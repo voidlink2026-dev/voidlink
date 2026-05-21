@@ -31,6 +31,7 @@ export interface NetworkNode {
   label: string
   securityTier: SecurityTier
   isBreached: boolean
+  isScanned: boolean  // true after player runs port scan
   isActive: boolean  // powered on / online
   services: NetworkService[]
   files: FileEntry[]

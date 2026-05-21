@@ -59,6 +59,7 @@ interface GameActions {
   acceptMission: (missionId: string) => void
   loadNetwork: (network: Network) => void
   selectNode: (nodeId: string | null) => void
+  scanNode: (networkId: string, nodeId: string) => void
   breachNode: (networkId: string, nodeId: string) => void
   collectFile: (networkId: string, nodeId: string, fileId: string) => void
   executeMissionObjective: (networkId: string, nodeId: string) => void
@@ -186,6 +187,15 @@ export const useGameStore = create<GameState & GameActions>()(
     loadNetwork: (network) => set((s) => { s.networks[network.id] = network }),
 
     selectNode: (nodeId) => set((s) => { s.selectedNodeId = nodeId }),
+
+    scanNode: (networkId, nodeId) =>
+      set((s) => {
+        const network = s.networks[networkId]
+        if (!network) return
+        const node = network.nodes.find((n) => n.id === nodeId)
+        if (!node) return
+        node.isScanned = true
+      }),
 
     breachNode: (networkId, nodeId) =>
       set((s) => {

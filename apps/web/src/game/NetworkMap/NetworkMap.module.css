@@ -111,6 +111,21 @@
 
 .vuln { color: #ff2d20; font-weight: 700; }
 
+.notScanned {
+  font-size: 9px;
+  color: #333;
+  font-style: italic;
+}
+
+.scannedBadge {
+  font-size: 9px;
+  color: #ff9900;
+  border: 1px solid rgba(255, 153, 0, 0.35);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.06em;
+}
+
 .fileRow {
   display: flex;
   align-items: center;

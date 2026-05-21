@@ -98,6 +98,47 @@ const ARCHETYPES: Record<NetworkArchetype, ArchetypeTemplate> = {
   },
 }
 
+interface ServiceTemplate { protocol: string; port: number; versions: string[]; vulnChance: number; vulnId: string }
+
+const SERVICE_TEMPLATES: Partial<Record<NodeType, ServiceTemplate[]>> = {
+  entry_point:   [{ protocol: 'SSH',   port: 22,  versions: ['7.4', '8.2', '8.9'],          vulnChance: 0.3, vulnId: 'CVE-2023-38408' },
+                  { protocol: 'HTTP',  port: 80,  versions: ['Apache/2.4.51', 'nginx/1.22'], vulnChance: 0.2, vulnId: 'CVE-2021-41773' }],
+  firewall:      [{ protocol: 'ICMP',  port: 0,   versions: ['1.0', '2.1'],                  vulnChance: 0.15, vulnId: 'CVE-2020-14871' },
+                  { protocol: 'SNMP',  port: 161, versions: ['v2c', 'v3'],                   vulnChance: 0.25, vulnId: 'CVE-2022-20919' }],
+  file_server:   [{ protocol: 'FTP',   port: 21,  versions: ['vsftpd 3.0', 'ProFTPD 1.3'],  vulnChance: 0.4, vulnId: 'CVE-2020-9470' },
+                  { protocol: 'SMB',   port: 445, versions: ['3.0.11', '3.1.1'],             vulnChance: 0.35, vulnId: 'CVE-2020-0796' }],
+  database:      [{ protocol: 'MySQL', port: 3306, versions: ['8.0.26', '5.7.35'],           vulnChance: 0.3, vulnId: 'CVE-2021-2307' },
+                  { protocol: 'PostgreSQL', port: 5432, versions: ['13.4', '14.1'],          vulnChance: 0.2, vulnId: 'CVE-2021-3393' }],
+  mail_server:   [{ protocol: 'SMTP',  port: 25,  versions: ['Postfix 3.5', 'Exim 4.94'],   vulnChance: 0.35, vulnId: 'CVE-2020-28017' },
+                  { protocol: 'IMAP',  port: 143, versions: ['Dovecot 2.3.13'],              vulnChance: 0.2, vulnId: 'CVE-2021-29157' }],
+  router:        [{ protocol: 'Telnet', port: 23, versions: ['1.0', '2.0'],                  vulnChance: 0.5, vulnId: 'CVE-2018-9866' },
+                  { protocol: 'RIP',   port: 520, versions: ['v1', 'v2'],                    vulnChance: 0.3, vulnId: 'CVE-2019-12299' }],
+  admin_console: [{ protocol: 'RDP',   port: 3389, versions: ['6.1', '7.0'],                vulnChance: 0.45, vulnId: 'CVE-2019-0708' },
+                  { protocol: 'HTTPS', port: 443, versions: ['Apache/2.4.49', 'nginx/1.20'], vulnChance: 0.25, vulnId: 'CVE-2021-41773' }],
+  intrusion_detector: [{ protocol: 'SYSLOG', port: 514, versions: ['rsyslog 8.2', 'syslog-ng 3.31'], vulnChance: 0.1, vulnId: 'CVE-2022-24903' }],
+  endpoint:      [{ protocol: 'RDP',   port: 3389, versions: ['6.1', '7.0'],                vulnChance: 0.4, vulnId: 'CVE-2019-0708' }],
+  ai_core:       [{ protocol: 'HTTPS', port: 8443, versions: ['TensorFlow Serving 2.5'],    vulnChance: 0.2, vulnId: 'CVE-2022-29216' }],
+  proxy:         [{ protocol: 'SOCKS5', port: 1080, versions: ['3proxy 0.9', 'Squid 5.2'],  vulnChance: 0.15, vulnId: 'CVE-2020-25097' }],
+}
+
+function generateServices(type: NodeType, tier: SecurityTier, rng: Rng): import('../types/network.ts').NetworkService[] {
+  const templates = SERVICE_TEMPLATES[type] ?? []
+  return templates
+    .filter(() => rng() > 0.25) // ~75% chance each service is present
+    .map((t) => {
+      const version = t.versions[Math.floor(rng() * t.versions.length)]
+      // Higher tiers have lower vuln chance (better patching)
+      const vulnRoll = rng() < t.vulnChance * (1 - (tier - 1) * 0.15)
+      return {
+        protocol: t.protocol,
+        port: t.port,
+        version,
+        hasKnownVulnerability: vulnRoll,
+        vulnerabilityId: vulnRoll ? t.vulnId : undefined,
+      }
+    })
+}
+
 function lerp(a: number, b: number, t: number): number {
   return Math.round(a + (b - a) * t)
 }
@@ -171,18 +212,22 @@ export function generateNetwork(
     nodeTypes.push(pick.type)
   }
 
-  const rawNodes: NetworkNode[] = nodeTypes.map((type, i) => ({
-    id: `node_${seed}_${i}`,
-    type,
-    label: type.replace(/_/g, ' '),
-    securityTier: Math.max(1, Math.min(5, tier + Math.round(rng() * 2 - 1))) as SecurityTier,
-    isBreached: false,
-    isActive: true,
-    services: [],
-    files: [],
-    connectedTo: [],
-    position: { x: 0, y: 0 },
-  }))
+  const rawNodes: NetworkNode[] = nodeTypes.map((type, i) => {
+    const nodeTier = Math.max(1, Math.min(5, tier + Math.round(rng() * 2 - 1))) as SecurityTier
+    return {
+      id: `node_${seed}_${i}`,
+      type,
+      label: type.replace(/_/g, ' '),
+      securityTier: nodeTier,
+      isBreached: false,
+      isScanned: false,
+      isActive: true,
+      services: generateServices(type, nodeTier, rng),
+      files: [],
+      connectedTo: [],
+      position: { x: 0, y: 0 },
+    }
+  })
 
   const connected = connectNodes(rawNodes, rng)
   const laid = layoutNodes(connected, rng)

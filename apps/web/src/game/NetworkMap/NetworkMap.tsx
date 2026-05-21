@@ -146,6 +146,11 @@ export function NetworkMap() {
                 aria-label={`${node.type}: tier ${node.securityTier}${node.isBreached ? ', breached' : ''}${hasRival ? ', rival hacker present' : ''}`}
                 aria-pressed={isSelected}
               >
+                {/* Scanned ring */}
+                {node.isScanned && !node.isBreached && (
+                  <circle r={20} fill="none" stroke="#ff9900" strokeWidth={1}
+                    strokeDasharray="2 4" opacity={0.5} />
+                )}
                 {/* Rival hacker ring */}
                 {hasRival && (
                   <circle r={28} fill="none" stroke="#ff9900" strokeWidth={1.5}
@@ -247,22 +252,27 @@ function NodePanel({
         <span className={node.isBreached ? styles.statusBreached : styles.statusSecure}>
           {node.isBreached ? '● COMPROMISED' : '○ SECURE'}
         </span>
+        {node.isScanned && <span className={styles.scannedBadge}>SCANNED</span>}
         {!node.isActive && <span className={styles.statusOffline}>OFFLINE</span>}
       </div>
 
-      {node.services.length > 0 && (
-        <div className={styles.panelSection}>
-          <div className={styles.panelSectionLabel}>SERVICES</div>
-          {node.services.map((svc, i) => (
+      <div className={styles.panelSection}>
+        <div className={styles.panelSectionLabel}>SERVICES</div>
+        {!node.isScanned ? (
+          <div className={styles.notScanned}>Run SCAN to discover services</div>
+        ) : node.services.length === 0 ? (
+          <div className={styles.notScanned}>No services detected</div>
+        ) : (
+          node.services.map((svc, i) => (
             <div key={i} className={styles.service}>
               {svc.protocol}:{svc.port} v{svc.version}
               {svc.hasKnownVulnerability && (
                 <span className={styles.vuln}> [VULN]</span>
               )}
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
 
       {node.files.length > 0 && (
         <div className={styles.panelSection}>

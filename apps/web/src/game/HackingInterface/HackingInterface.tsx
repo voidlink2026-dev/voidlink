@@ -16,6 +16,7 @@ export function HackingInterface() {
   const disconnect = useGameStore((s) => s.disconnect)
   const rivalHacker = useGameStore((s) => s.rivalHacker)
   const interceptRival = useGameStore((s) => s.interceptRival)
+  const scanNode = useGameStore((s) => s.scanNode)
 
   const [activeJob, setActiveJob] = useState<CrackJob | null>(null)
   const [jobProgress, setJobProgress] = useState(0)
@@ -23,8 +24,11 @@ export function HackingInterface() {
   const [wipeProgress, setWipeProgress] = useState(0)
   const [wipingNodeId, setWipingNodeId] = useState<string | null>(null)
   const [wipedNodeIds, setWipedNodeIds] = useState<Set<string>>(new Set())
+  const [scanProgress, setScanProgress] = useState(0)
+  const [scanningNodeId, setScanningNodeId] = useState<string | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const wipeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const scanIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const activeNetwork = activeNetworkId ? networks[activeNetworkId] : null
   const selectedNode = activeNetwork?.nodes.find((n) => n.id === selectedNodeId) ?? null
@@ -33,6 +37,7 @@ export function HackingInterface() {
   useEffect(() => () => {
     if (intervalRef.current) clearInterval(intervalRef.current)
     if (wipeIntervalRef.current) clearInterval(wipeIntervalRef.current)
+    if (scanIntervalRef.current) clearInterval(scanIntervalRef.current)
   }, [])
 
   // Announce rival hacker on first appearance
@@ -46,6 +51,44 @@ export function HackingInterface() {
     if (!rivalHacker) prevRivalRef.current = null
   }, [rivalHacker, logTerminal])
 
+  function runScan() {
+    if (!selectedNode || !activeNetworkId) return
+    if (selectedNode.isScanned) {
+      logTerminal(`${selectedNode.type.replace(/_/g, ' ')} already scanned.`, 'dim')
+      return
+    }
+    if (scanningNodeId) {
+      logTerminal('Scan already in progress.', 'dim')
+      return
+    }
+    const durationMs = selectedNode.securityTier * 1200 + Math.random() * 800
+    const startedAt = Date.now()
+    setScanningNodeId(selectedNode.id)
+    setScanProgress(0)
+    logTerminal(`Port scanning ${selectedNode.type.replace(/_/g, ' ')} [T${selectedNode.securityTier}]…`, 'system')
+
+    scanIntervalRef.current = setInterval(() => {
+      const p = Math.min(1, (Date.now() - startedAt) / durationMs)
+      setScanProgress(p)
+      if (p >= 1) {
+        clearInterval(scanIntervalRef.current!)
+        setScanningNodeId(null)
+        scanNode(activeNetworkId, selectedNode.id)
+        // Report findings
+        const vulnServices = selectedNode.services.filter((sv) => sv.hasKnownVulnerability)
+        if (vulnServices.length > 0) {
+          logTerminal(`Scan complete — ${vulnServices.length} exploitable service(s) found.`, 'success')
+          vulnServices.forEach((sv) =>
+            logTerminal(`  ${sv.protocol}:${sv.port} → ${sv.vulnerabilityId}`, 'success'),
+          )
+          logTerminal('CRACK will now use exploit method (faster).', 'system')
+        } else {
+          logTerminal(`Scan complete — no known vulnerabilities on this node.`, 'system')
+        }
+      }
+    }, 80)
+  }
+
   function startCrack() {
     if (!selectedNode || !player || activeJob) return
     if (selectedNode.isBreached) {
@@ -53,9 +96,13 @@ export function HackingInterface() {
       return
     }
 
+    // Use exploit method if node is scanned and has a known vulnerability
+    const hasExploit = selectedNode.isScanned && selectedNode.services.some((sv) => sv.hasKnownVulnerability)
+    const method = hasExploit ? 'exploit' : 'dictionary'
+
     const job = startCrackJob(
       selectedNode.id,
-      'dictionary',
+      method,
       player.software.passwordCrackers[0]?.toolId ?? 'cracker_basic',
       player.software.passwordCrackers[0]?.level ?? 1,
       selectedNode,
@@ -64,7 +111,7 @@ export function HackingInterface() {
     setActiveJob(job)
     setJobProgress(0)
     logTerminal(
-      `Starting dictionary attack on ${selectedNode.type.replace(/_/g, ' ')} [T${selectedNode.securityTier}]...`,
+      `Starting ${method.replace('_', ' ')} attack on ${selectedNode.type.replace(/_/g, ' ')} [T${selectedNode.securityTier}]…`,
       'system',
     )
 
@@ -114,9 +161,11 @@ export function HackingInterface() {
   function handleDisconnect() {
     if (intervalRef.current) clearInterval(intervalRef.current)
     if (wipeIntervalRef.current) clearInterval(wipeIntervalRef.current)
+    if (scanIntervalRef.current) clearInterval(scanIntervalRef.current)
     setActiveJob(null)
     setWipingNodeId(null)
     setWipedNodeIds(new Set())
+    setScanningNodeId(null)
     setProxyCount(0)
     disconnect()
     logTerminal('Connection terminated.', 'system')
@@ -242,12 +291,20 @@ export function HackingInterface() {
         <div className={styles.sectionLabel}>TOOLS</div>
         <div className={styles.toolGrid}>
           <Button
+            variant="secondary"
+            size="sm"
+            onClick={runScan}
+            disabled={!selectedNode || !!scanningNodeId || selectedNode?.isScanned}
+          >
+            {scanningNodeId ? 'SCANNING…' : selectedNode?.isScanned ? 'SCANNED' : 'SCAN'}
+          </Button>
+          <Button
             variant="danger"
             size="sm"
             onClick={startCrack}
             disabled={!selectedNode || !!activeJob || selectedNode?.isBreached}
           >
-            {activeJob ? 'CRACKING…' : 'CRACK'}
+            {activeJob ? 'CRACKING…' : selectedNode?.isScanned && selectedNode.services.some(s => s.hasKnownVulnerability) ? 'EXPLOIT' : 'CRACK'}
           </Button>
           <Button
             variant="secondary"
@@ -279,10 +336,21 @@ export function HackingInterface() {
           </Button>
         </div>
 
+        {scanningNodeId && (
+          <div className={styles.progressSection}>
+            <div className={styles.progressLabel}>
+              PORT SCAN — {Math.round(scanProgress * 100)}%
+            </div>
+            <div className={styles.progressTrack}>
+              <div className={styles.progressFillScan} style={{ width: `${scanProgress * 100}%` }} />
+            </div>
+          </div>
+        )}
+
         {activeJob && (
           <div className={styles.progressSection}>
             <div className={styles.progressLabel}>
-              CRACKING — {Math.round(jobProgress * 100)}%
+              {activeJob.method === 'exploit' ? 'EXPLOITING' : 'CRACKING'} — {Math.round(jobProgress * 100)}%
             </div>
             <div className={styles.progressTrack}>
               <div className={styles.progressFill} style={{ width: `${jobProgress * 100}%` }} />
