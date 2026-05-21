@@ -1,0 +1,111 @@
+/* ============================================================
+   UPLINK: NEXT GENERATION – Global Styles
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Colours */
+  --color-bg:          #0a0a0a;
+  --color-surface:     #111111;
+  --color-elevated:    #1a1a1a;
+  --color-overlay:     #222222;
+  --color-border:      #2a2a2a;
+  --color-border-active: #39ff14;
+
+  --color-green:       #39ff14;
+  --color-green-dim:   #1a7a00;
+  --color-cyan:        #00cfff;
+  --color-amber:       #ff9900;
+  --color-red:         #ff2d20;
+
+  --color-text:        #e8e8e8;
+  --color-text-muted:  #888888;
+  --color-text-dim:    #444444;
+
+  /* Typography */
+  --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+  --font-display: 'Rajdhani', 'Orbitron', sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+
+  /* Glow shadows */
+  --glow-green: 0 0 8px rgba(57, 255, 20, 0.4), 0 0 20px rgba(57, 255, 20, 0.15);
+  --glow-cyan:  0 0 8px rgba(0, 207, 255, 0.4), 0 0 20px rgba(0, 207, 255, 0.15);
+  --glow-red:   0 0 8px rgba(255, 45, 32, 0.5);
+
+  /* Scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-bg);
+}
+
+::-webkit-scrollbar         { width: 4px; height: 4px; }
+::-webkit-scrollbar-track   { background: var(--color-bg); }
+::-webkit-scrollbar-thumb   { background: var(--color-border); border-radius: 2px; }
+
+html, body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden; /* Desktop app — no page scroll */
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* CRT scanline overlay */
+#root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  z-index: 9999;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root::after { display: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus ring reset — use our own */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--color-green);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--color-cyan);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(57, 255, 20, 0.25);
+  color: var(--color-text);
+}

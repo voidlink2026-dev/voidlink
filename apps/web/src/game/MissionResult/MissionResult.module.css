@@ -1,0 +1,89 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 800;
+  backdrop-filter: blur(2px);
+}
+
+.panel {
+  width: 380px;
+  background: #111;
+  border-radius: 4px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.success {
+  border: 1px solid rgba(57, 255, 20, 0.4);
+  box-shadow: 0 0 40px rgba(57, 255, 20, 0.1), 0 8px 32px rgba(0,0,0,0.8);
+}
+
+.fail {
+  border: 1px solid rgba(255, 45, 32, 0.4);
+  box-shadow: 0 0 40px rgba(255, 45, 32, 0.1), 0 8px 32px rgba(0,0,0,0.8);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statusIcon {
+  font-size: 20px;
+}
+
+.success .statusIcon { color: #39ff14; }
+.fail .statusIcon    { color: #ff2d20; }
+
+.statusText {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.success .statusText { color: #39ff14; }
+.fail .statusText    { color: #ff2d20; }
+
+.divider {
+  height: 1px;
+  background: #1e1e1e;
+}
+
+.rewards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rewardRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+}
+
+.rewardLabel { color: #555; font-size: 10px; letter-spacing: 0.08em; }
+.rewardValue { color: #ff9900; font-weight: 700; font-size: 16px; }
+.rewardValueGreen { color: #39ff14; font-size: 14px; }
+.rewardValueDim { color: #888; font-size: 12px; }
+
+.failText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #888;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.failSub { color: #555; font-size: 10px; }
+
+.dismissBtn { align-self: flex-end; }

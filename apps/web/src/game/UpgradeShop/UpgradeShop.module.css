@@ -1,0 +1,137 @@
+.shop {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  gap: 0;
+}
+
+.empty { color: #444; font-size: 12px; padding: 12px; }
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 0 10px;
+  border-bottom: 1px solid #1a1a1a;
+  flex-shrink: 0;
+}
+
+.balance { display: flex; flex-direction: column; gap: 2px; }
+.balanceLabel { font-size: 9px; color: #444; letter-spacing: 0.1em; text-transform: uppercase; }
+.balanceValue { font-size: 18px; color: #ff9900; font-weight: 700; }
+.repLine { font-size: 10px; color: #444; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #1a1a1a;
+  flex-shrink: 0;
+  margin-top: 10px;
+}
+
+.tab {
+  padding: 6px 18px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #444;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.tab:hover { color: #888; }
+.tabActive { color: #39ff14; border-bottom-color: #39ff14; }
+.tab:focus-visible { outline: 2px solid #39ff14; outline-offset: -2px; }
+
+/* Item list */
+.list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-top: 8px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #0d0d0d;
+  border: 1px solid #181818;
+  border-radius: 2px;
+  gap: 12px;
+  transition: border-color 0.12s;
+}
+
+.item:hover { border-color: #2a2a2a; }
+.itemOwned { opacity: 0.5; }
+.itemLocked { opacity: 0.35; }
+
+.itemLeft { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.itemName {
+  font-size: 12px;
+  color: #ccc;
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 9px;
+  color: #00cfff;
+  border: 1px solid rgba(0,207,255,0.3);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+
+.itemDesc {
+  font-size: 10px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.itemStat { font-size: 10px; color: #39ff14; opacity: 0.7; }
+
+.itemRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.price { font-size: 13px; color: #ff9900; font-weight: 600; }
+.priceAfford { color: #ff2d20; }
+
+.locked {
+  font-size: 9px;
+  color: #ff2d20;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255,45,32,0.3);
+  border-radius: 2px;
+  padding: 2px 6px;
+}
+
+.ownedBadge {
+  font-size: 9px;
+  color: #39ff14;
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(57,255,20,0.3);
+  border-radius: 2px;
+  padding: 2px 6px;
+}

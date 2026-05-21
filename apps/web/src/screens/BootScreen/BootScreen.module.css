@@ -1,0 +1,27 @@
+.boot {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: flex-start;
+  padding: 40px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #39ff14;
+  line-height: 1.8;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+}
+
+.line {
+  min-height: 1.8em;
+}
+
+.cursor {
+  display: inline-block;
+  color: #39ff14;
+  font-size: 16px;
+}

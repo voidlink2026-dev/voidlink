@@ -1,0 +1,126 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 2px 0;
+}
+
+/* Identity row */
+.identityRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.identityInfo { flex: 1; }
+
+.handle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #39ff14;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+}
+
+.username { font-size: 10px; color: #555; margin-top: 1px; }
+.rank     { font-size: 9px; color: #444; letter-spacing: 0.1em; margin-top: 3px; }
+
+.balancePill {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.credits { font-size: 14px; color: #ff9900; font-weight: 700; }
+.rep     { font-size: 10px; color: #00cfff; }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: #1a1a1a;
+  flex-shrink: 0;
+}
+
+/* Two-column layout */
+.columns {
+  display: flex;
+  gap: 16px;
+}
+
+.col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.colLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #444;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.statKey { color: #555; }
+.statVal { color: #ccc; font-variant-numeric: tabular-nums; }
+.danger  { color: #ff2d20; }
+
+/* Software */
+.softwareGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tool {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background: #0d0d0d;
+  border: 1px solid #1a1a1a;
+  border-radius: 2px;
+}
+
+.toolId   { font-size: 10px; color: #aaa; font-weight: 600; }
+.toolMeta { font-size: 9px; color: #444; }
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #333;
+  padding-top: 2px;
+}
+
+.empty { color: #333; font-size: 11px; padding: 8px 0; }

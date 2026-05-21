@@ -1,0 +1,178 @@
+.interface {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 6px;
+  color: #333;
+  font-size: 12px;
+}
+
+.hint { font-size: 10px; color: #222; }
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #444;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 4px;
+}
+
+.targetInfo { display: flex; flex-direction: column; gap: 2px; }
+.targetName { color: #00cfff; font-weight: 600; font-size: 12px; }
+.targetMeta { color: #555; font-size: 10px; }
+.dim { color: #333; font-size: 10px; }
+
+.objective {
+  font-size: 11px;
+  color: #888;
+  line-height: 1.4;
+}
+
+.objectiveDone { color: #39ff14; }
+
+.selectedNode {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selectedNodeType {
+  font-size: 11px;
+  color: #ccc;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.selectedNodeStatus {
+  font-size: 10px;
+  color: #555;
+}
+
+.breachedText { color: #39ff14; }
+
+.toolGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.progressSection {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progressLabel {
+  font-size: 10px;
+  color: #888;
+  letter-spacing: 0.06em;
+}
+
+.progressTrack {
+  height: 6px;
+  background: #1a1a1a;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid #2a2a2a;
+}
+
+.progressFill {
+  height: 100%;
+  background: #ff2d20;
+  box-shadow: 0 0 6px rgba(255, 45, 32, 0.5);
+  transition: width 0.08s linear;
+  border-radius: 2px;
+}
+
+.progressFillWipe {
+  height: 100%;
+  background: #00cfff;
+  box-shadow: 0 0 6px rgba(0, 207, 255, 0.4);
+  transition: width 0.08s linear;
+  border-radius: 2px;
+}
+
+/* Rival hacker alert */
+.rivalAlert {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 45, 32, 0.06);
+  border: 1px solid rgba(255, 45, 32, 0.35);
+  border-radius: 2px;
+  animation: rivalPulse 2s ease-in-out infinite;
+}
+
+@keyframes rivalPulse {
+  0%, 100% { border-color: rgba(255, 45, 32, 0.35); }
+  50%       { border-color: rgba(255, 45, 32, 0.7); }
+}
+
+.rivalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rivalLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #ff2d20;
+}
+
+.rivalHandle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff9900;
+  letter-spacing: 0.06em;
+}
+
+.rivalDesc {
+  font-size: 10px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rivalAlert { animation: none; }
+}
+
+.disconnectSection {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #1a1a1a;
+}
+
+.disconnectBtn { width: 100%; }
+
+.disconnectWarning {
+  font-size: 9px;
+  color: #444;
+  line-height: 1.4;
+}

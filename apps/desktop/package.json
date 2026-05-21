@@ -1,0 +1,43 @@
+{
+  "name": "@uplink/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter @uplink/web dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "build": "pnpm --filter @uplink/web build && electron-builder",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.0",
+    "wait-on": "^7.2.0",
+    "typescript": "^5.5.0"
+  },
+  "build": {
+    "appId": "com.uplink.nextgen",
+    "productName": "Uplink: Next Generation",
+    "directories": {
+      "output": "dist"
+    },
+    "files": ["src/**/*", "../../apps/web/dist/**/*"],
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Game"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "assets/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
+    }
+  }
+}

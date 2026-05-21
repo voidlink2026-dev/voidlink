@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@uplink/core": ["../../libs/core/src/index.ts"],
+      "@uplink/ui": ["../../libs/ui/src/index.ts"]
+    }
+  },
+  "include": ["src", "../../libs/core/src", "../../libs/ui/src"]
+}

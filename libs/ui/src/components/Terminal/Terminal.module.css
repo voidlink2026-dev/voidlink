@@ -1,0 +1,91 @@
+.terminal {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  cursor: text;
+}
+
+.output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a #0a0a0a;
+}
+
+.output::-webkit-scrollbar {
+  width: 4px;
+}
+
+.output::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.output::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+}
+
+.line {
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 1.6em;
+  display: flex;
+}
+
+.output    { color: #c8c8c8; }
+.input     { color: #888888; }
+.error     { color: #ff2d20; }
+.success   { color: #39ff14; }
+.system    { color: #00cfff; }
+.dim       { color: #444444; }
+
+.inputPrefix {
+  color: #39ff14;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-top: 1px solid #1a1a1a;
+  gap: 4px;
+}
+
+.promptLabel {
+  color: #39ff14;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e8e8e8;
+  font-family: inherit;
+  font-size: inherit;
+  caret-color: #39ff14;
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 15px;
+  background: #39ff14;
+  animation: blink 1s step-end infinite;
+  flex-shrink: 0;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}

@@ -1,0 +1,87 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 8px;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusText {
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.percent {
+  color: #888;
+}
+
+.track {
+  height: 8px;
+  background: #1a1a1a;
+  border-radius: 2px;
+  position: relative;
+  overflow: visible;
+  border: 1px solid #2a2a2a;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: #2a2a2a;
+}
+
+/* Status colours */
+.clean .statusText  { color: #39ff14; }
+.clean .fill        { background: #39ff14; box-shadow: 0 0 6px rgba(57,255,20,0.4); }
+
+.monitoring .statusText { color: #ff9900; }
+.monitoring .fill       { background: #ff9900; box-shadow: 0 0 6px rgba(255,153,0,0.4); }
+
+.tracing .statusText { color: #ff6600; }
+.tracing .fill       { background: #ff6600; box-shadow: 0 0 8px rgba(255,102,0,0.5); }
+
+.traced .statusText { color: #ff2d20; }
+.traced .fill       { background: #ff2d20; box-shadow: 0 0 12px rgba(255,45,32,0.7); }
+.traced .track      { animation: pulse-border 0.5s ease-in-out infinite; }
+
+.escaped .statusText { color: #888; }
+.escaped .fill       { background: #444; }
+
+.tracedAlert {
+  color: #ff2d20;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  animation: blink-alert 0.4s step-end infinite;
+  text-align: center;
+  margin-top: 4px;
+}
+
+@keyframes blink-alert {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: #ff2d20; }
+  50%       { border-color: #440000; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tracedAlert { animation: none; }
+  .traced .track { animation: none; }
+}
