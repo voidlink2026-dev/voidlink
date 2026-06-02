@@ -115,13 +115,14 @@ export function Taskbar() {
               key={app.id}
               className={`${styles.launchBtn} ${isOpen ? styles.launchBtnOpen : ''} ${isFocused ? styles.launchBtnFocused : ''} ${isMinimised ? styles.launchBtnMin : ''}`}
               onClick={() => {
-                if (!openWin) {
-                  launch(app)
-                } else if (openWin.isMinimized || !isFocused) {
-                  focusWindow(app.id)
-                } else {
+                // Currently focused + visible → minimise
+                if (openWin && !openWin.isMinimized && isFocused) {
                   minimizeWindow(app.id)
+                  return
                 }
+                // Otherwise launch() — covers brand-new open, restore-from-minimised,
+                // and focus-from-background. openWindow store action handles all three.
+                launch(app)
               }}
               disabled={disabled}
               title={disabled ? `${app.title} — no active connection` : app.title}

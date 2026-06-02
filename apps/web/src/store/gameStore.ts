@@ -294,6 +294,7 @@ export const useGameStore = create<GameState & GameActions>()(
       set((s) => {
         const win = s.activeWindows.find((w: WindowState) => w.id === id)
         if (win) {
+          win.isMinimized = false  // un-minimise on focus
           win.zOrder = ++s.windowZCounter
           s.focusedWindowId = id
         }
