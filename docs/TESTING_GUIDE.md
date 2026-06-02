@@ -633,3 +633,37 @@ The big sweep. Test everything below.
 - [ ] cpu_t3 unlock: 80 rep (was 200)
 - [ ] cpu_t4 unlock: 250 rep (was 600)
 - [ ] After 4–5 successful difficulty-3+ missions you should have access to cracker_v3
+
+---
+
+## 22. M14g — Upgrade Shop Skill Tree (2199-01-01)
+
+### 22.1 Graph view (default)
+- [ ] Open SHOP from taskbar — opens at 1280×620
+- [ ] Top right: GRAPH / LIST toggle, GRAPH is active by default
+- [ ] HARDWARE band (left) shows 4 columns: CPU, RAM, MODEM, GATEWAY
+- [ ] SOFTWARE band (right) shows 6 columns: CRACKER, PROXY, LOG, SCAN, FW, MISC
+- [ ] Vertical dashed separator between bands
+- [ ] Each column has a starter node (●, always green) at top, tier 2/3/4 below
+- [ ] Edges connect each tier to its prereq
+
+### 22.2 Node colour states
+- [ ] Starter / owned node: green-filled circle with ✓ / ●
+- [ ] Affordable node: cyan-outlined circle showing tier badge (T2/v3/etc.)
+- [ ] Locked-funds: amber-outlined circle (rep met, can't afford)
+- [ ] Locked-rep: grey circle with 🔒
+- [ ] Edge from owned → next node lights green; later edges stay dim
+
+### 22.3 Side panel
+- [ ] Default: shows UPGRADE TREE hint + colour-coded legend
+- [ ] Click any node → side panel shows name, badge, description, stat, price
+- [ ] Owned: shows "INSTALLED" badge
+- [ ] Affordable: large BUY button
+- [ ] Locked-funds: "Need X more Cr"
+- [ ] Locked-rep: "Requires Y REP (you have Z)"
+- [ ] BUY succeeds → node turns green, edge to next tier lights up, side panel refreshes
+
+### 22.4 List view (legacy fallback)
+- [ ] Click LIST toggle → reverts to the old list with HARDWARE / SOFTWARE tabs
+- [ ] All purchase functionality intact
+- [ ] Toggle back to GRAPH retains selected node state
