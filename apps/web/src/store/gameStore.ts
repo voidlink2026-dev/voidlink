@@ -256,7 +256,14 @@ export const useGameStore = create<GameState & GameActions>()(
       }),
 
     saveWindowPosition: (id, x, y, width, height) =>
-      set((s) => { s.windowLastPositions[id] = { x, y, width, height } }),
+      set((s) => {
+        s.windowLastPositions[id] = { x, y, width, height }
+        // Also update the live window state so saveGame() picks up the new size/pos
+        const win = s.activeWindows.find((w) => w.id === id)
+        if (win) {
+          win.x = x; win.y = y; win.width = width; win.height = height
+        }
+      }),
 
     closeWindow: (id) =>
       set((s) => {

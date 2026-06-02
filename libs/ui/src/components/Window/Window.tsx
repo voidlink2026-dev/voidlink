@@ -71,7 +71,7 @@ export function Window({
     const startX = motionX.get()
     const startY = motionY.get()
 
-    function onMove(me: PointerEvent) {
+    function onPointerMove(me: PointerEvent) {
       const dx = me.clientX - startClientX
       const dy = me.clientY - startClientY
       let newW = startW
@@ -97,11 +97,13 @@ export function Window({
     }
 
     function onUp() {
-      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onUp)
+      // Persist the new size + position once the resize gesture finishes
+      onMove?.(id, motionX.get(), motionY.get(), sizeRef.current.width, sizeRef.current.height)
     }
 
-    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointermove', onPointerMove)
     window.addEventListener('pointerup', onUp)
   }
 

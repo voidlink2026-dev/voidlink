@@ -275,6 +275,8 @@ export function WorldMap() {
     controls.dampingFactor = 0.08
     controls.minDistance   = 140
     controls.maxDistance   = 500
+    controls.zoomSpeed     = 0.6   // smoother wheel zoom (default 1.0)
+    controls.rotateSpeed   = 1.0   // baseline — adapted per-frame below to compensate for distance
     ctrlRef.current = controls
 
     // Globe base
@@ -344,6 +346,12 @@ export function WorldMap() {
       rafRef.current = requestAnimationFrame(animate)
       if (ts - last < 33) return
       last = ts
+      // Scale rotate speed inversely with how close the camera is to the globe.
+      // Closer in → smaller angular delta per pixel → easier to focus on one region.
+      // distance ranges from 140 (closest) to 500 (farthest); minDistance=140 → speed=0.25, maxDistance=500 → speed=1.0
+      const dist = camera.position.length()
+      const t = (dist - 140) / (500 - 140)   // 0 close → 1 far
+      controls.rotateSpeed = 0.25 + 0.75 * Math.max(0, Math.min(1, t))
       controls.update()
       renderer.render(scene, camera)
     }

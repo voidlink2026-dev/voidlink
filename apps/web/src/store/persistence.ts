@@ -1,6 +1,6 @@
 import { useGameStore } from './gameStore.ts'
 
-const SAVE_VERSION = 2
+const SAVE_VERSION = 3  // v3: layout persistence (activeWindows + windowLastPositions)
 const LEGACY_KEY = 'uplink_ng_save'  // original pre-rename key — kept for one-time migration
 const SAVE_PREFIX = 'voidlink_save_'
 const INDEX_KEY = 'voidlink_accounts'
@@ -13,7 +13,14 @@ interface SaveData {
   newsFeed: ReturnType<typeof useGameStore.getState>['newsFeed']
   activeWorldEvents: ReturnType<typeof useGameStore.getState>['activeWorldEvents']
   nextWorldEventAt: ReturnType<typeof useGameStore.getState>['nextWorldEventAt']
+  // v3 — desktop layout persistence
+  activeWindows?: ReturnType<typeof useGameStore.getState>['activeWindows']
+  windowLastPositions?: ReturnType<typeof useGameStore.getState>['windowLastPositions']
+  windowZCounter?: ReturnType<typeof useGameStore.getState>['windowZCounter']
 }
+
+/** Windows that should NOT be restored because they require active mission state */
+const MISSION_ONLY_WINDOWS = new Set(['hacking', 'network-map'])
 
 export interface SaveMeta {
   handle: string
@@ -102,6 +109,10 @@ export function saveGame(): boolean {
       newsFeed: s.newsFeed,
       activeWorldEvents: s.activeWorldEvents,
       nextWorldEventAt: s.nextWorldEventAt,
+      // v3 — persist desktop layout so the player's arrangement survives logout
+      activeWindows: s.activeWindows,
+      windowLastPositions: s.windowLastPositions,
+      windowZCounter: s.windowZCounter,
     }
     localStorage.setItem(saveKey(s.player.handle), JSON.stringify(data))
     updateIndex(s.player)
@@ -119,6 +130,11 @@ export function loadGame(handle: string): boolean {
     const data: SaveData = JSON.parse(raw)
     if (!data.player) return false
     const now = Date.now()
+    // v3 layout: restore the player's saved window layout, but strip windows
+    // that require an active mission (they'd render empty/broken on cold boot)
+    const restoredWindows = (data.activeWindows ?? []).filter(
+      (w) => !MISSION_ONLY_WINDOWS.has(w.id),
+    )
     useGameStore.setState((s) => ({
       ...s,
       player: data.player,
@@ -126,6 +142,12 @@ export function loadGame(handle: string): boolean {
       newsFeed: data.newsFeed ?? [],
       activeWorldEvents: (data.activeWorldEvents ?? []).filter((e) => e.endsAt > now),
       nextWorldEventAt: data.nextWorldEventAt ?? null,
+      activeWindows: restoredWindows,
+      windowLastPositions: data.windowLastPositions ?? {},
+      windowZCounter: data.windowZCounter ?? 100,
+      focusedWindowId: restoredWindows.length > 0
+        ? restoredWindows.reduce((top, w) => (top.zOrder > w.zOrder ? top : w)).id
+        : null,
       screen: 'desktop',
     }))
     setActiveSession(handle)

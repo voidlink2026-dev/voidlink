@@ -775,3 +775,34 @@ The big sweep. Test everything below.
   4. Dual-tone modem warble at 1270/2225 Hz with LFO wobble
   5. Frequency-sweep chirp (2400 → 900 Hz)
 - [ ] ~3.5s total. Sequence text matches: DIALLING → RING → CARRIER → AUTH → ACK → ACKNOWLEDGED
+
+---
+
+## 25. M14h.2 — Layout Persistence + WorldMap Sensitivity + Hack Tools Re-openable
+
+### 25.1 Full window-layout persistence
+- [ ] Open the app, sign in
+- [ ] Arrange windows: drag some, resize others, minimise one, close one
+- [ ] Log out (⏻)
+- [ ] Log back in
+- [ ] Every window is in the exact same position + size as you left it
+- [ ] Minimised windows stay minimised, closed windows stay closed
+- [ ] z-order respects what was on top before logout
+- [ ] Hacking Interface and Network Map are NOT auto-restored (they require an active mission)
+- [ ] First-ever signup still gets the default 6-window layout
+
+### 25.2 Resize persistence
+- [ ] Resize any window by dragging the corner
+- [ ] Log out, log back in → window opens at the resized dimensions
+
+### 25.3 HACK TOOLS re-openable without mission
+- [ ] At the desktop (no mission active), close the Hacking Interface window
+- [ ] Click HACK TOOLS in the taskbar launcher → window re-opens
+- [ ] Shows the bounce panel hint + dirty hop cleanup tools as before
+
+### 25.4 WorldMap rotate sensitivity
+- [ ] Open WORLD MAP, drag to rotate at default zoom → smooth
+- [ ] Scroll-zoom in close to the globe
+- [ ] Drag to rotate → movement is much slower / easier to focus on a region
+- [ ] Zoom out → rotate speed scales back up to default
+- [ ] Wheel zoom itself is also gentler (0.6× speed, was 1.0)

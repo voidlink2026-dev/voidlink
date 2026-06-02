@@ -184,74 +184,17 @@ export function DesktopScreen() {
 
     loadInitialNews()
 
-    openWindow({
-      id: 'news',
-      title: 'VOIDLINK NEWSFEED',
-      component: 'NewsFeed',
-      x: 80,
-      y: 380,
-      width: 500,
-      height: 300,
-      isMinimized: false,
-    })
-
-    openWindow({
-      id: 'welcome',
-      title: 'SYSTEM TERMINAL',
-      component: 'WelcomeTerminal',
-      x: 80,
-      y: 60,
-      width: 520,
-      height: 300,
-      isMinimized: false,
-    })
-
-    openWindow({
-      id: 'missions',
-      title: 'MISSION BOARD',
-      component: 'MissionBoard',
-      x: 640,
-      y: 60,
-      width: 560,
-      height: 480,
-      isMinimized: false,
-    })
-
-    openWindow({
-      id: 'profile',
-      title: 'OPERATIVE PROFILE',
-      component: 'ProfileWindow',
-      x: 1220,
-      y: 60,
-      width: 380,
-      height: 520,
-      isMinimized: false,
-    })
-
-    // Hacking Interface — always open so the player can see the bounce-route hint
-    // and quickly reach HACK TOOLS once a mission is accepted.
-    openWindow({
-      id: 'hacking',
-      title: 'HACKING INTERFACE',
-      component: 'HackingInterface',
-      x: 640,
-      y: 380,
-      width: 480,
-      height: 360,
-      isMinimized: false,
-    })
-
-    // Bounce Chain — dedicated window so the chain status is always visible
-    openWindow({
-      id: 'bounce-chain',
-      title: 'BOUNCE CHAIN',
-      component: 'BounceChainWindow',
-      x: 1160,
-      y: 380,
-      width: 340,
-      height: 220,
-      isMinimized: false,
-    })
+    // Only seed default windows on a FRESH session. Returning players keep their
+    // saved layout (restored by loadGame in persistence.ts).
+    const restoredFromSave = useGameStore.getState().activeWindows.length > 0
+    if (!restoredFromSave) {
+      openWindow({ id: 'news',         title: 'VOIDLINK NEWSFEED',  component: 'NewsFeed',          x: 80,   y: 380, width: 500, height: 300, isMinimized: false })
+      openWindow({ id: 'welcome',      title: 'SYSTEM TERMINAL',    component: 'WelcomeTerminal',   x: 80,   y: 60,  width: 520, height: 300, isMinimized: false })
+      openWindow({ id: 'missions',     title: 'MISSION BOARD',      component: 'MissionBoard',      x: 640,  y: 60,  width: 560, height: 480, isMinimized: false })
+      openWindow({ id: 'profile',      title: 'OPERATIVE PROFILE',  component: 'ProfileWindow',     x: 1220, y: 60,  width: 380, height: 520, isMinimized: false })
+      openWindow({ id: 'hacking',      title: 'HACKING INTERFACE',  component: 'HackingInterface',  x: 640,  y: 380, width: 480, height: 360, isMinimized: false })
+      openWindow({ id: 'bounce-chain', title: 'BOUNCE CHAIN',       component: 'BounceChainWindow', x: 1160, y: 380, width: 340, height: 220, isMinimized: false })
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
