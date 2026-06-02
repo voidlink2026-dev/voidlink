@@ -1,14 +1,14 @@
 # VOIDLINK — MASTER GAME DESIGN DOCUMENT
 
-**Version:** 0.3 — Pre-Alpha Audit  
-**Last updated:** 2026-05-21  
-**Status:** Active design reference. All implementation decisions should be validated against this document.
+**Version:** 0.5 — Pre-Alpha Polish Pass (M14a/M14b shipped)
+**Last updated:** 2199-01-01
+**Status:** Active design reference. All implementation decisions should be validated against this document. For up-to-the-day shipped/planned status, see `NEXT_STAGE.md`.
 
 ---
 
 ## 1. Vision
 
-Voidlink is a single-player hacking thriller set in 2027. You play an anonymous contractor for Voidlink International — a black-market network where corporations, governments, and criminals pay skilled hackers to do the things they can't do officially. It is a game about **tension, consequence, and the slow realisation that you are not in control of the situation you think you are.**
+Voidlink is a single-player hacking thriller set in 2199. You play an anonymous contractor for Voidlink International — a black-market network where corporations, governments, and criminals pay skilled hackers to do the things they can't do officially. It is a game about **tension, consequence, and the slow realisation that you are not in control of the situation you think you are.**
 
 The experience sits between the authentic anxiety of the original *Uplink* (2001) and the narrative depth of games like *Deus Ex* and *Hacknet*. Every upgrade matters. Every mission leaves a trace. The world reacts to what you do, and the story finds you whether you go looking for it or not.
 
@@ -634,7 +634,7 @@ Multiplayer is a Phase 4+ feature, built after single-player is complete. Design
 - Story mission framework (StoryMission type, authored networks, coda) — good architecture
 - Mission events type system — well-designed, ready to implement
 - World types (Corporation, NewsArticle, WorldState, WorldEvent) — complete schema ready to build on
-- 46 unit tests covering core engine logic — healthy foundation
+- 60 unit tests covering core engine logic — 100% passing
 - localStorage persistence with auto-save — works correctly
 - New player tutorial — clear, well-paced
 

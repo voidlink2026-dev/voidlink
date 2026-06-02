@@ -4,7 +4,7 @@
 | Section | Status | Notes |
 |---------|--------|-------|
 | 10.1 Testing Philosophy | ✅ Done | Pure functions in libs/core tested in isolation |
-| 10.2 Automated Testing | 🚧 Partial | 46 Vitest unit tests: trace engine (12), crack engine (10), network generator (12), contract generator (12). No integration or E2E tests yet. |
+| 10.2 Automated Testing | 🚧 Partial | 60 Vitest unit tests covering trace engine, crack engine (including M13 protocol multipliers), network generator, and contract generator. 100% passing. No integration or E2E tests yet. |
 | 10.3 Manual & Exploratory Testing | 🚧 Partial | Manual browser testing during development. No formal test matrix. |
 | 10.4 Community Testing | ⬜ Not started | Pre-alpha — not ready |
 | 10.5 Launch Checklist | ⬜ Not started | — |

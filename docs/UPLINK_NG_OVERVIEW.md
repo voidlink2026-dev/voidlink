@@ -5,7 +5,7 @@
 
 ## What It Is
 
-A single-player hacking thriller set in 2027. You are an anonymous contractor for Voidlink International — a black-market network connecting corporations, governments, and criminals with skilled hackers for hire. You take contracts, breach networks, steal data, plant evidence, and sabotage infrastructure — all while managing your trace level, upgrading your tools, and slowly discovering that the job you took three missions ago is connected to something much larger than you thought.
+A single-player hacking thriller set in 2199. You are an anonymous contractor for Voidlink International — a black-market network connecting corporations, governments, and criminals with skilled hackers for hire. You take contracts, breach networks, steal data, plant evidence, and sabotage infrastructure — all while managing your trace level, upgrading your tools, and slowly discovering that the job you took three missions ago is connected to something much larger than you thought.
 
 The game sits between the authentic tension of the original *Uplink* (2001) and the narrative depth of *Deus Ex*. It is not an action game. It is a game of careful planning, earned progression, and consequence.
 
@@ -21,7 +21,9 @@ The game sits between the authentic tension of the original *Uplink* (2001) and 
 | **Animation** | Framer Motion |
 | **Styling** | CSS Modules + design tokens |
 | **Package manager** | pnpm monorepo |
-| **Testing** | Vitest (46 unit tests) |
+| **Testing** | Vitest (60 unit tests) |
+| **Audio** | Web Audio API procedural SFX + file-based looped music |
+| **3D** | Three.js — Network Map + World Map globe |
 | **Packages** | `apps/web`, `apps/desktop`, `libs/core`, `libs/ui` |
 
 ---
@@ -42,31 +44,42 @@ Tension is created by the trace system: trace climbs slowly at first, but spikes
 ## What's Built (Pre-Alpha)
 
 ### Fully Working
-- Multi-window OS shell with drag, minimize, z-order, taskbar
-- Boot → Login → Desktop screen flow with localStorage save/load
-- Mission Board: browse, accept, active mission display
-- Network Map: SVG node graph, click-to-inspect, breach/collect/objective actions
-- Hacking Interface: crack jobs, port scanner, log wipe, proxy bouncing, rival hacker alert
-- Trace system: tick-based, proxy bounce multiplier, auto-fail at 100%
-- Upgrade Shop: hardware + software with reputation locks
-- Profile Window: full operative stats, software inventory
-- Port scanner: timed scan reveals services + CVE IDs, enables exploit crack method (2× faster)
-- Story mission framework: hand-authored networks, narrative coda text, unlock chaining
-- New player tutorial: 8-step overlay, persisted via player flags
+- Multi-window OS shell — drag, resize, minimize, z-order, taskbar, window-position memory
+- Boot → Login (password + email + per-handle save) → Desktop with persistent session
+- Settings menu (⚙) — music/SFX volume + toggles, dark/light theme, UI scale 70–150%, reduce-motion, shortcuts reference
+- Mission Board: 5 mission types, story + procedural contracts, requirements gating
+- Network Map (Three.js 3D): node graph, click-to-inspect, scan/crack/exploit/wipe actions
+- Hacking Interface: scan, crack/exploit per-protocol with side-effects, log wipe, credential cache (dump/scrape/use), brute force lockout, subnet zones
+- Trace system: multi-rate (base + IDS + admin + rival + world events), proxy bounce multiplier, auto-fail at 100%, digital proximity beep audio
+- Upgrade Shop: hardware tiers + cracker/proxy/firewall/log-deleter/port-scanner software with reputation + price locks
+- Profile Window: stats, hardware/software, XP/level, faction standings, faction founding
+- Story mission framework: 5 arcs, 3 endings, hand-authored networks, narrative coda
+- Tutorial (25 steps): spotlight + soft dim, conditional auto-advance, requireConfirm option, trace paused during tutorial, forces first contract
 - Rival hacker AI: spawns mid-mission, roams the network, boosts trace, can be intercepted
-- 46 Vitest unit tests on core engine logic
+- World Map (Three.js globe): neon green digital aesthetic, lat/lon grid, country outlines (110m world-atlas), atmosphere halo, starfield
+- Bounce network on globe: click green nodes to chain, max hops scale with proxy software (basic=3, v2=5, v3=7)
+- Banking: 2 institutions (Global Trust, Pacific National), open account, deposit/withdraw, compound savings interest (continuous accrual)
+- In-game clock: epoch 2199-01-01 00:01:01, advances 1:1 with real time
+- Idle music: 4:26 looped track, fades out on mission, fades back on disconnect
+- Procedural SFX: scan, crack, wipe, success, fail, breach, click, tick, window-open/close, error
+- World events: 7 active events affecting trace/economy
+- 60 Vitest unit tests on core engine logic (100% passing)
+- Performance: game loop at 20Hz, DataRain throttled to 18fps, pauses on tab hide — ~75% idle CPU reduction
+- Accessibility: `<main>` landmarks (axe-clean), self-hosted fonts, focus-visible outlines, reduced-motion respect
 
 ### In Progress / Partially Built
-- Story missions: 3 missions authored (Revelation Arc 1–3); events authored but not wired
-- Mission event system: full type system designed, not yet running in game loop
-- Faction system: types and standing fields exist, no visible UI or gameplay effect yet
-- World simulation: Corporation, NewsArticle, WorldState types designed, not yet running
+- Banking expansion (M14c): loans, currency trading, equities, offshore accounts
+- Exfiltration channels (M14d): speed vs stealth file-transfer trade-offs
+- Privilege escalation + persistent backdoors (M15)
+- Dark web layer (M17): architecture exists, content not yet built
+- Mobile layout (M29)
+- Multiplayer infrastructure (M25)
 
 ---
 
 ## The Story
 
-Set in 2027. Five interconnected story arcs that unfold through mission briefings, terminal messages, and narrative coda text shown after mission completion.
+Set in 2199. Five interconnected story arcs that unfold through mission briefings, terminal messages, and narrative coda text shown after mission completion.
 
 **Arc 1 — The Revelation Arc** *(implemented)*
 You take a routine job and discover a file with an anomalous line: "If you are reading this, REVELATION has already found you." Following the trail leads you to Arunmor Corporation's classified research — and to an AI entity that predates the company that claims to have built it. The arc ends with a player choice that determines the shape of the rest of the game: upload the AI's propagation key to the global network, destroy it, or sell it.

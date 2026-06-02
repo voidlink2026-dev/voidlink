@@ -1,6 +1,17 @@
 # Voidlink – Development Documentation Index
 
-This index links every step-by-step guide for building Voidlink. All 10 guides are complete.
+**Last updated:** 2199-01-01 · **Current shipping milestone:** M14b (banking foundations)
+
+This index links every step-by-step guide for building Voidlink, plus the live shipping/planning docs.
+
+**Read these first:**
+- 📋 [NEXT_STAGE.md](NEXT_STAGE.md) — what's shipped, what's next, milestone roadmap
+- 📖 [GAME_GUIDE.md](GAME_GUIDE.md) — player-facing guide to all mechanics
+- 🎨 [GAME_DESIGN_MASTER.md](GAME_DESIGN_MASTER.md) — design principles, system specs
+- 🔍 [UPLINK_NG_OVERVIEW.md](UPLINK_NG_OVERVIEW.md) — pre-alpha summary, what's built
+- ✅ [TESTING_GUIDE.md](TESTING_GUIDE.md) — manual QA checklists (run after each milestone)
+
+**Dev guides** (`DEV_GUIDE_01` → `DEV_GUIDE_10` below) are stable architectural references — not updated per-milestone.
 
 ---
 
@@ -49,7 +60,7 @@ This index links every step-by-step guide for building Voidlink. All 10 guides a
 - Developer SDK: VS Code extension, CLI, hot-reload dev server
 
 ## [7. Content Creation](DEV_GUIDE_07_CONTENT_CREATION.md)
-- World lore, setting (2027), and five story arcs
+- World lore, setting (2199), and five story arcs
 - Branching narrative engine (flag-based state machine)
 - Mission scripting structure and the procedural contract generator
 - Procedural network, email, and news feed generation
@@ -85,9 +96,9 @@ This index links every step-by-step guide for building Voidlink. All 10 guides a
 
 ---
 
-**Status:** ✅ ALL MILESTONES COMPLETE — Pre-alpha feature-complete (M9 polish done 2026-05-26).
+**Status:** Pre-alpha — currently on M14b (banking foundations shipped). Next: M14c (banking expansion).
 
-**Game Guide:** [GAME_GUIDE.md](GAME_GUIDE.md) · **Next Stage:** [NEXT_STAGE.md](NEXT_STAGE.md) · **Design:** [GAME_DESIGN_MASTER.md](GAME_DESIGN_MASTER.md) · **Overview:** [UPLINK_NG_OVERVIEW.md](UPLINK_NG_OVERVIEW.md)
+**Quick links:** [Game Guide](GAME_GUIDE.md) · [Next Stage](NEXT_STAGE.md) · [Design Master](GAME_DESIGN_MASTER.md) · [Overview](UPLINK_NG_OVERVIEW.md) · [Testing Guide](TESTING_GUIDE.md)
 
 ---
 
@@ -186,16 +197,15 @@ This index links every step-by-step guide for building Voidlink. All 10 guides a
 ### Milestones Completed
 | Milestone | Focus | Status |
 |-----------|-------|--------|
-| M1 | Core loop (trace, gates, events) | ✅ Done |
-| M2 | Mission mechanical variety | ✅ Done |
-| M3 | Hardware stats all matter | ✅ Done |
-| M4 | Living world (news feed, corp patching, world events) | ✅ Done |
-| M5 | Story Arcs 1–3 | ✅ Done |
-| M6 | Audio system | ✅ Done |
-| M7 | Arcs 4–5, specializations, faction standing | ✅ Done |
-| M8 | i18n + Accessibility | ✅ Done |
-| M9 | Polish pass: resize, zoom, tutorial, stat/trace fixes | ✅ Done |
-| M10 | Atmosphere: 3D Network Map, TraceAmbient, CRTOverlay, DataRain, step guide, layout reset, lazy-load, scrollbar fixes | ✅ Done |
-| M11 | Realistic hacking mechanics (lateral movement, service exploits, exfil channels, timestomping…) | ⬜ Phase 2 (see NEXT_STAGE.md §1) |
-| M12 | Dark web layer + post-endgame arcs | ⬜ Phase 2 (see NEXT_STAGE.md §2, §10) |
-| M13 | Multiplayer backend | ⬜ Phase 3 (see NEXT_STAGE.md §12) |
+| M1–M10 | Core loop, mission variety, story arcs, audio, i18n/a11y, 3D, atmosphere | ✅ Shipped 2026-05-26 |
+| M11 | Bounce log wipe sub-missions + hop health | ✅ Shipped 2026-05-28 |
+| M12 | Lateral movement + credential reuse + memory scraping | ✅ Shipped 2026-05-28 |
+| M13 | Service-specific exploits + brute lockout + subnet zones (Zone A/B + pivot gate) | ✅ Shipped 2026-05-28 |
+| M14a | Pre-alpha polish: settings, neon globe, idle music, in-game clock, tutorial overhaul, light theme, perf throttling, mission retry, cracker fix, window memory | ✅ Shipped 2199-01-01 |
+| M14b | Banking foundations: bank window, deposits/withdrawals, compound savings interest | ✅ Shipped 2199-01-01 |
+| **M14c** | **Banking expansion: loans, currency trading, equities, offshore accounts** | ⬜ Next (NEXT_STAGE §7.0a) |
+| M14d | Exfiltration channels + canary files + timestomping | ⬜ Tier 1 |
+| M15 | Privilege escalation + persistent backdoors + traffic sniffing | ⬜ Tier 1 |
+| M16+ | Dark web, social engineering, advanced missions, multiplayer, post-endgame arcs | ⬜ See [NEXT_STAGE.md §13](NEXT_STAGE.md#13-milestone-priority-table) |
+
+For the full prioritised roadmap of M14c → M32, see the milestone table in [NEXT_STAGE.md §13](NEXT_STAGE.md#13-milestone-priority-table).

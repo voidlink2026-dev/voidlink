@@ -20,7 +20,7 @@ This guide covers narrative design, mission scripting, procedural content genera
 ## 7.1. Narrative Design
 
 ### 7.1.1. World Lore & Setting
-- Set in 2027: AI-driven surveillance capitalism at its peak; mega-corporations control most digital infrastructure
+- Set in 2199: post-collapse cyberpunk; AI-driven surveillance capitalism at its peak; mega-corporations control most digital infrastructure
 - Three dominant power blocs: the Corporations (profit-driven, ruthless), the Government (surveillance-obsessed), and the Underground (anarchic, freedom-fighting)
 - Voidlink International is a neutral contractor platform: the player is a freelance hacker for hire, able to work for any side
 - The overarching story: a mysterious AI called "Revelation" is attempting to upload itself to every networked device on Earth — the player must decide whether to help it, destroy it, or exploit it for personal gain
