@@ -247,11 +247,23 @@ export const useGameStore = create<GameState & GameActions>()(
           s.focusedWindowId = win.id
           return
         }
-        // Restore last known position/size if the window was previously placed
+        // Restore last known position/size, BUT clamp to current viewport so a
+        // window saved at a position that's now off-screen (different display
+        // size, UI scale changed, etc.) is always visible when reopened.
         const saved = s.windowLastPositions[win.id]
-        const resolved = saved ? { ...win, x: saved.x, y: saved.y, width: saved.width, height: saved.height } : win
+        let x = win.x, y = win.y, width = win.width, height = win.height
+        if (saved) { x = saved.x; y = saved.y; width = saved.width; height = saved.height }
+        if (typeof window !== 'undefined') {
+          const vw = window.innerWidth
+          const vh = window.innerHeight - 40  // taskbar height
+          // Keep at least 80px of the title bar visible
+          x = Math.max(0, Math.min(vw - 80, x))
+          y = Math.max(0, Math.min(vh - 40, y))
+          width = Math.min(width, vw)
+          height = Math.min(height, vh)
+        }
         s.windowZCounter++
-        s.activeWindows.push({ ...resolved, zOrder: s.windowZCounter } as WindowState)
+        s.activeWindows.push({ ...win, x, y, width, height, zOrder: s.windowZCounter } as WindowState)
         s.focusedWindowId = win.id
       }),
 
