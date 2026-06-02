@@ -102,20 +102,32 @@ export function Taskbar() {
   return (
     <div className={styles.taskbar} role="toolbar" aria-label="Taskbar" data-tutorial="taskbar">
 
-      {/* Left: app launcher */}
+      {/* Left: app launcher — also acts as focus/minimise toggle when the window is open */}
       <div className={styles.launcher} role="group" aria-label="App launcher">
         {APPS.map((app) => {
           const disabled = app.requiresActiveNetwork && !activeNetworkId
-          const isOpen   = windows.some((w) => w.id === app.id)
+          const openWin  = windows.find((w) => w.id === app.id)
+          const isOpen     = !!openWin
+          const isFocused  = openWin && focusedId === app.id && !openWin.isMinimized
+          const isMinimised = openWin?.isMinimized ?? false
           return (
             <button
               key={app.id}
-              className={`${styles.launchBtn} ${isOpen ? styles.launchBtnOpen : ''}`}
-              onClick={() => launch(app)}
+              className={`${styles.launchBtn} ${isOpen ? styles.launchBtnOpen : ''} ${isFocused ? styles.launchBtnFocused : ''} ${isMinimised ? styles.launchBtnMin : ''}`}
+              onClick={() => {
+                if (!openWin) {
+                  launch(app)
+                } else if (openWin.isMinimized || !isFocused) {
+                  focusWindow(app.id)
+                } else {
+                  minimizeWindow(app.id)
+                }
+              }}
               disabled={disabled}
               title={disabled ? `${app.title} — no active connection` : app.title}
               aria-label={`Open ${app.title}`}
               data-tutorial={`btn-${app.id}`}
+              aria-pressed={isFocused}
             >
               {app.label}
               {isOpen && <span className={styles.openDot} aria-hidden="true" />}
@@ -124,25 +136,27 @@ export function Taskbar() {
         })}
       </div>
 
-      {/* Centre: open window pills */}
+      {/* Centre: only ad-hoc windows that aren't in the APPS launcher (settings, bank, target-info) */}
       <div className={styles.centre}>
-        {windows.map((win) => {
-          const isActive = win.id === focusedId && !win.isMinimized
-          return (
-            <button
-              key={win.id}
-              className={`${styles.winBtn} ${isActive ? styles.winBtnActive : ''} ${win.isMinimized ? styles.winBtnMinimized : ''}`}
-              onClick={() => {
-                if (win.isMinimized || win.id !== focusedId) focusWindow(win.id)
-                else minimizeWindow(win.id)
-              }}
-              title={win.title}
-              aria-pressed={isActive}
-            >
-              {win.title}
-            </button>
-          )
-        })}
+        {windows
+          .filter((w) => !APPS.some((a) => a.id === w.id))
+          .map((win) => {
+            const isActive = win.id === focusedId && !win.isMinimized
+            return (
+              <button
+                key={win.id}
+                className={`${styles.winBtn} ${isActive ? styles.winBtnActive : ''} ${win.isMinimized ? styles.winBtnMinimized : ''}`}
+                onClick={() => {
+                  if (win.isMinimized || win.id !== focusedId) focusWindow(win.id)
+                  else minimizeWindow(win.id)
+                }}
+                title={win.title}
+                aria-pressed={isActive}
+              >
+                {win.title}
+              </button>
+            )
+          })}
       </div>
 
       {/* World events pills */}
