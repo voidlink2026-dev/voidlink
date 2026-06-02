@@ -235,12 +235,14 @@ export function WorldMap() {
   const rafRef      = useRef<number>(0)
   const bounceHitTargets = useRef<{ mesh: THREE.Mesh; id: string }[]>([])
   const bankHitTargets   = useRef<{ mesh: THREE.Mesh; id: string }[]>([])
+  const infoHitTargets   = useRef<{ mesh: THREE.Mesh; id: string }[]>([])
   const arcGroupRef = useRef<THREE.Group | null>(null)
 
   const player      = useGameStore((s) => s.player)
   const activeRoute = useGameStore((s) => s.activeRoute)
   const setBounceRoute = useGameStore((s) => s.setBounceRoute)
-  const setActiveBank  = useGameStore((s) => s.setActiveBank)
+  const setActiveBank        = useGameStore((s) => s.setActiveBank)
+  const setActiveTargetInfo  = useGameStore((s) => s.setActiveTargetInfo)
   const openWindow     = useGameStore((s) => s.openWindow)
 
   const bounceLib   = player?.bounceLibrary ?? []
@@ -289,6 +291,7 @@ export function WorldMap() {
 
     // World target nodes
     bankHitTargets.current = []
+    infoHitTargets.current = []
     for (const t of WORLD_TARGETS) {
       const pos = latLonToVec3(t.lat, t.lon)
       const col = TYPE_COLORS[t.type] ?? 0x888888
@@ -296,6 +299,7 @@ export function WorldMap() {
       dot.position.copy(pos)
       scene.add(dot)
       if (t.type === 'bank') bankHitTargets.current.push({ mesh: dot, id: t.id })
+      else infoHitTargets.current.push({ mesh: dot, id: t.id })
       const lbl = makeLabel(t.label, `#${col.toString(16).padStart(6, '0')}`)
       lbl.position.copy(pos.clone().multiplyScalar(1.12))
       scene.add(lbl)
@@ -423,23 +427,39 @@ export function WorldMap() {
         }
       }
 
-      // Then bounce targets
+      // Bounce targets next
       const meshes = bounceHitTargets.current.map((h) => h.mesh)
       const hits   = raycaster.intersectObjects(meshes)
-      if (hits.length === 0) return
-      const hitMesh = hits[0].object as THREE.Mesh
-      const target  = bounceHitTargets.current.find((h) => h.mesh === hitMesh)
-      if (!target) return
+      if (hits.length > 0) {
+        const hitMesh = hits[0].object as THREE.Mesh
+        const target  = bounceHitTargets.current.find((h) => h.mesh === hitMesh)
+        if (target) {
+          const node = bounceLib.find((n) => n.id === target.id)
+          if (node && node.logStatus !== 'traced') {
+            const inRoute = activeRoute.includes(target.id)
+            if (inRoute) {
+              setBounceRoute(activeRoute.filter((id) => id !== target.id))
+            } else if (activeRoute.length < maxHops && node.logStatus !== 'dirty') {
+              setBounceRoute([...activeRoute, target.id])
+            }
+          }
+          return
+        }
+      }
 
-      const node = bounceLib.find((n) => n.id === target.id)
-      if (!node || node.logStatus === 'traced') return
-
-      const inRoute = activeRoute.includes(target.id)
-      if (inRoute) {
-        setBounceRoute(activeRoute.filter((id) => id !== target.id))
-      } else if (activeRoute.length < maxHops) {
-        if (node.logStatus === 'dirty') return
-        setBounceRoute([...activeRoute, target.id])
+      // Lastly, info targets — corp / gov / underground / network
+      const infoMeshes = infoHitTargets.current.map((h) => h.mesh)
+      const infoHits   = raycaster.intersectObjects(infoMeshes)
+      if (infoHits.length > 0) {
+        const hitMesh = infoHits[0].object as THREE.Mesh
+        const target  = infoHitTargets.current.find((h) => h.mesh === hitMesh)
+        if (target) {
+          setActiveTargetInfo(target.id)
+          openWindow({
+            id: 'target-info', title: 'TARGET INTEL', component: 'TargetInfoWindow',
+            x: 280, y: 120, width: 440, height: 460, isMinimized: false,
+          })
+        }
       }
     }
 
@@ -448,12 +468,16 @@ export function WorldMap() {
       mouse.x =  ((e.clientX - rect.left)  / rect.width)  * 2 - 1
       mouse.y = -((e.clientY - rect.top)   / rect.height) * 2 + 1
       raycaster.setFromCamera(mouse, camera!)
-      const meshes = bounceHitTargets.current.map((h) => h.mesh)
-      const hits   = raycaster.intersectObjects(meshes)
+      const allMeshes = [
+        ...bounceHitTargets.current.map((h) => h.mesh),
+        ...bankHitTargets.current.map((h) => h.mesh),
+        ...infoHitTargets.current.map((h) => h.mesh),
+      ]
+      const hits = raycaster.intersectObjects(allMeshes)
       if (hits.length > 0) {
         const hitMesh = hits[0].object as THREE.Mesh
-        const target  = bounceHitTargets.current.find((h) => h.mesh === hitMesh)
-        setHoverNodeId(target?.id ?? null)
+        const bounceTarget = bounceHitTargets.current.find((h) => h.mesh === hitMesh)
+        setHoverNodeId(bounceTarget?.id ?? null) // bounce-only tooltip stays accurate
         renderer!.domElement.style.cursor = 'pointer'
       } else {
         setHoverNodeId(null)
@@ -467,7 +491,7 @@ export function WorldMap() {
       renderer.domElement.removeEventListener('click', onClick)
       renderer.domElement.removeEventListener('mousemove', onMove)
     }
-  }, [activeRoute, bounceLib, maxHops, setBounceRoute, setActiveBank, openWindow])
+  }, [activeRoute, bounceLib, maxHops, setBounceRoute, setActiveBank, setActiveTargetInfo, openWindow])
 
   // ── Hover node info ──────────────────────────────────────────────────────────
   const hoverNode = bounceLib.find((n) => n.id === hoverNodeId)

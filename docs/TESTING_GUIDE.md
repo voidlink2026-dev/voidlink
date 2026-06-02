@@ -584,3 +584,52 @@ The big sweep. Test everything below.
 - [ ] Log out, log back in
 - [ ] All balances + holdings + loan principal intact
 - [ ] Stock prices reset to base on fresh session (server-authoritative in future, OK for now)
+
+---
+
+## 21. M14d — UX & Balance Polish (2199-01-01)
+
+### 21.1 Mandatory log wipe + WIPE ALL LOGS
+- [ ] Complete a mission's primary objective
+- [ ] COVER YOUR TRACKS section shows a list of breached nodes with ✓ / ✗ icons
+- [ ] WIPE ALL LOGS button visible while any dirty nodes remain
+- [ ] Click it → sequential wipe through all dirty nodes; terminal logs each
+- [ ] Per-node ground-up wipe (selecting a node and using WIPE LOG) still works
+- [ ] LEAVE NETWORK with dirty logs: warning text reads "⚠ MISSION WILL FAIL — wipe all logs first…"
+- [ ] Dirty exit = mission abandoned, zero payment, news feed picks up
+
+### 21.2 OPEN WORLD MAP from HI
+- [ ] Open HACK TOOLS before accepting a mission
+- [ ] BOUNCE ROUTING panel shows the current ACTIVE ROUTE
+- [ ] "▶ OPEN WORLD MAP TO EDIT ROUTE" primary button visible
+- [ ] Click → World Map window opens (or focuses if already open)
+- [ ] Dirty hops listed separately with CLEAN HOP buttons
+- [ ] Traced hops listed under "TRACED HOPS — CANNOT BE REUSED"
+
+### 21.3 Connection effect
+- [ ] Accept any mission
+- [ ] Full-screen overlay appears: VOIDLINK UPLINK SERVICE
+- [ ] Node chain renders: YOU → [hops] → TARGET, lighting up in sequence
+- [ ] Dial-tone SFX plays (4 ascending tones + handshake buzz)
+- [ ] Status line cycles through INITIATING / HANDSHAKE / AUTH / ACK
+- [ ] Progress bar fills; overlay closes; Network Map ready
+
+### 21.4 Sabotage missions always have a router
+- [ ] Accept a `network_sabotage` mission
+- [ ] Open NETWORK MAP — a CORE ROUTER node is present (was missing in some corporate_intranet/legacy_mainframe seeds before)
+- [ ] Breach it → SABOTAGE NODE button works → objective completes
+
+### 21.5 Clickable Corp / Gov / Underground / VoidLink
+- [ ] Open WORLD MAP
+- [ ] Click ARUNMOR / ARES / INTERPOL / NAMELESS / VOIDLINK targets
+- [ ] TARGET INTEL window opens with: name, type, region, intel description, access requirements, flavour quote
+- [ ] Footer reads "DIRECT CONNECTION NOT YET AVAILABLE — contract via the MISSION BOARD"
+- [ ] These are NOT added to bounce chain (only green bounce dots can be)
+
+### 21.6 Rep gating rebalanced
+- [ ] cracker_v3 unlock: 80 rep (was 200)
+- [ ] cracker_v4 unlock: 250 rep (was 600)
+- [ ] proxy_v3 unlock: 100 rep (was 250)
+- [ ] cpu_t3 unlock: 80 rep (was 200)
+- [ ] cpu_t4 unlock: 250 rep (was 600)
+- [ ] After 4–5 successful difficulty-3+ missions you should have access to cracker_v3

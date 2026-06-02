@@ -136,6 +136,7 @@ interface GameState {
   credentialCache: CredentialEntry[]
   windowLastPositions: Record<string, { x: number; y: number; width: number; height: number }>
   activeBankId: string | null  // currently-viewed bank in BankWindow
+  activeTargetInfoId: string | null  // currently-viewed Corp/Gov/Underground in TargetInfoWindow
   // Currency market: 1 Darkcoin = N credits — fluctuates over time
   darkcoinExchangeRate: number
   // Stock prices: keyed by stock id, current price in Cr — fluctuate over time
@@ -189,6 +190,7 @@ interface GameActions {
   bankWithdraw: (bankId: string, amount: number) => 'ok' | 'insufficient_balance' | 'no_account'
   tickBankInterest: () => void
   setActiveBank: (bankId: string | null) => void
+  setActiveTargetInfo: (targetId: string | null) => void
   takeLoan: (bankId: string, amount: number) => 'ok' | 'no_account' | 'over_limit' | 'has_loan' | 'no_loans_at_bank'
   repayLoan: (bankId: string, amount: number) => 'ok' | 'no_account' | 'no_loan' | 'insufficient_funds'
   tradeCurrency: (direction: 'buy_dc' | 'sell_dc', amountCr: number) => 'ok' | 'insufficient_funds'
@@ -225,6 +227,7 @@ export const useGameStore = create<GameState & GameActions>()(
     credentialCache: [],
     windowLastPositions: {},
     activeBankId: null,
+    activeTargetInfoId: null,
     darkcoinExchangeRate: 142,
     stockPrices: { ARMR: 245, ARES: 612, INTC: 88, GTBK: 178 },
     lastMarketTickAt: Date.now(),
@@ -356,6 +359,31 @@ export const useGameStore = create<GameState & GameActions>()(
             }
             network.nodes.push(dbNode)
             if (connectTo) connectTo.connectedTo.push(dbNode.id)
+          }
+        }
+
+        // Sabotage needs a router (or admin_console) — inject one if absent
+        if (mission.type === 'network_sabotage') {
+          const hasSabotageTarget = network.nodes.some((n) => n.type === 'router' || n.type === 'admin_console')
+          if (!hasSabotageTarget) {
+            const connectTo = network.nodes.find((n) => n.type !== 'entry_point') ?? network.nodes[network.nodes.length - 1]
+            const rtrTier = Math.min(5, mission.difficulty + 1) as SecurityTier
+            const routerNode: NetworkNode = {
+              id: `node_${seed}_rtr`,
+              type: 'router',
+              label: 'CORE ROUTER',
+              securityTier: rtrTier,
+              isBreached: false,
+              isScanned: false,
+              isActive: true,
+              isLogWiped: false,
+              services: [{ protocol: 'Telnet', port: 23, version: '2.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2018-9866' }],
+              files: [],
+              connectedTo: connectTo ? [connectTo.id] : [],
+              position: { x: (connectTo?.position.x ?? 0) + 2, y: connectTo?.position.y ?? 0 },
+            }
+            network.nodes.push(routerNode)
+            if (connectTo) connectTo.connectedTo.push(routerNode.id)
           }
         }
 
@@ -1637,6 +1665,7 @@ export const useGameStore = create<GameState & GameActions>()(
     },
 
     setActiveBank: (bankId) => set((s) => { s.activeBankId = bankId }),
+    setActiveTargetInfo: (targetId) => set((s) => { s.activeTargetInfoId = targetId }),
 
     tickBankInterest: () =>
       set((s) => {
@@ -1884,6 +1913,7 @@ export const useGameStore = create<GameState & GameActions>()(
         activeRoute: [],
         credentialCache: [],
         activeBankId: null,
+        activeTargetInfoId: null,
       })
     },
   })),

@@ -82,7 +82,7 @@ export const HARDWARE_CATALOGUE: HardwareDefinition[] = [
     tier: 3,
     statBoost: { cpuSpeed: 2 },
     price: 24000,
-    unlockReputation: 200,
+    unlockReputation: 80,
   },
   {
     id: 'cpu_t4',
@@ -92,7 +92,7 @@ export const HARDWARE_CATALOGUE: HardwareDefinition[] = [
     tier: 4,
     statBoost: { cpuSpeed: 4 },
     price: 80000,
-    unlockReputation: 600,
+    unlockReputation: 250,
   },
   {
     id: 'ram_t2',
@@ -168,7 +168,7 @@ export const SOFTWARE_CATALOGUE: ToolDefinition[] = [
     upgradeSlots: 3,
     baseDurationMs: (level, cpu) => Math.max(800, 48000 / (level * cpu)),
     ramCost: 2,
-    unlockReputation: 200,
+    unlockReputation: 80,
     unlockPrice: 18000,
   },
   {
@@ -180,7 +180,7 @@ export const SOFTWARE_CATALOGUE: ToolDefinition[] = [
     upgradeSlots: 4,
     baseDurationMs: (level, cpu) => Math.max(400, 28000 / (level * cpu)),
     ramCost: 2,
-    unlockReputation: 600,
+    unlockReputation: 250,
     unlockPrice: 65000,
   },
   {
@@ -204,7 +204,7 @@ export const SOFTWARE_CATALOGUE: ToolDefinition[] = [
     upgradeSlots: 3,
     baseDurationMs: () => 0,
     ramCost: 1,
-    unlockReputation: 250,
+    unlockReputation: 100,
     unlockPrice: 14000,
   },
   {

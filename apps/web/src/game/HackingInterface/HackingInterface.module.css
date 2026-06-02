@@ -567,3 +567,8 @@
   color: #39ff14;
   letter-spacing: 0.06em;
 }
+
+.wipeAllBtn {
+  margin-top: 6px;
+  width: 100%;
+}

@@ -14,6 +14,7 @@ import { TutorialOverlay } from '../../game/Tutorial/TutorialOverlay.tsx'
 import { NewsFeed } from '../../game/NewsFeed/NewsFeed.tsx'
 import { SettingsWindow } from '../../game/Settings/SettingsWindow.tsx'
 import { BankWindow } from '../../game/Bank/BankWindow.tsx'
+import { TargetInfoWindow } from '../../game/TargetInfo/TargetInfoWindow.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
 import { generateContract, STORY_MISSIONS } from '@voidlink/core'
@@ -39,6 +40,7 @@ const WINDOW_COMPONENTS: Record<string, React.ComponentType> = {
   NewsFeed,
   SettingsWindow,
   BankWindow,
+  TargetInfoWindow,
 }
 
 export function DesktopScreen() {

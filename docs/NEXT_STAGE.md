@@ -1096,8 +1096,10 @@ Architecture for vertical layout:
 | **M14a** ✅ | Pre-alpha polish: settings, neon globe, idle music, in-game clock, perf throttling, tutorial overhaul, light theme, mission retry, cracker fix | Tier 1 | SHIPPED 2199-01-01 |
 | **M14b** ✅ | Banking foundations: bank window, deposits/withdrawals, savings interest | Tier 1 | SHIPPED 2199-01-01 |
 | **M14c** ✅ | Banking expansion: loans, Cr↔Darkcoin trading, equities (4 stocks), offshore banks (Cayman + Zurich), tabbed bank UI, market simulation | Tier 1 | SHIPPED 2199-01-01 |
-| **M14d** | Banking polish: stock-event linkage (sabotage → price drop), heat laundering, MARKET CRASH world event, loan defaulting + hunter contracts | Tier 1 | 2 |
-| **M14e** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
+| **M14d** ✅ | UX & balance: mandatory log wipe + WIPE ALL button, OPEN WORLD MAP from HI, connection effect overlay (dial-tone + animated chain), clickable Corp/Gov/Underground targets with TARGET INTEL window, sabotage router injection, rep gating rebalanced | Tier 1 | SHIPPED 2199-01-01 |
+| **M14e** | Banking polish: stock-event linkage (sabotage → price drop), heat laundering, MARKET CRASH world event, loan defaulting + hunter contracts | Tier 1 | 2 |
+| **M14f** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
+| **M14g** | Upgrade Shop → skill-tree graph UI (replace list view with node-link diagram showing prereqs + path) | Tier 1 | 2 |
 | **M15** | Privilege escalation + backdoors + traffic sniffing | Tier 1 | 3 |
 | **M16** | Terminal expanded commands + Lua scripting layer | Tier 2 | 4 |
 | **M17** | Dark web layer: architecture + black market + contracts | Tier 2 | 5 |

@@ -19,11 +19,11 @@ export function HackingInterface() {
   const breachNode = useGameStore((s) => s.breachNode)
   const wipeNodeLog = useGameStore((s) => s.wipeNodeLog)
   const disconnect = useGameStore((s) => s.disconnect)
+  const openWindow = useGameStore((s) => s.openWindow)
   const rivalHacker = useGameStore((s) => s.rivalHacker)
   const interceptRival = useGameStore((s) => s.interceptRival)
   const scanNode = useGameStore((s) => s.scanNode)
   const activeRoute = useGameStore((s) => s.activeRoute)
-  const setBounceRoute = useGameStore((s) => s.setBounceRoute)
   const credentialCache = useGameStore((s) => s.credentialCache)
   const dumpCredentials = useGameStore((s) => s.dumpCredentials)
   const scrapeMemory = useGameStore((s) => s.scrapeMemory)
@@ -377,6 +377,47 @@ export function HackingInterface() {
     }, 80)
   }
 
+  // Wipe every breached + un-wiped node sequentially.
+  function startWipeAll() {
+    if (!activeNetworkId || !activeNetwork) return
+    const remaining = activeNetwork.nodes.filter((n) => n.isBreached && !n.isLogWiped)
+    if (remaining.length === 0) return
+    logTerminal(`Wiping ${remaining.length} node${remaining.length === 1 ? '' : 's'}…`, 'system')
+
+    const wipeMult = player?.specialization === 'ghost' ? 0.6 : 1
+    const queue = [...remaining]
+    let cancelled = false
+
+    function wipeNext() {
+      if (cancelled) return
+      const node = queue.shift()
+      if (!node) {
+        setWipingNodeId(null)
+        logTerminal('All log entries purged. No trace remains.', 'success')
+        AudioEngine.playSfx('success')
+        return
+      }
+      const tier = node.securityTier
+      const durationMs = Math.max(2000, (tier * 1800 + Math.random() * 1000) * wipeMult)
+      const startedAt = Date.now()
+      setWipingNodeId(node.id)
+      setWipeProgress(0)
+      wipeIntervalRef.current = setInterval(() => {
+        const elapsed = Date.now() - startedAt
+        const p = Math.min(1, elapsed / durationMs)
+        setWipeProgress(p)
+        if (p >= 1) {
+          clearInterval(wipeIntervalRef.current!)
+          if (activeNetworkId) wipeNodeLog(activeNetworkId, node.id)
+          AudioEngine.playSfx('wipe')
+          logTerminal(`${node.type.replace(/_/g, ' ').toUpperCase()}: logs purged.`, 'system')
+          wipeNext()
+        }
+      }, 80)
+    }
+    wipeNext()
+  }
+
   const activeMissions = useGameStore((s) => s.missions.filter((m) => m.status === 'active'))
   const activeMission = activeMissions[0] ?? null
   const primaryObjective = activeMission?.objectives.find((o) => !o.isOptional)
@@ -496,36 +537,30 @@ export function HackingInterface() {
     }, 80)
   }
 
-  // Pre-mission: show bounce router configuration
+  // Pre-mission: bounce routing has moved to the WORLD MAP.
+  // Keep this panel minimal — a launcher + dirty-hop cleanup utility.
   if (!traceState) {
     const bounceLibrary = player?.bounceLibrary ?? []
-
-    function handleAddHop(nodeId: string) {
-      if (!activeRoute.includes(nodeId)) setBounceRoute([...activeRoute, nodeId])
-    }
-
-    function handleRemoveHop(index: number) {
-      setBounceRoute(activeRoute.filter((_, i) => i !== index))
-    }
+    const dirtyHops = bounceLibrary.filter((n) => n.logStatus === 'dirty')
+    const tracedHops = bounceLibrary.filter((n) => n.logStatus === 'traced')
 
     return (
-      <div className={styles.bouncePanel}>
+      <div className={styles.bouncePanel} data-tutorial="bounce-panel">
         <div className={styles.section}>
           <div className={styles.sectionLabel}>BOUNCE ROUTING</div>
-          <span className={styles.dim}>Configure your connection route. Each hop absorbs one full trace cycle before re-trace begins.</span>
+          <span className={styles.dim}>
+            Configure your bounce chain on the WORLD MAP. Each hop in your route slows trace accumulation. Max hops scale with your installed Proxy software (basic = 3, v2 = 5, v3 = 7).
+          </span>
         </div>
 
-        {/* Active route */}
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>
-            ACTIVE ROUTE — {activeRoute.length} HOP{activeRoute.length !== 1 ? 'S' : ''}
-          </div>
+          <div className={styles.sectionLabel}>ACTIVE ROUTE — {activeRoute.length} HOP{activeRoute.length !== 1 ? 'S' : ''}</div>
           {activeRoute.length === 0 ? (
             <span className={styles.dim}>No route set — traces will reach you directly.</span>
           ) : (
             <div className={styles.routeChain}>
               <div className={styles.routeOrigin}>YOU</div>
-              {activeRoute.map((hopId, i) => {
+              {activeRoute.map((hopId) => {
                 const node = bounceLibrary.find((n) => n.id === hopId)
                 if (!node) return null
                 return (
@@ -535,7 +570,6 @@ export function HackingInterface() {
                       <span className={`${styles.bounceStatus} ${styles[`status_${node.logStatus}`]}`}>●</span>
                       <span className={styles.routeNodeLabel}>{node.label}</span>
                       <span className={styles.routeNodeMeta}>{node.region} · T{node.tier}</span>
-                      <button className={styles.routeRemove} onClick={() => handleRemoveHop(i)}>✕</button>
                     </div>
                   </div>
                 )
@@ -544,54 +578,61 @@ export function HackingInterface() {
               <div className={styles.routeTarget}>TARGET</div>
             </div>
           )}
+          <Button variant="primary" size="sm" onClick={() => openWindow({
+            id: 'world-map', title: 'GLOBAL NETWORK MAP', component: 'WorldMap',
+            x: 200, y: 80, width: 820, height: 580, isMinimized: false,
+          })}>
+            ▶ OPEN WORLD MAP TO EDIT ROUTE
+          </Button>
         </div>
 
-        {/* Node library */}
-        <div className={styles.section}>
-          <div className={styles.sectionLabel}>NODE LIBRARY</div>
-          {bounceLibrary.length === 0 ? (
-            <span className={styles.dim}>No bounce nodes. Purchase from the Upgrade Shop.</span>
-          ) : (
-            bounceLibrary.map((node) => {
-              const inRoute = activeRoute.includes(node.id)
-              return (
-                <div key={node.id} className={`${styles.bounceNode} ${inRoute ? styles.bounceNodeActive : ''}`}>
-                  <div className={styles.bounceNodeInfo}>
-                    <span className={`${styles.bounceStatus} ${styles[`status_${node.logStatus}`]}`}>●</span>
-                    <span className={styles.bounceNodeLabel}>{node.label}</span>
-                    <span className={styles.bounceNodeMeta}>{node.region}</span>
-                    <span className={styles.bounceTier}>T{node.tier}</span>
-                  </div>
-                  {node.logStatus === 'dirty' && cleaningHopId !== node.id && (
-                    <div className={styles.hopActionRow}>
-                      <span className={styles.dirtyWarn}>⚠ LOGS DIRTY</span>
-                      <Button variant="ghost" size="sm" onClick={() => startCleanHop(node.id)} disabled={!!cleaningHopId}>
-                        CLEAN HOP
-                      </Button>
-                    </div>
-                  )}
-                  {node.logStatus === 'dirty' && cleaningHopId === node.id && (
-                    <div className={styles.hopCleanProgress}>
-                      <div className={styles.hopCleanLabel}>WIPING LOGS… {Math.round(cleanHopProgress * 100)}%</div>
-                      <div className={styles.progressTrack}>
-                        <div className={styles.progressFillWipe} style={{ width: `${cleanHopProgress * 100}%` }} />
-                      </div>
-                    </div>
-                  )}
-                  {node.logStatus === 'traced' && (
-                    <span className={`${styles.dirtyWarn} ${styles.status_traced}`}>✗ TRACED — remove from library</span>
-                  )}
-                  {!inRoute && node.logStatus === 'clean' && (
-                    <Button variant="ghost" size="sm" onClick={() => handleAddHop(node.id)}>+ ADD TO ROUTE</Button>
-                  )}
-                  {inRoute && node.logStatus === 'clean' && (
-                    <Button variant="ghost" size="sm" onClick={() => handleRemoveHop(activeRoute.indexOf(node.id))}>REMOVE</Button>
-                  )}
+        {/* Cleanup utility: only show dirty hops here */}
+        {dirtyHops.length > 0 && (
+          <div className={styles.section}>
+            <div className={styles.sectionLabel}>DIRTY HOPS — CLEAN BEFORE REUSE</div>
+            {dirtyHops.map((node) => (
+              <div key={node.id} className={styles.bounceNode}>
+                <div className={styles.bounceNodeInfo}>
+                  <span className={`${styles.bounceStatus} ${styles[`status_${node.logStatus}`]}`}>●</span>
+                  <span className={styles.bounceNodeLabel}>{node.label}</span>
+                  <span className={styles.bounceNodeMeta}>{node.region}</span>
+                  <span className={styles.bounceTier}>T{node.tier}</span>
                 </div>
-              )
-            })
-          )}
-        </div>
+                {cleaningHopId !== node.id ? (
+                  <div className={styles.hopActionRow}>
+                    <span className={styles.dirtyWarn}>⚠ LOGS DIRTY</span>
+                    <Button variant="ghost" size="sm" onClick={() => startCleanHop(node.id)} disabled={!!cleaningHopId}>
+                      CLEAN HOP
+                    </Button>
+                  </div>
+                ) : (
+                  <div className={styles.hopCleanProgress}>
+                    <div className={styles.hopCleanLabel}>WIPING LOGS… {Math.round(cleanHopProgress * 100)}%</div>
+                    <div className={styles.progressTrack}>
+                      <div className={styles.progressFillWipe} style={{ width: `${cleanHopProgress * 100}%` }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tracedHops.length > 0 && (
+          <div className={styles.section}>
+            <div className={styles.sectionLabel}>TRACED HOPS — CANNOT BE REUSED</div>
+            {tracedHops.map((node) => (
+              <div key={node.id} className={styles.bounceNode}>
+                <div className={styles.bounceNodeInfo}>
+                  <span className={`${styles.bounceStatus} ${styles.status_traced}`}>●</span>
+                  <span className={styles.bounceNodeLabel}>{node.label}</span>
+                  <span className={styles.bounceNodeMeta}>{node.region}</span>
+                </div>
+                <span className={`${styles.dirtyWarn} ${styles.status_traced}`}>✗ TRACED</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className={styles.section}>
           <span className={styles.dim}>Accept a mission from the Mission Board to begin.</span>
@@ -962,6 +1003,16 @@ export function HackingInterface() {
               )}
             </div>
           ))}
+          {!allLogsClear && !wipingNodeId && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => startWipeAll()}
+              className={styles.wipeAllBtn}
+            >
+              ▶ WIPE ALL LOGS ({dirtyNodes.length})
+            </Button>
+          )}
         </div>
       )}
 
@@ -986,7 +1037,7 @@ export function HackingInterface() {
         )}
         {allPrimaryDone && !allLogsClear && (
           <span className={styles.disconnectWarning}>
-            WIPE ALL LOGS FIRST — client will not pay a dirty exit
+            ⚠ MISSION WILL FAIL — wipe all logs first to get paid. Dirty exit = no payment + corp opens an investigation against you.
           </span>
         )}
       </div>

@@ -1,0 +1,145 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  pointer-events: all;
+  animation: fadeIn 0.18s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.panel {
+  background: rgba(2, 8, 14, 0.95);
+  border: 1px solid var(--color-cyan, #00e5ff);
+  border-radius: 4px;
+  padding: 28px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 540px;
+  max-width: 720px;
+  box-shadow: 0 0 60px rgba(0, 229, 255, 0.18), inset 0 0 30px rgba(0, 229, 255, 0.04);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--color-cyan, #00e5ff);
+  text-align: center;
+  opacity: 0.7;
+}
+
+.chain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 12px 0;
+}
+
+.chainSegment {
+  display: flex;
+  align-items: center;
+}
+
+.node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 10px;
+  border: 1px solid #1a4050;
+  border-radius: 2px;
+  background: rgba(0, 229, 255, 0.02);
+  min-width: 90px;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+
+.nodeActive {
+  border-color: var(--color-cyan, #00e5ff);
+  background: rgba(0, 229, 255, 0.1);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.4);
+}
+
+.nodeTarget { border-color: rgba(255, 153, 0, 0.4); }
+.nodeTarget.nodeActive { border-color: var(--color-amber, #ff9900); background: rgba(255, 153, 0, 0.12); box-shadow: 0 0 14px rgba(255, 153, 0, 0.4); }
+
+.nodeIcon { font-size: 24px; color: var(--color-cyan, #00e5ff); line-height: 1; }
+.nodeTarget .nodeIcon { color: var(--color-amber, #ff9900); }
+
+.nodeLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-cyan, #00e5ff);
+  text-align: center;
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nodeTarget .nodeLabel { color: var(--color-amber, #ff9900); }
+
+.nodeSub {
+  font-size: 8px;
+  color: #4a6a7a;
+  letter-spacing: 0.05em;
+}
+
+.link {
+  width: 50px;
+  height: 1px;
+  background: #1a4050;
+  position: relative;
+  transition: background 0.25s;
+}
+
+.linkActive {
+  background: var(--color-cyan, #00e5ff);
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.5);
+}
+
+.statusLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--color-cyan, #00e5ff);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 16px;
+}
+
+.cursor {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+.progressBar {
+  height: 2px;
+  background: #1a4050;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-cyan, #00e5ff);
+  transition: width 0.2s ease-out;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+}

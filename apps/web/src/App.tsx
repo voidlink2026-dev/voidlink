@@ -6,6 +6,7 @@ import { BootScreen } from './screens/BootScreen/BootScreen.tsx'
 import { LoginScreen } from './screens/LoginScreen/LoginScreen.tsx'
 import { DesktopScreen } from './screens/DesktopScreen/DesktopScreen.tsx'
 import { TraceAmbient } from './components/TraceAmbient/TraceAmbient.tsx'
+import { ConnectionEffect } from './components/ConnectionEffect/ConnectionEffect.tsx'
 import { startAutoSave, getActiveSession, loadGame } from './store/persistence.ts'
 
 export function App() {
@@ -48,6 +49,7 @@ export function App() {
         {screen === 'desktop' && <DesktopScreen key="desktop" />}
       </AnimatePresence>
       <TraceAmbient />
+      {screen === 'desktop' && <ConnectionEffect />}
     </>
   )
 }
