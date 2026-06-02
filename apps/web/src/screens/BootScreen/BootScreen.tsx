@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { DataRain } from '../../components/DataRain/DataRain.tsx'
+import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
 import styles from './BootScreen.module.css'
 
 const BOOT_LINES = [
@@ -27,13 +27,7 @@ export function BootScreen() {
       exit={{ opacity: 0, filter: 'blur(4px)' }}
       transition={{ duration: 0.5 }}
     >
-      <DataRain
-        opacity={0.75}
-        speed={0.6}
-        fontSize={13}
-        fadeOut
-        fadeOutAfterMs={1800}
-      />
+      <GlyphDrift opacity={0.85} density={1.6} />
 
       <div className={styles.lines}>
         {BOOT_LINES.map((line, i) => (

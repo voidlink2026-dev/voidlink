@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
-import { DataRain } from '../../components/DataRain/DataRain.tsx'
+import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
 import { AudioEngine } from '../../game/Audio/audioEngine.ts'
 import type { PlayerProfile } from '@voidlink/core'
 import {
@@ -207,7 +207,7 @@ export function LoginScreen() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <DataRain opacity={0.22} speed={0.45} fontSize={13} />
+      <GlyphDrift opacity={0.65} density={1.2} />
 
       <div className={styles.panel}>
 

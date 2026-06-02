@@ -19,7 +19,8 @@ import { BounceChainWindow } from '../../game/BounceChain/BounceChainWindow.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
 import { generateContract, STORY_MISSIONS } from '@voidlink/core'
-import { DataRain } from '../../components/DataRain/DataRain.tsx'
+import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
+import { TraceSweep } from '../../components/TraceSweep/TraceSweep.tsx'
 import styles from './DesktopScreen.module.css'
 
 // Three.js components — lazy-load (~600KB)
@@ -199,7 +200,9 @@ export function DesktopScreen() {
 
   return (
     <main className={styles.desktop} aria-label="Voidlink desktop environment">
-      <DataRain opacity={0.04} speed={0.18} fontSize={12} style={{ zIndex: 0 }} />
+      {/* Idle ambient — fades when a trace is active (TraceSweep takes over) */}
+      <GlyphDrift opacity={traceState ? 0.15 : 0.55} density={0.9} style={{ zIndex: 0 }} />
+      <TraceSweep />
 
       <div
         className={styles.windowLayer}
