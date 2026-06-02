@@ -65,15 +65,28 @@ export interface PlayerProfile {
   bounceLibrary: BounceNode[]
   faction: FactionData | null
   bankAccounts?: Record<string, BankAccount>  // keyed by bank target id (e.g. 'globalbank')
+  darkcoin?: number                            // alt currency (volatile vs Cr)
+  stockHoldings?: Record<string, StockHolding> // keyed by stock id
 }
 
 export interface BankAccount {
   bankId: string
-  balance: number        // current deposited credits
-  apr: number            // annual percentage rate (0.025 = 2.5%)
-  openedAt: number       // unix ms
+  balance: number             // current deposited credits
+  apr: number                 // annual percentage rate (0.025 = 2.5%)
+  openedAt: number            // unix ms
   lastInterestTickAt: number  // unix ms — used to compute accrual
   totalInterestEarned: number
+  loanPrincipal?: number      // current outstanding loan principal at this bank
+  loanRate?: number           // APR on the loan (set when loan taken)
+  loanTakenAt?: number        // unix ms
+  loanLastInterestTickAt?: number
+  loanTotalInterestAccrued?: number
+}
+
+export interface StockHolding {
+  stockId: string
+  shares: number
+  costBasis: number   // total spent (Cr) to acquire current shares — for P&L
 }
 
 export interface PlayerStats {

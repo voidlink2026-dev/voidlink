@@ -25,6 +25,7 @@ const REGION_COORDS: Record<string, [number, number]> = {
   'CA':         [45, -75],
   'MX':         [19, -99],
   'AR':         [-34, -58],
+  'CAYMAN':     [19.3, -81.4],
   'DARKWEB':    [0, 0],
 }
 
@@ -34,6 +35,8 @@ const WORLD_TARGETS = [
   { id: 'interpol',    label: 'INTERPOL',           lat: 48.9,  lon:   2.3, type: 'gov' },
   { id: 'globalbank',  label: 'GLOBAL TRUST BANK', lat: 40.7,  lon: -74.0, type: 'bank' },
   { id: 'pacificbank', label: 'PACIFIC NATIONAL',  lat: 37.8,  lon:-122.4, type: 'bank' },
+  { id: 'caymantrust', label: 'CAYMAN TRUST',      lat: 19.3,  lon: -81.4, type: 'bank' },
+  { id: 'zurichvault', label: 'ZURICH VAULT',      lat: 47.4,  lon:   8.5, type: 'bank' },
   { id: 'nameless',    label: 'THE NAMELESS',      lat: 35.0,  lon: 139.0, type: 'underground' },
   { id: 'voidlink',    label: 'VOIDLINK INTL',     lat: 47.0,  lon:   8.0, type: 'network' },
 ]

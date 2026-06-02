@@ -530,3 +530,57 @@ The big sweep. Test everything below.
 ### 19.6 Persistence
 - [ ] Deposit credits, log out, log back in
 - [ ] Account balance, total interest earned, openedAt date all intact
+
+---
+
+## 20. M14c — Banking Expansion (2199-01-01)
+
+### 20.1 New banks on the World Map
+- [ ] CAYMAN TRUST visible at Caribbean (~19°N, 81°W)
+- [ ] ZURICH VAULT visible at Switzerland (~47°N, 8°E)
+- [ ] Both yellow bank dots; clicking opens BANK TERMINAL
+- [ ] Both list under FINANCIAL INSTITUTIONS (when no bank selected) with OFFSHORE tag
+
+### 20.2 Loans
+- [ ] At Global Trust or Pacific National, open the LOAN tab
+- [ ] Without an active loan: shows "LOAN AVAILABLE — UP TO X Cr"
+- [ ] Borrow a small amount (say 1000 Cr) → cash increases, "OUTSTANDING PRINCIPAL" appears
+- [ ] After ~30 seconds the principal increases slightly (loan interest accrues)
+- [ ] Repay partial: principal reduces, terminal logs remaining principal
+- [ ] Repay in full (FULL button): "Loan repaid in full" terminal log, panel returns to LOAN AVAILABLE
+- [ ] Cannot borrow with active loan: error "Existing loan must be repaid first"
+- [ ] Cannot borrow above max (collateral × multiplier): error "Max loan: X Cr"
+- [ ] Cayman Trust does NOT show LOAN tab (savings only)
+- [ ] Zurich shows LOAN tab with 7% APR
+
+### 20.3 Currency trading (Cr ↔ Darkcoin)
+- [ ] Open TRADE tab on Global Trust or Pacific National
+- [ ] EXCHANGE RATE shows "1 DC = ~142 Cr", updates every 1.5s
+- [ ] BUY DARKCOIN: enter Cr amount → shows estimated DC → click BUY DC → credits decrease, darkcoin increases
+- [ ] SELL DARKCOIN: enter DC (e.g. 0.5) → shows estimated Cr → click SELL DC → DC decreases, credits increase
+- [ ] 1% spread: buying then immediately selling loses ~2% (expected)
+- [ ] Darkcoin balance visible in the stats row at top (top stat panel)
+
+### 20.4 Equities
+- [ ] Open STOCKS tab on Global Trust or Pacific National
+- [ ] 4 stocks listed: ARMR (Arunmor), ARES (Defence), INTC (Internic), GTBK (Global Trust)
+- [ ] Each row shows ticker, name, price, ▲/▼ drift %, owned shares (if any)
+- [ ] Prices update every ~1.5s (random walk with mean reversion)
+- [ ] Click a stock → highlighted, detail panel shows price + holdings
+- [ ] Buy 5 shares of ARMR: credits deduct, holdings show "5 shares", cost basis recorded
+- [ ] Sell at higher price → terminal shows "Realised P&L: +X Cr" (green)
+- [ ] Sell at lower price → "Realised P&L: -X Cr" (warn yellow)
+- [ ] Cannot sell more than you own (button disabled)
+
+### 20.5 Offshore banks
+- [ ] CAYMAN TRUST: only SAVINGS tab shown
+- [ ] ZURICH VAULT: SAVINGS + LOAN tabs only (no trade/stocks)
+- [ ] Both show "OFFSHORE" purple tag in header and bank card list
+- [ ] Footer text reads "OFFSHORE ACCOUNT — DEPOSITS REDUCE HEAT…" (flavour only for now)
+- [ ] Higher setup fees (5,000 / 8,000 Cr) than retail banks
+
+### 20.6 Persistence
+- [ ] Deposit, take a loan, buy stocks, swap to Darkcoin
+- [ ] Log out, log back in
+- [ ] All balances + holdings + loan principal intact
+- [ ] Stock prices reset to base on fresh session (server-authoritative in future, OK for now)

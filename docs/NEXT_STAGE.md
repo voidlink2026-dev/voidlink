@@ -630,23 +630,28 @@ A journalist contacts you through channels only a ghost could find. They have a 
 
 ---
 
-### 7.0a Banking & Personal Finance ✅ PARTIAL SHIPPED (M14b — 2199-01-01)
+### 7.0a Banking & Personal Finance ✅ SHIPPED (M14b + M14c — 2199-01-01)
 
-**Shipped (foundational):**
-- Two clickable bank targets on the World Map: GLOBAL TRUST BANK (2.5% APR, 500 Cr setup) and PACIFIC NATIONAL (3.4% APR, 750 Cr setup)
-- Bank window: open account, deposit, withdraw, ALL CASH / ALL SAVINGS quick-fill
-- Continuous compound interest accrual via `tickBankInterest` (real-time 1:1)
+**M14b — Foundations:**
+- 2 retail bank targets on World Map: GLOBAL TRUST BANK (2.5% APR) and PACIFIC NATIONAL (3.4% APR)
+- Open account, deposit, withdraw, ALL CASH / ALL SAVINGS quick-fill
+- Continuous compound savings interest via `tickBankInterest` (real-time 1:1)
 - Per-bank account state persisted on player profile
-- Terminal logs every banking transaction
-- Three.js raycast on World Map: bank targets check before bounce targets
 
-**Still planned:**
-- **Loans** — borrow against future earnings at 8–15% APR; defaulting triggers a hunter contract
-- **Currency trading** — Cr ↔ Darkcoin at live exchange rates
-- **Equities** — invest in corporate stock; sabotage missions affect prices (short the corp you're hitting)
-- **Anonymous offshore accounts** — at Cayman / Zurich nodes; harder to access, but laundered credits don't count toward heat
-- **Risk** — bank balances attract rival hackers; high balances = more frequent break-in attempts on the bank
-- **World event** — `MARKET CRASH`: all bank APR drops to 0 for the duration
+**M14c — Expansion:**
+- **Loans** — `takeLoan` / `repayLoan` actions. Borrow up to `collateral × maxLoanMultiplier` (Global=2×, Pacific=3×, Zurich=1×). Interest compounds continuously on the outstanding principal. UI in LOAN tab: borrow / repay / max-afford / pay-in-full.
+- **Currency trading** — Cr ↔ Darkcoin. Live exchange rate (anchored ~142 Cr/DC, ±2.5% noise, slow mean reversion). 1% spread on each side. TRADE tab.
+- **Equities** — 4 stocks (ARMR / ARES / INTC / GTBK) with random-walk prices, soft mean reversion to base. `buyStock` / `sellStock` actions track shares + cost basis for realised P&L. STOCKS tab shows live prices, ▲/▼ drift %, holdings.
+- **Offshore accounts** — 2 new bank targets: CAYMAN TRUST (savings only, laundering flavour) and ZURICH VAULT (savings + discreet 7% loans). Purple offshore tag throughout the UI.
+- **Tabbed UI** — BankWindow now has dynamic Savings / Loan / Trade / Stocks tabs filtered by bank's available features.
+- **Market simulation** — `tickMarket` runs every 1.5s alongside the existing game loop; updates stock prices and DC exchange rate.
+
+**Still planned (future milestones):**
+- **Defaulting** — if loan principal grows unchecked beyond a threshold, trigger a hunter contract from the bank
+- **Stock event linkage** — sabotage missions against a corp should drop its stock price (short-sellers profit). Wire `tickMarket` to consume mission events.
+- **Heat laundering** — offshore deposits should actually reduce the player's heat per corporation (currently flavour only)
+- **MARKET CRASH world event** — drops all stocks 30% + caps APR to 0 for its duration
+- **Margin & options** — leveraged stock positions, put/call contracts (Tier 2)
 
 ---
 
@@ -1090,8 +1095,9 @@ Architecture for vertical layout:
 | **M13** ✅ | Service-specific exploits + brute lockout + subnet zones | Tier 1 | SHIPPED 2026-05-28 |
 | **M14a** ✅ | Pre-alpha polish: settings, neon globe, idle music, in-game clock, perf throttling, tutorial overhaul, light theme, mission retry, cracker fix | Tier 1 | SHIPPED 2199-01-01 |
 | **M14b** ✅ | Banking foundations: bank window, deposits/withdrawals, savings interest | Tier 1 | SHIPPED 2199-01-01 |
-| **M14c** | Banking expansion: loans, currency trading, equities, offshore accounts | Tier 1 | 3 |
-| **M14d** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
+| **M14c** ✅ | Banking expansion: loans, Cr↔Darkcoin trading, equities (4 stocks), offshore banks (Cayman + Zurich), tabbed bank UI, market simulation | Tier 1 | SHIPPED 2199-01-01 |
+| **M14d** | Banking polish: stock-event linkage (sabotage → price drop), heat laundering, MARKET CRASH world event, loan defaulting + hunter contracts | Tier 1 | 2 |
+| **M14e** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
 | **M15** | Privilege escalation + backdoors + traffic sniffing | Tier 1 | 3 |
 | **M16** | Terminal expanded commands + Lua scripting layer | Tier 2 | 4 |
 | **M17** | Dark web layer: architecture + black market + contracts | Tier 2 | 5 |

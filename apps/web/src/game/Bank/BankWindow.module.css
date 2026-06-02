@@ -178,3 +178,124 @@
   border-top: 1px solid var(--color-border, #1e1e1e);
   padding-top: 10px;
 }
+
+/* ── M14c additions ────────────────────────────────────────────────────── */
+
+.offshoreTag {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  color: var(--color-purple, #bf5fff);
+  border: 1px solid var(--color-purple, #bf5fff);
+  border-radius: 2px;
+  padding: 1px 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.bankCardOffshore { border-color: rgba(191, 95, 255, 0.4); }
+
+.loanTag { color: var(--color-red, #ff3333); font-size: 8px; }
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border, #2a2a2a);
+  margin: -4px 0 4px;
+}
+
+.tabBtn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-dim, #606060);
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+.tabBtn:hover { color: var(--color-text, #d4d4d4); }
+.tabBtnActive {
+  color: var(--color-cyan, #00e5ff);
+  border-bottom-color: var(--color-cyan, #00e5ff);
+}
+
+.balanceValueAmber {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-amber, #ffaa00);
+  font-variant-numeric: tabular-nums;
+}
+.balanceValueRed {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-red, #ff3333);
+  font-variant-numeric: tabular-nums;
+}
+
+.loanSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tradeSection { display: flex; flex-direction: column; gap: 12px; }
+.tradeBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  padding: 10px;
+}
+
+.stocksSection { display: flex; flex-direction: column; gap: 10px; }
+
+.stockGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stockRow {
+  display: grid;
+  grid-template-columns: 50px 1fr 80px 70px 40px;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  color: var(--color-text-muted, #909090);
+  font-family: inherit;
+  font-size: 10px;
+  padding: 5px 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.stockRow:hover { background: rgba(127,127,127,0.04); }
+
+.stockRowActive {
+  border-color: var(--color-cyan, #00e5ff);
+  background: rgba(0, 229, 255, 0.06);
+  color: var(--color-text, #d4d4d4);
+}
+
+.stockTicker {
+  font-weight: 700;
+  color: var(--color-cyan, #00e5ff);
+  font-size: 11px;
+}
+
+.stockName { font-size: 9px; color: var(--color-text-dim, #686868); }
+.stockPrice { font-variant-numeric: tabular-nums; text-align: right; }
+.stockUp { color: var(--color-green, #39ff14); font-size: 9px; text-align: right; }
+.stockDown { color: var(--color-red, #ff3333); font-size: 9px; text-align: right; }
+.stockOwned {
+  color: var(--color-amber, #ffaa00);
+  font-size: 9px;
+  font-weight: 700;
+  text-align: right;
+}

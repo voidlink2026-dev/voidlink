@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 export type Screen = 'boot' | 'login' | 'desktop'
@@ -136,6 +136,12 @@ interface GameState {
   credentialCache: CredentialEntry[]
   windowLastPositions: Record<string, { x: number; y: number; width: number; height: number }>
   activeBankId: string | null  // currently-viewed bank in BankWindow
+  // Currency market: 1 Darkcoin = N credits — fluctuates over time
+  darkcoinExchangeRate: number
+  // Stock prices: keyed by stock id, current price in Cr — fluctuate over time
+  stockPrices: Record<string, number>
+  // Internal: last time market simulation ran (for tick deltas)
+  lastMarketTickAt: number
 }
 
 interface GameActions {
@@ -183,6 +189,12 @@ interface GameActions {
   bankWithdraw: (bankId: string, amount: number) => 'ok' | 'insufficient_balance' | 'no_account'
   tickBankInterest: () => void
   setActiveBank: (bankId: string | null) => void
+  takeLoan: (bankId: string, amount: number) => 'ok' | 'no_account' | 'over_limit' | 'has_loan' | 'no_loans_at_bank'
+  repayLoan: (bankId: string, amount: number) => 'ok' | 'no_account' | 'no_loan' | 'insufficient_funds'
+  tradeCurrency: (direction: 'buy_dc' | 'sell_dc', amountCr: number) => 'ok' | 'insufficient_funds'
+  buyStock: (stockId: string, shares: number) => 'ok' | 'insufficient_funds' | 'invalid_amount'
+  sellStock: (stockId: string, shares: number) => 'ok' | 'insufficient_shares' | 'invalid_amount'
+  tickMarket: () => void
   tickGameLoop: (deltaMs: number) => void
   logTerminal: (text: string, type?: string) => void
   logout: () => void
@@ -213,6 +225,9 @@ export const useGameStore = create<GameState & GameActions>()(
     credentialCache: [],
     windowLastPositions: {},
     activeBankId: null,
+    darkcoinExchangeRate: 142,
+    stockPrices: { ARMR: 245, ARES: 612, INTC: 88, GTBK: 178 },
+    lastMarketTickAt: Date.now(),
 
     setScreen: (screen) => set((s) => { s.screen = screen }),
 
@@ -1627,22 +1642,29 @@ export const useGameStore = create<GameState & GameActions>()(
       set((s) => {
         if (!s.player?.bankAccounts) return
         const now = Date.now()
-        // Game-time-scaled APR: each real second = 60 in-game seconds (just like the in-game clock).
-        // Actually our clock runs 1:1 with real time, so use real-time accrual.
-        // Compound continuously: balance *= exp(apr * dt / yearMs)
         const YEAR_MS = 365.25 * 24 * 3600 * 1000
         for (const acct of Object.values(s.player.bankAccounts)) {
+          // Savings interest
           const dt = now - acct.lastInterestTickAt
-          if (dt <= 0 || acct.balance <= 0) {
-            acct.lastInterestTickAt = now
-            continue
+          if (dt > 0 && acct.balance > 0) {
+            const factor = Math.exp(acct.apr * dt / YEAR_MS)
+            const newBalance = acct.balance * factor
+            acct.totalInterestEarned += newBalance - acct.balance
+            acct.balance = newBalance
           }
-          const factor = Math.exp(acct.apr * dt / YEAR_MS)
-          const newBalance = acct.balance * factor
-          const earned = newBalance - acct.balance
-          acct.balance = newBalance
-          acct.totalInterestEarned += earned
           acct.lastInterestTickAt = now
+
+          // Loan interest accrual — grows the principal owed
+          if (acct.loanPrincipal && acct.loanPrincipal > 0 && acct.loanRate) {
+            const ldt = now - (acct.loanLastInterestTickAt ?? now)
+            if (ldt > 0) {
+              const factor = Math.exp(acct.loanRate * ldt / YEAR_MS)
+              const newPrincipal = acct.loanPrincipal * factor
+              acct.loanTotalInterestAccrued = (acct.loanTotalInterestAccrued ?? 0) + (newPrincipal - acct.loanPrincipal)
+              acct.loanPrincipal = newPrincipal
+            }
+            acct.loanLastInterestTickAt = now
+          }
         }
       }),
 
@@ -1663,6 +1685,178 @@ export const useGameStore = create<GameState & GameActions>()(
       })
       return result
     },
+
+    // ── Loans ────────────────────────────────────────────────────────────────
+    takeLoan: (bankId, amount) => {
+      let result: 'ok' | 'no_account' | 'over_limit' | 'has_loan' | 'no_loans_at_bank' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'no_account'; return }
+        const bank = getBank(bankId)
+        const acct = s.player.bankAccounts?.[bankId]
+        if (!bank || !acct) { result = 'no_account'; return }
+        if (!bank.features.includes('loans') || bank.maxLoanMultiplier <= 0) { result = 'no_loans_at_bank'; return }
+        if ((acct.loanPrincipal ?? 0) > 0) { result = 'has_loan'; return }
+        const amt = Math.max(0, Math.floor(amount))
+        // Max loan = max(player credits, bank balance) × multiplier, with a floor of 1000
+        const collateral = Math.max(s.player.credits + acct.balance, 1000)
+        const maxLoan = Math.floor(collateral * bank.maxLoanMultiplier)
+        if (amt > maxLoan) { result = 'over_limit'; return }
+        s.player.credits += amt
+        s.player.stats.creditsEarned += amt
+        acct.loanPrincipal = amt
+        acct.loanRate = bank.loanRate
+        acct.loanTakenAt = Date.now()
+        acct.loanLastInterestTickAt = Date.now()
+        acct.loanTotalInterestAccrued = 0
+        s.terminalLines.push({
+          id: `log_loan_${Date.now()}`, type: 'success',
+          text: `Loan approved: ${amt.toLocaleString()} Cr @ ${(bank.loanRate * 100).toFixed(2)}% APR from ${bank.name}.`,
+        })
+      })
+      return result
+    },
+
+    repayLoan: (bankId, amount) => {
+      let result: 'ok' | 'no_account' | 'no_loan' | 'insufficient_funds' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'no_account'; return }
+        const acct = s.player.bankAccounts?.[bankId]
+        if (!acct) { result = 'no_account'; return }
+        if (!acct.loanPrincipal || acct.loanPrincipal <= 0) { result = 'no_loan'; return }
+        const amt = Math.min(Math.max(0, Math.floor(amount)), Math.ceil(acct.loanPrincipal))
+        if (s.player.credits < amt) { result = 'insufficient_funds'; return }
+        s.player.credits -= amt
+        s.player.stats.creditsSpent += amt
+        acct.loanPrincipal -= amt
+        if (acct.loanPrincipal < 0.01) {
+          acct.loanPrincipal = 0
+          acct.loanRate = undefined
+          acct.loanTakenAt = undefined
+          acct.loanLastInterestTickAt = undefined
+          s.terminalLines.push({
+            id: `log_loan_paid_${Date.now()}`, type: 'success',
+            text: `Loan repaid in full at ${getBank(bankId)?.name ?? bankId}.`,
+          })
+        } else {
+          s.terminalLines.push({
+            id: `log_loan_pay_${Date.now()}`, type: 'system',
+            text: `Repaid ${amt.toLocaleString()} Cr. Principal remaining: ${Math.ceil(acct.loanPrincipal).toLocaleString()} Cr.`,
+          })
+        }
+      })
+      return result
+    },
+
+    // ── Currency trading ─────────────────────────────────────────────────────
+    tradeCurrency: (direction, amountCr) => {
+      let result: 'ok' | 'insufficient_funds' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'insufficient_funds'; return }
+        const rate = s.darkcoinExchangeRate
+        if (!s.player.darkcoin) s.player.darkcoin = 0
+        if (direction === 'buy_dc') {
+          // Pay Cr, receive Darkcoin at current rate (small 1% spread)
+          const cr = Math.max(0, Math.floor(amountCr))
+          if (s.player.credits < cr) { result = 'insufficient_funds'; return }
+          const dc = (cr * 0.99) / rate
+          s.player.credits -= cr
+          s.player.darkcoin += dc
+          s.terminalLines.push({
+            id: `log_dc_buy_${Date.now()}`, type: 'system',
+            text: `Bought ${dc.toFixed(4)} DC for ${cr.toLocaleString()} Cr @ ${rate.toFixed(2)} Cr/DC.`,
+          })
+        } else {
+          // sell_dc — amountCr is interpreted as DC amount × 1000 (to keep one numeric input)
+          // Actually, treat amountCr as direct DC amount × 100 for fractional clarity
+          // Simpler: the UI sends DC * 10000 as integer; here we convert back
+          const dcAmount = amountCr / 10000  // DC quantity
+          if (s.player.darkcoin < dcAmount) { result = 'insufficient_funds'; return }
+          const cr = Math.floor(dcAmount * rate * 0.99)
+          s.player.darkcoin -= dcAmount
+          s.player.credits += cr
+          s.terminalLines.push({
+            id: `log_dc_sell_${Date.now()}`, type: 'system',
+            text: `Sold ${dcAmount.toFixed(4)} DC for ${cr.toLocaleString()} Cr @ ${rate.toFixed(2)} Cr/DC.`,
+          })
+        }
+      })
+      return result
+    },
+
+    // ── Stocks ───────────────────────────────────────────────────────────────
+    buyStock: (stockId, shares) => {
+      let result: 'ok' | 'insufficient_funds' | 'invalid_amount' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'insufficient_funds'; return }
+        const stock = getStock(stockId)
+        if (!stock || shares <= 0 || !Number.isFinite(shares)) { result = 'invalid_amount'; return }
+        const n = Math.floor(shares)
+        const price = s.stockPrices[stockId] ?? stock.basePrice
+        const cost = Math.ceil(price * n)
+        if (s.player.credits < cost) { result = 'insufficient_funds'; return }
+        if (!s.player.stockHoldings) s.player.stockHoldings = {}
+        const h = s.player.stockHoldings[stockId] ?? { stockId, shares: 0, costBasis: 0 }
+        h.shares += n
+        h.costBasis += cost
+        s.player.stockHoldings[stockId] = h
+        s.player.credits -= cost
+        s.player.stats.creditsSpent += cost
+        s.terminalLines.push({
+          id: `log_stock_buy_${Date.now()}`, type: 'system',
+          text: `Bought ${n} ${stock.ticker} @ ${price.toFixed(2)} Cr. Total: ${cost.toLocaleString()} Cr.`,
+        })
+      })
+      return result
+    },
+
+    sellStock: (stockId, shares) => {
+      let result: 'ok' | 'insufficient_shares' | 'invalid_amount' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'insufficient_shares'; return }
+        const stock = getStock(stockId)
+        if (!stock || shares <= 0 || !Number.isFinite(shares)) { result = 'invalid_amount'; return }
+        const n = Math.floor(shares)
+        const h = s.player.stockHoldings?.[stockId]
+        if (!h || h.shares < n) { result = 'insufficient_shares'; return }
+        const price = s.stockPrices[stockId] ?? stock.basePrice
+        const proceeds = Math.floor(price * n)
+        // Reduce cost basis proportionally
+        const fraction = n / h.shares
+        const reduced = h.costBasis * fraction
+        h.shares -= n
+        h.costBasis -= reduced
+        if (h.shares === 0) delete s.player.stockHoldings![stockId]
+        s.player.credits += proceeds
+        s.player.stats.creditsEarned += proceeds
+        const pnl = proceeds - reduced
+        s.terminalLines.push({
+          id: `log_stock_sell_${Date.now()}`, type: pnl >= 0 ? 'success' : 'warn',
+          text: `Sold ${n} ${stock.ticker} @ ${price.toFixed(2)} Cr. Realised P&L: ${pnl >= 0 ? '+' : ''}${pnl.toFixed(0)} Cr.`,
+        })
+      })
+      return result
+    },
+
+    // ── Market simulation tick ───────────────────────────────────────────────
+    tickMarket: () =>
+      set((s) => {
+        const now = Date.now()
+        const dt = now - s.lastMarketTickAt
+        if (dt < 1500) return  // throttle: only update every 1.5s of real time
+        s.lastMarketTickAt = now
+        // Random-walk each stock price within ±volatility%, anchored softly to basePrice
+        for (const stock of STOCKS) {
+          const cur = s.stockPrices[stock.id] ?? stock.basePrice
+          const noise = (Math.random() - 0.5) * 2 * stock.volatility * cur
+          const meanReversion = (stock.basePrice - cur) * 0.005  // slow drift back to base
+          const next = Math.max(0.5, cur + noise + meanReversion)
+          s.stockPrices[stock.id] = next
+        }
+        // Darkcoin: more volatile, no mean reversion (let it drift)
+        const dcNoise = (Math.random() - 0.5) * 2 * 0.025 * s.darkcoinExchangeRate
+        const dcDrift = (142 - s.darkcoinExchangeRate) * 0.002
+        s.darkcoinExchangeRate = Math.max(20, s.darkcoinExchangeRate + dcNoise + dcDrift)
+      }),
 
     logout: () => {
       saveGame()

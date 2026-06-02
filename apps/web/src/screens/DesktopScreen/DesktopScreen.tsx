@@ -102,6 +102,7 @@ export function DesktopScreen() {
   // Game loop — 20 fps interval (50 ms). Pauses when the tab is hidden.
   // Also ticks bank interest accrual every loop iteration.
   const tickBankInterest = useGameStore((s) => s.tickBankInterest)
+  const tickMarket       = useGameStore((s) => s.tickMarket)
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null
     function tick() {
@@ -109,6 +110,7 @@ export function DesktopScreen() {
       tickGameLoop(now - lastTickRef.current)
       lastTickRef.current = now
       tickBankInterest()
+      tickMarket()
     }
     function start() {
       if (intervalId) return
@@ -120,7 +122,7 @@ export function DesktopScreen() {
     start()
     document.addEventListener('visibilitychange', onVis)
     return () => { stop(); document.removeEventListener('visibilitychange', onVis) }
-  }, [tickGameLoop, tickBankInterest])
+  }, [tickGameLoop, tickBankInterest, tickMarket])
 
   // Ctrl+scroll zooms the entire window layer (railway.com-style)
   useEffect(() => {
