@@ -137,6 +137,8 @@ interface GameState {
   windowLastPositions: Record<string, { x: number; y: number; width: number; height: number }>
   activeBankId: string | null  // currently-viewed bank in BankWindow
   activeTargetInfoId: string | null  // currently-viewed Corp/Gov/Underground in TargetInfoWindow
+  connectingUntil: number | null    // unix ms — while now < connectingUntil, trace accumulation is paused
+                                    // (gives the ConnectionEffect animation time to play without burning the player)
   // Currency market: 1 Darkcoin = N credits — fluctuates over time
   darkcoinExchangeRate: number
   // Stock prices: keyed by stock id, current price in Cr — fluctuate over time
@@ -230,6 +232,7 @@ export const useGameStore = create<GameState & GameActions>()(
     windowLastPositions: {},
     activeBankId: null,
     activeTargetInfoId: null,
+    connectingUntil: null,
     darkcoinExchangeRate: 142,
     stockPrices: { ARMR: 245, ARES: 612, INTC: 88, GTBK: 178 },
     lastMarketTickAt: Date.now(),
@@ -316,6 +319,9 @@ export const useGameStore = create<GameState & GameActions>()(
         mission.status = 'active'
         mission.assignedTo = s.player?.id
         mission.startedAt = Date.now()
+        // Connection-effect grace period: pause time-based trace accumulation
+        // until the dial-up animation finishes (~3.5s). Per-action spikes still apply.
+        s.connectingUntil = Date.now() + 3500
         s.activeMissionId = missionId
         s.missionResult = null
 
@@ -1055,6 +1061,15 @@ export const useGameStore = create<GameState & GameActions>()(
     tickGameLoop: (deltaMs) =>
       set((s) => {
         if (!s.traceState) return
+
+        // Connection grace: pause trace ticks until the dial-up animation finishes.
+        if (s.connectingUntil && Date.now() < s.connectingUntil) {
+          return
+        }
+        // Clear the flag once the grace period has elapsed.
+        if (s.connectingUntil && Date.now() >= s.connectingUntil) {
+          s.connectingUntil = null
+        }
 
         // Freeze time-based trace accumulation while the tutorial is active.
         // Per-action spikes (scan, crack) still apply — only the background tick pauses.
@@ -2132,6 +2147,7 @@ export const useGameStore = create<GameState & GameActions>()(
         credentialCache: [],
         activeBankId: null,
         activeTargetInfoId: null,
+        connectingUntil: null,
       })
     },
   })),

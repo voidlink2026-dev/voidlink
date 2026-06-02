@@ -1,260 +1,252 @@
 import { useEffect, useRef } from 'react'
+import * as THREE from 'three'
 
-// Voidlink original — "Constellation Network".
-// A sparse field of glowing nodes connected by faint edges. Packets travel along
-// edges in both directions, occasionally branching. Nodes pulse briefly when a
-// packet "arrives". Subtle parallax via depth layers. Reads as live network
-// traffic rather than Matrix-style falling characters.
+// Voidlink original — "Stargate Wireframe".
+// A slowly rotating wireframe sphere with packet trails arcing around its surface,
+// rendered in Three.js. Lives behind everything as a background visual.
+// Modern 3D feel, not 80s falling-character pastiche.
 //
-// (Kept the GlyphDrift filename + export name so existing imports keep working;
-// the visual is now Constellation Network.)
+// (Kept the GlyphDrift filename + export name so existing imports keep working.)
 
-interface Node {
-  x: number; y: number
-  vx: number; vy: number  // slow ambient drift
-  depth: number           // 0 (back) → 1 (front), drives size + opacity
-  pulse: number           // 0–1, decays each frame
-}
-
-interface Edge {
-  a: number; b: number    // node indices
-  length: number          // px (cached)
-}
-
-interface Packet {
-  edge: number            // edge index
-  direction: 1 | -1
-  position: number        // 0 → 1 along edge
-  speed: number           // px/s
-  age: number
-  color: 'g' | 'c' | 'a'
-}
-
-const COLORS = {
-  g: { hue: '57, 255, 20'  },  // green
-  c: { hue: '0, 229, 255'  },  // cyan
-  a: { hue: '255, 170, 0'  },  // amber
-}
-
-interface ConstellationProps {
+interface StargateProps {
   opacity?: number
-  density?: number   // multiplier for node count
+  density?: number     // packet density multiplier
   className?: string
   style?: React.CSSProperties
 }
 
-// Kept the original export name so callers don't need to change imports.
+interface Packet {
+  curve: THREE.QuadraticBezierCurve3
+  line: THREE.Line
+  head: THREE.Mesh
+  t: number              // 0–1 along the curve
+  speed: number          // per-second
+  life: number           // total lifetime (s)
+  age: number
+  colorHex: number
+}
+
 export function GlyphDrift({
   opacity = 0.55,
   density = 1.0,
   className,
   style,
-}: ConstellationProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+}: StargateProps) {
+  const mountRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const el = mountRef.current
+    if (!el) return
 
-    function resize() {
-      if (!canvas) return
-      canvas.width  = canvas.offsetWidth  || window.innerWidth
-      canvas.height = canvas.offsetHeight || window.innerHeight
-    }
-    resize()
+    // Reduce DPR cost on the background — it's ambient, doesn't need pixel-perfect
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
 
-    // ── Build the constellation ────────────────────────────────────────────
-    const area = canvas.width * canvas.height
-    const NODE_COUNT = Math.max(20, Math.floor((area / 30000) * density))
-    const MAX_EDGE_DIST = Math.min(canvas.width, canvas.height) * 0.18
-    const nodes: Node[] = []
-    for (let i = 0; i < NODE_COUNT; i++) {
-      nodes.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.04,
-        vy: (Math.random() - 0.5) * 0.04,
-        depth: Math.random(),
-        pulse: 0,
-      })
-    }
+    // ── Scene setup ───────────────────────────────────────────────────────
+    const scene  = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(45, el.clientWidth / el.clientHeight, 0.1, 200)
+    camera.position.set(0, 0, 32)
 
-    // Edges: connect each node to its nearest few neighbours within range
-    const edges: Edge[] = []
-    function rebuildEdges() {
-      edges.length = 0
-      for (let i = 0; i < nodes.length; i++) {
-        // Find 2–3 nearest neighbours within MAX_EDGE_DIST
-        const dists: Array<{ idx: number; d: number }> = []
-        for (let j = 0; j < nodes.length; j++) {
-          if (j === i) continue
-          const dx = nodes[i].x - nodes[j].x
-          const dy = nodes[i].y - nodes[j].y
-          const d = Math.sqrt(dx * dx + dy * dy)
-          if (d < MAX_EDGE_DIST) dists.push({ idx: j, d })
-        }
-        dists.sort((a, b) => a.d - b.d)
-        const take = Math.min(3, dists.length)
-        for (let k = 0; k < take; k++) {
-          const j = dists[k].idx
-          // Avoid duplicate edges
-          if (edges.some((e) => (e.a === i && e.b === j) || (e.a === j && e.b === i))) continue
-          edges.push({ a: i, b: j, length: dists[k].d })
-        }
-      }
-    }
-    rebuildEdges()
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    renderer.setPixelRatio(dpr)
+    renderer.setClearColor(0x000000, 0)
+    renderer.setSize(el.clientWidth, el.clientHeight)
+    el.appendChild(renderer.domElement)
+    renderer.domElement.style.position = 'absolute'
+    renderer.domElement.style.inset = '0'
+    renderer.domElement.style.width = '100%'
+    renderer.domElement.style.height = '100%'
+    renderer.domElement.style.pointerEvents = 'none'
 
-    // Periodically rebuild edges as nodes drift
-    let lastRebuild = 0
-    const REBUILD_INTERVAL = 4000
+    // ── Build the wireframe sphere ────────────────────────────────────────
+    const SPHERE_R = 12
+    const group = new THREE.Group()
+    scene.add(group)
 
-    // ── Packet system ──────────────────────────────────────────────────────
+    // Outer wireframe — thin lat/lon grid
+    const wireGeo = new THREE.SphereGeometry(SPHERE_R, 24, 12)
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: 0x1a8030,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.18 * opacity,
+    })
+    group.add(new THREE.Mesh(wireGeo, wireMat))
+
+    // Inner shaded sphere — almost invisible, gives subtle volume
+    const fillGeo = new THREE.SphereGeometry(SPHERE_R - 0.05, 32, 16)
+    const fillMat = new THREE.MeshBasicMaterial({
+      color: 0x031a08,
+      transparent: true,
+      opacity: 0.55 * opacity,
+    })
+    group.add(new THREE.Mesh(fillGeo, fillMat))
+
+    // Equator + meridian accent rings
+    const ringGeo = new THREE.TorusGeometry(SPHERE_R + 0.05, 0.04, 4, 96)
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.32 * opacity })
+    group.add(new THREE.Mesh(ringGeo, ringMat))
+    const meridian = new THREE.Mesh(ringGeo.clone(), ringMat)
+    meridian.rotation.y = Math.PI / 2
+    group.add(meridian)
+    const tilt = new THREE.Mesh(ringGeo.clone(), ringMat.clone())
+    tilt.material.opacity = 0.18 * opacity
+    tilt.rotation.x = Math.PI / 4
+    group.add(tilt)
+
+    // Halo glow — a slightly larger transparent sphere on the back-side
+    const haloGeo = new THREE.SphereGeometry(SPHERE_R + 1.2, 32, 16)
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x39ff14,
+      transparent: true,
+      opacity: 0.04 * opacity,
+      side: THREE.BackSide,
+    })
+    group.add(new THREE.Mesh(haloGeo, haloMat))
+
+    // Outer atmosphere — bigger softer halo
+    const atmGeo = new THREE.SphereGeometry(SPHERE_R + 3, 24, 12)
+    const atmMat = new THREE.MeshBasicMaterial({
+      color: 0x00cc33,
+      transparent: true,
+      opacity: 0.025 * opacity,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    })
+    group.add(new THREE.Mesh(atmGeo, atmMat))
+
+    // ── Packet trail factory ──────────────────────────────────────────────
+    const PACKET_COLORS = [0x39ff14, 0x00e5ff, 0xffaa00]
     const packets: Packet[] = []
+
     function spawnPacket() {
-      if (edges.length === 0) return
-      const edgeIdx = Math.floor(Math.random() * edges.length)
-      const roll = Math.random()
-      const color: Packet['color'] = roll < 0.8 ? 'g' : roll < 0.95 ? 'c' : 'a'
+      // Pick two random points on the surface
+      const a = randomSpherePoint(SPHERE_R + 0.4)
+      const b = randomSpherePoint(SPHERE_R + 0.4)
+      // Arc them through a control point pushed away from the centre
+      const mid = a.clone().add(b).multiplyScalar(0.5).normalize().multiplyScalar(SPHERE_R + 2.5)
+      const curve = new THREE.QuadraticBezierCurve3(a, mid, b)
+      const colorHex = PACKET_COLORS[Math.random() < 0.7 ? 0 : Math.random() < 0.85 ? 1 : 2]
+
+      const points = curve.getPoints(24)
+      const lineGeo = new THREE.BufferGeometry().setFromPoints(points)
+      const lineMat = new THREE.LineBasicMaterial({
+        color: colorHex,
+        transparent: true,
+        opacity: 0.45 * opacity,
+      })
+      const line = new THREE.Line(lineGeo, lineMat)
+      group.add(line)
+
+      const headGeo = new THREE.SphereGeometry(0.18, 6, 6)
+      const headMat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: opacity })
+      const head = new THREE.Mesh(headGeo, headMat)
+      head.position.copy(a)
+      group.add(head)
+
       packets.push({
-        edge: edgeIdx,
-        direction: Math.random() < 0.5 ? 1 : -1,
-        position: Math.random() < 0.5 ? 0 : 1,
-        speed: 60 + Math.random() * 90,  // px/s
-        age: 0,
-        color,
+        curve, line, head,
+        t: 0, speed: 0.3 + Math.random() * 0.4,
+        life: 5 + Math.random() * 3, age: 0,
+        colorHex,
       })
     }
+
+    function randomSpherePoint(r: number): THREE.Vector3 {
+      const theta = Math.random() * Math.PI * 2
+      const phi = Math.acos(Math.random() * 2 - 1)
+      return new THREE.Vector3(
+        r * Math.sin(phi) * Math.cos(theta),
+        r * Math.cos(phi),
+        r * Math.sin(phi) * Math.sin(theta),
+      )
+    }
+
     // Seed initial packets
-    for (let i = 0; i < Math.min(8, Math.floor(edges.length * 0.25)); i++) spawnPacket()
+    const TARGET_PACKETS = Math.floor(14 * density)
+    for (let i = 0; i < TARGET_PACKETS; i++) {
+      spawnPacket()
+      const p = packets[packets.length - 1]
+      p.t = Math.random()
+      p.age = Math.random() * p.life * 0.5
+    }
 
-    // ── Animation loop ─────────────────────────────────────────────────────
+    // ── Render loop (cap to 30fps for ambient bg) ─────────────────────────
     let raf: number
-    let lastFrame = 0
-    const FRAME_MS = 1000 / 30  // 30fps — fluid enough for packet motion
+    let last = performance.now()
+    let frameAccum = 0
+    const FRAME_MS = 1000 / 30
 
-    function draw(ts: number) {
-      raf = requestAnimationFrame(draw)
-      if (ts - lastFrame < FRAME_MS) return
-      const dt = lastFrame === 0 ? FRAME_MS : ts - lastFrame
-      lastFrame = ts
+    function frame(now: number) {
+      raf = requestAnimationFrame(frame)
+      const dt = now - last
+      last = now
+      frameAccum += dt
+      if (frameAccum < FRAME_MS) return
+      const stepSec = frameAccum / 1000
+      frameAccum = 0
 
-      // Rebuild edges occasionally as nodes drift
-      if (ts - lastRebuild > REBUILD_INTERVAL) {
-        rebuildEdges()
-        lastRebuild = ts
-      }
+      // Slow rotation
+      group.rotation.y += 0.04 * stepSec
+      group.rotation.x = Math.sin(now * 0.0001) * 0.08
 
-      ctx!.clearRect(0, 0, canvas!.width, canvas!.height)
-
-      // Drift nodes
-      for (const n of nodes) {
-        n.x += n.vx * dt
-        n.y += n.vy * dt
-        if (n.x < 0 || n.x > canvas!.width)  n.vx *= -1
-        if (n.y < 0 || n.y > canvas!.height) n.vy *= -1
-        n.pulse = Math.max(0, n.pulse - dt / 800)
-      }
-
-      // Draw edges (faint, length-attenuated)
-      for (const e of edges) {
-        const a = nodes[e.a]; const b = nodes[e.b]
-        const fadeFactor = 1 - (e.length / MAX_EDGE_DIST)
-        const edgeAlpha = 0.04 * fadeFactor * opacity
-        ctx!.strokeStyle = `rgba(${COLORS.g.hue}, ${edgeAlpha.toFixed(3)})`
-        ctx!.lineWidth = 0.7
-        ctx!.beginPath()
-        ctx!.moveTo(a.x, a.y); ctx!.lineTo(b.x, b.y)
-        ctx!.stroke()
-      }
-
-      // Spawn new packets at a steady rate
-      const spawnChance = 0.04 + (edges.length / 200) * 0.06
-      if (Math.random() < spawnChance) spawnPacket()
-
-      // Update + draw packets
+      // Update packets
       for (let i = packets.length - 1; i >= 0; i--) {
         const p = packets[i]
-        const e = edges[p.edge]
-        if (!e) { packets.splice(i, 1); continue }
-        const a = nodes[e.a]; const b = nodes[e.b]
-        const delta = (p.speed * dt / 1000) / e.length
-        p.position += delta * p.direction
-        p.age += dt
-
-        // If packet arrived at an endpoint: pulse the node, maybe rebound
-        if (p.position >= 1 || p.position <= 0) {
-          const targetNode = p.position >= 1 ? nodes[e.b] : nodes[e.a]
-          targetNode.pulse = 1
-          // 30% chance to branch onto another edge from this node
-          if (Math.random() < 0.3) {
-            const fromIdx = p.position >= 1 ? e.b : e.a
-            const candidates = edges.filter((ee) =>
-              (ee.a === fromIdx || ee.b === fromIdx) && ee !== e,
-            )
-            if (candidates.length > 0) {
-              const next = candidates[Math.floor(Math.random() * candidates.length)]
-              p.edge = edges.indexOf(next)
-              p.direction = (next.a === fromIdx ? 1 : -1)
-              p.position = next.a === fromIdx ? 0 : 1
-              p.age = 0
-              continue
-            }
-          }
+        p.age += stepSec
+        p.t += p.speed * stepSec
+        if (p.t >= 1 || p.age >= p.life) {
+          group.remove(p.line); group.remove(p.head)
+          p.line.geometry.dispose(); (p.line.material as THREE.Material).dispose()
+          p.head.geometry.dispose(); (p.head.material as THREE.Material).dispose()
           packets.splice(i, 1)
           continue
         }
+        p.head.position.copy(p.curve.getPoint(p.t))
 
-        // Draw packet — glowing dot at interpolated position
-        const px = a.x + (b.x - a.x) * p.position
-        const py = a.y + (b.y - a.y) * p.position
-        const hue = COLORS[p.color].hue
-        ctx!.fillStyle = `rgba(${hue}, ${0.95 * opacity})`
-        ctx!.beginPath()
-        ctx!.arc(px, py, 1.8, 0, Math.PI * 2)
-        ctx!.fill()
-        // Outer glow
-        ctx!.fillStyle = `rgba(${hue}, ${0.25 * opacity})`
-        ctx!.beginPath()
-        ctx!.arc(px, py, 5, 0, Math.PI * 2)
-        ctx!.fill()
+        // Trail fade — material opacity scales with t (bright at start, fades by end)
+        const fade = 1 - (p.t * 0.7)
+        ;(p.line.material as THREE.LineBasicMaterial).opacity = 0.45 * opacity * fade
       }
 
-      // Draw nodes (after packets so they sit on top)
-      for (const n of nodes) {
-        const size = 1.5 + n.depth * 2.5 + n.pulse * 4
-        const nodeAlpha = (0.45 + n.depth * 0.45) * opacity
-        const pulseAlpha = n.pulse * opacity * 0.6
+      // Top-up to maintain target packet count
+      while (packets.length < TARGET_PACKETS) spawnPacket()
 
-        // Pulse halo
-        if (n.pulse > 0) {
-          ctx!.fillStyle = `rgba(${COLORS.g.hue}, ${pulseAlpha.toFixed(3)})`
-          ctx!.beginPath()
-          ctx!.arc(n.x, n.y, size + 6, 0, Math.PI * 2)
-          ctx!.fill()
-        }
-        // Core dot
-        ctx!.fillStyle = `rgba(${COLORS.g.hue}, ${nodeAlpha.toFixed(3)})`
-        ctx!.beginPath()
-        ctx!.arc(n.x, n.y, size, 0, Math.PI * 2)
-        ctx!.fill()
-      }
+      renderer.render(scene, camera)
     }
+    raf = requestAnimationFrame(frame)
 
-    raf = requestAnimationFrame(draw)
-    const ro = new ResizeObserver(() => {
-      resize()
-      rebuildEdges()
-    })
-    ro.observe(canvas)
-    return () => { cancelAnimationFrame(raf); ro.disconnect() }
+    // ── Resize ────────────────────────────────────────────────────────────
+    function resize() {
+      if (!el) return
+      const w = el.clientWidth, h = el.clientHeight
+      camera.aspect = w / h
+      camera.updateProjectionMatrix()
+      renderer.setSize(w, h)
+    }
+    const ro = new ResizeObserver(resize)
+    ro.observe(el)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+      // Dispose all geometries/materials in the group
+      group.traverse((obj) => {
+        const m = obj as THREE.Mesh
+        if (m.geometry) m.geometry.dispose()
+        if (m.material) {
+          if (Array.isArray(m.material)) m.material.forEach((mm) => mm.dispose())
+          else m.material.dispose()
+        }
+      })
+      renderer.dispose()
+      if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
+    }
   }, [opacity, density])
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
+      ref={mountRef}
       aria-hidden="true"
       className={className}
       style={{
