@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 export type Screen = 'boot' | 'login' | 'desktop'
@@ -166,6 +166,8 @@ interface GameActions {
   completeMission: (success: boolean) => void
   buyHardware: (item: HardwareDefinition) => 'ok' | 'insufficient_funds' | 'already_owned'
   buyTool: (item: ToolDefinition) => 'ok' | 'insufficient_funds' | 'already_owned'
+  buyConsumable: (id: string, qty?: number) => 'ok' | 'insufficient_funds' | 'unknown' | 'max_stack'
+  useConsumable: (id: string) => 'ok' | 'no_stock' | 'not_applicable'
   interceptRival: () => void
   setPlayerFlag: (key: string, value: boolean | string | number) => void
   addNewsItem: (item: Omit<NewsItem, 'id' | 'timestamp'>) => void
@@ -452,6 +454,19 @@ export const useGameStore = create<GameState & GameActions>()(
         const node = network.nodes.find((n) => n.id === nodeId)
         if (!node) return
         node.isScanned = true
+        // Zero-day pack consumable: guarantee a vuln on the next scanned service
+        if (s.player?.activeFlags.consumable_zero_day_armed) {
+          for (const svc of node.services) {
+            svc.hasKnownVulnerability = true
+            if (!svc.vulnerabilityId) svc.vulnerabilityId = 'CVE-0DAY-PACK'
+            break
+          }
+          delete s.player.activeFlags.consumable_zero_day_armed
+          s.terminalLines.push({
+            id: `log_zd_used_${Date.now()}`, type: 'success',
+            text: 'Zero-day pack consumed — CVE injected into scan results.',
+          })
+        }
       }),
 
     breachNode: (networkId, nodeId) =>
@@ -461,6 +476,21 @@ export const useGameStore = create<GameState & GameActions>()(
         const node = network.nodes.find((n) => n.id === nodeId)
         if (!node) return
         node.isBreached = true
+        // M14h: PacketGhost sniffer auto-scans adjacent nodes when a router is breached
+        const hasSniffer = (s.player?.software.sniffers?.length ?? 0) > 0
+        if (hasSniffer && node.type === 'router') {
+          let revealed = 0
+          for (const adjId of node.connectedTo) {
+            const adj = network.nodes.find((n) => n.id === adjId)
+            if (adj && !adj.isScanned) { adj.isScanned = true; revealed++ }
+          }
+          if (revealed > 0) {
+            s.terminalLines.push({
+              id: `log_sniffer_${Date.now()}`, type: 'success',
+              text: `SNIFFER: ${revealed} adjacent node${revealed === 1 ? '' : 's'} auto-revealed.`,
+            })
+          }
+        }
         if (s.traceState) {
           const hasFirewallBypasser = (s.player?.software.firewallBypassers.length ?? 0) > 0
           if (node.type === 'firewall' && !hasFirewallBypasser) {
@@ -720,13 +750,23 @@ export const useGameStore = create<GameState & GameActions>()(
           if (network) {
             const dirtyNodes = network.nodes.filter((n) => n.isBreached && !n.isLogWiped)
             const corpId = mission.briefing.clientHandle
-            if (dirtyNodes.length > 0) {
+            // M14h: Anti-Forensic Module reduces probability of heat being recorded
+            const antiForensicLevel = s.player.software.antiForensics?.length ?? 0
+            const heatSurvivalRoll = Math.random()
+            const heatReduction = antiForensicLevel >= 2 ? 0.6 : antiForensicLevel === 1 ? 0.3 : 0
+            const heatSuppressed = heatSurvivalRoll < heatReduction
+            if (dirtyNodes.length > 0 && !heatSuppressed) {
               const now2 = Date.now()
               s.player.activeFlags[`heat_${corpId}`] = now2
-              // Corp starts a patch cycle — only record the earliest breach detection
               if (!s.player.activeFlags[`patch_${corpId}`]) {
                 s.player.activeFlags[`patch_${corpId}`] = now2
               }
+            } else if (dirtyNodes.length > 0 && heatSuppressed) {
+              s.terminalLines.push({
+                id: `log_af_${Date.now()}`, type: 'success',
+                text: `ANTI-FORENSIC: evidence reduction held. ${corpId} did not link the breach to you.`,
+              })
+              delete s.player.activeFlags[`heat_${corpId}`]
             } else {
               delete s.player.activeFlags[`heat_${corpId}`]
               // patch_<corpId> intentionally kept — corp continues patching regardless of clean exit
@@ -871,11 +911,22 @@ export const useGameStore = create<GameState & GameActions>()(
         const effectivePrice = Math.floor(item.price * (1 - discount))
         if (s.player.credits < effectivePrice) { result = 'insufficient_funds'; return }
         const key = item.slot as keyof typeof s.player.hardware
-        if ((s.player.hardware[key] as number) >= item.tier * 2) {
+        // gpuTier and coolingTier start undefined — default to 0
+        const current = (s.player.hardware[key] as number | undefined) ?? 0
+        // For 'tiered slots' (gpuTier/coolingTier), the stored value IS the tier.
+        // For continuous slots (cpuSpeed, ramSlots etc.), the threshold is tier*2.
+        const isDiscreteTier = key === 'gpuTier' || key === 'coolingTier'
+        const ownedThreshold = isDiscreteTier ? item.tier : item.tier * 2
+        if (current >= ownedThreshold) {
           result = 'already_owned'; return
         }
         s.player.credits -= effectivePrice
-        ;(s.player.hardware[key] as number) += item.statBoost[item.slot] ?? 1
+        const boost = item.statBoost[item.slot] ?? 1
+        if (isDiscreteTier) {
+          ;(s.player.hardware[key] as number) = item.tier  // discrete tier set, not added
+        } else {
+          ;(s.player.hardware[key] as number) = current + boost
+        }
         s.player.stats.creditsSpent += effectivePrice
       })
       return result
@@ -891,13 +942,15 @@ export const useGameStore = create<GameState & GameActions>()(
         const discount2 = Math.min(0.5, eventDiscount2 + archDiscount2)
         const effectivePrice = Math.floor(item.unlockPrice * (1 - discount2))
         if (s.player.credits < effectivePrice) { result = 'insufficient_funds'; return }
+        const sw = s.player.software
+        if (!sw.sniffers)        sw.sniffers = []
+        if (!sw.memoryScrapers)  sw.memoryScrapers = []
+        if (!sw.antiForensics)   sw.antiForensics = []
         const allTools = [
-          ...s.player.software.passwordCrackers,
-          ...s.player.software.proxies,
-          ...s.player.software.logDeleters,
-          ...s.player.software.portScanners,
-          ...s.player.software.firewallBypassers,
-          ...s.player.software.misc,
+          ...sw.passwordCrackers, ...sw.proxies, ...sw.logDeleters,
+          ...sw.portScanners, ...sw.firewallBypassers,
+          ...(sw.sniffers ?? []), ...(sw.memoryScrapers ?? []), ...(sw.antiForensics ?? []),
+          ...sw.misc,
         ]
         if (allTools.some((t) => t.toolId === item.id)) {
           result = 'already_owned'; return
@@ -906,12 +959,15 @@ export const useGameStore = create<GameState & GameActions>()(
         s.player.stats.creditsSpent += effectivePrice
         const toolInstance = { toolId: item.id, level: 1, version: '1.0' }
         switch (item.category) {
-          case 'password':  s.player.software.passwordCrackers.push(toolInstance); break
-          case 'proxy':     s.player.software.proxies.push(toolInstance); break
-          case 'log':       s.player.software.logDeleters.push(toolInstance); break
-          case 'port_scanner': s.player.software.portScanners.push(toolInstance); break
-          case 'firewall':  s.player.software.firewallBypassers.push(toolInstance); break
-          default:          s.player.software.misc.push(toolInstance); break
+          case 'password':       sw.passwordCrackers.push(toolInstance); break
+          case 'proxy':          sw.proxies.push(toolInstance); break
+          case 'log':            sw.logDeleters.push(toolInstance); break
+          case 'port_scanner':   sw.portScanners.push(toolInstance); break
+          case 'firewall':       sw.firewallBypassers.push(toolInstance); break
+          case 'sniffer':        sw.sniffers.push(toolInstance); break
+          case 'memory_scraper': sw.memoryScrapers.push(toolInstance); break
+          case 'anti_forensic':  sw.antiForensics.push(toolInstance); break
+          default:               sw.misc.push(toolInstance); break
         }
       })
       return result
@@ -1665,6 +1721,103 @@ export const useGameStore = create<GameState & GameActions>()(
     },
 
     setActiveBank: (bankId) => set((s) => { s.activeBankId = bankId }),
+
+    // ── Consumables (M14h) ───────────────────────────────────────────────────
+    buyConsumable: (id, qty = 1) => {
+      let result: 'ok' | 'insufficient_funds' | 'unknown' | 'max_stack' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'unknown'; return }
+        const def = getConsumable(id)
+        if (!def) { result = 'unknown'; return }
+        if (s.player.reputation < def.unlockReputation) { result = 'unknown'; return }
+        const cost = def.price * qty
+        if (s.player.credits < cost) { result = 'insufficient_funds'; return }
+        if (!s.player.consumables) s.player.consumables = {}
+        const max = def.maxStack ?? 5
+        const have = s.player.consumables[id] ?? 0
+        if (have + qty > max) { result = 'max_stack'; return }
+        s.player.credits -= cost
+        s.player.stats.creditsSpent += cost
+        s.player.consumables[id] = have + qty
+        s.terminalLines.push({
+          id: `log_buy_consumable_${Date.now()}`, type: 'success',
+          text: `Purchased: ${def.name} ×${qty}.`,
+        })
+      })
+      return result
+    },
+
+    useConsumable: (id) => {
+      let result: 'ok' | 'no_stock' | 'not_applicable' = 'ok'
+      set((s) => {
+        if (!s.player?.consumables) { result = 'no_stock'; return }
+        const have = s.player.consumables[id] ?? 0
+        if (have <= 0) { result = 'no_stock'; return }
+        const def = getConsumable(id)
+        if (!def) { result = 'not_applicable'; return }
+
+        // Apply effect
+        const ef = def.effect
+        if (ef.kind === 'panic_disconnect') {
+          if (!s.traceState) { result = 'not_applicable'; return }
+          // Force a clean abandon — reset trace + clear mission state
+          if (s.activeMissionId) {
+            const m = s.missions.find((mm) => mm.id === s.activeMissionId)
+            if (m) {
+              m.status = 'available'
+              m.objectives.forEach((o) => { o.isCompleted = false })
+            }
+          }
+          s.traceState = null
+          s.activeMissionId = null
+          s.activeNetworkId = null
+          s.selectedNodeId = null
+          s.rivalHacker = null
+          s.rivalSpawnAt = null
+          s.credentialCache = []
+          s.activeWindows = s.activeWindows.filter((w) => w.id !== 'hacking' && w.id !== 'network-map')
+          s.missionResult = 'abandoned'
+          s.terminalLines.push({
+            id: `log_panic_${Date.now()}`, type: 'warn',
+            text: 'PANIC DISCONNECT — uplink severed. Mission abandoned. Trace cleared.',
+          })
+        } else if (ef.kind === 'zero_day_pack') {
+          s.player.activeFlags.consumable_zero_day_armed = true
+          s.terminalLines.push({
+            id: `log_zd_${Date.now()}`, type: 'system',
+            text: 'Zero-day exploit primed. Your next scan will reveal a guaranteed CVE.',
+          })
+        } else if (ef.kind === 'decoy_log') {
+          s.player.activeFlags.consumable_decoy_active = Date.now() + 600_000  // 10 min cooldown reduction
+          s.terminalLines.push({
+            id: `log_decoy_${Date.now()}`, type: 'system',
+            text: 'Decoy logs planted. Corporate heat diverted for ~10 minutes.',
+          })
+        } else if (ef.kind === 'false_flag') {
+          s.player.activeFlags.consumable_false_flag = true
+          s.terminalLines.push({
+            id: `log_ff_${Date.now()}`, type: 'system',
+            text: 'False flag primed. Next mission attributed to another faction.',
+          })
+        } else if (ef.kind === 'rep_token') {
+          s.player.reputation += ef.amount
+          s.terminalLines.push({
+            id: `log_rep_${Date.now()}`, type: 'success',
+            text: `Reputation token consumed. +${ef.amount} REP. Total: ${s.player.reputation}.`,
+          })
+        } else if (ef.kind === 'cred_pack') {
+          s.player.activeFlags.consumable_cred_pack_armed = true
+          s.terminalLines.push({
+            id: `log_cp_${Date.now()}`, type: 'system',
+            text: 'Pre-acquired credentials loaded. Next CRACK becomes instant bypass.',
+          })
+        }
+
+        s.player.consumables[id] = have - 1
+        if (s.player.consumables[id] === 0) delete s.player.consumables[id]
+      })
+      return result
+    },
     setActiveTargetInfo: (targetId) => set((s) => { s.activeTargetInfoId = targetId }),
 
     tickBankInterest: () =>

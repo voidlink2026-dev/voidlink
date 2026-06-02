@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react'
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
-import { HARDWARE_CATALOGUE, SOFTWARE_CATALOGUE } from '@voidlink/core'
-import type { HardwareDefinition, ToolDefinition } from '@voidlink/core'
+import { HARDWARE_CATALOGUE, SOFTWARE_CATALOGUE, CONSUMABLES_CATALOGUE } from '@voidlink/core'
+import type { HardwareDefinition, ToolDefinition, ConsumableDefinition } from '@voidlink/core'
 import styles from './UpgradeShop.module.css'
 
-type View = 'graph' | 'list'
+type View = 'graph' | 'list' | 'consumables'
 type NodeState = 'starter' | 'owned' | 'affordable' | 'locked-rep' | 'locked-funds' | 'unbuyable-prev'
 type ItemDef =
   | { kind: 'hw'; data: HardwareDefinition }
@@ -25,20 +25,25 @@ interface NodeLayout {
   item?: ItemDef
 }
 
-const HW_COLS: { slot: HardwareDefinition['slot']; label: string; col: number; starterLabel: string }[] = [
+const HW_COLS: { slot: HardwareDefinition['slot']; label: string; col: number; starterLabel: string; hasStarter?: boolean }[] = [
   { slot: 'cpuSpeed',         label: 'CPU',     col: 0, starterLabel: 'CPU v1 (1 GHz)' },
   { slot: 'ramSlots',         label: 'RAM',     col: 1, starterLabel: 'RAM (2 slots)' },
   { slot: 'modemSpeed',       label: 'MODEM',   col: 2, starterLabel: 'Modem (10 Mb/s)' },
   { slot: 'gatewayBandwidth', label: 'GATEWAY', col: 3, starterLabel: 'Gateway (10 Mb/s)' },
+  { slot: 'gpuTier',          label: 'GPU',     col: 4, starterLabel: 'No GPU', hasStarter: true },
+  { slot: 'coolingTier',      label: 'COOLING', col: 5, starterLabel: 'Passive', hasStarter: true },
 ]
 
 const SW_COLS: { category: ToolDefinition['category']; label: string; col: number; starterId?: string; starterLabel?: string }[] = [
-  { category: 'password',     label: 'CRACKER', col: 4, starterId: 'cracker_basic',     starterLabel: 'Cracker v1' },
-  { category: 'proxy',        label: 'PROXY',   col: 5, starterId: 'proxy_basic',       starterLabel: 'Proxy v1' },
-  { category: 'log',          label: 'LOG',     col: 6, starterId: 'log_deleter_basic', starterLabel: 'Log Deleter v1' },
-  { category: 'port_scanner', label: 'SCAN',    col: 7, starterId: 'port_scanner_basic', starterLabel: 'Port Scanner v1' },
-  { category: 'firewall',     label: 'FW',      col: 8 },
-  { category: 'misc',         label: 'MISC',    col: 9 },
+  { category: 'password',       label: 'CRACKER', col: 6,  starterId: 'cracker_basic',     starterLabel: 'Cracker v1' },
+  { category: 'proxy',          label: 'PROXY',   col: 7,  starterId: 'proxy_basic',       starterLabel: 'Proxy v1' },
+  { category: 'log',            label: 'LOG',     col: 8,  starterId: 'log_deleter_basic', starterLabel: 'Log Deleter v1' },
+  { category: 'port_scanner',   label: 'SCAN',    col: 9,  starterId: 'port_scanner_basic', starterLabel: 'Port Scanner v1' },
+  { category: 'firewall',       label: 'FW',      col: 10 },
+  { category: 'sniffer',        label: 'SNIFF',   col: 11 },
+  { category: 'memory_scraper', label: 'MEM',     col: 12 },
+  { category: 'anti_forensic',  label: 'AF',      col: 13 },
+  { category: 'misc',           label: 'MISC',    col: 14 },
 ]
 
 function buildLayout(): { nodes: NodeLayout[]; edges: { from: string; to: string }[] } {
@@ -101,13 +106,17 @@ export function UpgradeShop() {
     ...p.software.logDeleters,
     ...p.software.portScanners,
     ...p.software.firewallBypassers,
+    ...(p.software.sniffers ?? []),
+    ...(p.software.memoryScrapers ?? []),
+    ...(p.software.antiForensics ?? []),
     ...p.software.misc,
   ].map((t) => t.toolId))
 
   function isHwOwned(item: HardwareDefinition): boolean {
     const statKey = item.slot as keyof typeof p.hardware
-    const currentVal = p.hardware[statKey] as number
-    return currentVal >= (item.tier * 2)
+    const currentVal = (p.hardware[statKey] as number | undefined) ?? 0
+    const isDiscreteTier = item.slot === 'gpuTier' || item.slot === 'coolingTier'
+    return currentVal >= (isDiscreteTier ? item.tier : item.tier * 2)
   }
 
   function nodeState(n: NodeLayout): NodeState {
@@ -175,6 +184,10 @@ export function UpgradeShop() {
             className={`${styles.toggleBtn} ${view === 'list' ? styles.toggleActive : ''}`}
             onClick={() => setView('list')}
           >LIST</button>
+          <button
+            className={`${styles.toggleBtn} ${view === 'consumables' ? styles.toggleActive : ''}`}
+            onClick={() => setView('consumables')}
+          >CONSUMABLES</button>
         </div>
       </div>
 
@@ -191,12 +204,12 @@ export function UpgradeShop() {
 
               {/* HW / SW band separator */}
               <line
-                x1={(xOf(3) + xOf(4)) / 2} y1={36}
-                x2={(xOf(3) + xOf(4)) / 2} y2={height - 10}
+                x1={(xOf(5) + xOf(6)) / 2} y1={36}
+                x2={(xOf(5) + xOf(6)) / 2} y2={height - 10}
                 className={styles.bandSeparator}
               />
-              <text x={(xOf(0) + xOf(3)) / 2} y={36} textAnchor="middle" className={styles.bandHeader}>HARDWARE</text>
-              <text x={(xOf(4) + xOf(9)) / 2} y={36} textAnchor="middle" className={styles.bandHeader}>SOFTWARE</text>
+              <text x={(xOf(0) + xOf(5)) / 2} y={36} textAnchor="middle" className={styles.bandHeader}>HARDWARE</text>
+              <text x={(xOf(6) + xOf(14)) / 2} y={36} textAnchor="middle" className={styles.bandHeader}>SOFTWARE</text>
 
               {/* Edges */}
               {edges.map((e) => {
@@ -258,13 +271,15 @@ export function UpgradeShop() {
             )}
           </aside>
         </div>
-      ) : (
+      ) : view === 'list' ? (
         <ListView
           player={player}
           ownedToolIds={ownedToolIds}
           onBuyHw={(it) => handleBuy({ kind: 'hw', data: it })}
           onBuySw={(it) => handleBuy({ kind: 'sw', data: it })}
         />
+      ) : (
+        <ConsumablesView player={player} />
       )}
     </div>
   )
@@ -409,6 +424,62 @@ function ShopItem({
           <Button variant="primary" size="sm" onClick={onBuy} disabled={!canAfford}>BUY</Button>
         )}
       </div>
+    </div>
+  )
+}
+
+// ── Consumables view ─────────────────────────────────────────────────────────
+function ConsumablesView({ player }: { player: import('@voidlink/core').PlayerProfile }) {
+  const buyConsumable = useGameStore((s) => s.buyConsumable)
+  const useConsumable = useGameStore((s) => s.useConsumable)
+  const logTerminal = useGameStore((s) => s.logTerminal)
+
+  function buy(c: ConsumableDefinition) {
+    const r = buyConsumable(c.id, 1)
+    if (r === 'insufficient_funds') logTerminal(`DENIED: insufficient credits for ${c.name}.`, 'error')
+    else if (r === 'unknown') logTerminal(`${c.name}: requirements not met.`, 'error')
+    else if (r === 'max_stack') logTerminal(`${c.name}: max stack reached.`, 'dim')
+  }
+
+  function use(c: ConsumableDefinition) {
+    const r = useConsumable(c.id)
+    if (r === 'no_stock') logTerminal(`${c.name}: none in inventory.`, 'error')
+    else if (r === 'not_applicable') logTerminal(`${c.name}: cannot be used right now.`, 'error')
+  }
+
+  return (
+    <div className={styles.consumablesList}>
+      {CONSUMABLES_CATALOGUE.map((c) => {
+        const have = player.consumables?.[c.id] ?? 0
+        const canAfford = player.credits >= c.price
+        const repLocked = player.reputation < c.unlockReputation
+        const max = c.maxStack ?? 5
+        const full = have >= max
+        return (
+          <div key={c.id} className={styles.consumableCard}>
+            <div className={styles.consumableLeft}>
+              <div className={styles.consumableHeader}>
+                <span className={styles.consumableName}>{c.name}</span>
+                <span className={styles.consumableStack}>{have} / {max}</span>
+              </div>
+              <div className={styles.consumableDesc}>{c.description}</div>
+            </div>
+            <div className={styles.consumableRight}>
+              <div className={styles.consumablePrice}>{c.price.toLocaleString()} Cr</div>
+              {repLocked ? (
+                <div className={styles.lockedTag}>REQ {c.unlockReputation} REP</div>
+              ) : (
+                <div className={styles.consumableBtnRow}>
+                  <Button variant="primary" size="sm" onClick={() => buy(c)} disabled={!canAfford || full}>BUY</Button>
+                  {have > 0 && (
+                    <Button variant="ghost" size="sm" onClick={() => use(c)}>USE</Button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

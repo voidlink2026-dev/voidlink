@@ -723,7 +723,12 @@ Current rival system: basic. Expand to:
 
 ---
 
-### 8.0 Hardware Tiers 5–8
+### 8.0 Hardware Tiers 5–8 ✅ PARTIAL SHIPPED (M14h — 2199-01-01)
+
+**M14h shipped:** RAM tier 4, Modem tier 4, Gateway tier 3, GPU tier 1–3, Cooling tier 1–3.
+
+**Still planned (Tier 5–8 and exotic slots — M22):**
+- CPU tier 5–8, RAM tier 5–8, HDD tiering, SDR slot, Quantum co-proc
 
 Current max: CPU 5 GHz, 8 RAM slots, 2 TB HDD, 1 Gbps modem. New tiers:
 
@@ -741,7 +746,18 @@ Gateway bandwidth separately upgradeable — determines how many simultaneous co
 
 ---
 
-### 8.1 Tool Depth — Crackers through Quantum
+### 8.1 Tool Depth — Crackers through Quantum ✅ PARTIAL SHIPPED (M14h — 2199-01-01)
+
+**M14h shipped:**
+- Cracker v5 ChaosNet (adversarial random attack patterns, rival-hacker prediction immunity)
+- ShadowMesh proxy v4 (route re-orders mid-mission)
+- Log Wiper v3 Ghost Trail
+- PortMap v3 DeepRecon
+- Firewall Bypass v2 Phantom
+- 3 NEW categories: **Sniffer** (PacketGhost v1/v2 — passive packet capture, router auto-reveal), **Memory Scraper** (MemDump v1/v2 — standalone cred extraction), **Anti-Forensic** (v1/v2 — 30%/60% evidence reduction, heat suppression)
+- **Consumables** (new system): Panic Kit, Zero-Day Pack, Decoy Log, False Flag, Rep Tokens (small/large), Credential Pre-Pack — all with armed-flag mechanics, persistent across missions
+
+**Still planned:**
 
 Current tool categories extended:
 
@@ -1100,6 +1116,11 @@ Architecture for vertical layout:
 | **M14e** | Banking polish: stock-event linkage (sabotage → price drop), heat laundering, MARKET CRASH world event, loan defaulting + hunter contracts | Tier 1 | 2 |
 | **M14f** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
 | **M14g** ✅ | Upgrade Shop → skill-tree graph UI (SVG node-link diagram, 10 columns, prereq edges, colour-coded states, side detail panel, LIST fallback) | Tier 1 | SHIPPED 2199-01-01 |
+| **M14h** ✅ | Shop expansion — 2 new HW slots (GPU, Cooling), 3 new SW categories (Sniffer, MemScrape, Anti-Forensic), 5 tier extensions (Cracker v5, Proxy v4, etc.), 7 consumables with armed-flag effects (panic kit, zero-day pack, decoy log, false flag, rep tokens, cred pack), wired into crack speed / scan / heat / breach reveal | Tier 1 | SHIPPED 2199-01-01 |
+| **M14i** | Research Tech Tree — 5 branches (Crypto / Stealth / Hardware / Social / AI), 30+ research nodes, slow-burn unlocks via paid research bench, hidden nodes gated by story flags | Tier 1 | 4 |
+| **M14j** | Loadout slots — save/swap tool configurations between missions (Stealth / Brute / Bank-Run presets) | Tier 1 | 2 |
+| **M14k** | Implants / Wetware — permanent player buffs (Ghost reflexes +20% wipe speed, Brute synapse +1 max bounce, etc.) | Tier 1 | 2 |
+| **M14l** | Vehicle Gateways — physical-location gateways (Tor relay home / safehouse / corporate VPN) affecting starting trace rate | Tier 1 | 2 |
 | **M15** | Privilege escalation + backdoors + traffic sniffing | Tier 1 | 3 |
 | **M16** | Terminal expanded commands + Lua scripting layer | Tier 2 | 4 |
 | **M17** | Dark web layer: architecture + black market + contracts | Tier 2 | 5 |

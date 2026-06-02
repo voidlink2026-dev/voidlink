@@ -667,3 +667,64 @@ The big sweep. Test everything below.
 - [ ] Click LIST toggle → reverts to the old list with HARDWARE / SOFTWARE tabs
 - [ ] All purchase functionality intact
 - [ ] Toggle back to GRAPH retains selected node state
+
+---
+
+## 23. M14h — Shop Expansion (2199-01-01)
+
+### 23.1 New hardware columns in graph
+- [ ] Open SHOP → graph view shows 6 HW columns: CPU, RAM, MODEM, GATEWAY, **GPU**, **COOLING**
+- [ ] GPU starter is "No GPU" → click to inspect; tiers 1/2/3 below
+- [ ] Cooling starter is "Passive" → tiers 1/2/3 below
+- [ ] HW/SW band separator moved correctly between GATEWAY/COOLING and CRACKER
+- [ ] Buy GPU v1 (12,000 Cr + 50 rep) → node turns green, edge to v2 lights up
+
+### 23.2 New software columns
+- [ ] Graph shows: CRACKER, PROXY, LOG, SCAN, FW, **SNIFF**, **MEM**, **AF**, MISC
+- [ ] PacketGhost v1 (sniffer) and MemDump v1 (memory scraper) buyable at low rep
+- [ ] Anti-Forensic v1 buyable at 80 rep, 7,500 Cr
+- [ ] All new tools appear in profile's installed software list
+
+### 23.3 Tier extensions
+- [ ] Cracker v5 ChaosNet unlocks at 600 rep, 180k Cr (test gating only)
+- [ ] Proxy v4 ShadowMesh unlocks at 300 rep
+- [ ] Log Wiper v3 unlocks at 150 rep
+- [ ] PortMap v3 DeepRecon unlocks at 200 rep
+- [ ] Firewall Bypass v2 unlocks at 280 rep
+- [ ] RAM tier 4 (8 extra slots) unlocks at 200 rep
+- [ ] Modem v4 Quantum Link unlocks at 350 rep
+- [ ] Gateway v3 Onion Stack unlocks at 220 rep
+
+### 23.4 CONSUMABLES tab
+- [ ] Toggle in shop header: GRAPH / LIST / CONSUMABLES
+- [ ] 7 items listed: Panic Kit, Zero-Day Pack, Decoy Log, False Flag, Rep Token (Small/Large), Cred Pack
+- [ ] Each card shows stack count "0 / N", description, price, BUY button
+- [ ] Buy → quantity ticks up
+- [ ] USE button appears next to BUY when stack > 0
+- [ ] Cannot exceed maxStack (3/5/10 per item)
+- [ ] Rep-locked items show "REQ X REP" instead of BUY
+
+### 23.5 Consumable effects — wired in
+- [ ] **Rep Token (Small)** — USE outside a mission → +25 rep instantly, token consumed
+- [ ] **Zero-Day Pack** — USE → terminal says "Zero-day exploit primed". Accept a mission, scan a node → service auto-marked vulnerable with CVE-0DAY-PACK. Flag clears after one use.
+- [ ] **Cred Pack** — USE → terminal says "Pre-acquired credentials loaded". Next CRACK attempt completes in ~200ms (instant bypass).
+- [ ] **Panic Kit** — only usable during active mission. USE → trace clears, network disconnects, mission marked abandoned (returns to available).
+- [ ] **Decoy Log** — USE → terminal log + 10-min flag set on player.activeFlags.
+
+### 23.6 GPU acceleration
+- [ ] Without GPU: crack a Tier 3 node, note duration
+- [ ] Buy GPU v1 (×0.75) → re-do same crack → ~25% faster
+- [ ] Buy GPU v3 → crack times roughly a third of unaccelerated
+
+### 23.7 Sniffer auto-reveal
+- [ ] Buy PacketGhost v1
+- [ ] Accept a mission with a router in the network
+- [ ] Breach the router → terminal logs "SNIFFER: N adjacent nodes auto-revealed"
+- [ ] Those adjacent nodes now show isScanned=true (services + CVEs visible without scanning)
+
+### 23.8 Anti-Forensic heat suppression
+- [ ] Buy Anti-Forensic v1
+- [ ] Complete a mission but leave logs dirty
+- [ ] ~30% of the time: terminal logs "ANTI-FORENSIC: evidence reduction held"
+- [ ] No heat flag set on corp for that run (won't show next-mission trace penalty)
+- [ ] AF v2: ~60% suppression rate

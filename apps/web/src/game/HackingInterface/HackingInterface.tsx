@@ -174,9 +174,22 @@ export function HackingInterface() {
       player.hardware,
       { exploitProtocol, hasCredentials },
     )
-    const job = player.specialization === 'brute'
-      ? { ...baseJob, durationMs: Math.round(baseJob.durationMs / 1.35) }
-      : baseJob
+    // GPU acceleration: t1 = ×0.75 duration, t2 = ×0.55, t3 = ×0.35
+    const gpuMult = { 0: 1, 1: 0.75, 2: 0.55, 3: 0.35 }[player.hardware.gpuTier ?? 0] ?? 1
+    let job = player.specialization === 'brute'
+      ? { ...baseJob, durationMs: Math.round(baseJob.durationMs / 1.35 * gpuMult) }
+      : { ...baseJob, durationMs: Math.round(baseJob.durationMs * gpuMult) }
+
+    // Credential pack consumable: instant breach
+    if (player.activeFlags.consumable_cred_pack_armed) {
+      job = { ...job, durationMs: 200 }
+      logTerminal('CRED PACK consumed — instant bypass active.', 'system')
+      // Clear the flag through the store
+      useGameStore.setState((s) => {
+        if (s.player?.activeFlags) delete s.player.activeFlags.consumable_cred_pack_armed
+        return s
+      })
+    }
     setActiveJob(job)
     setJobProgress(0)
 

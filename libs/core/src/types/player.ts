@@ -27,6 +27,8 @@ export interface PlayerHardware {
   hddCapacity: number   // GB, affects file storage
   modemSpeed: number    // Mbps, affects transfer speed
   gatewayBandwidth: number
+  gpuTier?: number      // GPU acceleration for brute-force + required for ai_core breaches
+  coolingTier?: number  // 0 = passive (default), 1 = active, 2 = cryo (no thermal throttle)
 }
 
 export interface PlayerSoftware {
@@ -35,6 +37,9 @@ export interface PlayerSoftware {
   firewallBypassers: ToolInstance[]
   logDeleters: ToolInstance[]
   portScanners: ToolInstance[]
+  sniffers?: ToolInstance[]            // M14h — passive packet capture
+  memoryScrapers?: ToolInstance[]      // M14h — standalone memory scrape
+  antiForensics?: ToolInstance[]       // M14h — reduces evidence per breach
   misc: ToolInstance[]
 }
 
@@ -67,6 +72,7 @@ export interface PlayerProfile {
   bankAccounts?: Record<string, BankAccount>  // keyed by bank target id (e.g. 'globalbank')
   darkcoin?: number                            // alt currency (volatile vs Cr)
   stockHoldings?: Record<string, StockHolding> // keyed by stock id
+  consumables?: Record<string, number>         // M14h — consumable id → quantity
 }
 
 export interface BankAccount {

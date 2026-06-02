@@ -376,3 +376,55 @@
   margin-top: 4px;
 }
 .buyBtn { width: 100%; margin-top: 4px; }
+
+/* ── M14h: Consumables section ───────────────────────────────────────────── */
+.consumablesList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.consumableCard {
+  display: flex;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border, #1e1e1e);
+  border-radius: 2px;
+  background: var(--color-surface, #0d0d0d);
+}
+
+.consumableLeft { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.consumableRight { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; min-width: 130px; }
+
+.consumableHeader { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+
+.consumableName {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-cyan, #00e5ff);
+  letter-spacing: 0.08em;
+}
+
+.consumableStack {
+  font-size: 9px;
+  color: var(--color-amber, #ffaa00);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.consumableDesc {
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--color-text-muted, #909090);
+}
+
+.consumablePrice {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-green, #39ff14);
+}
+
+.consumableBtnRow { display: flex; gap: 4px; }
