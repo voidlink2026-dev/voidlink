@@ -15,6 +15,7 @@ import { NewsFeed } from '../../game/NewsFeed/NewsFeed.tsx'
 import { SettingsWindow } from '../../game/Settings/SettingsWindow.tsx'
 import { BankWindow } from '../../game/Bank/BankWindow.tsx'
 import { TargetInfoWindow } from '../../game/TargetInfo/TargetInfoWindow.tsx'
+import { BounceChainWindow } from '../../game/BounceChain/BounceChainWindow.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
 import { generateContract, STORY_MISSIONS } from '@voidlink/core'
@@ -41,6 +42,7 @@ const WINDOW_COMPONENTS: Record<string, React.ComponentType> = {
   SettingsWindow,
   BankWindow,
   TargetInfoWindow,
+  BounceChainWindow,
 }
 
 export function DesktopScreen() {
@@ -223,6 +225,31 @@ export function DesktopScreen() {
       y: 60,
       width: 380,
       height: 520,
+      isMinimized: false,
+    })
+
+    // Hacking Interface — always open so the player can see the bounce-route hint
+    // and quickly reach HACK TOOLS once a mission is accepted.
+    openWindow({
+      id: 'hacking',
+      title: 'HACKING INTERFACE',
+      component: 'HackingInterface',
+      x: 640,
+      y: 380,
+      width: 480,
+      height: 360,
+      isMinimized: false,
+    })
+
+    // Bounce Chain — dedicated window so the chain status is always visible
+    openWindow({
+      id: 'bounce-chain',
+      title: 'BOUNCE CHAIN',
+      component: 'BounceChainWindow',
+      x: 1160,
+      y: 380,
+      width: 340,
+      height: 220,
       isMinimized: false,
     })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

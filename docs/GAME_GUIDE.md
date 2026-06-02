@@ -25,6 +25,13 @@
 17. [The News Feed](#17-the-news-feed)
 18. [Operative Profile & Statistics](#18-operative-profile--statistics)
 19. [Strategy & Tips](#19-strategy--tips)
+20. [The World Map (3D Globe) — Bounce Routing & Targets](#20-the-world-map-3d-globe--bounce-routing--targets)
+21. [Banking & Personal Finance](#21-banking--personal-finance)
+22. [The Upgrade Shop (Skill-Tree Graph)](#22-the-upgrade-shop-skill-tree-graph)
+23. [Settings ⚙](#23-settings-)
+24. [Audio Design](#24-audio-design)
+25. [Bounce Chain Window](#25-bounce-chain-window)
+26. [What's New (M11–M14h)](#26-whats-new-m11m14h)
 
 ---
 
@@ -58,20 +65,27 @@ Your handle is permanent and appears throughout the game. Your reputation, facti
 ### Initial State
 
 You begin with:
-- **500 Cr** starting balance
-- Rank 1 (NOVICE)
+- **5,000 Cr** starting balance
+- Rank 1 (NOVICE / SCRIPT KIDDIE)
 - Basic password cracker, proxy, log deleter, and port scanner (all Level 1)
-- Minimal hardware (CPU 1 GHz, 2 RAM slots, 10 GB HDD, 10 Mbps modem)
+- Minimal hardware (CPU 1 GHz, 2 RAM slots, 10 GB HDD, 10 Mbps modem, no GPU, passive cooling)
 - Standing of 0 with all factions except Voidlink International (+10)
-- A 9-step interactive tutorial that guides you through your first mission
+- 3 starter bounce nodes in your library (Oslo, Singapore, Amsterdam)
+- A **25-step spotlight tutorial** that guides you through your first mission
 
 ### Interactive Tutorial
 
-The tutorial overlay (bottom-right corner) walks new operatives through the core loop in **9 action-gated steps**. Unlike a passive walkthrough, it **waits for you to act**. Steps that require you to do something — open the Mission Board, accept a contract, select a node, scan a node, breach a node, complete an objective, wipe logs, disconnect — show a pulsing indicator and do not advance until the action is performed. You can skip the tutorial at any time with the SKIP button, but the game is harder to learn without it.
+The tutorial uses a soft-dim spotlight (no hard blockers — the game stays fully interactive). It walks new operatives through everything in 25 steps covering: desktop / taskbar / mission board / network map / hacking interface / trace bar / bounce routing / scan-crack-exploit / dump-credentials / wipe-logs / secure-disconnect / shop / profile / factions. Time-based trace accumulation is **paused** during the tutorial — only per-action spikes apply, so you can read at your own pace. Steps requiring an action wait for you to perform it; informational steps advance via NEXT. You can SKIP at any time.
+
+The first mission ("FIRST CONTACT") is forced — all other contracts show "Complete tutorial to unlock" until you finish.
 
 ### Save System
 
-The game auto-saves to localStorage every 60 seconds. You can also continue from a previous save at the login screen. The "DELETE SAVE" option on the login screen permanently wipes your operative.
+The game auto-saves every 60 seconds. Multiple operatives can be created (saved per-handle, password + email required at signup). Login screen offers password verification, SHOW/HIDE toggle on the password field, and DELETE SAVE per-operative.
+
+### In-Game Clock
+
+The taskbar shows the in-game date and time. The clock is anchored at **1 January 2199 00:01:01** and advances 1:1 with real time from the moment you created your operative.
 
 ---
 
@@ -101,10 +115,19 @@ The taskbar runs along the bottom of the screen and has three sections:
 |-----|-------------|
 | TERMINAL | System terminal — shows all game log output |
 | MISSIONS | Mission board — accept contracts and story missions |
-| SHOP | Upgrade shop — buy hardware and software |
+| NEWS | News feed — global incidents + your own headlines |
+| SHOP | Upgrade shop — graph view of hardware, software, and consumables |
 | PROFILE | Operative profile — stats, software, faction standing |
+| WORLD MAP | 3D globe — bounce routing, bank targets, faction HQs |
+| BOUNCE | Bounce chain — dedicated window showing your active route |
 | NETWORK | Network map — only available during an active mission |
 | HACK TOOLS | Hacking interface — tools panel, only during a mission |
+
+**Right — Settings ⚙ and Logout ⏻**
+
+The ⚙ icon opens the Settings window: music/SFX volumes + toggles, dark/light theme, UI scale (70–150%), reduce-motion, FPS counter, shortcut reference. All persist across sessions.
+
+The ⏻ icon saves and logs out (disabled while a mission is active — you can't flee).
 
 **Centre — Open Windows**
 All currently open windows appear here. Click to bring to front; click again to minimise.
@@ -751,3 +774,212 @@ The Profile Window tracks everything about your operative:
 - The branching finale missions have strict time limits (240–300 seconds)
 - The Null Option (destroy path) finale is the hardest — no backdoor means raw Tier 5 cracking under time pressure
 - Wipe all logs in arc5 missions — Ares/Nameless track unwiped connections
+
+---
+
+## 20. The World Map (3D Globe) — Bounce Routing & Targets
+
+The WORLD MAP is a 3D globe rendered with Three.js. It is the central hub for bounce-route configuration and reconnaissance on global targets.
+
+### Visual Style
+- Neon-green digital aesthetic
+- Latitude/longitude grid at 15° spacing (30° = bright)
+- Intersection dots at every 30° crossing
+- Country outlines (110m world-atlas TopoJSON) in faint green wireframe
+- Atmosphere halo (additive blend)
+- Starfield background
+- Renders at 30fps to save battery
+
+### Interactive Targets
+- **Green dots** — your **bounce library**. Click to add/remove from the active chain. Hover for tooltip (region, tier, status: clean/dirty/traced).
+- **Cyan dots** — **corporations** (Arunmor HQ, etc.). Click → TARGET INTEL window with lore, region, access requirements.
+- **Red dots** — **government** targets (Ares Division, Interpol). Same intel popup.
+- **Yellow dots** — **banks** (Global Trust, Pacific National, Cayman Trust, Zurich Vault). Click to open BANK TERMINAL.
+- **Purple dot** — The Nameless (underground collective).
+- **Green VOIDLINK INTL** dot — your employer.
+
+### Bounce Chain
+Click a green bounce node to add it to your route. Click again to remove. Max hops scale with proxy software:
+
+| Proxy software | Max hops |
+|----------------|----------|
+| Proxy v1 (basic) | 3 |
+| Proxy v2 | 5 |
+| Proxy v3 | 7 |
+| Proxy v4 (ShadowMesh) | 8 — chain re-orders mid-mission |
+
+Active route is drawn as arcs across the globe. Dirty (logged) hops can be cleaned via the HACK TOOLS bounce panel. Traced hops cannot be used at all.
+
+### Acquiring New Bounce Nodes
+When you breach an **entry_point** or **router** node during any mission, that compromised host is automatically added to your bounce library. The more networks you penetrate, the wider your global proxy reach.
+
+### Connection Effect
+When you accept a mission, a full-screen overlay shows the dial-up sequence: DTMF tone dial → ring → carrier hiss → modem warble → handshake chirp. The bounce chain visually lights up node-by-node. ~3.5s total.
+
+---
+
+## 21. Banking & Personal Finance
+
+Click any yellow **bank** target on the World Map. Each bank is a separate institution with its own APR, services, and account.
+
+### The Four Banks
+
+| Bank | Region | Savings APR | Loan APR | Services |
+|------|--------|-------------|----------|----------|
+| Global Trust Bank | NYC (US-East) | 2.5% | 8.0% (2× collateral) | Savings, Loans, Trade, Stocks |
+| Pacific National | SF (US-West) | 3.4% | 9.5% (3× collateral) | Savings, Loans, Trade, Stocks |
+| Cayman Trust (Offshore) | Cayman Is. | 1.8% | — | Savings only — heat laundering |
+| Zurich Vault (Offshore) | Zurich, CH | 2.1% | 7.0% (1× collateral) | Savings + discreet loans |
+
+### Services
+
+**Savings:** open an account (one-time setup fee), deposit/withdraw, ALL CASH / ALL SAVINGS quick-fill. Compound interest accrues continuously via the game loop.
+
+**Loans:** borrow against your cash + bank balance × multiplier. Loan principal grows with continuous compound interest. Repay any amount, any time. Cayman Trust does NOT offer loans (offshore institutions are deposit-only).
+
+**Currency trading (Cr ↔ Darkcoin):** live exchange rate around 142 Cr/DC, fluctuates ±2.5% every ~1.5s, 1% spread on each side. Used for dark-web economy access (future content).
+
+**Equities:** 4 listed stocks (ARMR, ARES, INTC, GTBK). Random-walk prices with mean reversion. Track cost basis for realised P&L. STOCKS tab in Global Trust or Pacific National.
+
+### Offshore Tag (Purple)
+Offshore banks carry the OFFSHORE tag in the UI. Currently flavour; full heat-laundering effect lands in M14e.
+
+---
+
+## 22. The Upgrade Shop (Skill-Tree Graph)
+
+The shop opens at 1280×620 with three view modes:
+
+### Graph View (default)
+SVG node-link diagram. Columns are upgrade chains; rows are tiers. **15 columns total:**
+
+**Hardware band (6 columns):**
+- **CPU** (v1→v4) — tool execution speed
+- **RAM** (v1→v4) — concurrent tool slots
+- **MODEM** (v1→v4) — file transfer speed
+- **GATEWAY** (v1→v3) — anonymisation
+- **GPU** (v1→v3) — accelerates cracks ×0.75 / ×0.55 / ×0.35. Unlocks ai_core breaches (M15)
+- **COOLING** (passive / active / liquid / cryo) — thermal protection (full effect M14h+)
+
+**Software band (9 columns):**
+- **CRACKER** (v1→v5 ChaosNet) — password cracking
+- **PROXY** (v1→v4 ShadowMesh) — bounce hop count
+- **LOG** (v1→v3 Ghost Trail) — wipe speed
+- **SCAN** (v1→v3 DeepRecon) — service + CVE reveal
+- **FW** (v1→v2 Phantom) — firewall bypass
+- **SNIFF** (PacketGhost v1/v2) — passive packet capture, auto-reveals adjacent nodes on router breach
+- **MEM** (MemDump v1/v2) — standalone memory scrape
+- **AF** (Anti-Forensic v1/v2) — 30%/60% probabilistic heat suppression on dirty exits
+- **MISC** (Voice Analyser etc.)
+
+### Node Colour States
+- 🟢 Green ✓ — owned
+- 🟢 Green ● — starter (free, always installed)
+- 🔷 Cyan outline — affordable now
+- 🟠 Amber outline — rep met, can't afford
+- ⬛ Grey 🔒 — rep-locked
+
+Click any node for full details + BUY action in the side panel.
+
+### List View
+Linear shop with HARDWARE / SOFTWARE tabs. Same items, traditional UI.
+
+### Consumables View
+One-shot items (max stack 3–10 per type):
+
+| Item | Cost | Effect |
+|------|------|--------|
+| Panic Kit | 3,500 Cr | Emergency disconnect: resets trace, abandons mission |
+| Zero-Day Pack | 8,000 Cr (60 rep) | Next scan auto-reveals a CVE on the target node |
+| Decoy Log | 5,500 Cr (80 rep) | Plants false intrusion log, diverts heat ~10 min |
+| False Flag | 14,000 Cr (200 rep) | Attributes next mission to a chosen rival faction |
+| Rep Token (Small) | 6,000 Cr | +25 reputation instantly |
+| Rep Token (Large) | 28,000 Cr (150 rep) | +100 reputation instantly |
+| Credential Pre-Pack | 9,500 Cr (120 rep) | Next CRACK = instant breach (~200ms) |
+
+USE button appears next to BUY once you own at least one of an item.
+
+---
+
+## 23. Settings ⚙
+
+Click the gear icon at the right of the taskbar.
+
+**Audio**
+- MUSIC toggle + volume slider (master idle music)
+- SFX toggle + volume slider (master SFX bus — covers clicks, beeps, dial-up, etc.)
+- TEST SFX button plays the scan sound
+
+**Display**
+- DARK / LIGHT theme (full coverage: window chrome, scrollbars, desktop background)
+- UI SCALE slider 70%–150% (accessibility — zooms entire app)
+- REDUCE MOTION toggle (respects `prefers-reduced-motion`)
+- SHOW FPS COUNTER toggle
+
+**Shortcuts** — reference card: Ctrl+Scroll zoom, ⊞ cascade, ⏻ logout, ⚙ settings.
+
+All settings persist to localStorage.
+
+---
+
+## 24. Audio Design
+
+### Music
+A 4:26 looped idle track plays whenever no mission is active. Spliced at zero-crossings for click-free looping. Fades out over 2.5s when a mission starts; fades back over 3s when you disconnect.
+
+### Trace Beep
+At 10% trace and above, a digital proximity beep starts firing. Interval shrinks linearly from 5000ms at 10% to 120ms at 100%. Pitch rises gently. Pure square+noise digital sound (not an analogue alarm).
+
+### Connection SFX (Dial-Up)
+When you accept a mission: DTMF tone dial (7 digits) → ring tone fragment → carrier hiss → dual-tone modem warble with LFO wobble → handshake chirp. ~3.5s total. Inspired by Bell 103 / classic 56k handshake.
+
+### One-Shot SFX
+- **scan** — three ascending sine pulses
+- **crack** — irregular noise burst + success chord
+- **wipe** — descending sawtooth through lowpass
+- **success / fail / breach** — distinctive sting
+- **click / tick / windowOpen / windowClose / error** — UI feedback
+
+All routed through a master SFX bus so the volume slider has consistent effect.
+
+---
+
+## 25. Bounce Chain Window
+
+A dedicated window (also auto-opens on desktop boot) showing your current bounce chain at a glance:
+
+- Header: `BOUNCE CHAIN — N/M HOPS`
+- Vertical chain: `YOU → [hop 1] → [hop 2] → ... → TARGET`
+- Per-hop status dot (green/amber/red)
+- Click ✕ next to any hop to remove it
+- `▶ EDIT ON WORLD MAP` button to add new hops
+- `CLEAR` button to wipe the route
+
+The chain persists across missions. Burned hops automatically appear as "dirty" and must be cleaned via HACK TOOLS before reuse.
+
+---
+
+## 26. What's New (M11–M14h)
+
+**Realistic hacking layer:**
+- Service-specific exploits (per-protocol speeds + side effects — FTP auto-wipes log, SQL skips objective, etc.)
+- Brute-force lockout (cancelling crack mid-progress on tier 4–5 nodes triggers 30s lockout)
+- Subnet zones (Zone A perimeter, Zone B internal, pivot via admin_console)
+- Lateral movement: dump credentials → use them to bypass other nodes
+- Memory scraping (silent credential exfil)
+- Bounce log cleanup sub-operation
+
+**Banking system (M14b/c):**
+- 4 banks, deposit/withdraw, savings interest, loans, currency trading, equities, offshore accounts
+
+**UX & visual polish (M14a/d/g/h):**
+- Settings ⚙, idle music, in-game clock (2199), trace beep system
+- Neon globe + bounce routing on WorldMap (replaces HI panel)
+- Connection effect overlay (dial-up + animated chain)
+- Tutorial overhaul (25 steps, spotlight, trace paused)
+- Window position memory, light theme, UI scale
+- Mission retry on clean disconnect (mission stays available)
+- Skill-tree graph upgrade shop (15 columns + 7 consumables)
+- Sabotage trace rebalance (60s + 15s/hop escape window)
+- Auto-opening Hacking Interface + Bounce Chain window
+- Bounce library auto-expands when you breach entry_points/routers

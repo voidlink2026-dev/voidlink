@@ -728,3 +728,50 @@ The big sweep. Test everything below.
 - [ ] ~30% of the time: terminal logs "ANTI-FORENSIC: evidence reduction held"
 - [ ] No heat flag set on corp for that run (won't show next-mission trace penalty)
 - [ ] AF v2: ~60% suppression rate
+
+---
+
+## 24. M14h.1 — Hotfix Pass (2199-01-01)
+
+### 24.1 Sabotage trace rebalance
+- [ ] Accept a `network_sabotage` mission with 3 bounce hops in your route
+- [ ] Complete primary objective → deadline = 60s + (3 × 15s) = 105s
+- [ ] Trace climbs but is no longer brutal: baseRate +3 (was +8), alarm 2.5 (was 5)
+- [ ] You have time to wipe logs AND secure-disconnect on average
+
+### 24.2 Audio master bus
+- [ ] Open Settings ⚙ → set MUSIC VOLUME slider → music level changes IMMEDIATELY
+- [ ] Set SFX VOLUME slider → click anything, beep, etc. responds to slider
+- [ ] MUSIC toggle OFF → silences idle music (fades to 0)
+- [ ] SFX toggle OFF → silences all SFX (master gain → 0)
+- [ ] Toggling either back on restores at the slider value
+
+### 24.3 Auto-open windows
+- [ ] On every desktop load (fresh signup OR returning login), these auto-open:
+  - System Terminal, Mission Board, Operative Profile, News, **Hacking Interface**, **Bounce Chain**
+- [ ] Bounce Chain shows "No active route" + "Open WORLD MAP to build your chain" hint
+- [ ] HI shows "▶ OPEN WORLD MAP TO EDIT ROUTE" button when no mission active
+
+### 24.4 Bounce Chain dedicated window
+- [ ] Click BOUNCE in taskbar → opens (or focuses) Bounce Chain window
+- [ ] Shows: header (N/M HOPS), chain (YOU → hops → TARGET), per-hop ✕ remove buttons
+- [ ] Legend at bottom: Clean / Dirty / Traced
+- [ ] EDIT ON WORLD MAP button opens (or focuses) WorldMap
+- [ ] CLEAR button wipes the route
+
+### 24.5 Bounce-library expansion
+- [ ] Accept any mission, breach the entry_point node
+- [ ] Terminal log: `+ BOUNCE NODE ACQUIRED: [corp] — entry_point. Added to library.`
+- [ ] After disconnect, open WORLD MAP → new green dot visible at the corp's region
+- [ ] Can be added to bounce chain like any other clean node
+- [ ] Also triggers on `router` node breach
+- [ ] Repeat breach of same node does NOT add duplicate
+
+### 24.6 Better dial-up SFX
+- [ ] Accept any mission. Connection effect plays:
+  1. DTMF dial pulses (7 digits) — distinct beeps
+  2. Ring tone fragment (440+480 Hz)
+  3. Bandpassed pink-noise carrier hiss
+  4. Dual-tone modem warble at 1270/2225 Hz with LFO wobble
+  5. Frequency-sweep chirp (2400 → 900 Hz)
+- [ ] ~3.5s total. Sequence text matches: DIALLING → RING → CARRIER → AUTH → ACK → ACKNOWLEDGED

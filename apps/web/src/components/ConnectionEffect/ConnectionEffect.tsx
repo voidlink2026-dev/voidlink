@@ -6,45 +6,112 @@ import styles from './ConnectionEffect.module.css'
 // Plays a brief "dialling" effect when the player connects to a network.
 // Triggered by activeNetworkId transitioning from null → non-null.
 const SEQUENCE: { text: string; ms: number }[] = [
-  { text: 'INITIATING CONNECTION...',         ms: 350 },
-  { text: 'ESTABLISHING BOUNCE ROUTE...',     ms: 500 },
-  { text: 'NEGOTIATING HANDSHAKE...',         ms: 450 },
-  { text: 'AUTHENTICATING UPLINK...',         ms: 400 },
-  { text: 'AWAITING REMOTE ACK...',           ms: 600 },
-  { text: '◉ CONNECTION ACKNOWLEDGED',        ms: 350 },
+  { text: 'DIALLING...',                      ms: 950 },   // DTMF tones
+  { text: 'RING — REMOTE ANSWERING...',       ms: 500 },
+  { text: 'NEGOTIATING CARRIER...',           ms: 700 },   // hiss + warble
+  { text: 'AUTHENTICATING UPLINK...',         ms: 500 },
+  { text: 'AWAITING REMOTE ACK...',           ms: 500 },
+  { text: '◉ CONNECTION ACKNOWLEDGED',        ms: 400 },   // chirp
 ]
 
 function playDialSfx() {
-  // Procedural dial-tone: ascending tone burst, then handshake-style buzz
+  // Richer dial-up handshake: DTMF-style number pulses → carrier hiss →
+  // dual-tone handshake warble → high-frequency negotiation chirp.
   try {
     const w = window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }
     const Ctx = w.AudioContext || w.webkitAudioContext
     if (!Ctx) return
     const ac = new Ctx()
     const t = ac.currentTime
-    // 4 ascending tones (dial pulses)
-    for (let i = 0; i < 4; i++) {
-      const osc = ac.createOscillator()
-      osc.type = 'square'
-      osc.frequency.value = 380 + i * 90
-      const g = ac.createGain()
-      const onset = t + i * 0.15
-      g.gain.setValueAtTime(0, onset)
-      g.gain.linearRampToValueAtTime(0.06, onset + 0.02)
-      g.gain.exponentialRampToValueAtTime(0.001, onset + 0.12)
-      osc.connect(g); g.connect(ac.destination)
-      osc.start(onset); osc.stop(onset + 0.14)
+    const master = ac.createGain()
+    master.gain.value = 0.55
+    master.connect(ac.destination)
+
+    // 1. DTMF dial — 7-digit number being dialled (697/770/852/941 × 1209/1336/1477)
+    const dtmf: [number, number][] = [
+      [697, 1209], [770, 1336], [852, 1477],
+      [697, 1336], [941, 1209], [697, 1477], [770, 1209],
+    ]
+    let beat = 0
+    for (const [low, high] of dtmf) {
+      const onset = t + beat * 0.13
+      for (const f of [low, high]) {
+        const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = f
+        const g = ac.createGain()
+        g.gain.setValueAtTime(0, onset)
+        g.gain.linearRampToValueAtTime(0.10, onset + 0.005)
+        g.gain.setValueAtTime(0.10, onset + 0.075)
+        g.gain.exponentialRampToValueAtTime(0.001, onset + 0.090)
+        osc.connect(g); g.connect(master)
+        osc.start(onset); osc.stop(onset + 0.10)
+      }
+      beat++
     }
-    // Handshake buzz at the end — band-passed noise
-    const buf = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.6), ac.sampleRate)
-    const d = buf.getChannelData(0)
-    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * 0.4
-    const n = ac.createBufferSource(); n.buffer = buf
-    const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1200; bp.Q.value = 4
-    const ng = ac.createGain(); ng.gain.setValueAtTime(0.05, t + 0.65); ng.gain.exponentialRampToValueAtTime(0.001, t + 1.2)
-    n.connect(bp); bp.connect(ng); ng.connect(ac.destination)
-    n.start(t + 0.65); n.stop(t + 1.25)
-    setTimeout(() => ac.close().catch(() => {}), 2500)
+
+    // 2. Pickup ring-tone fragment (~100ms, classic ring frequencies)
+    const ringStart = t + 1.0
+    for (const f of [440, 480]) {
+      const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = f
+      const g = ac.createGain()
+      g.gain.setValueAtTime(0, ringStart)
+      g.gain.linearRampToValueAtTime(0.06, ringStart + 0.02)
+      g.gain.exponentialRampToValueAtTime(0.001, ringStart + 0.35)
+      osc.connect(g); g.connect(master)
+      osc.start(ringStart); osc.stop(ringStart + 0.38)
+    }
+
+    // 3. Carrier hiss — bandpassed pink-ish noise (300ms ramp-in)
+    const hissStart = t + 1.45
+    const hissDur = 0.9
+    const hissBuf = ac.createBuffer(1, Math.floor(ac.sampleRate * hissDur), ac.sampleRate)
+    const hd = hissBuf.getChannelData(0)
+    let last = 0
+    for (let i = 0; i < hd.length; i++) {
+      const white = Math.random() * 2 - 1
+      last = (last + 0.06 * white) / 1.06  // pink-ish filter
+      hd[i] = last * 3
+    }
+    const hissSrc = ac.createBufferSource(); hissSrc.buffer = hissBuf
+    const hissBp = ac.createBiquadFilter(); hissBp.type = 'bandpass'; hissBp.frequency.value = 1500; hissBp.Q.value = 1.2
+    const hissG = ac.createGain()
+    hissG.gain.setValueAtTime(0, hissStart)
+    hissG.gain.linearRampToValueAtTime(0.07, hissStart + 0.2)
+    hissG.gain.setValueAtTime(0.07, hissStart + hissDur - 0.2)
+    hissG.gain.exponentialRampToValueAtTime(0.001, hissStart + hissDur)
+    hissSrc.connect(hissBp); hissBp.connect(hissG); hissG.connect(master)
+    hissSrc.start(hissStart); hissSrc.stop(hissStart + hissDur + 0.05)
+
+    // 4. Dual-tone modem warble — 1270 Hz + 2225 Hz (Bell 103 mark/space mimic)
+    const warbleStart = t + 1.6
+    for (const [f, vol] of [[1270, 0.045], [2225, 0.045]] as [number, number][]) {
+      const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = f
+      const g = ac.createGain()
+      g.gain.setValueAtTime(0, warbleStart)
+      g.gain.linearRampToValueAtTime(vol, warbleStart + 0.05)
+      // Add a slow LFO wobble for that "negotiating" feel
+      const lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 8
+      const lfoG = ac.createGain(); lfoG.gain.value = vol * 0.5
+      lfo.connect(lfoG); lfoG.connect(g.gain)
+      g.gain.setValueAtTime(vol, warbleStart + 0.6)
+      g.gain.exponentialRampToValueAtTime(0.001, warbleStart + 0.85)
+      osc.connect(g); g.connect(master)
+      osc.start(warbleStart); osc.stop(warbleStart + 0.9)
+      lfo.start(warbleStart); lfo.stop(warbleStart + 0.9)
+    }
+
+    // 5. Negotiation chirp — frequency sweep at the end (handshake success)
+    const chirpStart = t + 2.4
+    const chirp = ac.createOscillator(); chirp.type = 'square'
+    chirp.frequency.setValueAtTime(2400, chirpStart)
+    chirp.frequency.exponentialRampToValueAtTime(900, chirpStart + 0.35)
+    const cg = ac.createGain()
+    cg.gain.setValueAtTime(0.05, chirpStart)
+    cg.gain.exponentialRampToValueAtTime(0.001, chirpStart + 0.4)
+    chirp.connect(cg); cg.connect(master)
+    chirp.start(chirpStart); chirp.stop(chirpStart + 0.4)
+
+    // Auto-close context after everything has played
+    setTimeout(() => ac.close().catch(() => {}), 3500)
   } catch { /* ignore */ }
 }
 

@@ -437,6 +437,14 @@ Multiple operational aliases:
 
 *Break-and-steal was only the beginning. Real operators run operations. These are operations.*
 
+**Current state (pre-M14m):** Missions are single-phase: connect → scan → breach → click action → wipe → disconnect. Each contract takes ~3-5 minutes. The five base types (file_theft / account_deletion / database_corruption / network_sabotage / bounty_hunt) cover the foundational mechanics but are not yet "operations" — they're tasks.
+
+**Mission depth roadmap** — directly addressing player request:
+- **M14m (next)** — Multi-phase missions: 2-3 phases per contract, with OSINT pre-phase, intra-mission decision points, news-feed echoes after completion. Reuses existing mission framework + adds a `phases: MissionPhase[]` field.
+- **M14n** — Mission events at runtime: timed pop-ups during a mission ("INTERPOL hit the network 90 seconds ago, your trace is now critical"), forcing tactical decisions
+- **M14o** — Choice missions: mid-mission branches that change the outcome (rob the file_server quietly OR sabotage the admin_console loudly — different rep, news, faction effects)
+- **M20** — Full implementation of §5.0–5.7 below (identity fraud, gov DB manipulation, stock manip, etc.)
+
 ---
 
 ### 5.0 Identity Fraud
@@ -1117,10 +1125,14 @@ Architecture for vertical layout:
 | **M14f** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
 | **M14g** ✅ | Upgrade Shop → skill-tree graph UI (SVG node-link diagram, 10 columns, prereq edges, colour-coded states, side detail panel, LIST fallback) | Tier 1 | SHIPPED 2199-01-01 |
 | **M14h** ✅ | Shop expansion — 2 new HW slots (GPU, Cooling), 3 new SW categories (Sniffer, MemScrape, Anti-Forensic), 5 tier extensions (Cracker v5, Proxy v4, etc.), 7 consumables with armed-flag effects (panic kit, zero-day pack, decoy log, false flag, rep tokens, cred pack), wired into crack speed / scan / heat / breach reveal | Tier 1 | SHIPPED 2199-01-01 |
+| **M14h.1** ✅ | UX hotfixes: sabotage trace rebalance (60s base + 15s/hop, lower spike), audio master bus + volume responsiveness, HI/Bounce Chain auto-open on desktop, dedicated BounceChainWindow, breach-acquired bounce nodes added to library, richer DTMF/handshake dial-up SFX | Tier 1 | SHIPPED 2199-01-01 |
 | **M14i** | Research Tech Tree — 5 branches (Crypto / Stealth / Hardware / Social / AI), 30+ research nodes, slow-burn unlocks via paid research bench, hidden nodes gated by story flags | Tier 1 | 4 |
 | **M14j** | Loadout slots — save/swap tool configurations between missions (Stealth / Brute / Bank-Run presets) | Tier 1 | 2 |
 | **M14k** | Implants / Wetware — permanent player buffs (Ghost reflexes +20% wipe speed, Brute synapse +1 max bounce, etc.) | Tier 1 | 2 |
 | **M14l** | Vehicle Gateways — physical-location gateways (Tor relay home / safehouse / corporate VPN) affecting starting trace rate | Tier 1 | 2 |
+| **M14m** | Multi-phase missions — OSINT pre-phase + intra-mission decision points + news echoes (precursor to §5) | Tier 1 | 3 |
+| **M14n** | Mission runtime events — timed pop-ups during active missions ("INTERPOL has joined the network", rival hacker offers a trade) | Tier 1 | 2 |
+| **M14o** | Choice missions — mid-mission branches with rep/news/faction consequences | Tier 1 | 2 |
 | **M15** | Privilege escalation + backdoors + traffic sniffing | Tier 1 | 3 |
 | **M16** | Terminal expanded commands + Lua scripting layer | Tier 2 | 4 |
 | **M17** | Dark web layer: architecture + black market + contracts | Tier 2 | 5 |

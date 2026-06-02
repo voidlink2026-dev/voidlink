@@ -516,6 +516,48 @@ export const useGameStore = create<GameState & GameActions>()(
             }
           }
         }
+
+        // M14h+: Bounce-library expansion — breaching an entry_point or router on a
+        // corporate/cloud/legacy network adds it to the player's bounce library.
+        // Lets the player chain through compromised hosts they've already owned.
+        if (
+          s.player &&
+          (node.type === 'entry_point' || node.type === 'router') &&
+          s.activeMissionId
+        ) {
+          const mission = s.missions.find((m: Mission) => m.id === s.activeMissionId)
+          if (mission) {
+            const corpId = mission.briefing.clientHandle
+            const archetype = mission.targetNetworkId as string
+            // Region map by archetype (approximate)
+            const REGION_BY_ARCH: Record<string, string> = {
+              corporate_intranet:    'US-EAST',
+              cloud_infrastructure:  'EU-WEST',
+              government_classified: 'US-CENTRAL',
+              iot_mesh:              'APAC',
+              legacy_mainframe:      'EU-EAST',
+              personal_gateway:      'EU-NORTH',
+            }
+            const region = REGION_BY_ARCH[archetype] ?? 'US-EAST'
+            // De-dupe by id
+            const bounceId = `bounce_breached_${corpId}_${node.type}_${node.id}`.slice(0, 64)
+            const exists = s.player.bounceLibrary.some((n) => n.id === bounceId)
+            if (!exists) {
+              s.player.bounceLibrary.push({
+                id: bounceId,
+                label: `${corpId} — ${node.type.toUpperCase()}`,
+                region,
+                tier: Math.min(3, Math.max(1, node.securityTier - 1)) as 1 | 2 | 3,
+                logStatus: 'clean',
+                addedAt: Date.now(),
+              })
+              s.terminalLines.push({
+                id: `log_bounce_added_${Date.now()}`, type: 'success',
+                text: `+ BOUNCE NODE ACQUIRED: ${corpId} — ${node.type}. Added to library.`,
+              })
+            }
+          }
+        }
       }),
 
     collectFile: (networkId, nodeId, fileId) =>
@@ -575,11 +617,14 @@ export const useGameStore = create<GameState & GameActions>()(
 
         if (mission.type === 'network_sabotage') {
           if (!mission.narrativeFlags) mission.narrativeFlags = {}
-          mission.narrativeFlags.sabotage_deadline = Date.now() + 30_000
+          // 60s escape window (was 30s), scales up with bounce hops for breathing room
+          const hops = s.activeRoute.length
+          mission.narrativeFlags.sabotage_deadline = Date.now() + 60_000 + (hops * 15_000)
           if (s.traceState) {
-            s.traceState.baseRate += 8.0
-            s.traceState.alarmRate = 5.0
-            s.traceState.alarmDecaysAt = Date.now() + 30_000
+            // Spike but don't drown — proxy v3 (50% reduction) makes this manageable
+            s.traceState.baseRate += 3.0
+            s.traceState.alarmRate = 2.5
+            s.traceState.alarmDecaysAt = Date.now() + 45_000
           }
         }
       }),

@@ -40,8 +40,9 @@ function _playIdleNode() {
   const doStart = () => {
     if (idleNode) return
     idleGain = ac.createGain()
+    const target = _musicOn ? _musicVol * 0.55 : 0  // 0.55 = post-mix scale (original 0.36 was at vol 0.65)
     idleGain.gain.setValueAtTime(0, ac.currentTime)
-    idleGain.gain.linearRampToValueAtTime(0.36, ac.currentTime + 3)
+    idleGain.gain.linearRampToValueAtTime(target, ac.currentTime + 3)
     idleGain.connect(ac.destination)
     idleNode = ac.createBufferSource()
     idleNode.buffer = idleBuffer!
@@ -180,7 +181,7 @@ function fireBeep() {
   clickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.003)
   click.connect(clickHp)
   clickHp.connect(clickGain)
-  clickGain.connect(ac.destination)
+  clickGain.connect(getSfxBus())
   click.start(t)
 
   // 2. Square tone: 1200 Hz → 1600 Hz as trace rises, 18 ms duration
@@ -198,7 +199,7 @@ function fireBeep() {
   g.gain.exponentialRampToValueAtTime(0.001, t + 0.018)
   osc.connect(bp)
   bp.connect(g)
-  g.connect(ac.destination)
+  g.connect(getSfxBus())
   osc.start(t + 0.001)
   osc.stop(t + 0.022)
 
@@ -233,7 +234,7 @@ function playSfxScan() {
   const ac = getCtx()
   const master = ac.createGain()
   master.gain.value = 0.12
-  master.connect(ac.destination)
+  master.connect(getSfxBus())
   const t = ac.currentTime
   // Three rising beeps: 440 → 550 → 660 Hz
   for (let i = 0; i < 3; i++) {
@@ -270,7 +271,7 @@ function playSfxCrack() {
   noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.4)
   noise.connect(bpf)
   bpf.connect(noiseGain)
-  noiseGain.connect(ac.destination)
+  noiseGain.connect(getSfxBus())
   noise.start(t)
   noise.stop(t + 0.4)
   // Success chord after noise
@@ -283,7 +284,7 @@ function playSfxCrack() {
     g.gain.linearRampToValueAtTime(0.08, t + delay + 0.02)
     g.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.25)
     osc.connect(g)
-    g.connect(ac.destination)
+    g.connect(getSfxBus())
     osc.start(t + delay)
     osc.stop(t + delay + 0.3)
   }
@@ -304,7 +305,7 @@ function playSfxWipe() {
   lpf.frequency.value = 600
   osc.connect(lpf)
   lpf.connect(g)
-  g.connect(ac.destination)
+  g.connect(getSfxBus())
   osc.start(t)
   osc.stop(t + 0.65)
 }
@@ -324,7 +325,7 @@ function playSfxSuccess() {
     g.gain.linearRampToValueAtTime(0.12, onset + 0.02)
     g.gain.exponentialRampToValueAtTime(0.001, onset + 0.6)
     osc.connect(g)
-    g.connect(ac.destination)
+    g.connect(getSfxBus())
     osc.start(onset)
     osc.stop(onset + 0.7)
   })
@@ -342,7 +343,7 @@ function playSfxFail() {
     g.gain.setValueAtTime(0.09, t + onset)
     g.gain.exponentialRampToValueAtTime(0.001, t + onset + dur)
     osc.connect(g)
-    g.connect(ac.destination)
+    g.connect(getSfxBus())
     osc.start(t + onset)
     osc.stop(t + onset + dur + 0.05)
   }
@@ -360,7 +361,7 @@ function playSfxBreach() {
   g.gain.setValueAtTime(0.18, t)
   g.gain.exponentialRampToValueAtTime(0.001, t + 0.15)
   osc.connect(g)
-  g.connect(ac.destination)
+  g.connect(getSfxBus())
   osc.start(t)
   osc.stop(t + 0.18)
 }
@@ -372,8 +373,8 @@ function playSfxClick() {
     const nb = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.002), ac.sampleRate)
     const nd = nb.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1
     const n = ac.createBufferSource(); n.buffer = nb
-    const g = ac.createGain(); g.gain.setValueAtTime(0.15 * _sfxVol, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.002)
-    n.connect(g); g.connect(ac.destination); n.start(t)
+    const g = ac.createGain(); g.gain.setValueAtTime(0.15, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.002)
+    n.connect(g); g.connect(getSfxBus()); n.start(t)
   } catch { /**/ }
 }
 function playSfxTick() {
@@ -381,7 +382,7 @@ function playSfxTick() {
     const ac = getCtx(); const t = ac.currentTime
     const osc = ac.createOscillator(); osc.type = 'square'; osc.frequency.value = 1400
     const g = ac.createGain(); g.gain.setValueAtTime(0.04, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.009)
-    osc.connect(g); g.connect(ac.destination); osc.start(t); osc.stop(t + 0.012)
+    osc.connect(g); g.connect(getSfxBus()); osc.start(t); osc.stop(t + 0.012)
   } catch { /**/ }
 }
 function playSfxWindowOpen() {
@@ -390,7 +391,7 @@ function playSfxWindowOpen() {
     const osc = ac.createOscillator(); osc.type = 'sine'
     osc.frequency.setValueAtTime(300, t); osc.frequency.exponentialRampToValueAtTime(900, t + 0.08)
     const g = ac.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.07, t + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t + 0.08)
-    osc.connect(g); g.connect(ac.destination); osc.start(t); osc.stop(t + 0.09)
+    osc.connect(g); g.connect(getSfxBus()); osc.start(t); osc.stop(t + 0.09)
   } catch { /**/ }
 }
 function playSfxWindowClose() {
@@ -399,7 +400,7 @@ function playSfxWindowClose() {
     const osc = ac.createOscillator(); osc.type = 'sine'
     osc.frequency.setValueAtTime(800, t); osc.frequency.exponentialRampToValueAtTime(200, t + 0.07)
     const g = ac.createGain(); g.gain.setValueAtTime(0.06, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.07)
-    osc.connect(g); g.connect(ac.destination); osc.start(t); osc.stop(t + 0.08)
+    osc.connect(g); g.connect(getSfxBus()); osc.start(t); osc.stop(t + 0.08)
   } catch { /**/ }
 }
 function playSfxError() {
@@ -408,17 +409,39 @@ function playSfxError() {
     for (const [freq, onset] of [[320, 0], [220, 0.09]] as [number, number][]) {
       const osc = ac.createOscillator(); osc.type = 'square'; osc.frequency.value = freq
       const g = ac.createGain(); g.gain.setValueAtTime(0.08, t + onset); g.gain.exponentialRampToValueAtTime(0.001, t + onset + 0.12)
-      osc.connect(g); g.connect(ac.destination); osc.start(t + onset); osc.stop(t + onset + 0.14)
+      osc.connect(g); g.connect(getSfxBus()); osc.start(t + onset); osc.stop(t + onset + 0.14)
     }
   } catch { /**/ }
 }
 
 // ── Volume / enable stubs (wired up through idleGain when available) ──────────
 let _musicVol = 0.65, _sfxVol = 0.75, _musicOn = true, _sfxOn = true
-function setMusicVolume(vol: number) { _musicVol = Math.max(0, Math.min(1, vol)); if (idleGain) idleGain.gain.setTargetAtTime(_musicOn ? _musicVol : 0, getCtx().currentTime, 0.05) }
-function setMusicEnabled(on: boolean) { _musicOn = on; if (idleGain) idleGain.gain.setTargetAtTime(on ? _musicVol : 0, getCtx().currentTime, 0.05) }
-function setSfxVolume(vol: number) { _sfxVol = Math.max(0, Math.min(1, vol)) }
-function setSfxEnabled(on: boolean) { _sfxOn = on }
+let sfxMaster: GainNode | null = null
+function getSfxBus(): AudioNode {
+  if (!ctx) return getCtx().destination
+  if (!sfxMaster) {
+    sfxMaster = ctx.createGain()
+    sfxMaster.gain.value = _sfxOn ? _sfxVol : 0
+    sfxMaster.connect(ctx.destination)
+  }
+  return sfxMaster
+}
+function setMusicVolume(vol: number) {
+  _musicVol = Math.max(0, Math.min(1, vol))
+  if (idleGain) idleGain.gain.setTargetAtTime(_musicOn ? _musicVol * 0.55 : 0, getCtx().currentTime, 0.05)
+}
+function setMusicEnabled(on: boolean) {
+  _musicOn = on
+  if (idleGain) idleGain.gain.setTargetAtTime(on ? _musicVol * 0.55 : 0, getCtx().currentTime, 0.05)
+}
+function setSfxVolume(vol: number) {
+  _sfxVol = Math.max(0, Math.min(1, vol))
+  if (sfxMaster) sfxMaster.gain.setTargetAtTime(_sfxOn ? _sfxVol : 0, getCtx().currentTime, 0.02)
+}
+function setSfxEnabled(on: boolean) {
+  _sfxOn = on
+  if (sfxMaster) sfxMaster.gain.setTargetAtTime(on ? _sfxVol : 0, getCtx().currentTime, 0.02)
+}
 
 export type SfxType = 'scan' | 'crack' | 'wipe' | 'success' | 'fail' | 'breach' | 'click' | 'tick' | 'windowOpen' | 'windowClose' | 'error'
 
