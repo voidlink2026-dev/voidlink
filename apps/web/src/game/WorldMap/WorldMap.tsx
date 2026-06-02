@@ -231,11 +231,14 @@ export function WorldMap() {
   const ctrlRef     = useRef<OrbitControls | null>(null)
   const rafRef      = useRef<number>(0)
   const bounceHitTargets = useRef<{ mesh: THREE.Mesh; id: string }[]>([])
+  const bankHitTargets   = useRef<{ mesh: THREE.Mesh; id: string }[]>([])
   const arcGroupRef = useRef<THREE.Group | null>(null)
 
   const player      = useGameStore((s) => s.player)
   const activeRoute = useGameStore((s) => s.activeRoute)
   const setBounceRoute = useGameStore((s) => s.setBounceRoute)
+  const setActiveBank  = useGameStore((s) => s.setActiveBank)
+  const openWindow     = useGameStore((s) => s.openWindow)
 
   const bounceLib   = player?.bounceLibrary ?? []
   const proxies     = player?.software?.proxies ?? []
@@ -282,12 +285,14 @@ export function WorldMap() {
     void buildCountries(scene)
 
     // World target nodes
+    bankHitTargets.current = []
     for (const t of WORLD_TARGETS) {
       const pos = latLonToVec3(t.lat, t.lon)
       const col = TYPE_COLORS[t.type] ?? 0x888888
       const dot = makeGlowDot(col, t.type === 'gov' ? 1.8 : 1.2)
       dot.position.copy(pos)
       scene.add(dot)
+      if (t.type === 'bank') bankHitTargets.current.push({ mesh: dot, id: t.id })
       const lbl = makeLabel(t.label, `#${col.toString(16).padStart(6, '0')}`)
       lbl.position.copy(pos.clone().multiplyScalar(1.12))
       scene.add(lbl)
@@ -397,6 +402,25 @@ export function WorldMap() {
       mouse.x =  ((e.clientX - rect.left)  / rect.width)  * 2 - 1
       mouse.y = -((e.clientY - rect.top)   / rect.height) * 2 + 1
       raycaster.setFromCamera(mouse, camera!)
+
+      // Try bank targets first (so banks are interactive even though they're
+      // smaller than bounce nodes visually)
+      const bankMeshes = bankHitTargets.current.map((h) => h.mesh)
+      const bankHits   = raycaster.intersectObjects(bankMeshes)
+      if (bankHits.length > 0) {
+        const hitMesh = bankHits[0].object as THREE.Mesh
+        const target  = bankHitTargets.current.find((h) => h.mesh === hitMesh)
+        if (target) {
+          setActiveBank(target.id)
+          openWindow({
+            id: 'bank', title: 'BANK TERMINAL', component: 'BankWindow',
+            x: 240, y: 100, width: 460, height: 540, isMinimized: false,
+          })
+          return
+        }
+      }
+
+      // Then bounce targets
       const meshes = bounceHitTargets.current.map((h) => h.mesh)
       const hits   = raycaster.intersectObjects(meshes)
       if (hits.length === 0) return
@@ -411,7 +435,7 @@ export function WorldMap() {
       if (inRoute) {
         setBounceRoute(activeRoute.filter((id) => id !== target.id))
       } else if (activeRoute.length < maxHops) {
-        if (node.logStatus === 'dirty') return // dirty — must clean first
+        if (node.logStatus === 'dirty') return
         setBounceRoute([...activeRoute, target.id])
       }
     }
@@ -440,7 +464,7 @@ export function WorldMap() {
       renderer.domElement.removeEventListener('click', onClick)
       renderer.domElement.removeEventListener('mousemove', onMove)
     }
-  }, [activeRoute, bounceLib, maxHops, setBounceRoute])
+  }, [activeRoute, bounceLib, maxHops, setBounceRoute, setActiveBank, openWindow])
 
   // ── Hover node info ──────────────────────────────────────────────────────────
   const hoverNode = bounceLib.find((n) => n.id === hoverNodeId)

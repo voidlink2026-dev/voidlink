@@ -489,3 +489,44 @@ The big sweep. Test everything below.
 - Scrape Memory still requires CPU ≥ 2 GHz; starter hardware is 1 GHz
 - Mobile layout not yet built
 - Dark web layer not yet accessible
+
+---
+
+## 19. M14b — Banking Foundations (2199-01-01)
+
+### 19.1 World Map bank targets
+- [ ] Open WORLD MAP from taskbar
+- [ ] Yellow bank dots visible: GLOBAL TRUST BANK (US-East), PACIFIC NATIONAL (US-West)
+- [ ] Click a yellow bank dot → opens BANK TERMINAL window (does NOT add to bounce chain)
+- [ ] Clicking a green bounce node still adds it to chain (banks have priority but separate hit-test)
+
+### 19.2 Open account
+- [ ] Click GLOBAL TRUST → bank panel shows name, region, APR, your cash
+- [ ] No account yet → shows setup fee + "OPEN ACCOUNT" button
+- [ ] Insufficient credits: button disabled
+- [ ] Click OPEN ACCOUNT → setup fee deducted, account opens at 0 Cr balance
+- [ ] Success terminal log: "Account opened at Global Trust Bank. APR 2.50%. Setup fee: 500 Cr."
+
+### 19.3 Deposit / Withdraw
+- [ ] After opening: balance panel shows ACCOUNT BALANCE 0 Cr
+- [ ] Enter "1000" in amount → click DEPOSIT → cash -1000, balance +1000
+- [ ] Click ALL CASH → amount field fills with current credits
+- [ ] Click ALL SAVINGS → amount field fills with current balance
+- [ ] Click WITHDRAW with amount > balance → button is disabled
+- [ ] Click WITHDRAW with valid amount → credits returned, balance reduced
+- [ ] Every transaction logged to terminal
+
+### 19.4 Interest accrual
+- [ ] With 1000 Cr deposited, leave the game running for ~60 seconds
+- [ ] Balance should increase slightly (≈ 1000 × exp(0.025 × 60 / 31_557_600) ≈ 1000.00005 — visible at higher balances or over hours)
+- [ ] "Interest earned" counter on balance panel tracks the cumulative gain
+- [ ] Interest pauses when browser tab is hidden (game loop paused via visibility API)
+
+### 19.5 Multi-bank
+- [ ] Open PACIFIC NATIONAL on the globe
+- [ ] Open second account (750 Cr setup, 3.40% APR)
+- [ ] Switching between bank panels via the globe correctly shows that bank's account state
+
+### 19.6 Persistence
+- [ ] Deposit credits, log out, log back in
+- [ ] Account balance, total interest earned, openedAt date all intact

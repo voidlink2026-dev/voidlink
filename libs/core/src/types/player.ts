@@ -64,6 +64,16 @@ export interface PlayerProfile {
   stats: PlayerStats
   bounceLibrary: BounceNode[]
   faction: FactionData | null
+  bankAccounts?: Record<string, BankAccount>  // keyed by bank target id (e.g. 'globalbank')
+}
+
+export interface BankAccount {
+  bankId: string
+  balance: number        // current deposited credits
+  apr: number            // annual percentage rate (0.025 = 2.5%)
+  openedAt: number       // unix ms
+  lastInterestTickAt: number  // unix ms — used to compute accrual
+  totalInterestEarned: number
 }
 
 export interface PlayerStats {

@@ -23,3 +23,4 @@ export { STORY_MISSIONS } from './story/storyMissions.ts'
 // Data
 export * from './data/catalogue.ts'
 export type { SpecializationDefinition } from './data/catalogue.ts'
+export * from './data/banks.ts'

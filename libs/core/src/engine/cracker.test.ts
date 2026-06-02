@@ -75,12 +75,12 @@ describe('startCrackJob', () => {
     vi.useRealTimers()
   })
 
-  it('duration has a floor of 1000ms regardless of bonuses', () => {
+  it('duration has a floor of 800ms regardless of bonuses (M13 lowered the floor for fast-protocol exploits)', () => {
     vi.useFakeTimers()
     vi.setSystemTime(1000)
     const overpoweredHardware: PlayerHardware = { ...baseHardware, cpuSpeed: 100 }
     const job = startCrackJob('n', 'exploit', 'cracker_elite', 10, mockNode(1), overpoweredHardware)
-    expect(job.durationMs).toBeGreaterThanOrEqual(1000)
+    expect(job.durationMs).toBeGreaterThanOrEqual(800)
     vi.useRealTimers()
   })
 })

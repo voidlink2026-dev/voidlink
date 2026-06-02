@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 export type Screen = 'boot' | 'login' | 'desktop'
@@ -135,6 +135,7 @@ interface GameState {
   activeRoute: string[] // ordered bounce node IDs (outermost first)
   credentialCache: CredentialEntry[]
   windowLastPositions: Record<string, { x: number; y: number; width: number; height: number }>
+  activeBankId: string | null  // currently-viewed bank in BankWindow
 }
 
 interface GameActions {
@@ -177,6 +178,11 @@ interface GameActions {
   recordFailedCrack: (networkId: string, nodeId: string) => void
   createFaction: (name: string, tag: string, description: string) => 'ok' | 'insufficient_funds' | 'rank_required' | 'already_in_faction'
   leaveFaction: () => void
+  openBankAccount: (bankId: string) => 'ok' | 'insufficient_funds' | 'already_open' | 'unknown_bank'
+  bankDeposit: (bankId: string, amount: number) => 'ok' | 'insufficient_funds' | 'no_account'
+  bankWithdraw: (bankId: string, amount: number) => 'ok' | 'insufficient_balance' | 'no_account'
+  tickBankInterest: () => void
+  setActiveBank: (bankId: string | null) => void
   tickGameLoop: (deltaMs: number) => void
   logTerminal: (text: string, type?: string) => void
   logout: () => void
@@ -206,6 +212,7 @@ export const useGameStore = create<GameState & GameActions>()(
     activeRoute: [],
     credentialCache: [],
     windowLastPositions: {},
+    activeBankId: null,
 
     setScreen: (screen) => set((s) => { s.screen = screen }),
 
@@ -1572,6 +1579,91 @@ export const useGameStore = create<GameState & GameActions>()(
         s.player.faction = null
       }),
 
+    openBankAccount: (bankId) => {
+      let result: 'ok' | 'insufficient_funds' | 'already_open' | 'unknown_bank' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'insufficient_funds'; return }
+        const bank = getBank(bankId)
+        if (!bank) { result = 'unknown_bank'; return }
+        if (!s.player.bankAccounts) s.player.bankAccounts = {}
+        if (s.player.bankAccounts[bankId]) { result = 'already_open'; return }
+        if (s.player.credits < bank.openCost) { result = 'insufficient_funds'; return }
+        s.player.credits -= bank.openCost
+        s.player.stats.creditsSpent += bank.openCost
+        s.player.bankAccounts[bankId] = {
+          bankId, balance: 0, apr: bank.apr,
+          openedAt: Date.now(), lastInterestTickAt: Date.now(),
+          totalInterestEarned: 0,
+        }
+        s.terminalLines.push({
+          id: `log_bank_open_${Date.now()}`, type: 'success',
+          text: `Account opened at ${bank.name}. APR ${(bank.apr * 100).toFixed(2)}%. Setup fee: ${bank.openCost} Cr.`,
+        })
+      })
+      return result
+    },
+
+    bankDeposit: (bankId, amount) => {
+      let result: 'ok' | 'insufficient_funds' | 'no_account' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'no_account'; return }
+        const acct = s.player.bankAccounts?.[bankId]
+        if (!acct) { result = 'no_account'; return }
+        const amt = Math.max(0, Math.floor(amount))
+        if (s.player.credits < amt) { result = 'insufficient_funds'; return }
+        s.player.credits -= amt
+        acct.balance += amt
+        s.terminalLines.push({
+          id: `log_bank_dep_${Date.now()}`, type: 'system',
+          text: `Deposited ${amt.toLocaleString()} Cr. Balance: ${acct.balance.toLocaleString()} Cr.`,
+        })
+      })
+      return result
+    },
+
+    setActiveBank: (bankId) => set((s) => { s.activeBankId = bankId }),
+
+    tickBankInterest: () =>
+      set((s) => {
+        if (!s.player?.bankAccounts) return
+        const now = Date.now()
+        // Game-time-scaled APR: each real second = 60 in-game seconds (just like the in-game clock).
+        // Actually our clock runs 1:1 with real time, so use real-time accrual.
+        // Compound continuously: balance *= exp(apr * dt / yearMs)
+        const YEAR_MS = 365.25 * 24 * 3600 * 1000
+        for (const acct of Object.values(s.player.bankAccounts)) {
+          const dt = now - acct.lastInterestTickAt
+          if (dt <= 0 || acct.balance <= 0) {
+            acct.lastInterestTickAt = now
+            continue
+          }
+          const factor = Math.exp(acct.apr * dt / YEAR_MS)
+          const newBalance = acct.balance * factor
+          const earned = newBalance - acct.balance
+          acct.balance = newBalance
+          acct.totalInterestEarned += earned
+          acct.lastInterestTickAt = now
+        }
+      }),
+
+    bankWithdraw: (bankId, amount) => {
+      let result: 'ok' | 'insufficient_balance' | 'no_account' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'no_account'; return }
+        const acct = s.player.bankAccounts?.[bankId]
+        if (!acct) { result = 'no_account'; return }
+        const amt = Math.max(0, Math.floor(amount))
+        if (acct.balance < amt) { result = 'insufficient_balance'; return }
+        acct.balance -= amt
+        s.player.credits += amt
+        s.terminalLines.push({
+          id: `log_bank_wd_${Date.now()}`, type: 'system',
+          text: `Withdrew ${amt.toLocaleString()} Cr. Balance: ${acct.balance.toLocaleString()} Cr.`,
+        })
+      })
+      return result
+    },
+
     logout: () => {
       saveGame()
       clearActiveSession()
@@ -1597,6 +1689,7 @@ export const useGameStore = create<GameState & GameActions>()(
         pendingSpecialization: false,
         activeRoute: [],
         credentialCache: [],
+        activeBankId: null,
       })
     },
   })),

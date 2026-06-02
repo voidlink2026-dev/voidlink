@@ -630,22 +630,23 @@ A journalist contacts you through channels only a ghost could find. They have a 
 
 ---
 
-### 7.0a Banking & Personal Finance (PLANNED — M14b)
+### 7.0a Banking & Personal Finance ✅ PARTIAL SHIPPED (M14b — 2199-01-01)
 
-The player should be able to **connect to bank nodes on the World Map** (NOT for bouncing — these are legitimate financial institutions).
+**Shipped (foundational):**
+- Two clickable bank targets on the World Map: GLOBAL TRUST BANK (2.5% APR, 500 Cr setup) and PACIFIC NATIONAL (3.4% APR, 750 Cr setup)
+- Bank window: open account, deposit, withdraw, ALL CASH / ALL SAVINGS quick-fill
+- Continuous compound interest accrual via `tickBankInterest` (real-time 1:1)
+- Per-bank account state persisted on player profile
+- Terminal logs every banking transaction
+- Three.js raycast on World Map: bank targets check before bounce targets
 
-**Operations on a connected bank:**
-- **Open Account** — one-time setup cost (~500 Cr); persistent bank account on that institution
-- **Deposit / Withdraw** — move credits between hand-cash and bank balance
-- **Savings interest** — passive 2–4% APR (in-game time) on deposited credits. Rates per-bank, fluctuate with world events.
-- **Loans** — borrow against future earnings at 8–15% APR. Defaulting triggers a hunter contract.
-- **Currency trading** — Cr ↔ Darkcoin at live exchange rates (volatile, ties into existing dark-economy mechanic)
-- **Equities** — invest in corporate stock. Stock prices respond to player breaches (sabotage a corp → its stock drops → short-sellers profit).
-- **Anonymous offshore accounts** — at certain banks (Cayman, Zurich nodes). Harder to access (need credentials), but laundered credits don't count toward heat tracking.
-
-**Risk:** the more credits in any one bank, the more attractive it becomes as a target for **rival hackers** (or government seizure during heat events). Spread your wealth.
-
-**Bank labels on the globe** stay accessible whether or not the player has an account — the connection screen shows: BANK NAME, your balance, deposit/withdraw, savings rate, current Darkcoin rate.
+**Still planned:**
+- **Loans** — borrow against future earnings at 8–15% APR; defaulting triggers a hunter contract
+- **Currency trading** — Cr ↔ Darkcoin at live exchange rates
+- **Equities** — invest in corporate stock; sabotage missions affect prices (short the corp you're hitting)
+- **Anonymous offshore accounts** — at Cayman / Zurich nodes; harder to access, but laundered credits don't count toward heat
+- **Risk** — bank balances attract rival hackers; high balances = more frequent break-in attempts on the bank
+- **World event** — `MARKET CRASH`: all bank APR drops to 0 for the duration
 
 ---
 
@@ -1087,9 +1088,10 @@ Architecture for vertical layout:
 | **M11** ✅ | Bounce log wipe sub-missions + hop health | Tier 1 | SHIPPED 2026-05-28 |
 | **M12** ✅ | Lateral movement + credential reuse + memory scraping | Tier 1 | SHIPPED 2026-05-28 |
 | **M13** ✅ | Service-specific exploits + brute lockout + subnet zones | Tier 1 | SHIPPED 2026-05-28 |
-| **M14a** ✅ | Pre-alpha polish: settings menu, idle music, neon globe + bounce rework, in-game clock (2199), perf throttling, tutorial overhaul, light theme, window memory, retry mission, cracker fix, audio polish | Tier 1 | SHIPPED 2199-01-01 |
-| **M14b** | Banking & finance — connect to bank nodes, deposits/savings/loans/equities | Tier 1 | 4 |
-| **M14c** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
+| **M14a** ✅ | Pre-alpha polish: settings, neon globe, idle music, in-game clock, perf throttling, tutorial overhaul, light theme, mission retry, cracker fix | Tier 1 | SHIPPED 2199-01-01 |
+| **M14b** ✅ | Banking foundations: bank window, deposits/withdrawals, savings interest | Tier 1 | SHIPPED 2199-01-01 |
+| **M14c** | Banking expansion: loans, currency trading, equities, offshore accounts | Tier 1 | 3 |
+| **M14d** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
 | **M15** | Privilege escalation + backdoors + traffic sniffing | Tier 1 | 3 |
 | **M16** | Terminal expanded commands + Lua scripting layer | Tier 2 | 4 |
 | **M17** | Dark web layer: architecture + black market + contracts | Tier 2 | 5 |

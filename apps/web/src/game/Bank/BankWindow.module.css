@@ -1,0 +1,180 @@
+.root {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--color-text, #d4d4d4);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-amber, #ffaa00);
+  text-shadow: var(--glow-amber, 0 0 8px rgba(255,170,0,0.4));
+}
+
+.flavour {
+  font-size: 10px;
+  color: var(--color-text-muted, #909090);
+  line-height: 1.5;
+  border-left: 2px solid var(--color-border, #2a2a2a);
+  padding-left: 8px;
+}
+
+.muted { font-size: 10px; color: var(--color-text-dim, #686868); line-height: 1.5; }
+
+.statsRow {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid var(--color-border, #1e1e1e);
+  border-bottom: 1px solid var(--color-border, #1e1e1e);
+  padding: 8px 0;
+}
+
+.stat { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.statLabel { font-size: 8px; letter-spacing: 0.1em; color: var(--color-text-dim, #606060); }
+.statValue { font-size: 12px; font-weight: 700; color: var(--color-cyan, #00e5ff); }
+
+.openSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0;
+}
+
+.primaryBtn {
+  background: rgba(57, 255, 20, 0.08);
+  border: 1px solid var(--color-green, #39ff14);
+  border-radius: 2px;
+  color: var(--color-green, #39ff14);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.primaryBtn:hover:not(:disabled) { background: rgba(57, 255, 20, 0.18); }
+.primaryBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.balancePanel {
+  background: rgba(255, 170, 0, 0.04);
+  border: 1px solid rgba(255, 170, 0, 0.3);
+  border-radius: 2px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.balanceLabel {
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: var(--color-text-dim, #686868);
+}
+
+.balanceValue {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-amber, #ffaa00);
+  text-shadow: var(--glow-amber, 0 0 10px rgba(255,170,0,0.4));
+  font-variant-numeric: tabular-nums;
+}
+
+.balanceMeta {
+  font-size: 9px;
+  color: var(--color-text-dim, #686868);
+  letter-spacing: 0.04em;
+}
+
+.txSection { display: flex; flex-direction: column; gap: 8px; }
+
+.input {
+  background: var(--color-bg, #050505);
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  color: var(--color-text, #d4d4d4);
+  font-family: inherit;
+  font-size: 12px;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color 0.12s;
+}
+.input:focus { border-color: var(--color-cyan, #00e5ff); }
+
+.btnRow { display: flex; gap: 6px; }
+
+.depositBtn, .withdrawBtn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.depositBtn { color: var(--color-green, #39ff14); }
+.depositBtn:hover:not(:disabled) { background: rgba(57, 255, 20, 0.08); border-color: var(--color-green, #39ff14); }
+
+.withdrawBtn { color: var(--color-amber, #ffaa00); }
+.withdrawBtn:hover:not(:disabled) { background: rgba(255, 170, 0, 0.08); border-color: var(--color-amber, #ffaa00); }
+
+.depositBtn:disabled, .withdrawBtn:disabled, .maxBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.maxBtn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--color-text-dim, #606060);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.maxBtn:hover { color: var(--color-cyan, #00e5ff); border-color: var(--color-cyan, #00e5ff); }
+
+.bankGrid { display: flex; flex-direction: column; gap: 6px; }
+.bankCard {
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bankName { font-size: 11px; font-weight: 700; color: var(--color-amber, #ffaa00); letter-spacing: 0.05em; }
+.bankMeta { font-size: 9px; color: var(--color-text-dim, #686868); letter-spacing: 0.04em; }
+.bankBalance { font-size: 11px; color: var(--color-green, #39ff14); font-weight: 700; }
+.bankDim { font-size: 9px; color: var(--color-text-dim, #454545); font-style: italic; }
+
+.error {
+  font-size: 10px;
+  color: var(--color-red, #ff3333);
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  background: rgba(255, 51, 51, 0.06);
+  border-radius: 2px;
+  padding: 6px 10px;
+}
+
+.footer {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--color-text-dim, #454545);
+  line-height: 1.6;
+  margin-top: auto;
+  border-top: 1px solid var(--color-border, #1e1e1e);
+  padding-top: 10px;
+}

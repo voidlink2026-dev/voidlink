@@ -13,6 +13,7 @@ import { ProfileWindow } from '../../game/ProfileWindow/ProfileWindow.tsx'
 import { TutorialOverlay } from '../../game/Tutorial/TutorialOverlay.tsx'
 import { NewsFeed } from '../../game/NewsFeed/NewsFeed.tsx'
 import { SettingsWindow } from '../../game/Settings/SettingsWindow.tsx'
+import { BankWindow } from '../../game/Bank/BankWindow.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
 import { generateContract, STORY_MISSIONS } from '@voidlink/core'
@@ -37,6 +38,7 @@ const WINDOW_COMPONENTS: Record<string, React.ComponentType> = {
   ProfileWindow,
   NewsFeed,
   SettingsWindow,
+  BankWindow,
 }
 
 export function DesktopScreen() {
@@ -97,18 +99,28 @@ export function DesktopScreen() {
     }
   }, [traceState?.level])
 
-  // Game loop
+  // Game loop — 20 fps interval (50 ms). Pauses when the tab is hidden.
+  // Also ticks bank interest accrual every loop iteration.
+  const tickBankInterest = useGameStore((s) => s.tickBankInterest)
   useEffect(() => {
-    let rafId: number
-    function loop() {
+    let intervalId: ReturnType<typeof setInterval> | null = null
+    function tick() {
       const now = Date.now()
       tickGameLoop(now - lastTickRef.current)
       lastTickRef.current = now
-      rafId = requestAnimationFrame(loop)
+      tickBankInterest()
     }
-    rafId = requestAnimationFrame(loop)
-    return () => cancelAnimationFrame(rafId)
-  }, [tickGameLoop])
+    function start() {
+      if (intervalId) return
+      lastTickRef.current = Date.now()
+      intervalId = setInterval(tick, 50)
+    }
+    function stop() { if (intervalId) { clearInterval(intervalId); intervalId = null } }
+    function onVis() { if (document.hidden) stop(); else start() }
+    start()
+    document.addEventListener('visibilitychange', onVis)
+    return () => { stop(); document.removeEventListener('visibilitychange', onVis) }
+  }, [tickGameLoop, tickBankInterest])
 
   // Ctrl+scroll zooms the entire window layer (railway.com-style)
   useEffect(() => {
