@@ -1,0 +1,72 @@
+.console {
+  position: fixed;
+  bottom: 52px; /* above taskbar */
+  right: 12px;
+  z-index: 500;
+  width: 220px;
+  background: rgba(6, 6, 6, 0.92);
+  border: 1px solid rgba(57, 255, 20, 0.18);
+  border-radius: 3px;
+  backdrop-filter: blur(6px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+  transition: border-color 0.2s;
+}
+
+.console:hover { border-color: rgba(57, 255, 20, 0.3); }
+
+.collapsed {
+  width: 52px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 8px;
+  color: #39ff14;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  gap: 4px;
+}
+
+.title { flex: 1; text-align: left; }
+
+.chevron {
+  font-size: 7px;
+  opacity: 0.5;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 8px 8px;
+  border-top: 1px solid rgba(57, 255, 20, 0.1);
+}
+
+.process {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1.6;
+}
+
+.dot {
+  font-size: 7px;
+  flex-shrink: 0;
+}
+
+.label {
+  color: #888;
+  letter-spacing: 0.04em;
+  font-size: 9px;
+  line-height: 1.5;
+}

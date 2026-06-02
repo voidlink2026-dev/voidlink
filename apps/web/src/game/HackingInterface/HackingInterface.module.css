@@ -14,7 +14,7 @@
   justify-content: center;
   height: 100%;
   gap: 6px;
-  color: #333;
+  color: #606060;
   font-size: 12px;
 }
 
@@ -26,11 +26,25 @@
   gap: 6px;
 }
 
+.ramOk {
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #606060;
+  font-size: 9px;
+}
+
+.ramFull {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #ff9900;
+  font-size: 9px;
+}
+
 .sectionLabel {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #444;
+  color: #686868;
   text-transform: uppercase;
   border-bottom: 1px solid #1a1a1a;
   padding-bottom: 4px;
@@ -38,8 +52,8 @@
 
 .targetInfo { display: flex; flex-direction: column; gap: 2px; }
 .targetName { color: #00cfff; font-weight: 600; font-size: 12px; }
-.targetMeta { color: #555; font-size: 10px; }
-.dim { color: #333; font-size: 10px; }
+.targetMeta { color: #787878; font-size: 10px; }
+.dim { color: #606060; font-size: 10px; }
 
 .objective {
   font-size: 11px;
@@ -48,6 +62,24 @@
 }
 
 .objectiveDone { color: #39ff14; }
+
+.objectiveOptional {
+  font-size: 10px;
+  color: #787878;
+  line-height: 1.4;
+  margin-top: 3px;
+}
+
+.optionalLabel {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #ff9900;
+  border: 1px solid rgba(255,153,0,0.4);
+  border-radius: 2px;
+  padding: 0 4px;
+  margin-right: 4px;
+}
 
 .selectedNode {
   display: flex;
@@ -64,7 +96,7 @@
 
 .selectedNodeStatus {
   font-size: 10px;
-  color: #555;
+  color: #787878;
 }
 
 .breachedText { color: #39ff14; }
@@ -181,6 +213,357 @@
 
 .disconnectWarning {
   font-size: 9px;
-  color: #444;
+  color: #686868;
   line-height: 1.4;
+}
+
+/* ── Mission step guide ───────────────────────────── */
+.stepGuide {
+  border: 1px solid rgba(0, 207, 255, 0.2);
+  border-left: 2px solid rgba(0, 207, 255, 0.6);
+  background: rgba(0, 207, 255, 0.04);
+  border-radius: 2px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stepGuideHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(0, 207, 255, 0.7);
+}
+
+.stepBadge {
+  background: rgba(0, 207, 255, 0.15);
+  border: 1px solid rgba(0, 207, 255, 0.3);
+  border-radius: 2px;
+  padding: 1px 5px;
+  font-size: 8px;
+}
+
+.stepDescription {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d4d4d4;
+  letter-spacing: 0.04em;
+}
+
+.stepDetail {
+  font-size: 10px;
+  color: #909090;
+  line-height: 1.5;
+}
+
+.stepGuideDone {
+  border-color: rgba(57, 255, 20, 0.3);
+  border-left-color: rgba(57, 255, 20, 0.7);
+  background: rgba(57, 255, 20, 0.04);
+}
+
+.stepGuideDone .stepGuideHeader { color: rgba(57, 255, 20, 0.7); }
+.stepGuideDone .stepBadge {
+  background: rgba(57, 255, 20, 0.12);
+  border-color: rgba(57, 255, 20, 0.3);
+}
+
+/* ── Bounce router (pre-mission idle state) ───────── */
+.bouncePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  font-size: 12px;
+}
+
+.routeChain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(0, 207, 255, 0.03);
+  border: 1px solid rgba(0, 207, 255, 0.12);
+  border-radius: 2px;
+}
+
+.routeOrigin,
+.routeTarget {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #39ff14;
+  padding: 2px 6px;
+  border: 1px solid rgba(57, 255, 20, 0.3);
+  border-radius: 2px;
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.routeTarget { color: #ff2d20; border-color: rgba(255, 45, 32, 0.3); }
+
+.routeHop {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.routeArrow {
+  font-size: 9px;
+  color: #606060;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.routeNode {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(0, 207, 255, 0.06);
+  border: 1px solid rgba(0, 207, 255, 0.2);
+  border-radius: 2px;
+  font-size: 10px;
+}
+
+.routeNodeLabel { color: #d4d4d4; font-weight: 600; flex: 1; }
+.routeNodeMeta  { color: #606060; font-size: 9px; }
+
+.routeRemove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff2d20;
+  font-size: 9px;
+  padding: 0 2px;
+  opacity: 0.6;
+  transition: opacity 0.1s;
+}
+.routeRemove:hover { opacity: 1; }
+
+/* Node library list */
+.bounceNode {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid #1a1a1a;
+  border-radius: 2px;
+  font-size: 10px;
+  transition: border-color 0.15s;
+}
+
+.bounceNode:hover { border-color: #2a2a2a; }
+
+.bounceNodeActive {
+  border-color: rgba(0, 207, 255, 0.25);
+  background: rgba(0, 207, 255, 0.03);
+}
+
+.bounceNodeInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bounceStatus   { font-size: 8px; }
+.bounceNodeLabel { color: #ccc; font-weight: 600; flex: 1; }
+.bounceNodeMeta { color: #606060; font-size: 9px; }
+.bounceTier {
+  font-size: 9px;
+  font-weight: 700;
+  color: #ff9900;
+  border: 1px solid rgba(255, 153, 0, 0.3);
+  border-radius: 2px;
+  padding: 0 4px;
+}
+
+.dirtyWarn {
+  font-size: 9px;
+  color: #ff9900;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.status_clean  { color: #39ff14; }
+.status_dirty  { color: #ff9900; }
+.status_traced { color: #ff2d20; }
+
+/* Hop chain (in-mission) */
+.hopChain {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hopNode {
+  font-size: 10px;
+  color: #606060;
+  padding: 2px 4px;
+  letter-spacing: 0.04em;
+}
+
+.hopBurned  { color: #ff9900; text-decoration: line-through; opacity: 0.6; }
+.hopCurrent { color: #00cfff; font-weight: 700; }
+.hopPending { color: #484848; }
+
+/* ── Cover-your-tracks checklist ──────────────────── */
+.tracksClear {
+  color: #39ff14;
+  font-weight: 700;
+}
+
+.trackNode {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  padding: 2px 0;
+}
+
+.trackNodeDone {
+  color: #39ff14;
+  opacity: 0.7;
+}
+
+.trackNodeDirty {
+  color: #ff9900;
+}
+
+.trackNodeWarning {
+  color: #ff2d20;
+  font-weight: 700;
+}
+
+/* ── Zone badges ──────────────────────────────────── */
+.zoneBadgeA {
+  font-size: 8px;
+  color: #00cfff;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-left: 4px;
+  opacity: 0.7;
+}
+
+.zoneBadgeB {
+  font-size: 8px;
+  color: #ff9900;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-left: 4px;
+}
+
+/* ── Lockout state ────────────────────────────────── */
+.lockedOutText {
+  color: #ff2d20;
+  font-weight: 700;
+  animation: lockoutPulse 1s step-end infinite;
+}
+
+@keyframes lockoutPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── Credential dump progress bar ─────────────────── */
+.progressFillDump {
+  height: 100%;
+  background: #ff9900;
+  box-shadow: 0 0 6px rgba(255, 153, 0, 0.5);
+  border-radius: 2px;
+  transition: width 0.08s linear;
+}
+
+/* ── Memory scrape progress bar ───────────────────── */
+.progressFillScrape {
+  height: 100%;
+  background: #9900ff;
+  box-shadow: 0 0 6px rgba(153, 0, 255, 0.5);
+  border-radius: 2px;
+  transition: width 0.08s linear;
+}
+
+/* ── Credential cache panel ────────────────────────── */
+.credCache {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.credEntry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: rgba(255, 153, 0, 0.06);
+  border: 1px solid rgba(255, 153, 0, 0.2);
+  border-radius: 2px;
+}
+
+.credIcon {
+  font-size: 7px;
+  color: #ff9900;
+  flex-shrink: 0;
+}
+
+.credInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.credLabel {
+  font-size: 9px;
+  font-weight: 700;
+  color: #ff9900;
+  letter-spacing: 0.08em;
+}
+
+.credTarget {
+  font-size: 8px;
+  color: #00cfff;
+  letter-spacing: 0.06em;
+}
+
+.credExpiry {
+  font-size: 8px;
+  color: #484848;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.scrapeAlert {
+  font-size: 9px;
+  color: #9900ff;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 6px;
+  border: 1px solid rgba(153, 0, 255, 0.3);
+  border-radius: 2px;
+  background: rgba(153, 0, 255, 0.06);
+}
+
+/* ── Bounce hop action row (pre-mission) ──────────── */
+.hopActionRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.hopCleanProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 3px;
+}
+
+.hopCleanLabel {
+  font-size: 9px;
+  color: #39ff14;
+  letter-spacing: 0.06em;
 }

@@ -1,4 +1,67 @@
 import type { HardwareDefinition, ToolDefinition } from '../types/tools.ts'
+import type { Specialization } from '../types/player.ts'
+
+export interface SpecializationDefinition {
+  id: Specialization
+  name: string
+  tagline: string
+  description: string
+  bonuses: string[]
+}
+
+export const SPECIALIZATION_CATALOGUE: SpecializationDefinition[] = [
+  {
+    id: 'ghost',
+    name: 'Ghost',
+    tagline: 'Silent. Invisible. Untraceable.',
+    description:
+      'Optimised for zero-footprint operations. A Ghost leaves no evidence, no logs, ' +
+      'and no trace — and the network barely notices they were there.',
+    bonuses: [
+      'Trace rates from all passive sources reduced by 25%',
+      'Log wipe operations complete 40% faster',
+      'Stealth objective rep bonus increased from +50% to +75%',
+    ],
+  },
+  {
+    id: 'brute',
+    name: 'Brute',
+    tagline: 'Overwhelm. Crack. Dominate.',
+    description:
+      'Raw cracking power optimised for high-speed breach. A Brute hits networks ' +
+      'like a battering ram — slower to cover tracks, but nothing stays locked for long.',
+    bonuses: [
+      'Crack job speed increased by 35%',
+      'Hard firewall breaches (no bypasser) produce 50% less immediate trace spike',
+    ],
+  },
+  {
+    id: 'social',
+    name: 'Social',
+    tagline: 'Reputation is the most powerful exploit.',
+    description:
+      'Masters of leverage, information brokerage, and faction politics. ' +
+      'A Social operative turns every completed job into a web of influence.',
+    bonuses: [
+      'All mission credit rewards increased by 25%',
+      'Faction standing gains increased by 50%',
+    ],
+  },
+  {
+    id: 'architect',
+    name: 'Architect',
+    tagline: 'Build the perfect machine.',
+    description:
+      'Hardware and infrastructure specialists. An Architect turns raw silicon ' +
+      'into an operational advantage that outclasses any rival setup.',
+    bonuses: [
+      '+1 free RAM slot (no hardware purchase required)',
+      'Hardware and software purchases 15% cheaper',
+    ],
+  },
+]
+
+export const RANK_THRESHOLDS = [0, 0, 80, 250, 600, 1400, 3000, 6500] as const
 
 export const HARDWARE_CATALOGUE: HardwareDefinition[] = [
   {
@@ -86,8 +149,8 @@ export const HARDWARE_CATALOGUE: HardwareDefinition[] = [
 export const SOFTWARE_CATALOGUE: ToolDefinition[] = [
   {
     id: 'cracker_v2',
-    name: 'Password Breaker v2',
-    description: 'Advanced dictionary attack. 35% faster than v1.',
+    name: 'Cracker v2 — DictAttack Pro',
+    description: 'Upgrade from Cracker v1. Advanced dictionary attack engine, 35% faster. Handles Tier 3 systems reliably.',
     category: 'password',
     maxLevel: 5,
     upgradeSlots: 2,
@@ -98,8 +161,8 @@ export const SOFTWARE_CATALOGUE: ToolDefinition[] = [
   },
   {
     id: 'cracker_v3',
-    name: 'Decypher v1',
-    description: 'Hybrid brute-force/dictionary. Handles Tier 4 systems.',
+    name: 'Cracker v3 — Decypher',
+    description: 'Upgrade from Cracker v2. Hybrid brute-force/dictionary engine. Tears through Tier 4–5 systems. Requires 2 RAM slots.',
     category: 'password',
     maxLevel: 5,
     upgradeSlots: 3,
@@ -107,6 +170,18 @@ export const SOFTWARE_CATALOGUE: ToolDefinition[] = [
     ramCost: 2,
     unlockReputation: 200,
     unlockPrice: 18000,
+  },
+  {
+    id: 'cracker_v4',
+    name: 'Cracker v4 — Hydra Zero',
+    description: 'Upgrade from Cracker v3. Zero-day exploit integration. Sub-second cracking on Tier 1–3, competitive on Tier 5. No CVE required.',
+    category: 'password',
+    maxLevel: 5,
+    upgradeSlots: 4,
+    baseDurationMs: (level, cpu) => Math.max(400, 28000 / (level * cpu)),
+    ramCost: 2,
+    unlockReputation: 600,
+    unlockPrice: 65000,
   },
   {
     id: 'proxy_v2',

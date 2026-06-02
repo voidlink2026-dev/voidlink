@@ -1,72 +1,118 @@
 .window {
   position: absolute;
-  background: #111111;
-  border: 1px solid #2a2a2a;
-  border-radius: 4px;
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.8);
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 2px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.9), 0 2px 8px rgba(0, 0, 0, 0.6);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   font-family: 'JetBrains Mono', 'Courier New', monospace;
   user-select: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .window.active {
-  border-color: #39ff14;
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(57, 255, 20, 0.3);
+  border-color: rgba(57, 255, 20, 0.5);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(57, 255, 20, 0.12),
+    0 0 24px rgba(57, 255, 20, 0.06);
 }
 
+/* Corner brackets on active windows */
+.window.active::before,
+.window.active::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.window.active::before {
+  bottom: 0;
+  left: 0;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.5);
+  border-left:   1px solid rgba(57, 255, 20, 0.5);
+}
+
+.window.active::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.5);
+  border-right:  1px solid rgba(57, 255, 20, 0.5);
+}
+
+/* ── Title bar ────────────────────────────────────── */
 .titleBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px;
-  background: #1a1a1a;
-  border-bottom: 1px solid #2a2a2a;
-  min-height: 32px;
+  padding: 0 10px;
+  height: 34px;
+  background: #111;
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
 }
 
 .window.active .titleBar {
-  border-bottom-color: rgba(57, 255, 20, 0.3);
+  background: linear-gradient(180deg, #161616 0%, #111 100%);
+  border-bottom-color: rgba(57, 255, 20, 0.25);
+}
+
+/* Top accent line on active window */
+.window.active .titleBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #39ff14, transparent);
+  opacity: 0.6;
 }
 
 .title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #888888;
+  color: #555;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color 0.12s;
 }
 
 .window.active .title {
   color: #39ff14;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
 }
 
 .controls {
   display: flex;
   gap: 6px;
   flex-shrink: 0;
+  margin-left: 10px;
 }
 
 .controlBtn {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   padding: 0;
-  opacity: 0.6;
-  transition: opacity 0.1s ease, transform 0.1s ease;
+  opacity: 0.45;
+  transition: opacity 0.1s, transform 0.1s, box-shadow 0.1s;
 }
 
 .controlBtn:hover {
   opacity: 1;
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
 .controlBtn:focus-visible {
@@ -75,26 +121,47 @@
 }
 
 .minimize {
-  background: #ff9900;
+  background: #ffaa00;
 }
+.minimize:hover { box-shadow: 0 0 6px rgba(255,170,0,0.6); }
 
 .close {
-  background: #ff2d20;
+  background: #ff3333;
 }
+.close:hover { box-shadow: 0 0 6px rgba(255,51,51,0.7); }
 
+/* ── Content area ─────────────────────────────────── */
 .content {
   flex: 1;
   overflow: auto;
-  padding: 12px;
-  color: #e8e8e8;
+  padding: 14px;
+  color: #d4d4d4;
   font-size: 13px;
   line-height: 1.5;
+  min-height: 0;
+  scrollbar-gutter: stable;
 }
+
+/* ── Resize handles ───────────────────────────────── */
+.resizeHandle {
+  position: absolute;
+  z-index: 10;
+  user-select: none;
+}
+
+.resize_n  { top: 0;    left: 6px;    right: 6px;  height: 4px; cursor: n-resize; }
+.resize_s  { bottom: 0; left: 6px;    right: 6px;  height: 4px; cursor: s-resize; }
+.resize_e  { top: 6px;  right: 0;     bottom: 6px; width: 4px;  cursor: e-resize; }
+.resize_w  { top: 6px;  left: 0;      bottom: 6px; width: 4px;  cursor: w-resize; }
+.resize_ne { top: 0;    right: 0;     width: 10px; height: 10px; cursor: ne-resize; }
+.resize_se { bottom: 0; right: 0;     width: 10px; height: 10px; cursor: se-resize; }
+.resize_sw { bottom: 0; left: 0;      width: 10px; height: 10px; cursor: sw-resize; }
+.resize_nw { top: 0;    left: 0;      width: 10px; height: 10px; cursor: nw-resize; }
 
 .activeBorder {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 1px rgba(57, 255, 20, 0.15);
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(57, 255, 20, 0.08);
 }

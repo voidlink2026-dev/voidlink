@@ -21,7 +21,7 @@
   text-transform: uppercase;
 }
 
-.nodeCount { color: #444; }
+.nodeCount { color: #686868; }
 
 .body {
   flex: 1;
@@ -30,11 +30,13 @@
   min-height: 0;
 }
 
-.svg {
+.canvasWrapper {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
   background: #080808;
   border-radius: 2px;
-  min-width: 0;
+  overflow: hidden;
 }
 
 .edge {
@@ -77,7 +79,7 @@
 
 .nodePanelTier {
   font-size: 9px;
-  color: #444;
+  color: #686868;
 }
 
 .nodePanelStatus {
@@ -86,7 +88,7 @@
   align-items: center;
 }
 
-.statusSecure { color: #555; font-size: 10px; }
+.statusSecure { color: #787878; font-size: 10px; }
 .statusBreached { color: #39ff14; font-size: 10px; }
 .statusOffline { color: #ff2d20; font-size: 10px; }
 
@@ -100,7 +102,7 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #444;
+  color: #686868;
   text-transform: uppercase;
 }
 
@@ -113,7 +115,7 @@
 
 .notScanned {
   font-size: 9px;
-  color: #333;
+  color: #606060;
   font-style: italic;
 }
 
@@ -121,6 +123,51 @@
   font-size: 9px;
   color: #ff9900;
   border: 1px solid rgba(255, 153, 0, 0.35);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.06em;
+}
+
+.zoneBBadge {
+  font-size: 9px;
+  color: #ff6600;
+  border: 1px solid rgba(255, 102, 0, 0.4);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.pivotBadge {
+  font-size: 9px;
+  color: #ffcc00;
+  border: 1px solid rgba(255, 204, 0, 0.4);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.lockoutBadge {
+  font-size: 9px;
+  color: #ff2d20;
+  border: 1px solid rgba(255, 45, 32, 0.4);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  animation: lockoutPulse 1s step-end infinite;
+}
+
+@keyframes lockoutPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.exploitBadge {
+  font-size: 9px;
+  color: #9900ff;
+  border: 1px solid rgba(153, 0, 255, 0.3);
   border-radius: 2px;
   padding: 1px 5px;
   letter-spacing: 0.06em;
@@ -135,7 +182,7 @@
 
 .fileName { color: #888; font-size: 10px; flex: 1; }
 .fileTarget { color: #ff9900; font-size: 10px; flex: 1; }
-.fileSize { color: #444; font-size: 9px; flex-shrink: 0; }
+.fileSize { color: #686868; font-size: 9px; flex-shrink: 0; }
 
 .collectBtn {
   background: rgba(57, 255, 20, 0.1);
@@ -156,6 +203,45 @@
 
 .collectBtn:focus-visible {
   outline: 1px solid #39ff14;
+}
+
+.transferProgress {
+  flex: 1;
+  height: 12px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.transferFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #39ff14;
+  opacity: 0.6;
+  transition: width 0.08s linear;
+}
+
+.transferPct {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 8px;
+  color: #39ff14;
+  line-height: 12px;
+}
+
+.firewallWarning {
+  font-size: 9px;
+  color: #ff9900;
+  border: 1px solid rgba(255, 153, 0, 0.25);
+  background: rgba(255, 153, 0, 0.05);
+  border-radius: 2px;
+  padding: 4px 6px;
+  line-height: 1.4;
 }
 
 .breachBtn {
@@ -211,7 +297,7 @@
 }
 
 .dimNote {
-  color: #333;
+  color: #606060;
   font-size: 10px;
   font-style: italic;
   margin-top: auto;
@@ -224,7 +310,7 @@
   justify-content: center;
   height: 100%;
   gap: 8px;
-  color: #333;
+  color: #606060;
   font-size: 12px;
   letter-spacing: 0.06em;
 }

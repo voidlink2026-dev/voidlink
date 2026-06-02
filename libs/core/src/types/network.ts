@@ -33,10 +33,19 @@ export interface NetworkNode {
   isBreached: boolean
   isScanned: boolean  // true after player runs port scan
   isActive: boolean  // powered on / online
+  isLogWiped: boolean // true after player wipes logs on this node
   services: NetworkService[]
   files: FileEntry[]
   connectedTo: NodeId[]
   position: { x: number; y: number } // for network map rendering
+  // M13 additions
+  zone?: 'A' | 'B'            // subnet zone (gov/cloud networks only); zone B requires pivot
+  isPivotNode?: boolean        // bridges zone A → zone B
+  isLockedOut?: boolean        // brute-force lockout active
+  lockoutUntil?: number        // unix ms — lockout expires
+  failedCrackAttempts?: number // used by brute lockout
+  exploitedVia?: string        // protocol used to breach (e.g. 'FTP', 'RDP')
+  adminSuppressedUntil?: number // RDP exploit: admin rate suppressed until this time
 }
 
 export interface NetworkService {

@@ -1,32 +1,50 @@
 .desktop {
   position: fixed;
   inset: 0;
-  background: #0a0a0a;
+  background: #050505;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* Subtle animated grid background */
+/* Animated grid — drifts slowly */
 .desktop::before {
+  content: '';
+  position: absolute;
+  inset: -100px;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(57, 255, 20, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: gridPan 30s linear infinite;
+  z-index: 0;
+}
+
+/* Radial vignette on desktop edges */
+.desktop::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(57, 255, 20, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57, 255, 20, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background: radial-gradient(ellipse 100% 90% at 50% 50%, transparent 60%, rgba(0,0,0,0.5) 100%);
+  z-index: 0;
+}
+
+@keyframes gridPan {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(48px, 48px); }
 }
 
 .windowLayer {
   flex: 1;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 1;
 }
 
 .placeholder {
-  color: #444;
+  color: #555;
   font-size: 12px;
   padding: 12px;
 }

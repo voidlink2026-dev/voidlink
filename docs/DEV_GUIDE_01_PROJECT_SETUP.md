@@ -5,7 +5,7 @@
 |---------|--------|-------|
 | 1.1 Environment & Prerequisites | ✅ Done | Node.js, pnpm, Git installed locally |
 | 1.2 Repository Structure | ✅ Done | `/apps/web`, `/apps/desktop`, `/libs/ui`, `/libs/core` live; server/mobile not yet needed |
-| 1.3 Version Control & Branching | ⬜ Not started | Not a git repo yet; no CI branch protection |
+| 1.3 Version Control & Branching | ✅ Done | Git initialised on `main` branch, two commits |
 | 1.4 Coding Standards & Linting | ✅ Done | ESLint, Prettier, Husky, lint-staged, TypeScript strict |
 | 1.5 CI/CD Pipeline | ⬜ Not started | No GitHub Actions yet |
 | 1.6 Issue Tracking | ⬜ Not started | No project tracker set up |
@@ -15,7 +15,7 @@
 
 ---
 
-This guide ensures a world-class, future-proof foundation for Uplink Next Generation. Every step is detailed for maximum quality, scalability, and developer experience.
+This guide ensures a world-class, future-proof foundation for Voidlink. Every step is detailed for maximum quality, scalability, and developer experience.
 
 ---
 

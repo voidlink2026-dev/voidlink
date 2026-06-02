@@ -3,9 +3,10 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "types": ["vite/client"],
     "paths": {
-      "@uplink/core": ["../../libs/core/src/index.ts"],
-      "@uplink/ui": ["../../libs/ui/src/index.ts"]
+      "@voidlink/core": ["../../libs/core/src/index.ts"],
+      "@voidlink/ui": ["../../libs/ui/src/index.ts"]
     }
   },
   "include": ["src", "../../libs/core/src", "../../libs/ui/src"]

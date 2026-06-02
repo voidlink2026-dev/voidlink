@@ -30,6 +30,11 @@
   box-shadow: 0 0 40px rgba(255, 45, 32, 0.1), 0 8px 32px rgba(0,0,0,0.8);
 }
 
+.abandoned {
+  border: 1px solid rgba(255, 153, 0, 0.35);
+  box-shadow: 0 0 40px rgba(255, 153, 0, 0.08), 0 8px 32px rgba(0,0,0,0.8);
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -40,8 +45,9 @@
   font-size: 20px;
 }
 
-.success .statusIcon { color: #39ff14; }
-.fail .statusIcon    { color: #ff2d20; }
+.success  .statusIcon { color: #39ff14; }
+.fail     .statusIcon { color: #ff2d20; }
+.abandoned .statusIcon { color: #ff9900; }
 
 .statusText {
   font-size: 16px;
@@ -49,8 +55,9 @@
   letter-spacing: 0.12em;
 }
 
-.success .statusText { color: #39ff14; }
-.fail .statusText    { color: #ff2d20; }
+.success  .statusText { color: #39ff14; }
+.fail     .statusText { color: #ff2d20; }
+.abandoned .statusText { color: #ff9900; }
 
 .divider {
   height: 1px;
@@ -70,7 +77,7 @@
   font-size: 12px;
 }
 
-.rewardLabel { color: #555; font-size: 10px; letter-spacing: 0.08em; }
+.rewardLabel { color: #787878; font-size: 10px; letter-spacing: 0.08em; }
 .rewardValue { color: #ff9900; font-weight: 700; font-size: 16px; }
 .rewardValueGreen { color: #39ff14; font-size: 14px; }
 .rewardValueDim { color: #888; font-size: 12px; }
@@ -84,6 +91,101 @@
   line-height: 1.6;
 }
 
-.failSub { color: #555; font-size: 10px; }
+.failSub { color: #787878; font-size: 10px; }
+
+.abandonedText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #888;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.abandonedSub { color: #665533; font-size: 10px; }
 
 .dismissBtn { align-self: flex-end; }
+
+.storyCoda {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(255, 153, 0, 0.04);
+  border: 1px solid rgba(255, 153, 0, 0.25);
+  border-radius: 2px;
+}
+
+.storyCodaLabel {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #ff9900;
+}
+
+.storyCodaText {
+  margin: 0;
+  font-size: 11px;
+  color: #888;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Arc 1 key choice */
+.choiceBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.choiceLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #ff9900;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.choiceBtn {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 2px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.choiceBtn:hover {
+  border-color: rgba(255, 153, 0, 0.5);
+  background: rgba(255, 153, 0, 0.04);
+}
+
+.choiceBtnLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ccc;
+  letter-spacing: 0.06em;
+}
+
+.choiceBtnSub {
+  font-size: 9px;
+  color: #787878;
+  line-height: 1.4;
+}
+
+.consequenceText {
+  padding: 10px 14px;
+  background: rgba(57, 255, 20, 0.04);
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  border-radius: 2px;
+  font-size: 11px;
+  color: #39ff14;
+  line-height: 1.5;
+  font-style: italic;
+}

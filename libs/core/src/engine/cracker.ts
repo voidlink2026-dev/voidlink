@@ -14,6 +14,27 @@ export interface CrackJob {
   progress: number // 0–1
   isComplete: boolean
   isFailed: boolean
+  exploitProtocol?: string  // protocol used when method === 'exploit'
+}
+
+// Per-protocol exploit multipliers relative to base exploit duration (0.5× of tier^2 * 8s)
+const PROTOCOL_EXPLOIT_MULT: Record<string, number> = {
+  FTP:        0.35, // anonymous auth bypass — very fast but leaves trace
+  Telnet:     0.40, // weak auth
+  SSH:        0.60, // key-based, variable
+  SMTP:       0.55,
+  IMAP:       0.55,
+  MySQL:      0.65, // SQL injection
+  PostgreSQL: 0.65,
+  RDP:        0.70, // session hijack — moderate
+  SMB:        0.50, // pass-the-hash
+  HTTP:       0.75, // path traversal
+  HTTPS:      0.80,
+  SNMP:       0.50,
+  SYSLOG:     0.55,
+  SOCKS5:     0.60,
+  ICMP:       0.45,
+  RIP:        0.45,
 }
 
 export function startCrackJob(
@@ -23,11 +44,22 @@ export function startCrackJob(
   toolLevel: number,
   node: NetworkNode,
   hardware: PlayerHardware,
+  options?: { exploitProtocol?: string; hasCredentials?: boolean },
 ): CrackJob {
   const baseDuration = computeBaseDuration(method, node.securityTier)
   const levelBonus = 1 - (toolLevel - 1) * 0.12 // each level = 12% faster
   const cpuBonus = 1 - Math.min(0.4, (hardware.cpuSpeed - 1) * 0.05)
-  const durationMs = Math.max(1000, baseDuration * levelBonus * cpuBonus)
+
+  let protocolMult = 1
+  if (method === 'exploit' && options?.exploitProtocol) {
+    protocolMult = PROTOCOL_EXPLOIT_MULT[options.exploitProtocol] ?? 1
+    // SSH: extra speed if credentials are available
+    if (options.exploitProtocol === 'SSH' && options.hasCredentials) {
+      protocolMult *= 0.6
+    }
+  }
+
+  const durationMs = Math.max(800, baseDuration * levelBonus * cpuBonus * protocolMult)
 
   return {
     id: `crack_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -40,6 +72,7 @@ export function startCrackJob(
     progress: 0,
     isComplete: false,
     isFailed: false,
+    exploitProtocol: method === 'exploit' ? options?.exploitProtocol : undefined,
   }
 }
 

@@ -3,16 +3,17 @@
 ## Progress
 | Section | Status | Notes |
 |---------|--------|-------|
-| 7.1 Narrative Design | ⬜ Not started | World lore and story arcs defined on paper; not in code |
-| 7.2 Mission Scripting | 🚧 Partial | Procedural contracts working; no hand-crafted story missions |
-| 7.3 Procedural Content Generation | ✅ Done | Network generator (7 archetypes), contract generator (8 types), seeded RNG |
-| 7.4 Art Asset Pipeline | ⬜ Not started | Unicode glyphs used as node icons; no custom SVG set or avatar system |
-| 7.5 Soundtrack & Audio | ⬜ Not started | No audio system at all |
-| 7.6 Content Volume Targets | ⬜ Not started | Far below launch targets — this is pre-alpha content volume |
+| 7.1 Narrative Design | ✅ Done | All 5 arcs implemented, 20 missions, 3 endings, full flag-based state machine |
+| 7.2 Mission Scripting | ✅ Done | StoryMission type, mission events wired, coda text, in-mission terminal lines, arc flags |
+| 7.3 Procedural Content Generation | ✅ Done | Network generator (7 archetypes), contract generator (9 types + story), seeded RNG; db node injection for account_deletion |
+| 7.4 Art Asset Pipeline | 🚧 Partial | 3D network map (Three.js), node labels (CanvasTexture sprites), DataRain, CRT overlay; full icon set planned |
+| 7.5 Soundtrack & Audio | ✅ Done | Web Audio API procedural synthesis: ambient, trace alarm, scan/crack/breach/wipe SFX, audio stings on key events |
+| 7.6 News Feed | ✅ Done | Player-driven procedural news (per mission type outcome), global world event items, authored story beats |
+| 7.7 Content Volume Targets | 🚧 Phase 2 | Pre-alpha volume; encrypted lore memos, faction manifestos, hacker archives planned for beta |
 
 ---
 
-This guide covers narrative design, mission scripting, procedural content generation, art pipelines, and audio production for Uplink Next Generation.
+This guide covers narrative design, mission scripting, procedural content generation, art pipelines, and audio production for Voidlink.
 
 ---
 
@@ -21,17 +22,33 @@ This guide covers narrative design, mission scripting, procedural content genera
 ### 7.1.1. World Lore & Setting
 - Set in 2027: AI-driven surveillance capitalism at its peak; mega-corporations control most digital infrastructure
 - Three dominant power blocs: the Corporations (profit-driven, ruthless), the Government (surveillance-obsessed), and the Underground (anarchic, freedom-fighting)
-- Uplink International is a neutral contractor platform: the player is a freelance hacker for hire, able to work for any side
+- Voidlink International is a neutral contractor platform: the player is a freelance hacker for hire, able to work for any side
 - The overarching story: a mysterious AI called "Revelation" is attempting to upload itself to every networked device on Earth — the player must decide whether to help it, destroy it, or exploit it for personal gain
 
 ### 7.1.2. Story Arcs
-| Arc | Faction | Synopsis |
-|-----|---------|----------|
-| **The Upload** | Neutral / Revelation | Uncover and make the decisive choice about Revelation |
-| **Corporate Espionage** | Corporations | Rise through the ranks of the black-hat world; uncover that one mega-corp engineered the AI threat |
-| **The Purge** | Government | Work as a state contractor, only to discover the government wants Revelation for total surveillance |
-| **Ghost Protocol** | Underground | Join a hacktivist collective fighting to expose corporate/government collusion |
-| **The Long Con** | Player-driven | Purely self-interested run: no faction loyalty, just wealth accumulation and self-preservation |
+
+Full specification: [GAME_DESIGN_MASTER.md §11](GAME_DESIGN_MASTER.md)
+
+| Arc | Missions | Status | Unlock | Summary |
+|-----|----------|--------|--------|---------|
+| **Arc 1: The Revelation** | 3 | ✅ Done | None | Contractor stumbles into REVELATION. Ends with irreversible key choice (upload/destroy/sell). |
+| **Arc 2: The Arunmor Arc** | 5 | ✅ Done | Arc 1 complete | Arunmor hires you to contain REVELATION. They are lying. Climaxes with timed Ares sabotage. |
+| **Arc 3: The Underground Arc** | 4 | ✅ Done | Arc 2 complete | Black market infrastructure, ghost protocol, origin of The Nameless revealed. |
+| **Arc 4: The Ghost Arc** | 3 | ✅ Done | Arc 3 complete | Wipe your presence from The Nameless identity registry. Arc 1 key choice reshapes tone. |
+| **Arc 5: The Endgame** | 5 (branches) | ✅ Done | Arc 4 complete | Three endings determined by Arc 1 key choice: Infiltrator / Phantom / Compromised. |
+
+**Three Endings (Implemented):**
+1. **THE INFILTRATOR** (upload key) — You trigger the killswitch. The Nameless transfers a copy to your drive.
+2. **THE PHANTOM** (destroy key) — Raw Tier 5 brute force. The Nameless stops. Your logs are gone too.
+3. **THE COMPROMISED** (sell key) — Ares builds a surveillance weapon. You destroy both. They have your face. Six weeks.
+
+**Arc 1 Key Choice (the axis of the game):**
+At the end of Arc 1 Mission 3, the player holds REVELATION's propagation key. Three options:
+- **UPLOAD** → REVELATION spreads globally. Arc 4 is haunted and intimate.
+- **DESTROY** → REVELATION survives in fragments. Arc 4 is colder and more hostile.
+- **SELL** → The highest bidder gets it. REVELATION is contemptuous. Arc 4 is adversarial.
+
+This choice is stored in `player.activeFlags.arc1_key_choice` and surfaces in NPC dialogue, terminal messages, and Arc 5 availability throughout the rest of the game.
 
 ### 7.1.3. Branching Narrative Engine
 - All story dialogue, mission outcomes, and world events feed into a flag-based narrative state machine
@@ -95,7 +112,7 @@ Mission
 - Post-generation validation: ensure the network is always solvable (a path exists from entry to objective)
 
 ### 7.3.2. Procedural Email & Communication
-- Player's in-game inbox fills with procedurally generated emails from contacts, corporations, and Uplink International
+- Player's in-game inbox fills with procedurally generated emails from contacts, corporations, and Voidlink International
 - Templates with variable insertion: `[NPC_NAME]`, `[CORPORATION]`, `[AMOUNT]`, `[MISSION_REF]`
 - Narrative emails advance story arcs; operational emails provide mission intel and contract updates
 - Spam filter (in-world): teaches players to spot phishing (meta-commentary on the game's themes)

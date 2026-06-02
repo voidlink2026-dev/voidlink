@@ -2,15 +2,13 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  height: 100%;
-  overflow-y: auto;
 }
 
 .sectionLabel {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.15em;
-  color: #555;
+  color: #787878;
   text-transform: uppercase;
   border-bottom: 1px solid #1a1a1a;
   padding-bottom: 6px;
@@ -29,7 +27,7 @@
 }
 
 .empty {
-  color: #444;
+  color: #686868;
   font-size: 12px;
 }
 
@@ -45,7 +43,7 @@
 }
 
 .card:hover {
-  border-color: #2a2a2a;
+  border-color: #505050;
 }
 
 .cardActive {
@@ -59,6 +57,12 @@
   justify-content: space-between;
 }
 
+.cardHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .missionType {
   font-size: 10px;
   font-weight: 700;
@@ -68,7 +72,7 @@
 
 .difficulty {
   font-size: 10px;
-  color: #555;
+  color: #787878;
   letter-spacing: 0.08em;
 }
 
@@ -86,7 +90,7 @@
 
 .client {
   font-size: 10px;
-  color: #555;
+  color: #787878;
 }
 
 .clientHandle {
@@ -118,4 +122,71 @@
 
 .acceptBtn {
   align-self: flex-end;
+}
+
+.cardStory {
+  border-color: rgba(255, 153, 0, 0.25);
+  background: rgba(255, 153, 0, 0.03);
+}
+
+.cardStory:hover {
+  border-color: rgba(255, 153, 0, 0.45);
+}
+
+.missionTypeStory {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #ff9900;
+}
+
+.storyBadge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #ff9900;
+  border: 1px solid rgba(255, 153, 0, 0.5);
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+
+.cardLocked {
+  opacity: 0.65;
+}
+
+.requirements {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid #181818;
+}
+
+.reqMet {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #39ff14;
+  opacity: 0.7;
+}
+
+.reqUnmet {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #ff2d20;
+}
+
+.acceptRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.upgradeHint {
+  font-size: 9px;
+  color: #ff9900;
+  opacity: 0.8;
+  letter-spacing: 0.06em;
 }

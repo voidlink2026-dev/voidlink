@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore.ts'
-import { Button } from '@uplink/ui'
-import { HARDWARE_CATALOGUE, SOFTWARE_CATALOGUE } from '@uplink/core'
-import type { HardwareDefinition, ToolDefinition } from '@uplink/core'
+import { Button } from '@voidlink/ui'
+import { HARDWARE_CATALOGUE, SOFTWARE_CATALOGUE } from '@voidlink/core'
+import type { HardwareDefinition, ToolDefinition } from '@voidlink/core'
 import styles from './UpgradeShop.module.css'
 
 type Tab = 'hardware' | 'software'

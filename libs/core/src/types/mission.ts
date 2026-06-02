@@ -18,6 +18,12 @@ export type MissionStatus = 'available' | 'active' | 'completed' | 'failed' | 'e
 
 export type MissionDifficulty = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
+export interface MissionRequirements {
+  minCrackerLevel: number  // minimum cracker tool level in player inventory
+  minCpuSpeed: number      // minimum hardware.cpuSpeed
+  minReputation: number    // minimum player.reputation
+}
+
 export interface MissionReward {
   credits: number
   reputation: number
@@ -76,8 +82,10 @@ export interface Mission {
   briefing: MissionBriefing
   objectives: MissionObjective[]
   targetNetworkId: NetworkId
+  requirements: MissionRequirements
   reward: MissionReward
   events: MissionEvent[]
+  firedEventIds?: string[]
   assignedTo?: PlayerId
   startedAt?: number
   completedAt?: number

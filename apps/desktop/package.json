@@ -1,11 +1,11 @@
 {
-  "name": "@uplink/desktop",
+  "name": "@voidlink/desktop",
   "version": "0.1.0",
   "private": true,
   "main": "src/main.js",
   "scripts": {
-    "dev": "concurrently \"pnpm --filter @uplink/web dev\" \"wait-on http://localhost:5173 && electron .\"",
-    "build": "pnpm --filter @uplink/web build && electron-builder",
+    "dev": "concurrently \"pnpm --filter @voidlink/web dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "build": "pnpm --filter @voidlink/web build && electron-builder",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -19,8 +19,8 @@
     "typescript": "^5.5.0"
   },
   "build": {
-    "appId": "com.uplink.nextgen",
-    "productName": "Uplink: Next Generation",
+    "appId": "com.voidlink.app",
+    "productName": "Voidlink",
     "directories": {
       "output": "dist"
     },

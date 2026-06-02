@@ -14,7 +14,7 @@
 
 ---
 
-This guide covers full accessibility compliance, assistive technology integration, and the complete localisation pipeline for Uplink Next Generation.
+This guide covers full accessibility compliance, assistive technology integration, and the complete localisation pipeline for Voidlink.
 
 ---
 

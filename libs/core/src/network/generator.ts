@@ -222,6 +222,7 @@ export function generateNetwork(
       isBreached: false,
       isScanned: false,
       isActive: true,
+      isLogWiped: false,
       services: generateServices(type, nodeTier, rng),
       files: [],
       connectedTo: [],
@@ -231,17 +232,47 @@ export function generateNetwork(
 
   const connected = connectNodes(rawNodes, rng)
   const laid = layoutNodes(connected, rng)
+  const zoned = assignZones(laid, archetype)
 
   return {
     id: `net_${seed}`,
     archetype,
     ownerId,
     label: label ?? `${archetype.replace(/_/g, ' ')} [${seed.toString(16)}]`,
-    nodes: laid,
-    entryNodeId: laid[0].id,
+    nodes: zoned,
+    entryNodeId: zoned[0].id,
     seed,
     createdAt: Date.now(),
     traceSpeed,
     activeAdmins: 0,
   }
+}
+
+function assignZones(nodes: NetworkNode[], archetype: NetworkArchetype): NetworkNode[] {
+  if (archetype !== 'government_classified' && archetype !== 'cloud_infrastructure') {
+    return nodes
+  }
+
+  // Zone A: perimeter-facing node types; Zone B: internal/sensitive types
+  const ZONE_A_TYPES = new Set<NodeType>(['entry_point', 'firewall', 'intrusion_detector', 'proxy', 'router'])
+  const ZONE_B_TYPES = new Set<NodeType>(['database', 'ai_core', 'file_server'])
+  // admin_console: act as the pivot — zone A but connects to zone B
+
+  const result = nodes.map((n) => {
+    if (ZONE_A_TYPES.has(n.type) || n.type === 'admin_console') {
+      return { ...n, zone: 'A' as const }
+    }
+    if (ZONE_B_TYPES.has(n.type)) {
+      return { ...n, zone: 'B' as const }
+    }
+    return { ...n, zone: 'A' as const }
+  })
+
+  // Mark admin_console(s) as pivot nodes — they bridge zone A to zone B
+  const pivotIdx = result.findIndex((n) => n.type === 'admin_console')
+  if (pivotIdx >= 0) {
+    result[pivotIdx] = { ...result[pivotIdx], isPivotNode: true }
+  }
+
+  return result
 }

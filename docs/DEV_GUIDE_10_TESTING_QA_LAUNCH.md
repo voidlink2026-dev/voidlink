@@ -3,20 +3,25 @@
 ## Progress
 | Section | Status | Notes |
 |---------|--------|-------|
-| 10.1 Testing Philosophy | ⬜ Not started | No tests written yet |
-| 10.2 Automated Testing | ⬜ Not started | No Vitest/Jest/Playwright suite; typecheck passes |
-| 10.3 Manual & Exploratory Testing | 🚧 Partial | Manual testing done in browser during development |
-| 10.4 Community Testing | ⬜ Not started | Pre-alpha — not ready for community testing |
+| 10.1 Testing Philosophy | ✅ Done | Pure functions in libs/core tested in isolation |
+| 10.2 Automated Testing | 🚧 Partial | 46 Vitest unit tests: trace engine (12), crack engine (10), network generator (12), contract generator (12). No integration or E2E tests yet. |
+| 10.3 Manual & Exploratory Testing | 🚧 Partial | Manual browser testing during development. No formal test matrix. |
+| 10.4 Community Testing | ⬜ Not started | Pre-alpha — not ready |
 | 10.5 Launch Checklist | ⬜ Not started | — |
-| 10.6 Bug Severity & Triage | ⬜ Not started | No formal bug tracking |
+| 10.6 Bug Severity & Triage | 🚧 Partial | Known bugs catalogued in GAME_DESIGN_MASTER.md §14.2 |
 | 10.7 Post-Launch Support | ⬜ Not started | — |
 | 10.8 Analytics & Success Metrics | ⬜ Not started | — |
 
-**Immediate priority:** Set up Vitest for `libs/core` unit tests — the engine logic (trace tick, crack job, network generator) is pure functions and easy to test.
+**Current test coverage:** `libs/core` engine logic is well-tested. `apps/web` components have zero automated tests — no component tests, no E2E.
+
+**Next testing priorities:**
+- Integration tests for `gameStore.ts` actions (acceptMission, breachNode, disconnect)
+- Component tests for MissionBoard, HackingInterface (when mission event wiring is complete)
+- Playwright E2E: full session from login → accept mission → breach → disconnect → reward
 
 ---
 
-This guide covers the complete testing strategy, QA process, community testing programme, launch checklist, and post-launch support model for Uplink Next Generation.
+This guide covers the complete testing strategy, QA process, community testing programme, launch checklist, and post-launch support model for Voidlink.
 
 ---
 
@@ -231,4 +236,4 @@ This guide covers the complete testing strategy, QA process, community testing p
 
 ---
 
-This completes the full 10-guide development documentation suite for Uplink Next Generation. The documentation foundation is now complete — the next step is scaffolding the actual codebase and beginning implementation, starting with the monorepo setup and core UI framework.
+This completes the full 10-guide development documentation suite for Voidlink. The documentation foundation is now complete — the next step is scaffolding the actual codebase and beginning implementation, starting with the monorepo setup and core UI framework.

@@ -11,6 +11,7 @@ const mockNode = (tier: number): NetworkNode => ({
   isBreached: false,
   isScanned: false,
   isActive: true,
+  isLogWiped: false,
   services: [],
   files: [],
   connectedTo: [],

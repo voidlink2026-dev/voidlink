@@ -2,7 +2,18 @@ export type PlayerId = string
 
 export type Specialization = 'ghost' | 'brute' | 'social' | 'architect'
 
-export type FactionId = 'uplink_international' | 'arunmor' | 'revelation' | 'underground' | string
+export type BounceNodeTier = 1 | 2 | 3
+
+export interface BounceNode {
+  id: string
+  label: string
+  region: string
+  tier: BounceNodeTier
+  logStatus: 'clean' | 'dirty' | 'traced'
+  addedAt: number // unix ms
+}
+
+export type FactionId = 'voidlink_international' | 'arunmor' | 'revelation' | 'underground' | string
 
 export interface FactionStanding {
   factionId: FactionId
@@ -37,6 +48,7 @@ export interface PlayerProfile {
   id: PlayerId
   username: string
   handle: string
+  email: string
   avatarId: string
   createdAt: number // unix ms
   lastSeenAt: number
@@ -50,6 +62,8 @@ export interface PlayerProfile {
   completedMissions: string[]
   activeFlags: Record<string, boolean | string | number> // narrative state flags
   stats: PlayerStats
+  bounceLibrary: BounceNode[]
+  faction: FactionData | null
 }
 
 export interface PlayerStats {
@@ -60,4 +74,17 @@ export interface PlayerStats {
   creditsEarned: number
   creditsSpent: number
   hoursPlayed: number
+  xp: number
+  level: number
+}
+
+export interface FactionData {
+  id: string
+  name: string
+  tag: string       // e.g. [NULL] — max 6 chars
+  description: string
+  createdAt: number
+  founderHandle: string
+  memberHandles: string[]
+  inviteCode: string
 }

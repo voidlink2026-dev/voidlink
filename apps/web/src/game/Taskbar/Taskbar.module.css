@@ -1,7 +1,7 @@
 .taskbar {
-  height: 42px;
-  background: #0d0d0d;
-  border-top: 1px solid #1e1e1e;
+  height: 40px;
+  background: var(--color-surface, rgba(6, 6, 6, 0.97));
+  border-top: 1px solid var(--color-border, #1e1e1e);
   display: flex;
   align-items: center;
   gap: 0;
@@ -10,13 +10,25 @@
   font-size: 11px;
   z-index: 500;
   position: relative;
+  backdrop-filter: blur(4px);
+}
+
+/* Thin green top accent */
+.taskbar::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(57,255,20,0.4) 20%, rgba(57,255,20,0.4) 80%, transparent 100%);
+  pointer-events: none;
 }
 
 /* ── App launcher ──────────────────────────────── */
 .launcher {
   display: flex;
   align-items: stretch;
-  border-right: 1px solid #1e1e1e;
+  border-right: 1px solid var(--color-border, #1a1a1a);
   flex-shrink: 0;
   height: 100%;
 }
@@ -27,8 +39,8 @@
   padding: 0 14px;
   background: transparent;
   border: none;
-  border-right: 1px solid #1a1a1a;
-  color: #555;
+  border-right: 1px solid var(--color-border, #161616);
+  color: var(--color-text-muted, #606060);
   font-family: inherit;
   font-size: 10px;
   font-weight: 700;
@@ -39,39 +51,40 @@
 }
 
 .launchBtn:hover:not(:disabled) {
-  color: #ccc;
-  background: rgba(255,255,255,0.04);
+  color: var(--color-text, #d4d4d4);
+  background: rgba(127, 127, 127, 0.08);
 }
 
 .launchBtn:focus-visible {
-  outline: 2px solid #39ff14;
+  outline: 1px solid #39ff14;
   outline-offset: -2px;
 }
 
 .launchBtn:disabled {
-  color: #2a2a2a;
+  color: #505050;
   cursor: not-allowed;
 }
 
 .launchBtnOpen {
-  color: #888;
+  color: #909090;
 }
 
 .launchBtnOpen:hover:not(:disabled) {
   color: #39ff14;
+  text-shadow: 0 0 8px rgba(57,255,20,0.5);
 }
 
-/* green dot under open apps */
+/* Green dot under open apps */
 .openDot {
   position: absolute;
-  bottom: 5px;
+  bottom: 4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
   background: #39ff14;
-  box-shadow: 0 0 4px #39ff14;
+  box-shadow: 0 0 5px #39ff14;
 }
 
 /* ── Open window strip ─────────────────────────── */
@@ -79,21 +92,22 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   padding: 0 8px;
   overflow: hidden;
 }
 
 .winBtn {
-  height: 26px;
+  height: 24px;
   padding: 0 10px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid #222;
+  background: rgba(127,127,127,0.04);
+  border: 1px solid var(--color-border, #1e1e1e);
   border-radius: 2px;
-  color: #555;
+  color: var(--color-text-muted, #606060);
   font-family: inherit;
-  font-size: 10px;
-  letter-spacing: 0.06em;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   cursor: pointer;
   white-space: nowrap;
   max-width: 160px;
@@ -103,36 +117,49 @@
   flex-shrink: 0;
 }
 
-.winBtn:hover { border-color: #444; color: #aaa; }
+.winBtn:hover { border-color: var(--color-text-dim, #383838); color: var(--color-text-muted, #aaa); }
 
 .winBtnActive {
-  border-color: rgba(57,255,20,0.5);
-  color: #39ff14;
+  border-color: var(--color-green, rgba(57,255,20,0.45));
+  color: var(--color-green, #39ff14);
   background: rgba(57,255,20,0.05);
+  text-shadow: var(--glow-green, 0 0 6px rgba(57,255,20,0.3));
 }
 
 .winBtnMinimized {
-  opacity: 0.5;
+  opacity: 0.45;
   border-style: dashed;
 }
 
-.winBtn:focus-visible { outline: 2px solid #39ff14; outline-offset: 1px; }
+.winBtn:focus-visible { outline: 1px solid #39ff14; outline-offset: 1px; }
 
 /* ── Right side ────────────────────────────────── */
 .right {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 12px;
-  border-left: 1px solid #1e1e1e;
+  gap: 10px;
+  padding: 0 10px;
+  border-left: 1px solid var(--color-border, #1a1a1a);
   flex-shrink: 0;
   height: 100%;
+  max-width: 500px;
+}
+
+.gameClock {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--color-cyan, #00e5ff);
+  opacity: 0.65;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .traceBar { width: 180px; padding: 0; }
 
 .noTrace {
-  color: #2a2a2a;
+  color: var(--color-text-dim, #383838);
   font-size: 10px;
   letter-spacing: 0.06em;
   width: 180px;
@@ -147,6 +174,119 @@
   flex-shrink: 0;
 }
 
-.handle { color: #39ff14; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
-.credits { color: #ff9900; font-size: 10px; }
-.rep { color: #555; font-size: 10px; }
+.handle  {
+  color: var(--color-green, #39ff14);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-shadow: var(--glow-green, 0 0 8px rgba(57,255,20,0.35));
+}
+.credits { color: var(--color-amber, #ffaa00); font-size: 10px; }
+.rep     { color: var(--color-text-muted, #707070); font-size: 10px; }
+
+.resetBtn {
+  height: 100%;
+  padding: 0 12px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--color-border, #1a1a1a);
+  color: var(--color-text-dim, #383838);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.resetBtn:hover {
+  color: var(--color-text-muted, #909090);
+  background: rgba(127, 127, 127, 0.08);
+}
+
+.settingsBtn {
+  height: 100%;
+  padding: 0 12px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--color-border, #1a1a1a);
+  color: var(--color-text-dim, #454545);
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.settingsBtn:hover { color: var(--color-cyan, #00e5ff); background: rgba(0, 229, 255, 0.05); }
+.settingsBtn:focus-visible { outline: 1px solid var(--color-cyan, #00e5ff); outline-offset: -2px; }
+
+.logoutBtn {
+  height: 100%;
+  padding: 0 14px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--color-border, #1a1a1a);
+  color: var(--color-text-dim, #383838);
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logoutBtn:hover:not(:disabled) {
+  color: var(--color-red, #ff3333);
+  background: rgba(255, 51, 51, 0.08);
+}
+
+.logoutBtn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+/* ── World events strip ────────────────────────── */
+.worldEvents {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  border-left: 1px solid var(--color-border, #1a1a1a);
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.worldPill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  cursor: default;
+  opacity: 0.85;
+}
+
+.pillPulse {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.pillGood   { color: #39ff14; border-color: rgba(57,255,20,0.35); background: rgba(57,255,20,0.06); }
+.pillBad    { color: #ff3333; border-color: rgba(255,51,51,0.35);  background: rgba(255,51,51,0.06); }
+.pillShop   { color: #ffaa00; border-color: rgba(255,170,0,0.35);  background: rgba(255,170,0,0.06); }
+.pillReward { color: #00e5ff; border-color: rgba(0,229,255,0.35);  background: rgba(0,229,255,0.06); }
+.pillRival  { color: #ff6b35; border-color: rgba(255,107,53,0.35); background: rgba(255,107,53,0.06); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 3px currentColor; }
+  50%       { opacity: 0.25; box-shadow: none; }
+}

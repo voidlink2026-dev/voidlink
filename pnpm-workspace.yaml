@@ -2,7 +2,7 @@ packages:
   - 'apps/*'
   - 'libs/*'
 allowBuilds:
-  electron: set this to true or false
+  electron: true
   esbuild: set this to true or false
 onlyBuiltDependencies:
   - electron

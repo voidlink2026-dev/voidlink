@@ -13,6 +13,12 @@
   align-items: center;
 }
 
+.labelRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .statusText {
   letter-spacing: 0.1em;
   font-weight: 700;
@@ -20,6 +26,17 @@
 
 .percent {
   color: #888;
+}
+
+.rate {
+  font-size: 9px;
+  color: #555;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.rateHigh {
+  color: #ff6600;
 }
 
 .track {
@@ -79,6 +96,32 @@
 @keyframes pulse-border {
   0%, 100% { border-color: #ff2d20; }
   50%       { border-color: #440000; }
+}
+
+/* Bounce hop indicators */
+.hopsRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.hop {
+  width: 12px;
+  height: 5px;
+  border-radius: 1px;
+  transition: background 0.2s;
+}
+
+.hopIdle    { background: #2a2a2a; border: 1px solid #383838; }
+.hopActive  { background: #00cfff; box-shadow: 0 0 6px rgba(0,207,255,0.5); }
+.hopBurned  { background: #ff9900; opacity: 0.5; }
+
+.hopLabel {
+  font-size: 9px;
+  color: #555;
+  letter-spacing: 0.08em;
+  margin-left: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -6,7 +6,7 @@
   gap: 0;
 }
 
-.empty { color: #444; font-size: 12px; padding: 12px; }
+.empty { color: #686868; font-size: 12px; padding: 12px; }
 
 /* Header */
 .header {
@@ -19,9 +19,9 @@
 }
 
 .balance { display: flex; flex-direction: column; gap: 2px; }
-.balanceLabel { font-size: 9px; color: #444; letter-spacing: 0.1em; text-transform: uppercase; }
+.balanceLabel { font-size: 9px; color: #686868; letter-spacing: 0.1em; text-transform: uppercase; }
 .balanceValue { font-size: 18px; color: #ff9900; font-weight: 700; }
-.repLine { font-size: 10px; color: #444; }
+.repLine { font-size: 10px; color: #686868; }
 
 /* Tabs */
 .tabs {
@@ -36,7 +36,7 @@
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  color: #444;
+  color: #686868;
   font-family: inherit;
   font-size: 10px;
   font-weight: 700;
@@ -71,7 +71,7 @@
   transition: border-color 0.12s;
 }
 
-.item:hover { border-color: #2a2a2a; }
+.item:hover { border-color: #505050; }
 .itemOwned { opacity: 0.5; }
 .itemLocked { opacity: 0.35; }
 
@@ -101,7 +101,7 @@
 
 .itemDesc {
   font-size: 10px;
-  color: #555;
+  color: #787878;
   line-height: 1.4;
 }
 

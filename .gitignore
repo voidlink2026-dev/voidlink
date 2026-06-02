@@ -12,3 +12,29 @@ Thumbs.db
 coverage/
 .turbo/
 out/
+
+# Source/scratch assets (final exports live under apps/web/public/audio/)
+audio i added/
+*.bak
+*.swp
+
+# Electron build outputs
+apps/desktop/out/
+apps/desktop/dist/
+apps/desktop/release/
+
+# IDE / editor
+.idea/
+*.iml
+.history/
+
+# OS
+ehthumbs.db
+Desktop.ini
+
+# Local AI/editor state
+.claude/
+.cursor/
+
+# Build cache
+.vite/

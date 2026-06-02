@@ -18,7 +18,7 @@
 
 ---
 
-This guide covers all real-time and asynchronous multiplayer systems, social features, competitive infrastructure, and community tools for Uplink Next Generation.
+This guide covers all real-time and asynchronous multiplayer systems, social features, competitive infrastructure, and community tools for Voidlink.
 
 ---
 
@@ -50,7 +50,7 @@ This guide covers all real-time and asynchronous multiplayer systems, social fea
 ### 5.2.2. Reputation & Ranking
 - Global rank (Elo-based, recalculated after each competitive event)
 - Specialization ranks: Ghost (stealth), Brute (brute-force), Social (social engineering), Architect (network building)
-- Faction standing: standing with Uplink International, Arunmor, Revelation, and player-founded factions
+- Faction standing: standing with Voidlink International, Arunmor, Revelation, and player-founded factions
 - Seasonal rank resets with carry-over bonuses for top performers
 
 ### 5.2.3. Friend System

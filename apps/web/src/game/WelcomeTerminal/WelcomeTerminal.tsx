@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Terminal } from '@uplink/ui'
-import type { TerminalLine } from '@uplink/ui'
+import { Terminal } from '@voidlink/ui'
+import type { TerminalLine } from '@voidlink/ui'
 import { useGameStore } from '../../store/gameStore.ts'
 
 export function WelcomeTerminal() {

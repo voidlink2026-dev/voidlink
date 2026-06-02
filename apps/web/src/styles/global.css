@@ -1,5 +1,5 @@
 /* ============================================================
-   UPLINK: NEXT GENERATION – Global Styles
+   VOIDLINK – Global Styles
    ============================================================ */
 
 *, *::before, *::after {
@@ -10,22 +10,24 @@
 
 :root {
   /* Colours */
-  --color-bg:          #0a0a0a;
-  --color-surface:     #111111;
-  --color-elevated:    #1a1a1a;
-  --color-overlay:     #222222;
-  --color-border:      #2a2a2a;
+  --color-bg:          #050505;
+  --color-surface:     #0d0d0d;
+  --color-elevated:    #161616;
+  --color-overlay:     #1e1e1e;
+  --color-border:      #252525;
   --color-border-active: #39ff14;
 
   --color-green:       #39ff14;
-  --color-green-dim:   #1a7a00;
-  --color-cyan:        #00cfff;
-  --color-amber:       #ff9900;
-  --color-red:         #ff2d20;
+  --color-green-dim:   #1d6b00;
+  --color-green-glow:  rgba(57, 255, 20, 0.35);
+  --color-cyan:        #00e5ff;
+  --color-amber:       #ffaa00;
+  --color-red:         #ff3333;
+  --color-purple:      #bf5fff;
 
-  --color-text:        #e8e8e8;
-  --color-text-muted:  #888888;
-  --color-text-dim:    #444444;
+  --color-text:        #d4d4d4;
+  --color-text-muted:  #909090;
+  --color-text-dim:    #606060;
 
   /* Typography */
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
@@ -33,18 +35,23 @@
   --font-body:    'Inter', system-ui, sans-serif;
 
   /* Glow shadows */
-  --glow-green: 0 0 8px rgba(57, 255, 20, 0.4), 0 0 20px rgba(57, 255, 20, 0.15);
-  --glow-cyan:  0 0 8px rgba(0, 207, 255, 0.4), 0 0 20px rgba(0, 207, 255, 0.15);
-  --glow-red:   0 0 8px rgba(255, 45, 32, 0.5);
+  --glow-green: 0 0 8px rgba(57, 255, 20, 0.5), 0 0 24px rgba(57, 255, 20, 0.2);
+  --glow-cyan:  0 0 8px rgba(0, 229, 255, 0.5), 0 0 24px rgba(0, 229, 255, 0.2);
+  --glow-red:   0 0 8px rgba(255, 51, 51, 0.6), 0 0 20px rgba(255, 51, 51, 0.2);
+  --glow-amber: 0 0 8px rgba(255, 170, 0, 0.5), 0 0 20px rgba(255, 170, 0, 0.15);
 
   /* Scrollbar */
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) var(--color-bg);
+  scrollbar-color: #2a2a2a transparent;
 }
 
-::-webkit-scrollbar         { width: 4px; height: 4px; }
-::-webkit-scrollbar-track   { background: var(--color-bg); }
-::-webkit-scrollbar-thumb   { background: var(--color-border); border-radius: 2px; }
+/* Reserve scrollbar gutter so it never overlaps content */
+* { scrollbar-gutter: stable; }
+
+::-webkit-scrollbar         { width: 5px; height: 5px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: #4a4a4a; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #39ff14; }
 
 html, body {
   height: 100%;
@@ -54,7 +61,7 @@ html, body {
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  overflow: hidden; /* Desktop app — no page scroll */
+  overflow: hidden;
 }
 
 #root {
@@ -64,48 +71,186 @@ html, body {
   overflow: hidden;
 }
 
-/* CRT scanline overlay */
+/* ── CRT scanline overlay ─────────────────────────── */
 #root::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-  z-index: 9999;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.06) 2px,
+      rgba(0, 0, 0, 0.06) 4px
+    );
+  z-index: 9998;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  #root::after { display: none; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+/* Moving scan line */
+#root::before {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(
+    0deg,
+    transparent 0%,
+    rgba(57, 255, 20, 0.012) 50%,
+    transparent 100%
+  );
+  animation: scanSweep 8s linear infinite;
+  pointer-events: none;
+  z-index: 9997;
+}
+
+@keyframes scanSweep {
+  0%   { top: -120px; }
+  100% { top: calc(100vh + 120px); }
+}
+
+/* Occasional screen flicker */
+@keyframes screenFlicker {
+  0%, 96%, 100% { opacity: 1; }
+  97%           { opacity: 0.94; }
+  98%           { opacity: 1; }
+  99%           { opacity: 0.97; }
+}
+
+/* ── Text glitch ──────────────────────────────────── */
+@keyframes glitch {
+  0%, 88%, 100% {
+    transform: none;
+    text-shadow: var(--glow-green);
+    clip-path: none;
+  }
+  89% {
+    transform: skewX(-6deg) translateX(2px);
+    text-shadow: 3px 0 #ff3333, -3px 0 #00e5ff;
+  }
+  90% {
+    clip-path: inset(35% 0 40% 0);
+    transform: translateX(-3px);
+    text-shadow: -3px 0 #ff3333, 3px 0 #00e5ff;
+  }
+  91% {
+    clip-path: inset(70% 0 10% 0);
+    transform: translateX(4px);
+  }
+  92% {
+    clip-path: none;
+    transform: none;
+    text-shadow: 0 0 30px rgba(57, 255, 20, 0.8), 0 0 60px rgba(57, 255, 20, 0.3);
   }
 }
 
-/* Focus ring reset — use our own */
+/* ── Element flicker ──────────────────────────────── */
+@keyframes elementFlicker {
+  0%, 90%, 100% { opacity: 1; }
+  91%           { opacity: 0.6; }
+  92%           { opacity: 1; }
+  95%           { opacity: 0.8; }
+  96%           { opacity: 1; }
+}
+
+/* ── Pulse glow ───────────────────────────────────── */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(57, 255, 20, 0.3); }
+  50%      { box-shadow: 0 0 14px rgba(57, 255, 20, 0.6), 0 0 30px rgba(57, 255, 20, 0.2); }
+}
+
+/* ── Blink cursor ─────────────────────────────────── */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ── Type-in reveal ───────────────────────────────── */
+@keyframes typeIn {
+  from { max-width: 0; }
+  to   { max-width: 100%; }
+}
+
+/* ── Focus ring ───────────────────────────────────── */
 :focus { outline: none; }
 :focus-visible {
-  outline: 2px solid var(--color-green);
+  outline: 1px solid var(--color-green);
   outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.12);
 }
 
 a {
   color: var(--color-cyan);
   text-decoration: none;
+  transition: text-shadow 0.15s;
 }
-a:hover { text-decoration: underline; }
+a:hover {
+  text-shadow: var(--glow-cyan);
+}
 
 button, input, select, textarea {
   font: inherit;
 }
 
 ::selection {
-  background: rgba(57, 255, 20, 0.25);
+  background: rgba(57, 255, 20, 0.2);
   color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root::before, #root::after { display: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Light mode global overrides ──────────────────────────────────────────── */
+/* These patch CSS-module components that use hardcoded dark hex values.       */
+[data-theme="light"] #root::after,
+[data-theme="light"] #root::before { display: none; }
+
+/* Taskbar */
+[data-theme="light"] [role="toolbar"] {
+  background: rgba(240, 242, 244, 0.97) !important;
+  border-top-color: #c8cdd4 !important;
+  color: var(--color-text) !important;
+}
+[data-theme="light"] [role="toolbar"]::before {
+  background: linear-gradient(90deg, transparent 0%, rgba(0,112,168,0.3) 20%, rgba(0,112,168,0.3) 80%, transparent 100%) !important;
+}
+
+/* Window chrome (fallback for lib components) */
+[data-theme="light"] [role="dialog"] {
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12) !important;
+  color: var(--color-text) !important;
+}
+
+/* Inputs */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background: var(--color-elevated) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+[data-theme="light"] input::placeholder { color: var(--color-text-muted) !important; }
+
+/* Scrollbar */
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #c0c4cc; }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: var(--color-cyan); }
+
+/* Focus ring */
+[data-theme="light"] :focus-visible {
+  outline-color: var(--color-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 112, 168, 0.12);
+}
+
+/* Selection */
+[data-theme="light"] ::selection {
+  background: rgba(0, 112, 168, 0.18);
 }

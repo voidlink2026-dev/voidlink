@@ -11,7 +11,7 @@
 
 ---
 
-This guide ensures a world-class, accessible, and visually stunning UI/UX for Uplink Next Generation.
+This guide ensures a world-class, accessible, and visually stunning UI/UX for Voidlink.
 
 ---
 

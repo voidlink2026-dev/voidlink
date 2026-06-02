@@ -1,0 +1,135 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  backdrop-filter: blur(3px);
+}
+
+.panel {
+  width: 720px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #0e0e0e;
+  border: 1px solid rgba(255, 153, 0, 0.4);
+  border-radius: 4px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 60px rgba(255, 153, 0, 0.08), 0 12px 40px rgba(0,0,0,0.9);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.headerIcon {
+  font-size: 28px;
+  color: #ff9900;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff9900;
+  letter-spacing: 0.12em;
+}
+
+.headerSub {
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+.divider {
+  height: 1px;
+  background: #1e1e1e;
+  flex-shrink: 0;
+}
+
+/* 2x2 grid of spec cards */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: #0d0d0d;
+  border: 1px solid #1e1e1e;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.card:hover { transform: translateY(-1px); }
+.card:active { transform: translateY(0); }
+
+.card_ghost:hover   { border-color: rgba(57,255,20,0.5);  background: rgba(57,255,20,0.03);  }
+.card_brute:hover   { border-color: rgba(255,45,32,0.5);  background: rgba(255,45,32,0.03);  }
+.card_social:hover  { border-color: rgba(0,207,255,0.5);  background: rgba(0,207,255,0.03);  }
+.card_architect:hover { border-color: rgba(255,153,0,0.5); background: rgba(255,153,0,0.03); }
+
+.cardName {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.card_ghost   .cardName { color: #39ff14; }
+.card_brute   .cardName { color: #ff2d20; }
+.card_social  .cardName { color: #00cfff; }
+.card_architect .cardName { color: #ff9900; }
+
+.cardTagline {
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.cardDesc {
+  font-size: 10px;
+  color: #787878;
+  line-height: 1.5;
+}
+
+.bonusList {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bonusItem {
+  font-size: 9px;
+  color: #888;
+  display: flex;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+.bonusDot { flex-shrink: 0; }
+
+.card_ghost   .bonusDot { color: #39ff14; }
+.card_brute   .bonusDot { color: #ff2d20; }
+.card_social  .bonusDot { color: #00cfff; }
+.card_architect .bonusDot { color: #ff9900; }

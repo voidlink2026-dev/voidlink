@@ -1,4 +1,4 @@
-import type { Mission, MissionDifficulty, MissionType } from '../types/mission.ts'
+import type { Mission, MissionDifficulty, MissionRequirements, MissionType } from '../types/mission.ts'
 import type { NetworkId } from '../types/network.ts'
 
 const CLIENTS = [
@@ -7,7 +7,7 @@ const CLIENTS = [
   { handle: 'Cipher', avatar: 'avatar_cipher' },
   { handle: 'Zero_Cool', avatar: 'avatar_zero' },
   { handle: 'ARC_Internal', avatar: 'avatar_arc' },
-  { handle: 'UplinkSupport', avatar: 'avatar_uplink' },
+  { handle: 'VoidlinkSupport', avatar: 'avatar_voidlink' },
 ]
 
 const BRIEFING_TEMPLATES: Record<MissionType, string[]> = {
@@ -46,6 +46,24 @@ const BRIEFING_TEMPLATES: Record<MissionType, string[]> = {
   story: [],
 }
 
+// From GAME_DESIGN_MASTER.md §6.2
+const REQUIREMENTS_BY_DIFFICULTY: Record<number, MissionRequirements> = {
+  1:  { minCrackerLevel: 1, minCpuSpeed: 1.0, minReputation: 0 },
+  2:  { minCrackerLevel: 1, minCpuSpeed: 1.0, minReputation: 10 },
+  3:  { minCrackerLevel: 2, minCpuSpeed: 2.0, minReputation: 25 },
+  4:  { minCrackerLevel: 2, minCpuSpeed: 2.0, minReputation: 50 },
+  5:  { minCrackerLevel: 3, minCpuSpeed: 3.0, minReputation: 100 },
+  6:  { minCrackerLevel: 3, minCpuSpeed: 3.0, minReputation: 200 },
+  7:  { minCrackerLevel: 4, minCpuSpeed: 4.0, minReputation: 400 },
+  8:  { minCrackerLevel: 4, minCpuSpeed: 4.0, minReputation: 750 },
+  9:  { minCrackerLevel: 5, minCpuSpeed: 5.0, minReputation: 1500 },
+  10: { minCrackerLevel: 5, minCpuSpeed: 5.0, minReputation: 3000 },
+}
+
+export function requirementsForDifficulty(difficulty: MissionDifficulty): MissionRequirements {
+  return REQUIREMENTS_BY_DIFFICULTY[difficulty] ?? REQUIREMENTS_BY_DIFFICULTY[1]
+}
+
 function seededRandom(seed: number) {
   let s = seed
   return () => {
@@ -71,6 +89,26 @@ export function generateContract(
 
   const id = `mission_${seed.toString(16)}`
 
+  const objectives = [
+    {
+      id: `obj_${id}_primary`,
+      description: buildPrimaryObjective(type),
+      isOptional: false,
+      isCompleted: false,
+      targetNetworkId,
+    },
+    ...(difficulty >= 4
+      ? [
+          {
+            id: `obj_${id}_stealth`,
+            description: 'Cover your tracks — wipe logs on every breached node before disconnecting',
+            isOptional: true,
+            isCompleted: false,
+          },
+        ]
+      : []),
+  ]
+
   return {
     id,
     type,
@@ -83,16 +121,9 @@ export function generateContract(
       subject: `Contract: ${type.replace(/_/g, ' ')} [${id.slice(-6)}]`,
       body,
     },
-    objectives: [
-      {
-        id: `obj_${id}_primary`,
-        description: buildPrimaryObjective(type),
-        isOptional: false,
-        isCompleted: false,
-        targetNetworkId,
-      },
-    ],
+    objectives,
     targetNetworkId,
+    requirements: requirementsForDifficulty(difficulty),
     reward: { credits, reputation },
     events: [],
     timeLimitSeconds: difficulty >= 7 ? 300 - difficulty * 10 : undefined,
