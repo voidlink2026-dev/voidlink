@@ -29,12 +29,13 @@ function maxCrackerLevel(player: PlayerProfile): number {
   return versions.length ? Math.max(...versions) : 0
 }
 
-function meetsRequirements(reqs: MissionRequirements, player: PlayerProfile) {
+function meetsRequirements(reqs: MissionRequirements, player: PlayerProfile, activeRouteLen: number) {
   return {
     cracker: maxCrackerLevel(player) >= reqs.minCrackerLevel,
     cpu:     player.hardware.cpuSpeed >= reqs.minCpuSpeed,
     rep:     player.reputation >= reqs.minReputation,
-    get all() { return this.cracker && this.cpu && this.rep },
+    relay:   activeRouteLen >= (reqs.minRelayHops ?? 0),
+    get all() { return this.cracker && this.cpu && this.rep && this.relay },
   }
 }
 
@@ -125,7 +126,8 @@ function MissionCard({
 }) {
   const { t } = useTranslation()
   const isStory = (mission as StoryMission).isStory === true
-  const reqs = meetsRequirements(mission.requirements, player)
+  const activeRouteLen = useGameStore((s) => s.activeRoute.length)
+  const reqs = meetsRequirements(mission.requirements, player, activeRouteLen)
 
   return (
     <div className={`${styles.card} ${isActive ? styles.cardActive : ''} ${isStory ? styles.cardStory : ''} ${!reqs.all && !isActive ? styles.cardLocked : ''}`}>
@@ -164,12 +166,21 @@ function MissionCard({
         <span className={reqs.rep ? styles.reqMet : styles.reqUnmet}>
           {reqs.rep ? '✓' : '✗'} REP {mission.requirements.minReputation}+
         </span>
+        {mission.requirements.minRelayHops && mission.requirements.minRelayHops > 0 && (
+          <span className={reqs.relay ? styles.reqMet : styles.reqUnmet}>
+            {reqs.relay ? '✓' : '✗'} RELAY ≥{mission.requirements.minRelayHops} HOPS
+          </span>
+        )}
       </div>
 
       {!isActive && (
         <div className={styles.acceptRow}>
           {!reqs.all && (
-            <span className={styles.upgradeHint}>Upgrade in SHOP to unlock</span>
+            <span className={styles.upgradeHint}>
+              {!reqs.relay && reqs.cracker && reqs.cpu && reqs.rep
+                ? `Build a ${mission.requirements.minRelayHops}-hop relay on WORLD MAP`
+                : 'Upgrade in SHOP to unlock'}
+            </span>
           )}
           <Button
             variant="primary"

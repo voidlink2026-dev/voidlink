@@ -1,6 +1,6 @@
 import { useGameStore } from './gameStore.ts'
 
-const SAVE_VERSION = 3  // v3: layout persistence (activeWindows + windowLastPositions)
+const SAVE_VERSION = 4  // v4: inbox persistence (M14h.6)
 const LEGACY_KEY = 'uplink_ng_save'  // original pre-rename key — kept for one-time migration
 const SAVE_PREFIX = 'voidlink_save_'
 const INDEX_KEY = 'voidlink_accounts'
@@ -11,6 +11,7 @@ interface SaveData {
   player: ReturnType<typeof useGameStore.getState>['player']
   missions: ReturnType<typeof useGameStore.getState>['missions']
   newsFeed: ReturnType<typeof useGameStore.getState>['newsFeed']
+  inbox?: ReturnType<typeof useGameStore.getState>['inbox']  // v4
   activeWorldEvents: ReturnType<typeof useGameStore.getState>['activeWorldEvents']
   nextWorldEventAt: ReturnType<typeof useGameStore.getState>['nextWorldEventAt']
   // v3 — desktop layout persistence
@@ -122,6 +123,7 @@ export function saveGame(): boolean {
       player: s.player,
       missions: s.missions.filter((m) => m.status !== 'active'),
       newsFeed: s.newsFeed,
+      inbox: s.inbox,
       activeWorldEvents: s.activeWorldEvents,
       nextWorldEventAt: s.nextWorldEventAt,
       // v3 — persist desktop layout so the player's arrangement survives logout
@@ -155,6 +157,7 @@ export function loadGame(handle: string): boolean {
       player: data.player,
       missions: data.missions ?? [],
       newsFeed: data.newsFeed ?? [],
+      inbox: data.inbox ?? [],
       activeWorldEvents: (data.activeWorldEvents ?? []).filter((e) => e.endsAt > now),
       nextWorldEventAt: data.nextWorldEventAt ?? null,
       activeWindows: restoredWindows,

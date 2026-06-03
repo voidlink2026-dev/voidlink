@@ -4,6 +4,8 @@ export type * from './types/network.ts'
 export type * from './types/mission.ts'
 export type * from './types/tools.ts'
 export type * from './types/world.ts'
+export type * from './types/email.ts'
+export { SEED_CONTACTS } from './types/email.ts'
 
 // Engine
 export * from './engine/trace.ts'

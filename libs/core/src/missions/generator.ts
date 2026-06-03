@@ -47,17 +47,21 @@ const BRIEFING_TEMPLATES: Record<MissionType, string[]> = {
 }
 
 // From GAME_DESIGN_MASTER.md §6.2
+// M14h.5 — minRelayHops added. Difficulty-1/2 missions are still ungated so
+// brand-new operatives aren't locked out before they've earned a single
+// bounce node, but everything from D3 up requires building a relay chain
+// proportional to the mission's heat.
 const REQUIREMENTS_BY_DIFFICULTY: Record<number, MissionRequirements> = {
-  1:  { minCrackerLevel: 1, minCpuSpeed: 1.0, minReputation: 0 },
-  2:  { minCrackerLevel: 1, minCpuSpeed: 1.0, minReputation: 10 },
-  3:  { minCrackerLevel: 2, minCpuSpeed: 2.0, minReputation: 25 },
-  4:  { minCrackerLevel: 2, minCpuSpeed: 2.0, minReputation: 50 },
-  5:  { minCrackerLevel: 3, minCpuSpeed: 3.0, minReputation: 100 },
-  6:  { minCrackerLevel: 3, minCpuSpeed: 3.0, minReputation: 200 },
-  7:  { minCrackerLevel: 4, minCpuSpeed: 4.0, minReputation: 400 },
-  8:  { minCrackerLevel: 4, minCpuSpeed: 4.0, minReputation: 750 },
-  9:  { minCrackerLevel: 5, minCpuSpeed: 5.0, minReputation: 1500 },
-  10: { minCrackerLevel: 5, minCpuSpeed: 5.0, minReputation: 3000 },
+  1:  { minCrackerLevel: 1, minCpuSpeed: 1.0, minReputation: 0,    minRelayHops: 0 },
+  2:  { minCrackerLevel: 1, minCpuSpeed: 1.0, minReputation: 10,   minRelayHops: 1 },
+  3:  { minCrackerLevel: 2, minCpuSpeed: 2.0, minReputation: 25,   minRelayHops: 2 },
+  4:  { minCrackerLevel: 2, minCpuSpeed: 2.0, minReputation: 50,   minRelayHops: 3 },
+  5:  { minCrackerLevel: 3, minCpuSpeed: 3.0, minReputation: 100,  minRelayHops: 4 },
+  6:  { minCrackerLevel: 3, minCpuSpeed: 3.0, minReputation: 200,  minRelayHops: 5 },
+  7:  { minCrackerLevel: 4, minCpuSpeed: 4.0, minReputation: 400,  minRelayHops: 6 },
+  8:  { minCrackerLevel: 4, minCpuSpeed: 4.0, minReputation: 750,  minRelayHops: 7 },
+  9:  { minCrackerLevel: 5, minCpuSpeed: 5.0, minReputation: 1500, minRelayHops: 8 },
+  10: { minCrackerLevel: 5, minCpuSpeed: 5.0, minReputation: 3000, minRelayHops: 9 },
 }
 
 export function requirementsForDifficulty(difficulty: MissionDifficulty): MissionRequirements {

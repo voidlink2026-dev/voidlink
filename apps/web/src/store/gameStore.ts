@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization } from '@voidlink/core'
+import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage } from '@voidlink/core'
 import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
@@ -199,6 +199,7 @@ interface GameState {
   rivalSpawnAt: number | null
   terminalLines: TerminalLine[]
   newsFeed: NewsItem[]
+  inbox: EmailMessage[]  // M14h.6 — encrypted email inbox
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
   missionResult: 'success' | 'fail' | 'abandoned' | null
@@ -279,6 +280,14 @@ interface GameActions {
   tickGameLoop: (deltaMs: number) => void
   logTerminal: (text: string, type?: string) => void
   logout: () => void
+
+  // M14h.6 — encrypted email inbox
+  sendInboxMessage: (msg: Omit<EmailMessage, 'id' | 'receivedAt' | 'isRead'>) => void
+  markInboxRead: (id: string) => void
+  toggleInboxStar: (id: string) => void
+  deleteInboxMessage: (id: string) => void
+  markAllInboxRead: () => void
+  seedStarterInbox: () => void
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -298,6 +307,7 @@ export const useGameStore = create<GameState & GameActions>()(
     rivalSpawnAt: null,
     terminalLines: [],
     newsFeed: [],
+    inbox: [],
     activeWorldEvents: [],
     nextWorldEventAt: null,
     missionResult: null,
@@ -394,6 +404,23 @@ export const useGameStore = create<GameState & GameActions>()(
         mission.status = 'active'
         mission.assignedTo = s.player?.id
         mission.startedAt = Date.now()
+
+        // M14h.6 — dispatch a contract email to the encrypted inbox so the
+        // briefing has a permanent home outside the Mission Board.
+        s.inbox.unshift({
+          id: `mail_mission_${mission.id}_${Date.now()}`,
+          receivedAt: Date.now(),
+          isRead: false,
+          encrypted: true,
+          category: 'mission',
+          from: mission.briefing.clientHandle,
+          fromFingerprint: mission.briefing.clientHandle.split('').map(c =>
+            (c.charCodeAt(0) % 16).toString(16).toUpperCase()
+          ).join('').padEnd(16, 'F').match(/.{4}/g)!.slice(0, 4).join(' '),
+          subject: mission.briefing.subject,
+          body: `${mission.briefing.body}\n\n— Reward: ${mission.reward.credits.toLocaleString()} Cr + ${mission.reward.reputation} REP\n— Difficulty: ${mission.difficulty}\n— Contract ID: ${mission.id}`,
+        })
+        if (s.inbox.length > 100) s.inbox.length = 100
         // Connection-effect grace period: pause time-based trace accumulation
         // until the dial-up animation finishes (~3.5s). Per-action spikes still apply.
         s.connectingUntil = Date.now() + 3500
@@ -1759,6 +1786,73 @@ export const useGameStore = create<GameState & GameActions>()(
         }
       }),
 
+    // ── M14h.6 — encrypted email inbox ─────────────────────────────────────
+    sendInboxMessage: (msg) =>
+      set((s) => {
+        s.inbox.unshift({
+          ...msg,
+          id: `mail_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+          receivedAt: Date.now(),
+          isRead: false,
+        })
+        // Keep last 100 to bound storage
+        if (s.inbox.length > 100) s.inbox.length = 100
+      }),
+    markInboxRead: (id) =>
+      set((s) => {
+        const m = s.inbox.find((x) => x.id === id)
+        if (m) m.isRead = true
+      }),
+    toggleInboxStar: (id) =>
+      set((s) => {
+        const m = s.inbox.find((x) => x.id === id)
+        if (m) m.isStarred = !m.isStarred
+      }),
+    deleteInboxMessage: (id) =>
+      set((s) => { s.inbox = s.inbox.filter((m) => m.id !== id) }),
+    markAllInboxRead: () =>
+      set((s) => { s.inbox.forEach((m) => { m.isRead = true }) }),
+    seedStarterInbox: () =>
+      set((s) => {
+        if (s.inbox.length > 0) return
+        const handle = s.player?.handle ?? 'OPERATIVE'
+        const now = Date.now()
+        s.inbox = [
+          {
+            id: 'mail_seed_welcome',
+            receivedAt: now - 90_000,
+            from: 'VoidLink Dispatch',
+            fromFingerprint: '0001 0001 V01D L1NK',
+            subject: `Welcome to VoidLink, ${handle}`,
+            body: `Operative ${handle},\n\nYour account has been provisioned. All contract dispatch and faction correspondence will be delivered here in PGP-style encrypted form.\n\nMessages marked ENCRYPTED auto-decrypt when opened, using the key derived from your handle. Do not share fingerprints.\n\n— VoidLink Dispatch`,
+            category: 'system',
+            isRead: false,
+            encrypted: true,
+          },
+          {
+            id: 'mail_seed_cipher',
+            receivedAt: now - 60_000,
+            from: 'CIPHER',
+            fromFingerprint: 'C19H 3R20 7B83 D6CC',
+            subject: 'word of advice',
+            body: `New blood. Listen — three things will keep you alive longer than upgrades:\n\n  1. Build your RELAY CHAIN before every job. No exceptions.\n  2. Wipe your logs. Heat sticks to corps you didn't clean.\n  3. Don't bank where you breach. Pacific National has a beautiful APR and a memory like an elephant.\n\nWatch yourself out there.\n\n— C.`,
+            category: 'contact',
+            isRead: false,
+            encrypted: true,
+          },
+          {
+            id: 'mail_seed_sysops',
+            receivedAt: now - 30_000,
+            from: 'sys.ops',
+            fromFingerprint: '5Y50 P5DM 1NK4 N0NE',
+            subject: '[AUTOMATED] Account billing — Cr 0.00',
+            body: `Your monthly VoidLink subscription has been waived for new operatives during your 30-day onboarding period.\n\nNo further action required. This message is automated; do not reply.`,
+            category: 'system',
+            isRead: false,
+          },
+        ]
+      }),
+
     logTerminal: (text, type = 'output') =>
       set((s) => {
         s.terminalLines.push({
@@ -2448,6 +2542,7 @@ export const useGameStore = create<GameState & GameActions>()(
         rivalSpawnAt: null,
         terminalLines: [],
         newsFeed: [],
+        inbox: [],
         activeWorldEvents: [],
         nextWorldEventAt: null,
         missionResult: null,

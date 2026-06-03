@@ -20,6 +20,7 @@ const APPS: AppDef[] = [
   { id: 'terminal',    label: 'TERMINAL',   title: 'SYSTEM TERMINAL',    component: 'WelcomeTerminal',  width: 520, height: 300 },
   { id: 'missions',    label: 'MISSIONS',   title: 'MISSION BOARD',       component: 'MissionBoard',     width: 560, height: 480 },
   { id: 'news',        label: 'NEWS',       title: 'VOIDLINK NEWSFEED',   component: 'NewsFeed',         width: 500, height: 300 },
+  { id: 'inbox',       label: 'INBOX',      title: 'ENCRYPTED INBOX',     component: 'EmailInbox',       width: 720, height: 480 },
   { id: 'shop',        label: 'SHOP',       title: 'UPGRADE SHOP',        component: 'UpgradeShop',      width: 1280, height: 620 },
   { id: 'profile',     label: 'PROFILE',    title: 'OPERATIVE PROFILE',   component: 'ProfileWindow',    width: 480, height: 560 },
   { id: 'world-map',   label: 'WORLD MAP',  title: 'GLOBAL NETWORK MAP',  component: 'WorldMap',         width: 820, height: 580 },

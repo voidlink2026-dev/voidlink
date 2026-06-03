@@ -22,6 +22,7 @@ export interface MissionRequirements {
   minCrackerLevel: number  // minimum cracker tool level in player inventory
   minCpuSpeed: number      // minimum hardware.cpuSpeed
   minReputation: number    // minimum player.reputation
+  minRelayHops?: number    // M14h.5 — minimum active relay-chain hops required
 }
 
 export interface MissionReward {
