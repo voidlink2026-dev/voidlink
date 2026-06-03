@@ -654,12 +654,15 @@ A journalist contacts you through channels only a ghost could find. They have a 
 - **Tabbed UI** — BankWindow now has dynamic Savings / Loan / Trade / Stocks tabs filtered by bank's available features.
 - **Market simulation** — `tickMarket` runs every 1.5s alongside the existing game loop; updates stock prices and DC exchange rate.
 
-**Still planned (future milestones):**
-- **Defaulting** — if loan principal grows unchecked beyond a threshold, trigger a hunter contract from the bank
-- **Stock event linkage** — sabotage missions against a corp should drop its stock price (short-sellers profit). Wire `tickMarket` to consume mission events.
+**Shipped in M14e (2199-01-01):**
+- **Defaulting** ✅ — when loan principal exceeds 5× player's liquid assets, -50 REP + news article + flag `loan_default_<bankId>`. Hunter contracts (M15+) will key off this flag.
+- **Stock event linkage** ✅ — completing a `network_sabotage` mission drops a random stock 15% with terminal log
+- **MARKET CRASH world event** ✅ — drops all stocks ~6% per tick down to 40% of base; savings APR effectively zero during the event
+
+**Still planned:**
 - **Heat laundering** — offshore deposits should actually reduce the player's heat per corporation (currently flavour only)
-- **MARKET CRASH world event** — drops all stocks 30% + caps APR to 0 for its duration
 - **Margin & options** — leveraged stock positions, put/call contracts (Tier 2)
+- **Stock event by corp target** — currently the dropped stock is random; tying it to the mission's actual corporate target requires corp→ticker mapping
 
 ---
 
@@ -1121,7 +1124,7 @@ Architecture for vertical layout:
 | **M14b** ✅ | Banking foundations: bank window, deposits/withdrawals, savings interest | Tier 1 | SHIPPED 2199-01-01 |
 | **M14c** ✅ | Banking expansion: loans, Cr↔Darkcoin trading, equities (4 stocks), offshore banks (Cayman + Zurich), tabbed bank UI, market simulation | Tier 1 | SHIPPED 2199-01-01 |
 | **M14d** ✅ | UX & balance: mandatory log wipe + WIPE ALL button, OPEN WORLD MAP from HI, connection effect overlay (dial-tone + animated chain), clickable Corp/Gov/Underground targets with TARGET INTEL window, sabotage router injection, rep gating rebalanced | Tier 1 | SHIPPED 2199-01-01 |
-| **M14e** | Banking polish: stock-event linkage (sabotage → price drop), heat laundering, MARKET CRASH world event, loan defaulting + hunter contracts | Tier 1 | 2 |
+| **M14e** ✅ | Banking polish: sabotage → stock drop (-15%), MARKET CRASH world event (stocks crash, savings APR zero'd), loan defaulting (-50 REP + news article when principal > 5× liquid) | Tier 1 | SHIPPED 2199-01-01 |
 | **M14f** | Exfiltration channels + canary files + timestomping | Tier 1 | 3 |
 | **M14g** ✅ | Upgrade Shop → skill-tree graph UI (SVG node-link diagram, 10 columns, prereq edges, colour-coded states, side detail panel, LIST fallback) | Tier 1 | SHIPPED 2199-01-01 |
 | **M14h** ✅ | Shop expansion — 2 new HW slots (GPU, Cooling), 3 new SW categories (Sniffer, MemScrape, Anti-Forensic), 5 tier extensions (Cracker v5, Proxy v4, etc.), 7 consumables with armed-flag effects (panic kit, zero-day pack, decoy log, false flag, rep tokens, cred pack), wired into crack speed / scan / heat / breach reveal | Tier 1 | SHIPPED 2199-01-01 |

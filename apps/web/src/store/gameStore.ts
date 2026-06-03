@@ -110,6 +110,7 @@ export type WorldEventEffect =
   | { type: 'shop_discount'; pct: number }
   | { type: 'reward_boost'; mult: number }
   | { type: 'rival_frequency'; mult: number }
+  | { type: 'market_crash' }  // M14e — stock prices crash 25%, savings APR zeroed
 
 export interface WorldEvent {
   id: string
@@ -162,6 +163,12 @@ const WORLD_EVENT_CATALOGUE: Omit<WorldEvent, 'id' | 'endsAt'>[] = [
     shortLabel: 'QUIET',
     description: 'Night ops — security staff at minimum. Trace nearly silent.',
     effect: { type: 'trace_rate_delta', delta: -1.2 },
+  },
+  {
+    name: 'Market Crash',
+    shortLabel: 'CRASH',
+    description: 'Global financial markets in freefall. All stocks down sharply, savings APR zeroed for the duration.',
+    effect: { type: 'market_crash' },
   },
 ]
 
@@ -713,6 +720,20 @@ export const useGameStore = create<GameState & GameActions>()(
             s.traceState.baseRate += 3.0
             s.traceState.alarmRate = 2.5
             s.traceState.alarmDecaysAt = Date.now() + 45_000
+          }
+          // M14e: sabotage drops a corporate stock 15%. If the player short-sold by
+          // owning a put consumable (future M14e+), they'd profit. For now: just
+          // shows the player their actions move markets.
+          const stockIds = Object.keys(s.stockPrices)
+          if (stockIds.length > 0) {
+            const targetStock = stockIds[Math.floor(Math.random() * stockIds.length)]
+            const oldPrice = s.stockPrices[targetStock]
+            const newPrice = oldPrice * 0.85
+            s.stockPrices[targetStock] = newPrice
+            s.terminalLines.push({
+              id: `log_stock_drop_${Date.now()}`, type: 'system',
+              text: `MARKET REACTION: ${targetStock} dropped ${(15).toFixed(0)}% to ${newPrice.toFixed(2)} Cr (sabotage detected).`,
+            })
           }
         }
       }),
@@ -1990,11 +2011,14 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!s.player?.bankAccounts) return
         const now = Date.now()
         const YEAR_MS = 365.25 * 24 * 3600 * 1000
+        // M14e: savings APR zeroed during market crash
+        const crashActive = s.activeWorldEvents.some((e) => e.effect.type === 'market_crash')
         for (const acct of Object.values(s.player.bankAccounts)) {
-          // Savings interest
+          // Savings interest (zero during market crash)
+          const effectiveApr = crashActive ? 0 : acct.apr
           const dt = now - acct.lastInterestTickAt
-          if (dt > 0 && acct.balance > 0) {
-            const factor = Math.exp(acct.apr * dt / YEAR_MS)
+          if (dt > 0 && acct.balance > 0 && effectiveApr > 0) {
+            const factor = Math.exp(effectiveApr * dt / YEAR_MS)
             const newBalance = acct.balance * factor
             acct.totalInterestEarned += newBalance - acct.balance
             acct.balance = newBalance
@@ -2011,6 +2035,24 @@ export const useGameStore = create<GameState & GameActions>()(
               acct.loanPrincipal = newPrincipal
             }
             acct.loanLastInterestTickAt = now
+
+            // M14e: loan defaulting — principal exceeds 5× player's liquid assets
+            const liquid = s.player.credits + Object.values(s.player.bankAccounts).reduce((sum, a) => sum + a.balance, 0)
+            if (acct.loanPrincipal > liquid * 5 && liquid > 0 && !s.player.activeFlags[`loan_default_${acct.bankId}`]) {
+              s.player.activeFlags[`loan_default_${acct.bankId}`] = Date.now()
+              // Bank reports the default — rep penalty, news article
+              s.player.reputation = Math.max(0, s.player.reputation - 50)
+              s.terminalLines.push({
+                id: `log_loan_default_${Date.now()}`, type: 'error',
+                text: `⚠ LOAN DEFAULT at ${acct.bankId}. Principal ${Math.ceil(acct.loanPrincipal).toLocaleString()} Cr exceeds your collateral. -50 REP. Recovery agents have your file.`,
+              })
+              s.newsFeed.unshift({
+                id: `news_default_${Date.now()}`, timestamp: Date.now(),
+                headline: 'Unidentified Borrower Flagged for Loan Default',
+                body: `${acct.bankId} has placed a recovery contract on an anonymous high-risk borrower after their outstanding principal exceeded all liquid collateral. Independent recovery agents are reportedly evaluating the case.`,
+                category: 'crime', isPlayerAction: true,
+              })
+            }
           }
         }
       }),
@@ -2191,15 +2233,23 @@ export const useGameStore = create<GameState & GameActions>()(
         const dt = now - s.lastMarketTickAt
         if (dt < 1500) return  // throttle: only update every 1.5s of real time
         s.lastMarketTickAt = now
-        // Random-walk each stock price within ±volatility%, anchored softly to basePrice
+
+        // M14e: market crash event active → stocks crash, no mean reversion
+        const crashActive = s.activeWorldEvents.some((e) => e.effect.type === 'market_crash')
+
         for (const stock of STOCKS) {
           const cur = s.stockPrices[stock.id] ?? stock.basePrice
-          const noise = (Math.random() - 0.5) * 2 * stock.volatility * cur
-          const meanReversion = (stock.basePrice - cur) * 0.005  // slow drift back to base
-          const next = Math.max(0.5, cur + noise + meanReversion)
-          s.stockPrices[stock.id] = next
+          if (crashActive) {
+            // Aggressive downward drift, no mean reversion. ~5% per tick at most.
+            const next = Math.max(stock.basePrice * 0.4, cur * (0.94 + Math.random() * 0.04))
+            s.stockPrices[stock.id] = next
+          } else {
+            const noise = (Math.random() - 0.5) * 2 * stock.volatility * cur
+            const meanReversion = (stock.basePrice - cur) * 0.005
+            const next = Math.max(0.5, cur + noise + meanReversion)
+            s.stockPrices[stock.id] = next
+          }
         }
-        // Darkcoin: more volatile, no mean reversion (let it drift)
         const dcNoise = (Math.random() - 0.5) * 2 * 0.025 * s.darkcoinExchangeRate
         const dcDrift = (142 - s.darkcoinExchangeRate) * 0.002
         s.darkcoinExchangeRate = Math.max(20, s.darkcoinExchangeRate + dcNoise + dcDrift)

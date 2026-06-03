@@ -887,3 +887,36 @@ The big sweep. Test everything below.
 ### 27.6 No regressions
 - [ ] Tutorial mission (FIRST CONTACT) has no procedural events (story missions use authored events)
 - [ ] Toast pop-ups don't break the existing terminal log of events (both fire)
+
+---
+
+## 28. M14e — Banking Polish (2199-01-01)
+
+### 28.1 Sabotage → stock drop
+- [ ] Buy a stock (e.g. 5 shares of ARMR @ 245 Cr)
+- [ ] Accept a `network_sabotage` mission, complete it
+- [ ] Terminal: "MARKET REACTION: <TICKER> dropped 15% to X Cr (sabotage detected)."
+- [ ] Open SHOP → BANK → STOCKS tab — that ticker shows a 15% drop in price
+- [ ] Note: which stock drops is random (full corp↔ticker mapping is on the M14e-followup backlog)
+
+### 28.2 MARKET CRASH world event
+- [ ] Wait for the next world event cycle OR trigger via dev console (until time-elapsed simulation produces one)
+- [ ] CRASH pill appears in taskbar (orange-red colour)
+- [ ] Open a bank's STOCKS tab — all 4 prices drop sharply over ~10s
+- [ ] Open SAVINGS — balance no longer grows from interest (effective APR is 0)
+- [ ] Once event expires, prices begin recovering and APR resumes
+
+### 28.3 Loan defaulting
+- [ ] Open a bank, take a small loan
+- [ ] Spend all your credits (or just stop paying)
+- [ ] Wait for the loan principal to grow via interest until it exceeds 5× (cash + all bank balances)
+- [ ] Terminal: "⚠ LOAN DEFAULT at <bankId>. Principal X Cr exceeds your collateral. -50 REP..."
+- [ ] Open NEWS — new article: "Unidentified Borrower Flagged for Loan Default"
+- [ ] PROFILE shows -50 REP
+- [ ] activeFlags has `loan_default_<bankId>` set (visible via persistence inspection)
+- [ ] No second default triggers from the same bank (flag prevents repeat)
+
+### 28.4 No regressions
+- [ ] Regular savings interest still accrues outside of MARKET CRASH
+- [ ] Regular stock random-walk still works outside of MARKET CRASH
+- [ ] Buying/selling stocks during MARKET CRASH still works (just at crashed prices)
