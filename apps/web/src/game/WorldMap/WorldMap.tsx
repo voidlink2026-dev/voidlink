@@ -2,6 +2,9 @@ import { useEffect, useRef, useCallback, useState } from 'react'
 import * as THREE from 'three'
 import { feature } from 'topojson-client'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { useGameStore } from '../../store/gameStore.ts'
 import styles from './WorldMap.module.css'
 
@@ -71,8 +74,10 @@ async function buildCountries(scene: THREE.Scene) {
     const world = await import('world-atlas/countries-110m.json') as any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const countries = feature(world, world.objects.countries as any) as any
-    const lineMat = new THREE.LineBasicMaterial({ color: 0x1a5e30, transparent: true, opacity: 0.55 })
+    const cyanMat    = new THREE.LineBasicMaterial({ color: 0x33ddff, transparent: true, opacity: 0.85 })
+    const magentaMat = new THREE.LineBasicMaterial({ color: 0xff66cc, transparent: true, opacity: 0.85 })
 
+    let idx = 0
     for (const country of countries.features) {
       const geom = country.geometry
       const rings: number[][][] = []
@@ -80,11 +85,12 @@ async function buildCountries(scene: THREE.Scene) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       else if (geom.type === 'MultiPolygon') geom.coordinates.forEach((p: any) => rings.push(...p))
 
+      const mat = (idx++ % 7 === 3) ? magentaMat : cyanMat  // sprinkle magenta accents
       for (const ring of rings) {
         if (ring.length < 3) continue
         const pts: THREE.Vector3[] = ring.map(([lon, lat]) => latLonToVec3(lat, lon, G + 0.5))
         pts.push(pts[0]) // close the ring
-        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat))
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat))
       }
     }
   } catch { /* geo data unavailable — globe still usable */ }
@@ -92,9 +98,10 @@ async function buildCountries(scene: THREE.Scene) {
 
 // ── Globe builders ────────────────────────────────────────────────────────────
 function buildGrid(scene: THREE.Scene) {
-  const GREEN_DIM  = 0x0d3320
-  const GREEN_MID  = 0x124428
-  const GREEN_FULL = 0x1a6634
+  // Cyan-neon palette (was green)
+  const GREEN_DIM  = 0x0a2030
+  const GREEN_MID  = 0x14405a
+  const GREEN_FULL = 0x2299cc
 
   // Latitude lines — every 15°
   for (let lat = -75; lat <= 75; lat += 15) {
@@ -137,31 +144,19 @@ function buildGrid(scene: THREE.Scene) {
   for (let lon = 0; lon <= 360; lon += 1) eqPts.push(latLonToVec3(0, lon, G_OUT + 0.1))
   scene.add(new THREE.LineLoop(
     new THREE.BufferGeometry().setFromPoints(eqPts),
-    new THREE.LineBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.35 }),
+    new THREE.LineBasicMaterial({ color: 0x33ddff, transparent: true, opacity: 0.5 }),
   ))
 }
 
 function buildAtmosphere(scene: THREE.Scene) {
-  // Inner halo
+  // Single subtle halo — bloom does the rest
   scene.add(new THREE.Mesh(
-    new THREE.SphereGeometry(G + 4, 32, 32),
+    new THREE.SphereGeometry(G + 0.6, 32, 32),
     new THREE.MeshBasicMaterial({
-      color: 0x00ff44,
+      color: 0x0066bb,
       side: THREE.BackSide,
       transparent: true,
-      opacity: 0.04,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    }),
-  ))
-  // Outer halo
-  scene.add(new THREE.Mesh(
-    new THREE.SphereGeometry(G + 10, 24, 24),
-    new THREE.MeshBasicMaterial({
-      color: 0x00cc33,
-      side: THREE.BackSide,
-      transparent: true,
-      opacity: 0.02,
+      opacity: 0.05,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     }),
@@ -279,6 +274,22 @@ export function WorldMap() {
     controls.rotateSpeed   = 1.0   // baseline — adapted per-frame below to compensate for distance
     ctrlRef.current = controls
 
+    // Tone mapping for nicer bloom
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1.0
+
+    // Bloom post-processing — the "magic" that makes the neon look modern
+    const composer = new EffectComposer(renderer)
+    composer.setSize(el.clientWidth, el.clientHeight)
+    composer.addPass(new RenderPass(scene, camera))
+    const bloom = new UnrealBloomPass(
+      new THREE.Vector2(el.clientWidth, el.clientHeight),
+      1.0,   // strength
+      0.5,   // radius
+      0.10,  // threshold
+    )
+    composer.addPass(bloom)
+
     // Globe base
     scene.add(new THREE.Mesh(
       new THREE.SphereGeometry(G, 64, 64),
@@ -337,6 +348,8 @@ export function WorldMap() {
       camera.aspect = el.clientWidth / el.clientHeight
       camera.updateProjectionMatrix()
       renderer.setSize(el.clientWidth, el.clientHeight)
+      composer.setSize(el.clientWidth, el.clientHeight)
+      bloom.setSize(el.clientWidth, el.clientHeight)
     })
     ro.observe(el)
 
@@ -353,7 +366,7 @@ export function WorldMap() {
       const t = (dist - 140) / (500 - 140)   // 0 close → 1 far
       controls.rotateSpeed = 0.25 + 0.75 * Math.max(0, Math.min(1, t))
       controls.update()
-      renderer.render(scene, camera)
+      composer.render()
     }
     rafRef.current = requestAnimationFrame(animate)
 

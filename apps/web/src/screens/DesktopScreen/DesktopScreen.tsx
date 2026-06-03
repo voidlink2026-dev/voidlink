@@ -106,6 +106,19 @@ export function DesktopScreen() {
     }
   }, [traceState?.level])
 
+  // M14h.3 — Intruder alarm beep when a rival hacker spawns
+  const rivalHacker = useGameStore((s) => s.rivalHacker)
+  const lastRivalHandleRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (rivalHacker && lastRivalHandleRef.current !== rivalHacker.handle) {
+      AudioEngine.playSfx('error')
+      // Three pulses
+      setTimeout(() => AudioEngine.playSfx('error'), 250)
+      setTimeout(() => AudioEngine.playSfx('error'), 500)
+    }
+    lastRivalHandleRef.current = rivalHacker?.handle ?? null
+  }, [rivalHacker?.handle])
+
   // Game loop — 20 fps interval (50 ms). Pauses when the tab is hidden.
   // Also ticks bank interest accrual every loop iteration.
   const tickBankInterest = useGameStore((s) => s.tickBankInterest)
@@ -198,7 +211,7 @@ export function DesktopScreen() {
       openWindow({ id: 'missions',     title: 'MISSION BOARD',      component: 'MissionBoard',      x: 640,  y: 60,  width: 560, height: 480, isMinimized: false })
       openWindow({ id: 'profile',      title: 'OPERATIVE PROFILE',  component: 'ProfileWindow',     x: 1220, y: 60,  width: 380, height: 520, isMinimized: false })
       openWindow({ id: 'hacking',      title: 'HACKING INTERFACE',  component: 'HackingInterface',  x: 640,  y: 380, width: 480, height: 360, isMinimized: false })
-      openWindow({ id: 'bounce-chain', title: 'BOUNCE CHAIN',       component: 'BounceChainWindow', x: 1160, y: 380, width: 340, height: 220, isMinimized: false })
+      openWindow({ id: 'bounce-chain', title: 'RELAY CHAIN',       component: 'BounceChainWindow', x: 1160, y: 380, width: 340, height: 220, isMinimized: false })
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 

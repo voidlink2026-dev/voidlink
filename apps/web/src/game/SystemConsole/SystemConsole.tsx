@@ -33,11 +33,11 @@ export function SystemConsole() {
     const dirtyCount = bounceLibrary.filter((n) => activeRoute.includes(n.id) && n.logStatus === 'dirty').length
     processes.push({
       id: 'bounce',
-      label: `BOUNCE ROUTE — ${hopsRemaining} HOP${hopsRemaining !== 1 ? 'S' : ''}${dirtyCount > 0 ? ` (${dirtyCount} DIRTY)` : ''}`,
+      label: `RELAY CHAIN — ${hopsRemaining} HOP${hopsRemaining !== 1 ? 'S' : ''}${dirtyCount > 0 ? ` (${dirtyCount} DIRTY)` : ''}`,
       status: dirtyCount > 0 ? 'warn' : 'ok',
     })
   } else {
-    processes.push({ id: 'bounce', label: 'BOUNCE ROUTE — NONE', status: 'warn' })
+    processes.push({ id: 'bounce', label: 'RELAY CHAIN — NONE', status: 'warn' })
   }
 
   // Proxies

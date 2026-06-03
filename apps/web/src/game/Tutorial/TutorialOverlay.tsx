@@ -113,7 +113,7 @@ const STEPS: Step[] = [
     spotlightSelector: '[data-window-id="hacking"]',
   },
   {
-    title: 'BOUNCE ROUTING — YOUR PROXIES',
+    title: 'RELAY CHAIN — YOUR ANONYMITY NETWORK',
     body: 'Bounce chains route your connection through other servers so trace can\'t reach you directly. Open the WORLD MAP from the taskbar — click any green node to add it to your chain. If a hop is traced, only that node is exposed, not you.\n\nMax hops: 3 (basic proxy), 5 (proxy v2), 7 (proxy v3). Upgrade in SHOP to extend your chain.',
     hint: 'Dirty (logged) hops cannot be added — clean them via the Hack Tools window first.',
     spotlightSelector: '[data-tutorial="btn-world-map"]',
@@ -226,6 +226,7 @@ export function TutorialOverlay() {
   const player = useGameStore((s) => s.player)
   const setPlayerFlag = useGameStore((s) => s.setPlayerFlag)
   const minimizeWindow = useGameStore((s) => s.minimizeWindow)
+  const focusWindow = useGameStore((s) => s.focusWindow)
   const [step, setStep] = useState(0)
   const [spotlight, setSpotlight] = useState<SpotlightRect | null>(null)
   const conditionMet = useRef(false)
@@ -245,6 +246,18 @@ export function TutorialOverlay() {
       }
     }
   }, [step, current.keepOnlyWindows, minimizeWindow])
+
+  // M14h.3 — if the spotlight points at a specific window, bring it to front so
+  // it's never covered by another window. Parses [data-window-id="..."] selectors.
+  useEffect(() => {
+    if (!current.spotlightSelector) return
+    const match = current.spotlightSelector.match(/\[data-window-id="([^"]+)"\]/)
+    if (!match) return
+    const windowId = match[1]
+    // Defer to next frame so window-position effects settle first
+    const raf = requestAnimationFrame(() => focusWindow(windowId))
+    return () => cancelAnimationFrame(raf)
+  }, [step, current.spotlightSelector, focusWindow])
 
   // Measure spotlight target
   const measureSpotlight = useCallback(() => {

@@ -560,9 +560,9 @@ export function HackingInterface() {
     return (
       <div className={styles.bouncePanel} data-tutorial="bounce-panel">
         <div className={styles.section}>
-          <div className={styles.sectionLabel}>BOUNCE ROUTING</div>
+          <div className={styles.sectionLabel}>RELAY CHAIN</div>
           <span className={styles.dim}>
-            Configure your bounce chain on the WORLD MAP. Each hop in your route slows trace accumulation. Max hops scale with your installed Proxy software (basic = 3, v2 = 5, v3 = 7).
+            Configure your relay chain on the WORLD MAP. Each relay hop slows trace accumulation. Max hops scale with your installed Relay software (basic = 3, v2 = 5, v3 = 7).
           </span>
         </div>
 
@@ -672,7 +672,7 @@ export function HackingInterface() {
       {traceState.totalHops > 0 && (
         <div className={styles.section}>
           <div className={styles.sectionLabel}>
-            BOUNCE CHAIN — {traceState.hopsRemaining}/{traceState.totalHops} HOPS REMAINING
+            RELAY CHAIN — {traceState.hopsRemaining}/{traceState.totalHops} HOPS REMAINING
           </div>
           <div className={styles.hopChain}>
             {activeRoute.map((hopId, i) => {

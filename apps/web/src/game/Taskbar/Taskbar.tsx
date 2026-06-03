@@ -23,7 +23,7 @@ const APPS: AppDef[] = [
   { id: 'shop',        label: 'SHOP',       title: 'UPGRADE SHOP',        component: 'UpgradeShop',      width: 1280, height: 620 },
   { id: 'profile',     label: 'PROFILE',    title: 'OPERATIVE PROFILE',   component: 'ProfileWindow',    width: 480, height: 560 },
   { id: 'world-map',   label: 'WORLD MAP',  title: 'GLOBAL NETWORK MAP',  component: 'WorldMap',         width: 820, height: 580 },
-  { id: 'bounce-chain', label: 'BOUNCE',    title: 'BOUNCE CHAIN',        component: 'BounceChainWindow', width: 340, height: 240 },
+  { id: 'bounce-chain', label: 'RELAY',     title: 'RELAY CHAIN',         component: 'BounceChainWindow', width: 340, height: 240 },
   { id: 'network-map', label: 'NETWORK',    title: 'NETWORK MAP',         component: 'NetworkMap',       width: 660, height: 460, requiresActiveNetwork: true },
   { id: 'hacking',     label: 'HACK TOOLS', title: 'HACKING INTERFACE',   component: 'HackingInterface', width: 480, height: 360 },
 ]

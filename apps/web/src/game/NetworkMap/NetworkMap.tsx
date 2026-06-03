@@ -75,10 +75,12 @@ function mapPos(x: number, y: number, tier: number): THREE.Vector3 {
 }
 
 function nodeHex(node: NetworkNode): number {
+  // M14h.3 — Clear status colours: untouched=type-coloured / scanned=yellow / breached=green
   if (node.isBreached) return 0x39ff14
   if (node.isLockedOut) return 0xff2d20         // red flash for locked-out
-  if (node.zone === 'B' && !node.isBreached) return 0xff6600  // zone B amber
-  if (node.isPivotNode && !node.isBreached) return 0xffcc00   // pivot = bright yellow
+  if (node.zone === 'B' && !node.isBreached && !node.isScanned) return 0xff6600
+  if (node.isPivotNode && !node.isBreached && !node.isScanned) return 0xffcc00
+  if (node.isScanned) return 0xffd700           // scanned = bright yellow (universal)
   const map: Record<string, number> = {
     entry_point:        0xffffff,
     firewall:           0xff9900,
