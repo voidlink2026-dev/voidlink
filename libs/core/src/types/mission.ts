@@ -91,4 +91,49 @@ export interface Mission {
   completedAt?: number
   timeLimitSeconds?: number
   narrativeFlags?: Record<string, boolean | string | number>
+
+  // ── M14m: Multi-phase missions ────────────────────────────────────────
+  /** Ordered phases. When set, the mission iterates through them; otherwise it's a single-phase legacy mission. */
+  phases?: MissionPhase[]
+  /** Zero-based index of the currently active phase (0 by default). Advances when current phase's objectives complete. */
+  currentPhaseIndex?: number
+  /** When the player completes a phase, a news headline can be queued to fire after disconnect. */
+  newsEchoes?: Record<number, MissionNewsEcho>
+}
+
+export interface MissionPhase {
+  id: string
+  /** Short label shown in the HI step guide (e.g. "OSINT", "Breach", "Manipulation", "Cover") */
+  label: string
+  /** Long description shown when the phase begins */
+  description: string
+  /** Network archetype for this phase. If omitted, reuses the previous phase's network. */
+  targetNetworkId?: NetworkId
+  /** Objectives unique to this phase. Phase advances when all non-optional are complete. */
+  objectives: MissionObjective[]
+  /** Optional per-phase reward (paid on phase complete, not just final mission complete). */
+  phaseReward?: MissionReward
+  /** Choice this phase offers, if any — branching paths (M14o hook) */
+  choices?: MissionChoice[]
+}
+
+export interface MissionChoice {
+  id: string
+  label: string
+  description: string
+  /** Which phase index to advance to when this choice is taken. Default = next sequential. */
+  nextPhaseIndex?: number
+  /** Side effects of taking this choice */
+  effects?: {
+    factionDeltas?: Record<string, number>
+    repDelta?: number
+    setFlag?: { flag: string; value: boolean | string | number }
+  }
+}
+
+export interface MissionNewsEcho {
+  headline: string
+  body: string
+  category: 'corporate' | 'crime' | 'tech' | 'player'
+  delaySeconds?: number  // seconds after disconnect before the article appears
 }

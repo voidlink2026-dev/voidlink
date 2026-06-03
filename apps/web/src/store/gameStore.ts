@@ -1,8 +1,61 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import type { PlayerProfile, BounceNode, FactionData, Mission, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization } from '@voidlink/core'
+import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization } from '@voidlink/core'
 import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
+
+// ── M14m helper ──────────────────────────────────────────────────────────────
+// Advance a multi-phase mission if the current phase's non-optional objectives
+// are all complete. Returns true if a phase actually advanced.
+// Designed to be called from within a set() callback where the draft is mutated directly.
+function tryAdvanceMissionPhase(mission: Mission, draft: { terminalLines: Array<{ id: string; type: string; text: string }>; player: PlayerProfile | null }): boolean {
+  if (!mission.phases || mission.phases.length === 0) return false
+  const idx = mission.currentPhaseIndex ?? 0
+  const phase = mission.phases[idx]
+  if (!phase) return false
+  // Phase objectives live in mission.objectives by id; check primaries done
+  const phaseObjs = phase.objectives
+    .map((po) => mission.objectives.find((o) => o.id === po.id))
+    .filter((o): o is MissionObjective => !!o)
+  const allDone = phaseObjs.filter((o) => !o.isOptional).every((o) => o.isCompleted)
+  if (!allDone) return false
+  if (idx >= mission.phases.length - 1) return false  // already on final phase
+
+  const nextIdx = idx + 1
+  mission.currentPhaseIndex = nextIdx
+  const next = mission.phases[nextIdx]
+  for (const po of next.objectives) {
+    if (!mission.objectives.some((o) => o.id === po.id)) {
+      mission.objectives.push({ ...po, isCompleted: false })
+    }
+  }
+  draft.terminalLines.push({
+    id: `log_phase_${mission.id}_${nextIdx}_${Date.now()}`,
+    type: 'success',
+    text: `▶ PHASE ${nextIdx + 1} — ${next.label.toUpperCase()}: ${next.description}`,
+  })
+  // Per-phase reward
+  if (phase.phaseReward && draft.player) {
+    const cr = phase.phaseReward.credits ?? 0
+    const rp = phase.phaseReward.reputation ?? 0
+    draft.player.credits += cr
+    draft.player.stats.creditsEarned += cr
+    draft.player.reputation += rp
+    if (cr || rp) {
+      draft.terminalLines.push({
+        id: `log_phase_pay_${Date.now()}`,
+        type: 'success',
+        text: `Phase reward: +${cr.toLocaleString()} Cr · +${rp} REP`,
+      })
+    }
+  }
+  // Queue news echo if defined for the just-completed phase
+  if (mission.newsEchoes && mission.newsEchoes[idx]) {
+    if (!mission.narrativeFlags) mission.narrativeFlags = {}
+    mission.narrativeFlags[`news_echo_pending_${idx}`] = Date.now() + ((mission.newsEchoes[idx].delaySeconds ?? 0) * 1000)
+  }
+  return true
+}
 
 export type Screen = 'boot' | 'login' | 'desktop'
 
@@ -538,7 +591,10 @@ export const useGameStore = create<GameState & GameActions>()(
             const targetId = mission.narrativeFlags?.bounty_target_node_id
             if (targetId === node.id) {
               const obj = mission.objectives.find((o) => !o.isOptional && !o.isCompleted)
-              if (obj) obj.isCompleted = true
+              if (obj) {
+                obj.isCompleted = true
+                tryAdvanceMissionPhase(mission, s)
+              }
             }
           }
         }
@@ -602,7 +658,10 @@ export const useGameStore = create<GameState & GameActions>()(
           const mission = s.missions.find((m: Mission) => m.id === s.activeMissionId)
           if (mission) {
             const obj = mission.objectives.find((o) => !o.isOptional && !o.isCompleted)
-            if (obj) obj.isCompleted = true
+            if (obj) {
+              obj.isCompleted = true
+              tryAdvanceMissionPhase(mission, s)
+            }
           }
         }
 
@@ -639,7 +698,10 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!valid) return
 
         const obj = mission.objectives.find((o) => !o.isOptional && !o.isCompleted)
-        if (obj) obj.isCompleted = true
+        if (obj) {
+          obj.isCompleted = true
+          tryAdvanceMissionPhase(mission, s)
+        }
 
         if (mission.type === 'network_sabotage') {
           if (!mission.narrativeFlags) mission.narrativeFlags = {}
