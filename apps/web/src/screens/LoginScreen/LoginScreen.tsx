@@ -13,14 +13,23 @@ import {
   hashPassword,
   verifyPassword,
   setActiveSession,
+  updatePassword,
+  findSaveByEmail,
   type SaveMeta,
 } from '../../store/persistence.ts'
+
+function gen6DigitCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString()
+}
 import styles from './LoginScreen.module.css'
 
 const RANK_LABELS = ['', 'NOVICE', 'FREELANCER', 'SPECIALIST', 'OPERATIVE', 'ELITE', 'SHADOW', 'PHANTOM']
 
+type PendingSignup = { player: PlayerProfile; passwordHash: string; code: string }
+type PendingReset  = { handle: string; email: string; code: string }
+
 export function LoginScreen() {
-  const [mode, setMode] = useState<'pick' | 'signup'>('pick')
+  const [mode, setMode] = useState<'pick' | 'signup' | 'verify' | 'reset'>('pick')
   const [saves, setSaves] = useState<SaveMeta[]>([])
 
   // Signup fields
@@ -30,6 +39,18 @@ export function LoginScreen() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+
+  // Verify (signup confirmation)
+  const [pendingSignup, setPendingSignup] = useState<PendingSignup | null>(null)
+  const [verifyCode, setVerifyCode] = useState('')
+
+  // Reset
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetStep, setResetStep] = useState<'request' | 'code'>('request')
+  const [pendingReset, setPendingReset] = useState<PendingReset | null>(null)
+  const [resetCode, setResetCode] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
 
   // Per-card connect password
   const [connectingHandle, setConnectingHandle] = useState<string | null>(null)
@@ -187,13 +208,100 @@ export function LoginScreen() {
       ],
     }
 
+    // Stage signup — require email confirmation before committing the save
+    const code = gen6DigitCode()
+    setPendingSignup({ player: newPlayer, passwordHash: pwHash, code })
+    setVerifyCode('')
+    setMode('verify')
+  }
+
+  async function handleVerifySignup(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    if (!pendingSignup) { setError('NO PENDING REGISTRATION'); return }
+    if (verifyCode.trim() !== pendingSignup.code) {
+      setError('INCORRECT CODE — CHECK YOUR INBOX')
+      return
+    }
+    const { player: newPlayer, passwordHash: pwHash } = pendingSignup
     registerOperative(newPlayer, pwHash)
     setActiveSession(newPlayer.handle)
     setPlayer(newPlayer)
+    setPendingSignup(null)
     logTerminal('VOIDLINK INTERNATIONAL — OPERATIVE REGISTERED.', 'system')
     logTerminal(`Handle: ${newPlayer.handle} | User: ${newPlayer.username}`, 'success')
-    logTerminal('Starting balance: 5,000 Cr. Open MISSIONS to begin.', 'system')
+    logTerminal('Email verified. Starting balance: 5,000 Cr. Open MISSIONS to begin.', 'system')
     setScreen('desktop')
+  }
+
+  function handleResendCode() {
+    if (!pendingSignup) return
+    setPendingSignup({ ...pendingSignup, code: gen6DigitCode() })
+    setVerifyCode('')
+    setError('')
+  }
+
+  function handleCancelVerify() {
+    setPendingSignup(null)
+    setVerifyCode('')
+    setError('')
+    setMode('signup')
+  }
+
+  // ── Password reset ──────────────────────────────────────────────────────────
+  function startResetFlow() {
+    setMode('reset')
+    setResetStep('request')
+    setResetEmail('')
+    setResetCode('')
+    setNewPassword('')
+    setNewPasswordConfirm('')
+    setPendingReset(null)
+    setError('')
+  }
+
+  function handleResetRequest(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    const e2 = resetEmail.trim().toLowerCase()
+    if (!e2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e2)) {
+      setError('INVALID EMAIL ADDRESS')
+      return
+    }
+    const target = findSaveByEmail(e2)
+    if (!target) {
+      setError('NO OPERATIVE FOUND FOR THAT EMAIL')
+      return
+    }
+    setPendingReset({ handle: target.handle, email: e2, code: gen6DigitCode() })
+    setResetStep('code')
+  }
+
+  async function handleResetSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    if (!pendingReset) { setError('NO PENDING RESET'); return }
+    if (resetCode.trim() !== pendingReset.code) { setError('INCORRECT CODE'); return }
+    if (!newPassword || newPassword.length < 6) { setError('PASSWORD TOO SHORT — MINIMUM 6 CHARACTERS'); return }
+    if (!/[!@#$%^&*()\-_=+\[\]{};':",.<>/?\\|`~]/.test(newPassword)) {
+      setError('PASSWORD MUST CONTAIN AT LEAST ONE SPECIAL CHARACTER')
+      return
+    }
+    if (newPassword !== newPasswordConfirm) { setError('PASSWORDS DO NOT MATCH'); return }
+
+    setLoading(true)
+    const pwHash = await hashPassword(newPassword)
+    const ok = updatePassword(pendingReset.handle, pwHash)
+    setLoading(false)
+
+    if (!ok) { setError('RESET FAILED — TRY AGAIN'); return }
+
+    setPendingReset(null)
+    setResetStep('request')
+    setMode('pick')
+    setSaves(getAllSaveMeta())
+    setError('')
+    logTerminal(`Password reset for ${pendingReset.handle}.`, 'success')
   }
 
   const saveDate = (meta: SaveMeta) =>
@@ -312,6 +420,11 @@ export function LoginScreen() {
                         <Button variant="ghost" size="sm" onClick={resetConnectState} type="button">
                           CANCEL
                         </Button>
+                        <button
+                          type="button"
+                          className={styles.forgotLink}
+                          onClick={startResetFlow}
+                        >FORGOT?</button>
                       </div>
                     </form>
                   )}
@@ -445,6 +558,177 @@ export function LoginScreen() {
                   {loading ? 'REGISTERING…' : 'REGISTER OPERATIVE'}
                 </Button>
               </form>
+            </motion.div>
+          )}
+
+          {/* --- Email confirmation code --- */}
+          {mode === 'verify' && pendingSignup && (
+            <motion.div
+              key="verify"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18 }}
+            >
+              <form className={styles.form} onSubmit={handleVerifySignup} noValidate>
+                <div className={styles.verifyHeader}>
+                  DARKNET RELAY — CONFIRMATION REQUIRED
+                </div>
+                <p className={styles.verifyBlurb}>
+                  A 6-digit one-time code has been dispatched to <strong>{pendingSignup.player.email}</strong>.
+                  Enter it below to activate your operative account.
+                </p>
+                <div className={styles.demoBox}>
+                  <span className={styles.demoLabel}>INTERCEPTED (demo build):</span>
+                  <span className={styles.demoCode}>{pendingSignup.code}</span>
+                </div>
+                <div className={styles.fieldGroup}>
+                  <label className={styles.label} htmlFor="verifyCode">CONFIRMATION CODE</label>
+                  <input
+                    id="verifyCode"
+                    className={styles.input}
+                    type="text"
+                    inputMode="numeric"
+                    value={verifyCode}
+                    onChange={(e) => { setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
+                    placeholder="6-digit code"
+                    autoFocus
+                    autoComplete="one-time-code"
+                    maxLength={6}
+                  />
+                </div>
+                {error && <span className={styles.error} role="alert">{error}</span>}
+                <div className={styles.connectActions}>
+                  <Button type="submit" variant="primary" size="lg" className={styles.submitBtn}>
+                    VERIFY & CONNECT
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={handleResendCode}>
+                    RESEND
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={handleCancelVerify}>
+                    CANCEL
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          )}
+
+          {/* --- Password reset --- */}
+          {mode === 'reset' && (
+            <motion.div
+              key="reset"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18 }}
+            >
+              {resetStep === 'request' && (
+                <form className={styles.form} onSubmit={handleResetRequest} noValidate>
+                  <div className={styles.verifyHeader}>PASSWORD RESET</div>
+                  <p className={styles.verifyBlurb}>
+                    Enter the email associated with your operative account.
+                    A one-time reset code will be dispatched.
+                  </p>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label} htmlFor="resetEmail">EMAIL</label>
+                    <input
+                      id="resetEmail"
+                      className={styles.input}
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => { setResetEmail(e.target.value); setError('') }}
+                      placeholder="account email"
+                      autoFocus
+                      autoComplete="email"
+                      maxLength={254}
+                    />
+                  </div>
+                  {error && <span className={styles.error} role="alert">{error}</span>}
+                  <div className={styles.connectActions}>
+                    <Button type="submit" variant="primary" size="lg" className={styles.submitBtn}>
+                      SEND RESET CODE
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => { setMode('pick'); setError('') }}>
+                      CANCEL
+                    </Button>
+                  </div>
+                </form>
+              )}
+
+              {resetStep === 'code' && pendingReset && (
+                <form className={styles.form} onSubmit={handleResetSubmit} noValidate>
+                  <div className={styles.verifyHeader}>RESET CODE — {pendingReset.handle}</div>
+                  <p className={styles.verifyBlurb}>
+                    A reset code has been sent to <strong>{pendingReset.email}</strong>.
+                    Enter it below and choose a new password.
+                  </p>
+                  <div className={styles.demoBox}>
+                    <span className={styles.demoLabel}>INTERCEPTED (demo build):</span>
+                    <span className={styles.demoCode}>{pendingReset.code}</span>
+                  </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label} htmlFor="resetCode">CODE</label>
+                    <input
+                      id="resetCode"
+                      className={styles.input}
+                      type="text"
+                      inputMode="numeric"
+                      value={resetCode}
+                      onChange={(e) => { setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
+                      placeholder="6-digit code"
+                      autoFocus
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                    />
+                  </div>
+                  <div className={styles.fieldRow}>
+                    <div className={styles.fieldGroup}>
+                      <label className={styles.label} htmlFor="newPassword">
+                        NEW PASSWORD
+                        <button type="button" className={styles.showBtn} onClick={() => setShowPassword((v) => !v)}>
+                          {showPassword ? 'HIDE' : 'SHOW'}
+                        </button>
+                      </label>
+                      <input
+                        id="newPassword"
+                        className={styles.input}
+                        type={showPassword ? 'text' : 'password'}
+                        value={newPassword}
+                        onChange={(e) => { setNewPassword(e.target.value); setError('') }}
+                        placeholder="min 6 + 1 special"
+                        autoComplete="new-password"
+                      />
+                    </div>
+                    <div className={styles.fieldGroup}>
+                      <label className={styles.label} htmlFor="newPasswordConfirm">CONFIRM</label>
+                      <input
+                        id="newPasswordConfirm"
+                        className={styles.input}
+                        type={showPassword ? 'text' : 'password'}
+                        value={newPasswordConfirm}
+                        onChange={(e) => { setNewPasswordConfirm(e.target.value); setError('') }}
+                        placeholder="repeat password"
+                        autoComplete="new-password"
+                      />
+                    </div>
+                  </div>
+                  {error && <span className={styles.error} role="alert">{error}</span>}
+                  <div className={styles.connectActions}>
+                    <Button type="submit" variant="primary" size="lg" className={styles.submitBtn} disabled={loading}>
+                      {loading ? 'UPDATING…' : 'UPDATE PASSWORD'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => { setPendingReset(p => p ? { ...p, code: gen6DigitCode() } : null); setResetCode(''); setError('') }}
+                    >RESEND</Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => { setMode('pick'); setPendingReset(null); setError('') }}>
+                      CANCEL
+                    </Button>
+                  </div>
+                </form>
+              )}
             </motion.div>
           )}
 
