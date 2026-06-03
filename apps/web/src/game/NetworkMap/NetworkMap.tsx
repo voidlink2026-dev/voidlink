@@ -2,8 +2,48 @@ import { useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { useGameStore } from '../../store/gameStore.ts'
-import type { NetworkNode, FileEntry, MissionType } from '@voidlink/core'
+import type { NetworkNode, FileEntry, MissionType, PlayerProfile } from '@voidlink/core'
 import styles from './NetworkMap.module.css'
+
+// ── M14f: Exfiltration Channels ──────────────────────────────────────────────
+// File transfer can use one of several channels — faster = noisier.
+type ExfilChannelId = 'direct' | 'tunnel' | 'dns' | 'icmp'
+
+interface ExfilChannelDef {
+  id: ExfilChannelId
+  label: string
+  description: string
+  speedMult: number   // 1.0 = baseline modem speed
+  traceMod: number    // % trace level applied at transfer START
+  isAvailable: (player: PlayerProfile | null) => boolean
+}
+
+const EXFIL_CHANNELS: Record<ExfilChannelId, ExfilChannelDef> = {
+  direct: {
+    id: 'direct', label: 'DIRECT FTP',
+    description: '100% modem speed. Logged in network traffic. The default.',
+    speedMult: 1.0, traceMod: 0,
+    isAvailable: () => true,
+  },
+  tunnel: {
+    id: 'tunnel', label: 'ENCRYPTED TUNNEL',
+    description: '60% speed but reduces visible trace by 5% during transfer. Needs Proxy v3+.',
+    speedMult: 0.6, traceMod: -5,
+    isAvailable: (p) => (p?.software?.proxies?.some((t) => t.toolId === 'proxy_v3' || t.toolId === 'proxy_v4') ?? false),
+  },
+  dns: {
+    id: 'dns', label: 'DNS TUNNELING',
+    description: '20% speed, near-undetectable. Slips through DNS queries. Needs Port Scanner v2+.',
+    speedMult: 0.2, traceMod: -2,
+    isAvailable: (p) => (p?.software?.portScanners?.some((t) => t.toolId === 'port_scanner_v2' || t.toolId === 'port_scanner_v3') ?? false),
+  },
+  icmp: {
+    id: 'icmp', label: 'ICMP EXFIL',
+    description: '5% speed but completely silent. Bypasses every IDS. Requires Ghost specialisation + CPU ≥ 4 GHz.',
+    speedMult: 0.05, traceMod: -10,
+    isAvailable: (p) => p?.specialization === 'ghost' && (p?.hardware?.cpuSpeed ?? 0) >= 4,
+  },
+}
 
 // ─── Label sprite ──────────────────────────────────────────────────────
 function createNodeLabel(text: string, hexColor: number): THREE.Sprite {
@@ -338,6 +378,7 @@ export function NetworkMap() {
 
   const [transferringFileId, setTransferringFileId] = useState<string | null>(null)
   const [transferProgress, setTransferProgress]     = useState(0)
+  const [exfilChannel, setExfilChannel]             = useState<ExfilChannelId>('direct')
   const transferIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const activeMissionType = missions.find((m) => m.id === activeMissionId)?.type ?? null
@@ -362,12 +403,28 @@ export function NetworkMap() {
   function handleCollect(node: NetworkNode, file: FileEntry) {
     if (!activeNetwork) return
     if (transferringFileId) { logTerminal('Transfer already in progress.', 'dim'); return }
+
+    // M14f — Exfiltration channel selection
+    // Channel determines transfer speed AND trace impact
+    const channel = exfilChannel  // from state, default 'direct'
+    const channelDef = EXFIL_CHANNELS[channel]
     const modemSpeed = player?.hardware.modemSpeed ?? 10
-    const durationMs = Math.max(500, (file.sizeKb * 100) / modemSpeed)
+    const baseMs = Math.max(500, (file.sizeKb * 100) / modemSpeed)
+    const durationMs = baseMs / channelDef.speedMult
     const startedAt  = Date.now()
     setTransferringFileId(file.id)
     setTransferProgress(0)
-    logTerminal(`Initiating transfer: ${file.name} (${file.sizeKb} KB @ ${modemSpeed} KB/s)…`, 'system')
+    logTerminal(
+      `[${channelDef.label}] Initiating transfer: ${file.name} (${file.sizeKb} KB @ ${(modemSpeed * channelDef.speedMult).toFixed(1)} KB/s${channelDef.traceMod !== 0 ? `, trace ${channelDef.traceMod > 0 ? '+' : ''}${channelDef.traceMod}%` : ''})…`,
+      'system',
+    )
+    // Apply per-transfer trace effect at start
+    if (channelDef.traceMod !== 0) {
+      useGameStore.setState((s) => {
+        if (s.traceState) s.traceState.level = Math.max(0, Math.min(100, s.traceState.level + channelDef.traceMod))
+        return s
+      })
+    }
     transferIntervalRef.current = setInterval(() => {
       const p = Math.min(1, (Date.now() - startedAt) / durationMs)
       setTransferProgress(p)
@@ -412,6 +469,27 @@ export function NetworkMap() {
         <span className={styles.nodeCount}>
           {activeNetwork.nodes.filter((n) => n.isBreached).length}/{activeNetwork.nodes.length} nodes breached
         </span>
+      </div>
+
+      {/* M14f: Exfiltration channel selector */}
+      <div className={styles.exfilBar}>
+        <span className={styles.exfilLabel}>EXFIL:</span>
+        {(Object.values(EXFIL_CHANNELS)).map((ch) => {
+          const available = ch.isAvailable(player ?? null)
+          const active = exfilChannel === ch.id
+          return (
+            <button
+              key={ch.id}
+              className={`${styles.exfilBtn} ${active ? styles.exfilBtnActive : ''} ${!available ? styles.exfilBtnLocked : ''}`}
+              disabled={!available || !!transferringFileId}
+              onClick={() => setExfilChannel(ch.id)}
+              title={ch.description}
+            >
+              {ch.label}
+              {!available && <span className={styles.exfilLock}> 🔒</span>}
+            </button>
+          )
+        })}
       </div>
 
       <div className={styles.body}>

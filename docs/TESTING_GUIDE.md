@@ -956,3 +956,46 @@ The big sweep. Test everything below.
 - [ ] PROJECT GHOST (no choices) still works exactly as before — auto-advances phases
 - [ ] Legacy single-phase missions still work
 - [ ] Choice overlay doesn't appear on non-choice missions
+
+---
+
+## 30. M14f — Exfiltration Channels (2199-01-01)
+
+### 30.1 Channel bar visible during active mission
+- [ ] Accept any mission with files (file_theft works well)
+- [ ] In NETWORK MAP, above the main canvas, see "EXFIL:" bar with 4 buttons:
+  - DIRECT FTP (always available, default)
+  - ENCRYPTED TUNNEL (locked unless you have Proxy v3+)
+  - DNS TUNNELING (locked unless Port Scanner v2+)
+  - ICMP EXFIL (locked unless Ghost spec + CPU ≥ 4 GHz)
+- [ ] Locked buttons show 🔒, are dim, disabled
+
+### 30.2 Direct FTP (default)
+- [ ] Click DIRECT FTP (active by default)
+- [ ] Breach a file_server, click TRANSFER on a file
+- [ ] Terminal: "[DIRECT FTP] Initiating transfer: file.enc (X KB @ Y KB/s)…"
+- [ ] Transfer at modem speed, no trace mod
+- [ ] Completes normally
+
+### 30.3 Encrypted Tunnel (Proxy v3+)
+- [ ] Buy Proxy v3 from shop (or skip if not affordable)
+- [ ] Channel button becomes active
+- [ ] Click ENCRYPTED TUNNEL → button highlights cyan
+- [ ] Start a transfer: trace level DROPS by 5% at start
+- [ ] Transfer takes 60% longer (1/0.6×) than direct
+
+### 30.4 DNS Tunneling (Port Scanner v2+)
+- [ ] Buy Port Scanner v2 (22,000 Cr)
+- [ ] Channel available; click → cyan highlight
+- [ ] Transfer takes 5× longer (1/0.2×)
+- [ ] Trace -2% on start
+
+### 30.5 ICMP Exfil (Ghost + CPU 4+)
+- [ ] Only available if specialised as Ghost + CPU ≥ 4 GHz
+- [ ] If you meet criteria: channel is selectable
+- [ ] 20× slower transfer, -10% trace on start — pure stealth play
+
+### 30.6 No regressions
+- [ ] Single-phase missions still work
+- [ ] Multi-phase missions (PROJECT GHOST / BLACK HALO) still work
+- [ ] Channel resets to DIRECT FTP on next mission

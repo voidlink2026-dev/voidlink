@@ -316,3 +316,55 @@
 }
 
 .hint { font-size: 10px; color: #222; }
+
+/* ── M14f: Exfiltration channel bar ─────────────────────────────────────── */
+.exfilBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--color-border, #1e1e1e);
+  background: rgba(0, 229, 255, 0.03);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.exfilLabel {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: var(--color-cyan, #00e5ff);
+  margin-right: 4px;
+}
+
+.exfilBtn {
+  background: transparent;
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  color: var(--color-text-muted, #909090);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: border-color 0.1s, color 0.1s, background 0.1s;
+}
+
+.exfilBtn:hover:not(:disabled) {
+  color: var(--color-text, #d4d4d4);
+  border-color: var(--color-text-muted, #909090);
+}
+
+.exfilBtnActive {
+  border-color: var(--color-cyan, #00e5ff);
+  color: var(--color-cyan, #00e5ff);
+  background: rgba(0, 229, 255, 0.08);
+}
+
+.exfilBtnLocked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.exfilLock { font-size: 8px; }
