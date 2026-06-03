@@ -126,10 +126,10 @@ Before testing any specific feature, verify the app loads cleanly:
 - [ ] Status transitions: CLEAN → ALARM (yellow) → CRITICAL (red flashing) at 75%+
 - [ ] At 100%: TRACED — mission fails immediately
 - [ ] Screen vignette effect intensifies as trace rises; critical banner at 90%+
-- [ ] ADD PROXY button: reduces trace accumulation rate (visible on trace bar)
-- [ ] Maximum 3 proxies stackable
-- [ ] REMOVE PROXY reduces count; trace rate increases again
-- [ ] Rival hacker spawning: terminal warns, trace rate increases; INTERCEPT button removes them
+- [ ] (M14h.5) +PROXY / -PROXY buttons in HI have been **removed**. Bounce reduction now comes entirely from the active RELAY CHAIN configured on WORLD MAP. Verify the buttons are gone.
+- [ ] Each relay hop multiplies effective trace rate by 0.65 (was 0.85). With 3 hops the rate should be ~27% of unhopped.
+- [ ] traceSpeed-15 networks now tick at ~0.54 %/s passively (was 0.75) — verify mid-tier missions feel completable.
+- [ ] Rival hacker spawning: terminal warns, trace rate increases, 3-pulse intruder beep plays; INTERCEPT button removes them
 
 ---
 
@@ -1027,3 +1027,62 @@ The big sweep. Test everything below.
 ### 31.4 No regressions
 - [ ] Missions without backdoor flags work normally (no pre-breach)
 - [ ] All other mechanics (trace, wipe, exfil, phases, choices) work unchanged
+
+---
+
+## 32. M14h.4 — Signup email confirmation + password reset (2199-01-01)
+
+### 32.1 Signup verify
+- [ ] Fill out the signup form → click REGISTER OPERATIVE
+- [ ] Panel switches to "DARKNET RELAY — CONFIRMATION REQUIRED"
+- [ ] The dashed purple "INTERCEPTED (demo build)" box shows a 6-digit code
+- [ ] Wrong code shows "INCORRECT CODE — CHECK YOUR INBOX"
+- [ ] Correct code → DesktopScreen loads; terminal: "Email verified."
+- [ ] RESEND replaces the code; CANCEL returns to signup with all fields intact
+
+### 32.2 Forgotten password
+- [ ] On a saved operative, click CONNECT then click FORGOT? in the inline password row
+- [ ] Reset panel asks for the account email
+- [ ] Unknown email → "NO OPERATIVE FOUND FOR THAT EMAIL"
+- [ ] Known email → code panel appears with the demo code visible
+- [ ] Wrong code → "INCORRECT CODE"
+- [ ] Correct code + new password (min 6 + 1 special) + matching confirm → "Password reset" terminal log
+- [ ] Returned to operative picker; the new password unlocks the save
+
+---
+
+## 33. M14h.5 — Mid-game rebalance batch (2199-01-01)
+
+### 33.1 +PROXY removal + relay-driven bounceCount
+- [ ] No +PROXY / -PROXY buttons anywhere in Hacking Interface
+- [ ] Open WORLD MAP, build a 3-hop relay chain
+- [ ] Start any mission — System Console "RELAY CHAIN — 3 HOPS" row visible
+- [ ] Effective trace rate (Taskbar pill) is roughly 0.65³ ≈ 27% of the unhopped rate
+
+### 33.2 Hop caps
+- [ ] Starting (proxy_basic) → max 3 hops
+- [ ] Proxy v2 → max 6
+- [ ] Proxy v3 → max 8
+- [ ] Proxy v4 → max 10
+
+### 33.3 Trace rebalance
+- [ ] Easy network (traceSpeed 5) — passive ~9 min to 100% (was ~7)
+- [ ] Mid-tier networks no longer blow through 0→100 inside a minute when you have a relay chain
+
+### 33.4 Sabotage briefing
+- [ ] Accept a network_sabotage mission — briefing reads "Disable the network — breach a core router OR an admin console to take it offline"
+- [ ] Both node types complete the objective
+
+### 33.5 Banking APRs + notoriety
+- [ ] BankWindow shows new APRs (Global 12%, Pacific 22%, Cayman 6%, Zurich 15%)
+- [ ] Each bank card shows its notoriety/h indicator (orange for +, green for -)
+- [ ] Holding a balance in Pacific over a few minutes raises `player.notoriety` (System Console shows NOTORIETY row at ≥3 or with any non-zero value)
+- [ ] Holding a balance in Cayman/Zurich tics it down (clamped at -5)
+- [ ] At mission start with notoriety > 0, baseRate is +0.10 %/s per point higher; warning terminal line at ≥3
+
+### 33.6 World clock (VST)
+- [ ] Taskbar clock advances 1:1 with real time and shows the same value across multiple browser windows on the same wall-clock minute (independent of which operative is logged in)
+- [ ] Real-world 2026-01-01 00:00 UTC maps to game 2199-01-01 00:00 UTC (verify by spot-checking elapsed-since-anchor maths)
+
+### 33.7 Login save-list reveal
+- [ ] On login screen with ≥2 saves, the cards slide in left-to-right one at a time (~220 ms apart) with a soft click SFX per card

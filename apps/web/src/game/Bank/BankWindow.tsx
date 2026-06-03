@@ -42,7 +42,13 @@ export function BankWindow() {
             return (
               <div key={b.id} className={`${styles.bankCard} ${b.offshore ? styles.bankCardOffshore : ''}`}>
                 <div className={styles.bankName}>{b.name} {b.offshore && <span className={styles.offshoreTag}>OFFSHORE</span>}</div>
-                <div className={styles.bankMeta}>{b.region} · {(b.apr * 100).toFixed(2)}% APR · {b.features.join(' / ').toUpperCase()}</div>
+                <div className={styles.bankMeta}>
+                  {b.region} · {(b.apr * 100).toFixed(1)}% APR ·{' '}
+                  <span style={{ color: b.notorietyPerHour > 0 ? '#ff9900' : b.notorietyPerHour < 0 ? '#39ff14' : '#888' }}>
+                    {b.notorietyPerHour > 0 ? `+${b.notorietyPerHour.toFixed(1)}` : b.notorietyPerHour.toFixed(1)} NOTORIETY/h
+                  </span>
+                  {' · '}{b.features.join(' / ').toUpperCase()}
+                </div>
                 {acct
                   ? <div className={styles.bankBalance}>{Math.floor(acct.balance).toLocaleString()} Cr {acct.loanPrincipal ? <span className={styles.loanTag}> -{Math.ceil(acct.loanPrincipal).toLocaleString()} loan</span> : null}</div>
                   : <div className={styles.bankDim}>No account</div>}

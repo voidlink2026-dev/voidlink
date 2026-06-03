@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
 import type { CredentialEntry } from '../../store/gameStore.ts'
 import { Button, TraceBar } from '@voidlink/ui'
-import { startCrackJob, tickCrackJob, applyProxyBounce, removeProxyBounce } from '@voidlink/core'
+import { startCrackJob, tickCrackJob } from '@voidlink/core'
 import type { CrackJob } from '@voidlink/core'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './HackingInterface.module.css'
@@ -35,7 +35,10 @@ export function HackingInterface() {
 
   const [activeJob, setActiveJob] = useState<CrackJob | null>(null)
   const [jobProgress, setJobProgress] = useState(0)
-  const [proxyCount, setProxyCount] = useState(0)
+  // proxyCount kept only because resetMission still calls setProxyCount(0); the
+  // +PROXY UI was removed in M14h.5 — bounce reduction now comes from the
+  // active relay route instead.
+  const [, setProxyCount] = useState(0)
   const [wipeProgress, setWipeProgress] = useState(0)
   const [wipingNodeId, setWipingNodeId] = useState<string | null>(null)
   const [scanProgress, setScanProgress] = useState(0)
@@ -241,26 +244,6 @@ export function HackingInterface() {
     } else {
       logTerminal(`Crack cancelled.`, 'dim')
     }
-  }
-
-  function addProxy() {
-    if (!traceState || proxyCount >= 3) return
-    useGameStore.setState((s) => ({
-      ...s,
-      traceState: s.traceState ? applyProxyBounce(s.traceState) : null,
-    }))
-    setProxyCount((c) => c + 1)
-    logTerminal(`Proxy bounce added (${proxyCount + 1}/3). Trace speed reduced.`, 'system')
-  }
-
-  function removeProxy() {
-    if (!traceState || proxyCount <= 0) return
-    useGameStore.setState((s) => ({
-      ...s,
-      traceState: s.traceState ? removeProxyBounce(s.traceState) : null,
-    }))
-    setProxyCount((c) => c - 1)
-    logTerminal(`Proxy bounce removed.`, 'dim')
   }
 
   function handleIntercept() {
@@ -866,22 +849,8 @@ export function HackingInterface() {
                 ? t('hackingInterface.wiped')
                 : t('hackingInterface.wipeLog')}
           </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={addProxy}
-            disabled={proxyCount >= 3}
-          >
-            {t('hackingInterface.addProxy', { count: proxyCount })}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={removeProxy}
-            disabled={proxyCount === 0}
-          >
-            {t('hackingInterface.removeProxy')}
-          </Button>
+          {/* +PROXY / -PROXY buttons removed in M14h.5 — bounce reduction now
+              comes entirely from the active relay route (WORLD MAP). */}
           <Button
             variant="secondary"
             size="sm"

@@ -28,10 +28,11 @@ const STATUS_THRESHOLDS = {
 } as const
 
 // traceSpeed is the network's difficulty field (5–35).
-// Dividing by 20 converts it to a comfortable %/s passive rate:
-//   traceSpeed  5  → 0.25 %/s  (~7 min uninterrupted)
-//   traceSpeed 15  → 0.75 %/s  (~2.2 min)
-//   traceSpeed 35  → 1.75 %/s  (~57 s — but you should be using proxies)
+// M14h.5: softer global tracer — divide by 28 (was 20). Mid-tier missions had
+// the tracer climbing too fast for the player to actually complete the task.
+//   traceSpeed  5  → 0.18 %/s  (~9 min uninterrupted)
+//   traceSpeed 15  → 0.54 %/s  (~3 min)
+//   traceSpeed 35  → 1.25 %/s  (~80s — but you should be using a relay chain)
 export function createTraceState(networkTraceSpeed: number): TraceState {
   return {
     level: 0,
@@ -39,7 +40,7 @@ export function createTraceState(networkTraceSpeed: number): TraceState {
     bounceCount: 0,
     hopsRemaining: 0,
     totalHops: 0,
-    baseRate: networkTraceSpeed / 20,
+    baseRate: networkTraceSpeed / 28,
     alarmRate: 0,
     alarmDecaysAt: 0,
     idsRate: 0,
@@ -57,7 +58,7 @@ export function tickTrace(
 ): TraceState {
   const activeAlarm = nowMs < state.alarmDecaysAt ? state.alarmRate : 0
   const totalRate = Math.max(0, state.baseRate + activeAlarm + state.idsRate + state.adminRate + state.rivalRate + state.worldEventRate)
-  const effectiveRate = totalRate * Math.pow(0.7, state.bounceCount)
+  const effectiveRate = totalRate * Math.pow(0.65, state.bounceCount)
   const newLevel = Math.min(100, state.level + effectiveRate * (deltaMs / 1000))
 
   return { ...state, level: newLevel, status: computeStatus(newLevel) }
@@ -80,6 +81,23 @@ export function triggerBreachAlarm(
     alarmRate: Math.max(state.alarmRate, boost),
     alarmDecaysAt: Math.max(state.alarmDecaysAt, nowMs + ALARM_DURATION_MS),
   }
+}
+
+/**
+ * Max relay-chain hop count by proxy software tier. The cap rises faster than
+ * before (M14h.5) so upgrading the proxy tier visibly increases survivability.
+ *   basic / v1  → 3
+ *   v2          → 6
+ *   v3          → 8
+ *   v4          → 10
+ *   v5          → 12  (future tier)
+ */
+export function getMaxRelayHops(proxies: { toolId: string }[]): number {
+  if (proxies.some((p) => p.toolId === 'proxy_v5')) return 12
+  if (proxies.some((p) => p.toolId === 'proxy_v4')) return 10
+  if (proxies.some((p) => p.toolId === 'proxy_v3')) return 8
+  if (proxies.some((p) => p.toolId === 'proxy_v2')) return 6
+  return 3
 }
 
 export function applyProxyBounce(state: TraceState): TraceState {
@@ -105,7 +123,7 @@ export function computeEffectiveRate(
 ): number {
   const activeAlarm = nowMs < state.alarmDecaysAt ? state.alarmRate : 0
   const totalRate = Math.max(0, state.baseRate + activeAlarm + state.idsRate + state.adminRate + state.rivalRate + state.worldEventRate)
-  return totalRate * Math.pow(0.7, state.bounceCount)
+  return totalRate * Math.pow(0.65, state.bounceCount)
 }
 
 function computeStatus(level: number): TraceStatus {

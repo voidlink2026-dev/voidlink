@@ -363,8 +363,15 @@ export function LoginScreen() {
               transition={{ duration: 0.18 }}
               className={styles.saveList}
             >
-              {saves.map((meta) => (
-                <div key={meta.handle} className={`${styles.saveCard} ${connectingHandle === meta.handle ? styles.saveCardActive : ''}`}>
+              {saves.map((meta, idx) => (
+                <motion.div
+                  key={meta.handle}
+                  className={`${styles.saveCard} ${connectingHandle === meta.handle ? styles.saveCardActive : ''}`}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.15 + idx * 0.22, duration: 0.35, ease: 'easeOut' }}
+                  onAnimationStart={() => AudioEngine.playSfx('click')}
+                >
 
                   {confirmDelete === meta.handle ? (
                     <div className={styles.deleteConfirm}>
@@ -438,7 +445,7 @@ export function LoginScreen() {
                     </div>
                   )}
 
-                </div>
+                </motion.div>
               ))}
 
               {error && connectingHandle === null && (

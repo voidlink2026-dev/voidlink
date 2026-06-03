@@ -1,15 +1,8 @@
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
 import { AudioEngine } from '../Audio/audioEngine.ts'
+import { getMaxRelayHops as getMaxHops } from '@voidlink/core'
 import styles from './BounceChainWindow.module.css'
-
-// Max bounce hops from player proxy software (mirror of WorldMap helper)
-function getMaxHops(proxies: { toolId: string }[]): number {
-  if (proxies.some((p) => p.toolId === 'proxy_v4')) return 8
-  if (proxies.some((p) => p.toolId === 'proxy_v3')) return 7
-  if (proxies.some((p) => p.toolId === 'proxy_v2')) return 5
-  return 3
-}
 
 export function BounceChainWindow() {
   const player           = useGameStore((s) => s.player)

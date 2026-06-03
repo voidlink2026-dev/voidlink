@@ -5,13 +5,18 @@ export interface BankDef {
   id: string
   name: string
   shortLabel: string
-  apr: number               // annual percentage rate (savings)
+  apr: number               // annual percentage rate (savings) — M14h.5 inflated to game-time scale
   openCost: number          // credits to open an account
   region: string
   flavour: string           // 1-line description shown in panel
   loanRate: number          // APR charged on borrowed funds
   maxLoanMultiplier: number // max loan = player.credits * this (offered before rep gating)
   offshore?: boolean        // if true: laundering account, heat reduction, harder to access
+  // M14h.5 — financial "grid presence" delta per hour per 10 000 Cr of balance.
+  // Positive values raise the player's notoriety (more passive trace pressure
+  // at mission start); negative values launder it down. Range typically
+  // [-0.6, +0.8].
+  notorietyPerHour: number
   features: BankFeature[]
 }
 
@@ -22,50 +27,54 @@ export const BANKS: BankDef[] = [
     id: 'globalbank',
     name: 'Global Trust Bank',
     shortLabel: 'GLOBAL TRUST',
-    apr: 0.025,
+    apr: 0.12,
     openCost: 500,
-    loanRate: 0.08,
+    loanRate: 0.18,
     maxLoanMultiplier: 2,
     region: 'US-EAST',
-    flavour: 'New York. Conservative, well-secured. Full retail services.',
+    flavour: 'New York. Conservative retail bank — moderate yield, full services, reports to every audit body.',
+    notorietyPerHour: 0.4,
     features: ['savings', 'loans', 'trade', 'stocks'],
   },
   {
     id: 'pacificbank',
     name: 'Pacific National',
     shortLabel: 'PACIFIC NATIONAL',
-    apr: 0.034,
+    apr: 0.22,
     openCost: 750,
-    loanRate: 0.095,
+    loanRate: 0.24,
     maxLoanMultiplier: 3,
     region: 'US-WEST',
-    flavour: 'San Francisco. Aggressive yield. Higher target for breach attempts.',
+    flavour: 'San Francisco. High-yield aggressive growth fund — best returns, heaviest paper trail.',
+    notorietyPerHour: 0.8,
     features: ['savings', 'loans', 'trade', 'stocks'],
   },
   {
     id: 'caymantrust',
     name: 'Cayman Trust Offshore',
     shortLabel: 'CAYMAN OFFSHORE',
-    apr: 0.018,
+    apr: 0.06,
     openCost: 5000,
-    loanRate: 0.12,
+    loanRate: 0.20,
     maxLoanMultiplier: 0,
     offshore: true,
     region: 'CAYMAN',
-    flavour: 'Cayman Islands. Offshore haven. Lower yield, but deposits launder heat. No public ledger.',
+    flavour: 'Cayman Islands. Numbered offshore haven. Modest yield, but every Cr held washes notoriety.',
+    notorietyPerHour: -0.6,
     features: ['savings'],
   },
   {
     id: 'zurichvault',
     name: 'Zurich Vault',
     shortLabel: 'ZURICH VAULT',
-    apr: 0.021,
+    apr: 0.15,
     openCost: 8000,
-    loanRate: 0.07,
+    loanRate: 0.14,
     maxLoanMultiplier: 1,
     offshore: true,
     region: 'EU-SOUTH',
-    flavour: 'Zurich. Numbered accounts. Heat laundering plus discreet lending.',
+    flavour: 'Zurich. Discreet numbered accounts — strong yield, light notoriety reduction, private lending.',
+    notorietyPerHour: -0.3,
     features: ['savings', 'loans'],
   },
 ]

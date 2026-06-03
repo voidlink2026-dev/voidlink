@@ -54,14 +54,27 @@ Goal: create a fresh operative and reach the desktop.
 | 1.5 | Enter password: `pass!1234` and confirm | Fields type as masked dots by default |
 | 1.6 | Click the SHOW button next to PASSWORD | Both fields become plain text. Click HIDE → back to dots |
 | 1.7 | Try clicking REGISTER with an invalid email like `nope` | Red error banner: "INVALID EMAIL ADDRESS" |
-| 1.8 | Fix email, click REGISTER | Loading state ≈ 100ms, then DesktopScreen loads |
-| 1.9 | Note the auto-opened windows | SYSTEM TERMINAL, MISSION BOARD, OPERATIVE PROFILE, VOIDLINK NEWSFEED, HACKING INTERFACE, BOUNCE CHAIN — six windows |
+| 1.8 | Fix email, click REGISTER | Verification panel appears: "DARKNET RELAY — CONFIRMATION REQUIRED", with a 6-digit code visible in a dashed purple box (demo build). |
+| 1.9 | Type the displayed 6-digit code, click VERIFY & CONNECT | DesktopScreen loads. Terminal shows "Email verified." |
+| 1.10 | Note the auto-opened windows | SYSTEM TERMINAL, MISSION BOARD, OPERATIVE PROFILE, VOIDLINK NEWSFEED, HACKING INTERFACE, RELAY CHAIN — six windows |
 
 **Tick everything that worked:**
 - [ ] SHOW/HIDE password toggle works
 - [ ] Email validation rejects `nope`
+- [ ] Confirmation code panel appears with code shown in purple dashed box
+- [ ] Wrong code rejected with "INCORRECT CODE — CHECK YOUR INBOX"
+- [ ] Correct code accepted and operative committed
 - [ ] All 6 default windows appear after signup
 - [ ] Tutorial overlay appears bottom-right with step 1/25
+
+### Phase 1b — Password Reset (optional)
+
+| # | Action | Expected |
+|---|---|---|
+| 1b.1 | Log out, click your saved operative, then click FORGOT? next to the password input | Reset panel appears asking for the account email |
+| 1b.2 | Enter the email you signed up with, click SEND RESET CODE | Code panel appears with the demo code shown |
+| 1b.3 | Type the code, enter a new password (min 6 + 1 special), confirm, click UPDATE PASSWORD | Returned to operative picker, terminal logs "Password reset" |
+| 1b.4 | Click CONNECT and use the new password | Account opens normally |
 
 **Notes / Defects:**
 ```

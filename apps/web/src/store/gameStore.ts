@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -510,10 +510,28 @@ export const useGameStore = create<GameState & GameActions>()(
         s.activeNetworkId = network.id
         s.traceState = createTraceState(network.traceSpeed)
 
-        // Wire active bounce route into trace state
+        // Wire active relay route into trace state. Each hop is a real
+        // bounce node and applies the trace-rate reduction (Math.pow(0.65, n)).
+        // The +PROXY button (M14h.5) was removed, so the route is the *only*
+        // source of bounceCount during the mission.
         const routeLen = s.activeRoute.length
         s.traceState.hopsRemaining = routeLen
         s.traceState.totalHops = routeLen
+        s.traceState.bounceCount = routeLen
+
+        // M14h.5 — notoriety raises passive trace pressure. Each notoriety
+        // point adds 0.10 %/s to baseRate. Offshore banks can drive notoriety
+        // negative, slightly easing the tracer.
+        const notoriety = s.player?.notoriety ?? 0
+        if (notoriety !== 0) {
+          s.traceState.baseRate += notoriety * 0.10
+          if (notoriety >= 3) {
+            s.terminalLines.push({
+              id: `log_notoriety_${Date.now()}`, type: 'error',
+              text: `WARNING: financial monitoring networks recognise your profile (notoriety ${notoriety.toFixed(1)}). Trace pressure +${(notoriety * 0.10).toFixed(2)}%/s.`,
+            })
+          }
+        }
 
         // Apply heat penalty if player left dirty logs on this corp before
         if (s.player?.activeFlags[`heat_${corpId}`]) {
@@ -2152,9 +2170,12 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!s.player?.bankAccounts) return
         const now = Date.now()
         const YEAR_MS = 365.25 * 24 * 3600 * 1000
+        const HOUR_MS = 3600 * 1000
         // M14e: savings APR zeroed during market crash
         const crashActive = s.activeWorldEvents.some((e) => e.effect.type === 'market_crash')
+        let notorietyDelta = 0
         for (const acct of Object.values(s.player.bankAccounts)) {
+          const bank = BANKS.find((b) => b.id === acct.bankId)
           // Savings interest (zero during market crash)
           const effectiveApr = crashActive ? 0 : acct.apr
           const dt = now - acct.lastInterestTickAt
@@ -2163,6 +2184,13 @@ export const useGameStore = create<GameState & GameActions>()(
             const newBalance = acct.balance * factor
             acct.totalInterestEarned += newBalance - acct.balance
             acct.balance = newBalance
+          }
+          // M14h.5 — notoriety accrual: per-hour delta scales linearly with
+          // balance / 10 000 Cr so big holdings draw more attention (or wash
+          // faster at offshore banks).
+          if (bank && acct.balance > 0 && dt > 0) {
+            const balanceScale = acct.balance / 10_000
+            notorietyDelta += bank.notorietyPerHour * balanceScale * (dt / HOUR_MS)
           }
           acct.lastInterestTickAt = now
 
@@ -2195,6 +2223,11 @@ export const useGameStore = create<GameState & GameActions>()(
               })
             }
           }
+        }
+        // M14h.5 — commit notoriety delta, clamped to [-5, +10].
+        if (notorietyDelta !== 0) {
+          const current = s.player.notoriety ?? 0
+          s.player.notoriety = Math.max(-5, Math.min(10, current + notorietyDelta))
         }
       }),
 

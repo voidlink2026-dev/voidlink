@@ -73,6 +73,15 @@ export interface PlayerProfile {
   darkcoin?: number                            // alt currency (volatile vs Cr)
   stockHoldings?: Record<string, StockHolding> // keyed by stock id
   consumables?: Record<string, number>         // M14h — consumable id → quantity
+
+  // M14h.5 — banking notoriety / "grid presence".
+  // Tracks how visible the player is on financial monitoring networks.
+  // Public banks (Global Trust, Pacific National) tick this UP — bigger
+  // balances = more attention. Offshore banks (Cayman, Zurich) tick it DOWN.
+  // At mission start, `notoriety * 0.10 %/s` is added to baseRate, so a
+  // high-notoriety player begins under heavier passive trace pressure.
+  // Range clamped [-5, +10]. 0 = neutral.
+  notoriety?: number
 }
 
 export interface BankAccount {

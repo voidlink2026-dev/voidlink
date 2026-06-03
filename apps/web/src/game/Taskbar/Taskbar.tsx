@@ -35,28 +35,16 @@ function nextPos() {
   return { x: 80 + offset, y: 60 + offset }
 }
 
-// In-game clock — epoch: 2199-01-01 00:01:01, advances 1:1 with real time from player's createdAt
-const GAME_EPOCH_MS = new Date('2199-01-01T00:01:01.000Z').getTime()
-const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+// Voidlink Standard Time — a single global game-clock shared by every
+// operative, anchored in core/engine/worldClock.ts. Updates once per second.
+import { formatWorldClock } from '@voidlink/core'
 
-function useGameClock(createdAt: number | undefined) {
-  const [display, setDisplay] = useState('')
+function useGameClock() {
+  const [display, setDisplay] = useState(() => formatWorldClock())
   useEffect(() => {
-    if (!createdAt) { setDisplay(''); return }
-    function tick() {
-      const gd  = new Date(GAME_EPOCH_MS + (Date.now() - createdAt!))
-      const dd  = String(gd.getUTCDate()).padStart(2, '0')
-      const mon = MONTHS[gd.getUTCMonth()]
-      const yr  = gd.getUTCFullYear()
-      const hh  = String(gd.getUTCHours()).padStart(2, '0')
-      const mm  = String(gd.getUTCMinutes()).padStart(2, '0')
-      const ss  = String(gd.getUTCSeconds()).padStart(2, '0')
-      setDisplay(`${dd}.${mon}.${yr} ${hh}:${mm}:${ss}`)
-    }
-    tick()
-    const id = setInterval(tick, 1000)
+    const id = setInterval(() => setDisplay(formatWorldClock()), 1000)
     return () => clearInterval(id)
-  }, [createdAt])
+  }, [])
   return display
 }
 
@@ -73,7 +61,7 @@ export function Taskbar() {
   const resetWindowLayout = useGameStore((s) => s.resetWindowLayout)
   const logout           = useGameStore((s) => s.logout)
 
-  const gameClock = useGameClock(player?.createdAt)
+  const gameClock = useGameClock()
 
   function worldEventPillClass(evt: WorldEvent): string {
     const e = evt.effect

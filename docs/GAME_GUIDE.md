@@ -82,11 +82,11 @@ The first mission ("FIRST CONTACT") is forced — all other contracts show "Comp
 
 ### Save System
 
-The game auto-saves every 60 seconds. Multiple operatives can be created (saved per-handle, password + email required at signup). Login screen offers password verification, SHOW/HIDE toggle on the password field, and DELETE SAVE per-operative.
+The game auto-saves every 60 seconds. Multiple operatives can be created (saved per-handle, password + email required at signup). Login screen offers password verification, SHOW/HIDE toggle on the password field, DELETE SAVE per-operative, FORGOT password reset flow (M14h.4), and a 6-digit confirmation code on first signup (DARKNET RELAY one-time pass — visible in the demo build).
 
-### In-Game Clock
+### In-Game Clock — Voidlink Standard Time (VST)
 
-The taskbar shows the in-game date and time. The clock is anchored at **1 January 2199 00:01:01** and advances 1:1 with real time from the moment you created your operative.
+The taskbar shows **Voidlink Standard Time (VST)**, a single global clock shared by every operative. It is anchored so that real-world **1 January 2026 00:00 UTC = game-world 1 January 2199 00:00 UTC**, advancing 1:1 with real time from there. Every player — local or future-MMO — sees the same in-game date/time at the same wall-clock moment, which is what scheduled world events, market open hours, and shared drops will key off (M14h.5 — replaces the previous per-player session clock).
 
 ---
 
@@ -319,9 +319,23 @@ The effective trace rate is the sum of multiple components:
 
 The Ghost specialization adds a passive negative modifier to the total rate, effectively reducing base+alarm+IDS trace by 25%.
 
-### Proxy Effect
+### Relay-Chain Effect (M14h.5)
 
-Each proxy bounce multiplies the total rate by approximately 0.85. Three proxies reduce the rate to roughly 61% of its unproxied value.
+Each relay hop in your active route multiplies the total trace rate by **0.65** (was 0.85, then 0.70). The bounce count is now driven entirely by the WORLD MAP relay chain — the old +PROXY / -PROXY buttons inside the Hacking Interface were removed in M14h.5.
+
+| Hops | Multiplier | Practical effect |
+|------|-----------|------------------|
+| 0    | 1.00× | full rate |
+| 1    | 0.65× | -35% |
+| 3    | 0.27× | -73% |
+| 5    | 0.12× | -88% |
+| 8    | 0.032× | -97% |
+
+The maximum hop count scales with your proxy software tier — see *Relay Routing* below.
+
+### Trace Tuning (M14h.5)
+
+The global trace divisor was loosened from 20 → 28, so a typical traceSpeed-15 network now ticks at ~0.54 %/s passively (was 0.75). Mid-tier contracts were unwinnable for new players when combined with IDS + admin stacking; this rebalance restores the original "you should be using a relay chain" feel.
 
 ### Trace Status
 
@@ -802,12 +816,13 @@ The WORLD MAP is a 3D globe rendered with Three.js. It is the central hub for bo
 ### Bounce Chain
 Click a green bounce node to add it to your route. Click again to remove. Max hops scale with proxy software:
 
-| Proxy software | Max hops |
+| Proxy software | Max hops (M14h.5) |
 |----------------|----------|
 | Proxy v1 (basic) | 3 |
-| Proxy v2 | 5 |
-| Proxy v3 | 7 |
-| Proxy v4 (ShadowMesh) | 8 — chain re-orders mid-mission |
+| Proxy v2 | 6 |
+| Proxy v3 | 8 |
+| Proxy v4 (ShadowMesh) | 10 — chain re-orders mid-mission |
+| Proxy v5 (future) | 12 |
 
 Active route is drawn as arcs across the globe. Dirty (logged) hops can be cleaned via the HACK TOOLS bounce panel. Traced hops cannot be used at all.
 
@@ -823,14 +838,25 @@ When you accept a mission, a full-screen overlay shows the dial-up sequence: DTM
 
 Click any yellow **bank** target on the World Map. Each bank is a separate institution with its own APR, services, and account.
 
-### The Four Banks
+### The Four Banks (M14h.5 rebalance)
 
-| Bank | Region | Savings APR | Loan APR | Services |
-|------|--------|-------------|----------|----------|
-| Global Trust Bank | NYC (US-East) | 2.5% | 8.0% (2× collateral) | Savings, Loans, Trade, Stocks |
-| Pacific National | SF (US-West) | 3.4% | 9.5% (3× collateral) | Savings, Loans, Trade, Stocks |
-| Cayman Trust (Offshore) | Cayman Is. | 1.8% | — | Savings only — heat laundering |
-| Zurich Vault (Offshore) | Zurich, CH | 2.1% | 7.0% (1× collateral) | Savings + discreet loans |
+| Bank | Region | Savings APR | Loan APR | Notoriety/h | Services |
+|------|--------|-------------|----------|-------------|----------|
+| Global Trust Bank | NYC (US-East) | **12%** | 18% (2× collateral) | +0.4 | Savings, Loans, Trade, Stocks |
+| Pacific National | SF (US-West) | **22%** | 24% (3× collateral) | +0.8 | Savings, Loans, Trade, Stocks |
+| Cayman Trust (Offshore) | Cayman Is. | **6%** | — | -0.6 | Savings only — heat laundering |
+| Zurich Vault (Offshore) | Zurich, CH | **15%** | 14% (1× collateral) | -0.3 | Savings + discreet loans |
+
+APRs were inflated in M14h.5 to game-time scale so balances accrue meaningful interest within a play session.
+
+### Notoriety / Financial Grid Presence (M14h.5)
+
+Every credit you hold somewhere leaves a trail. Each bank account ticks `player.notoriety` up or down by `notorietyPerHour × (balance / 10 000 Cr)` per real-world hour:
+
+- **Public banks** (Global, Pacific) raise notoriety. Pacific is the worst — high yield, heavy paper trail.
+- **Offshore banks** (Cayman, Zurich) lower notoriety. Cayman is a pure heat-washer, Zurich balances yield with discretion.
+
+Notoriety clamps to **[-5, +10]**. At mission start it adds **+0.10 %/s per point** to the network's baseRate — so a +5 notoriety player begins under +0.5 %/s extra passive trace pressure. At +3 or higher the System Console shows a NOTORIETY warning row.
 
 ### Services
 

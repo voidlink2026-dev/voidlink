@@ -29,13 +29,13 @@ describe('createTraceState', () => {
     expect(s.alarmRate).toBe(0)
   })
 
-  it('converts networkTraceSpeed to a slow base %/s rate', () => {
-    // traceSpeed 20 → 1.0 %/s (100s to full trace passively)
-    expect(createTraceState(20).baseRate).toBeCloseTo(1.0)
-    // traceSpeed 5 → 0.25 %/s (easy network — ~7 min passive)
-    expect(createTraceState(5).baseRate).toBeCloseTo(0.25)
-    // traceSpeed 35 → 1.75 %/s (hard network)
-    expect(createTraceState(35).baseRate).toBeCloseTo(1.75)
+  it('converts networkTraceSpeed to a slow base %/s rate (M14h.5 — divisor 28)', () => {
+    // traceSpeed 28 → 1.0 %/s (100s to full trace passively)
+    expect(createTraceState(28).baseRate).toBeCloseTo(1.0)
+    // traceSpeed 5 → ~0.18 %/s (easy network — ~9 min passive)
+    expect(createTraceState(5).baseRate).toBeCloseTo(5 / 28)
+    // traceSpeed 35 → 1.25 %/s (hard network)
+    expect(createTraceState(35).baseRate).toBeCloseTo(1.25)
   })
 })
 
@@ -159,11 +159,11 @@ describe('triggerBreachAlarm', () => {
 // ─── proxy bounces ───────────────────────────────────────────────────────────
 
 describe('proxy bounces', () => {
-  it('each bounce reduces effective rate by 30%', () => {
+  it('each bounce reduces effective rate by 35% (M14h.5 — 0.65^n)', () => {
     const s = withRates({ baseRate: 10 })
     const bounced = applyProxyBounce(s)
     const ticked = tickTrace(bounced, 1000, 0)
-    expect(ticked.level).toBeCloseTo(7.0) // 10 * 0.7
+    expect(ticked.level).toBeCloseTo(6.5) // 10 * 0.65
   })
 
   it('three bounces stack multiplicatively', () => {
@@ -172,14 +172,14 @@ describe('proxy bounces', () => {
     s = applyProxyBounce(s)
     s = applyProxyBounce(s)
     const ticked = tickTrace(s, 1000, 0)
-    expect(ticked.level).toBeCloseTo(3.43, 1) // 10 * 0.7^3
+    expect(ticked.level).toBeCloseTo(2.746, 1) // 10 * 0.65^3
   })
 
   it('dampening applies to the combined total of all rates', () => {
-    // base=2 + IDS=4 = 6 total; one bounce → 6 * 0.7 = 4.2
+    // base=2 + IDS=4 = 6 total; one bounce → 6 * 0.65 = 3.9
     const s = applyProxyBounce(withRates({ baseRate: 2, idsRate: 4 }))
     const ticked = tickTrace(s, 1000, 0)
-    expect(ticked.level).toBeCloseTo(4.2)
+    expect(ticked.level).toBeCloseTo(3.9)
   })
 
   it('removeProxyBounce decrements, minimum 0', () => {
@@ -223,15 +223,15 @@ describe('real-world scenario', () => {
     const after20s = tickTrace(noProxy, 20_000, 0)
     expect(after20s.level).toBeCloseTo(100)
 
-    // With 2 proxies: 5.0 * 0.49 ≈ 2.45 %/s → ~41s to full trace
+    // With 2 hops: 5.0 * 0.65^2 = 2.1125 %/s → ~42% after 20s
     let withProxy = applyProxyBounce(applyProxyBounce(noProxy))
     const after20sWithProxy = tickTrace(withProxy, 20_000, 0)
-    expect(after20sWithProxy.level).toBeCloseTo(49, 0) // ≈ 49% after 20s — still in it
+    expect(after20sWithProxy.level).toBeCloseTo(42.25, 0)
   })
 
-  it('easy network (traceSpeed 5) passive only: ~400s to full trace', () => {
-    const s = createTraceState(5) // baseRate 0.25 %/s
+  it('easy network (traceSpeed 5) passive only — about 9 min passive (M14h.5)', () => {
+    const s = createTraceState(5) // baseRate ≈ 0.179 %/s
     const after200s = tickTrace(s, 200_000, 0)
-    expect(after200s.level).toBeCloseTo(50) // halfway after 200s
+    expect(after200s.level).toBeCloseTo(35.71, 1) // 200s × 0.179 ≈ 35.7%
   })
 })

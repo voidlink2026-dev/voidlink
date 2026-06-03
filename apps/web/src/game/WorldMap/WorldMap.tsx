@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
+import { getMaxRelayHops as getMaxHops } from '@voidlink/core'
 import { useGameStore } from '../../store/gameStore.ts'
 import styles from './WorldMap.module.css'
 
@@ -213,12 +214,6 @@ function makeArc(a: THREE.Vector3, b: THREE.Vector3, color: number): THREE.Line 
   )
 }
 
-// Max bounce hops from player proxy software
-function getMaxHops(proxies: { toolId: string }[]): number {
-  if (proxies.some((p) => p.toolId === 'proxy_v3')) return 7
-  if (proxies.some((p) => p.toolId === 'proxy_v2')) return 5
-  return 3
-}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function WorldMap() {

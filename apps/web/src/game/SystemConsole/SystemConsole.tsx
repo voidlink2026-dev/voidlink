@@ -53,6 +53,16 @@ export function SystemConsole() {
   // System status (always present)
   processes.push({ id: 'gateway', label: `GATEWAY — ${player.hardware.gatewayBandwidth} Mb/s`, status: 'ok' })
 
+  // M14h.5 — financial notoriety / grid presence
+  const notoriety = player.notoriety ?? 0
+  if (notoriety !== 0) {
+    processes.push({
+      id: 'notoriety',
+      label: `NOTORIETY — ${notoriety > 0 ? '+' : ''}${notoriety.toFixed(1)}`,
+      status: notoriety >= 3 ? 'err' : notoriety > 0 ? 'warn' : 'ok',
+    })
+  }
+
   const statusDot = (s: typeof processes[0]['status']) => {
     const colors = { ok: '#39ff14', warn: '#ff9900', active: '#00cfff', err: '#ff2d20' }
     return colors[s]

@@ -201,7 +201,7 @@ function buildPrimaryObjective(type: MissionType): string {
     file_theft: 'Locate and transfer the target file to your gateway',
     account_deletion: 'Delete the specified account from the target database',
     database_corruption: 'Corrupt the primary database on the target network',
-    network_sabotage: 'Disable the core router to take the network offline',
+    network_sabotage: 'Disable the network — breach a core router OR an admin console to take it offline',
     evidence_planting: 'Upload the provided file to the target file server',
     counter_hacking: 'Identify and disconnect the attacker from the target network',
     bounty_hunt: 'Breach the target personal gateway',

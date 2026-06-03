@@ -9,6 +9,7 @@ export type * from './types/world.ts'
 export * from './engine/trace.ts'
 export * from './engine/cracker.ts'
 export * from './engine/levels.ts'
+export * from './engine/worldClock.ts'
 
 // Network
 export * from './network/generator.ts'
