@@ -97,6 +97,21 @@ export function registerOperative(player: SaveData['player'], passwordHash: stri
   updateIndex(player, passwordHash)
 }
 
+export function updatePassword(handle: string, passwordHash: string): boolean {
+  const all = getAllSaveMeta()
+  const idx = all.findIndex((m) => m.handle.toLowerCase() === handle.toLowerCase())
+  if (idx === -1) return false
+  all[idx] = { ...all[idx], passwordHash }
+  localStorage.setItem(INDEX_KEY, JSON.stringify(all))
+  return true
+}
+
+export function findSaveByEmail(email: string): SaveMeta | null {
+  const e = email.trim().toLowerCase()
+  if (!e) return null
+  return getAllSaveMeta().find((m) => m.email?.toLowerCase() === e) ?? null
+}
+
 export function saveGame(): boolean {
   try {
     const s = useGameStore.getState()

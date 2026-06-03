@@ -284,9 +284,9 @@ export function WorldMap() {
     composer.addPass(new RenderPass(scene, camera))
     const bloom = new UnrealBloomPass(
       new THREE.Vector2(el.clientWidth, el.clientHeight),
-      1.0,   // strength
-      0.5,   // radius
-      0.10,  // threshold
+      0.55,  // strength — softer than background globe; world map has clickable dots that shouldn't blow out
+      0.4,   // radius
+      0.20,  // threshold — only the brightest pixels bloom
     )
     composer.addPass(bloom)
 
