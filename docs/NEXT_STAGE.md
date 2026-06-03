@@ -1138,7 +1138,7 @@ Architecture for vertical layout:
 | **M14m** ✅ | Multi-phase missions — MissionPhase state machine, phase progress UI in HI, PROJECT GHOST 3-phase example (OSINT → Breach → Decoy), per-phase rewards, news echoes posted after disconnect | Tier 1 | SHIPPED 2199-01-01 |
 | **M14n** ✅ | Mission runtime events — procedural events (2–5 per contract) trigger by trace/time/breach, surface as on-screen toast banners (good/bad/neutral severity colours), real trace-rate modulation effects | Tier 1 | SHIPPED 2199-01-01 |
 | **M14o** ✅ | Choice missions — MissionChoice + pendingChoiceFromPhaseIndex state, full-screen MissionChoiceOverlay UI, BLACK HALO mission with TURN-vs-BURN fork (different faction consequences + skipped phase) | Tier 1 | SHIPPED 2199-01-01 |
-| **M15** | Privilege escalation + backdoors + traffic sniffing | Tier 1 | 3 |
+| **M15** ✅ PARTIAL | Privilege escalation + persistent backdoors — ESCALATE on breached nodes (needs CPU≥3 + Cracker v3+, +tier×2.5% trace), PLANT BACKDOOR after root, pre-breaches the node on future missions against the same corp via `backdoor_<corp>_<type>` flag. Traffic sniffing partially shipped via M14h Sniffer tools. | Tier 1 | SHIPPED 2199-01-01 |
 | **M16** | Terminal expanded commands + Lua scripting layer | Tier 2 | 4 |
 | **M17** | Dark web layer: architecture + black market + contracts | Tier 2 | 5 |
 | **M18** | Social engineering: OSINT + phishing + vishing + insider | Tier 2 | 5 |

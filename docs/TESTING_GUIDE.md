@@ -999,3 +999,31 @@ The big sweep. Test everything below.
 - [ ] Single-phase missions still work
 - [ ] Multi-phase missions (PROJECT GHOST / BLACK HALO) still work
 - [ ] Channel resets to DIRECT FTP on next mission
+
+---
+
+## 31. M15 — Privilege Escalation + Persistent Backdoors (2199-01-01)
+
+### 31.1 ESCALATE button
+- [ ] Buy Cracker v3 (180 rep, 18,000 Cr) + CPU v3 (80 rep, 24,000 Cr) from the shop
+- [ ] Accept any mission, breach a node
+- [ ] In the node panel, ESCALATE PRIVILEGES button appears (amber)
+- [ ] Without those upgrades, button is disabled with a tooltip
+- [ ] Click ESCALATE → trace spikes (+ tier × 2.5%), terminal logs "[ROOT] Privileges escalated..."
+- [ ] [ROOT] badge appears on the node panel
+
+### 31.2 PLANT BACKDOOR
+- [ ] After ESCALATE, a PLANT BACKDOOR button appears (purple)
+- [ ] Click → terminal: "[BACKDOOR] Persistent access planted..."
+- [ ] Badge text: "✓ BACKDOOR ACTIVE — future missions to this target..."
+
+### 31.3 Backdoor on next mission
+- [ ] Disconnect cleanly
+- [ ] Wait for or find another mission against the SAME corporate target (clientHandle)
+- [ ] On accept, terminal logs "[BACKDOOR] Pre-breached <node_type>..."
+- [ ] In Network Map, that node is already isBreached + isScanned with hasBackdoor=true
+- [ ] You can go straight to objective without crack/scan on that node
+
+### 31.4 No regressions
+- [ ] Missions without backdoor flags work normally (no pre-breach)
+- [ ] All other mechanics (trace, wipe, exfil, phases, choices) work unchanged

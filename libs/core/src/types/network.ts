@@ -46,6 +46,9 @@ export interface NetworkNode {
   failedCrackAttempts?: number // used by brute lockout
   exploitedVia?: string        // protocol used to breach (e.g. 'FTP', 'RDP')
   adminSuppressedUntil?: number // RDP exploit: admin rate suppressed until this time
+  // ── M15 ────────────────────────────────────────────────────────────────
+  hasRoot?: boolean             // player has escalated privileges on this node
+  hasBackdoor?: boolean         // persistent backdoor planted; future missions start with this node pre-breached
 }
 
 export interface NetworkService {

@@ -374,6 +374,8 @@ export function NetworkMap() {
   const selectNode      = useGameStore((s) => s.selectNode)
   const collectFile     = useGameStore((s) => s.collectFile)
   const executeMissionObjective = useGameStore((s) => s.executeMissionObjective)
+  const escalatePrivileges = useGameStore((s) => s.escalatePrivileges)
+  const plantBackdoor   = useGameStore((s) => s.plantBackdoor)
   const logTerminal     = useGameStore((s) => s.logTerminal)
 
   const [transferringFileId, setTransferringFileId] = useState<string | null>(null)
@@ -453,6 +455,21 @@ export function NetworkMap() {
     logTerminal('Objective complete. Disconnect when ready.', 'system')
   }
 
+  function handleEscalate(node: NetworkNode) {
+    if (!activeNetwork) return
+    const r = escalatePrivileges(activeNetwork.id, node.id)
+    if (r === 'underqualified') logTerminal('ESCALATE: requires CPU ≥ 3 GHz and Cracker v3+.', 'error')
+    else if (r === 'no_breach') logTerminal('ESCALATE: node must be breached first.', 'error')
+    else if (r === 'already_root') logTerminal('ESCALATE: already root on this node.', 'dim')
+  }
+
+  function handleBackdoor(node: NetworkNode) {
+    if (!activeNetwork) return
+    const r = plantBackdoor(activeNetwork.id, node.id)
+    if (r === 'no_root') logTerminal('BACKDOOR: requires root. Escalate first.', 'error')
+    else if (r === 'already_planted') logTerminal('BACKDOOR: already planted on this node.', 'dim')
+  }
+
   if (!activeNetwork) {
     return (
       <div className={styles.empty}>
@@ -512,6 +529,14 @@ export function NetworkMap() {
             hasFirewallBypasser={(player?.software.firewallBypassers.length ?? 0) > 0}
             onCollect={(file) => handleCollect(selectedNode, file)}
             onExecuteObjective={() => handleExecuteObjective(selectedNode)}
+            onEscalate={() => handleEscalate(selectedNode)}
+            onBackdoor={() => handleBackdoor(selectedNode)}
+            canEscalate={
+              (player?.hardware.cpuSpeed ?? 0) >= 3 &&
+              (player?.software.passwordCrackers.some(
+                (c) => c.toolId === 'cracker_v3' || c.toolId === 'cracker_v4' || c.toolId === 'cracker_v5',
+              ) ?? false)
+            }
           />
         )}
       </div>
@@ -529,12 +554,17 @@ const OBJECTIVE_ACTIONS: Partial<Record<MissionType, { nodeTypes: string[]; labe
 
 function NodePanel({
   node, activeMissionType, transferringFileId, transferProgress,
-  hasFirewallBypasser, onCollect, onExecuteObjective,
+  hasFirewallBypasser, onCollect, onExecuteObjective, onEscalate, onBackdoor,
+  canEscalate,
 }: {
   node: NetworkNode; networkId: string; activeMissionType: MissionType | null
   transferringFileId: string | null; transferProgress: number
   hasFirewallBypasser: boolean
-  onCollect: (f: FileEntry) => void; onExecuteObjective: () => void
+  canEscalate: boolean
+  onCollect: (f: FileEntry) => void
+  onExecuteObjective: () => void
+  onEscalate: () => void
+  onBackdoor: () => void
 }) {
   const hexStr = '#' + nodeHex(node).toString(16).padStart(6, '0')
   const objAction = activeMissionType ? OBJECTIVE_ACTIONS[activeMissionType] : null
@@ -617,6 +647,31 @@ function NodePanel({
       )}
       {node.isBreached && node.files.length === 0 && !canExecute && (
         <div className={styles.dimNote}>Node compromised — no files present</div>
+      )}
+
+      {/* M15 — Privilege escalation + persistent backdoor */}
+      {node.isBreached && !node.hasRoot && (
+        <button
+          className={styles.escalateBtn}
+          onClick={onEscalate}
+          disabled={!canEscalate}
+          title={canEscalate ? 'Escalate to root — unlocks PLANT BACKDOOR' : 'Requires CPU ≥ 3 GHz and Cracker v3+'}
+        >
+          ▲ ESCALATE PRIVILEGES
+        </button>
+      )}
+      {node.hasRoot && !node.hasBackdoor && (
+        <button className={styles.backdoorBtn} onClick={onBackdoor}>
+          ◉ PLANT BACKDOOR
+        </button>
+      )}
+      {node.hasBackdoor && (
+        <div className={styles.backdoorActive}>
+          ✓ BACKDOOR ACTIVE — future missions to this target start with this node pre-breached
+        </div>
+      )}
+      {node.hasRoot && (
+        <div className={styles.rootBadge}>[ROOT]</div>
       )}
     </div>
   )

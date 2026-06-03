@@ -229,6 +229,9 @@ interface GameActions {
   loadMissions: (missions: Mission[]) => void
   acceptMission: (missionId: string) => void
   chooseMissionOption: (choiceId: string) => 'ok' | 'no_pending_choice'
+  // M15 — privilege escalation + backdoors
+  escalatePrivileges: (networkId: string, nodeId: string) => 'ok' | 'no_breach' | 'underqualified' | 'already_root'
+  plantBackdoor: (networkId: string, nodeId: string) => 'ok' | 'no_root' | 'already_planted'
   loadNetwork: (network: Network) => void
   selectNode: (nodeId: string | null) => void
   scanNode: (networkId: string, nodeId: string) => void
@@ -487,6 +490,22 @@ export const useGameStore = create<GameState & GameActions>()(
           }
         }
 
+        // M15 — apply persistent backdoors: any node of a backdoor-flagged type for this corp starts pre-breached.
+        if (s.player) {
+          const corpId = mission.briefing.clientHandle
+          for (const node of network.nodes) {
+            if (s.player.activeFlags[`backdoor_${corpId}_${node.type}`]) {
+              node.isBreached = true
+              node.isScanned = true
+              node.hasBackdoor = true
+              s.terminalLines.push({
+                id: `log_bd_use_${Date.now()}_${node.id}`, type: 'success',
+                text: `[BACKDOOR] Pre-breached ${node.type.replace(/_/g, ' ')} (${node.label}) via persistent backdoor.`,
+              })
+            }
+          }
+        }
+
         s.networks[network.id] = network
         s.activeNetworkId = network.id
         s.traceState = createTraceState(network.traceSpeed)
@@ -594,6 +613,59 @@ export const useGameStore = create<GameState & GameActions>()(
           })
         }
         mission.pendingChoiceFromPhaseIndex = undefined
+      })
+      return result
+    },
+
+    // M15 — escalate privileges. After breach, ESCALATE elevates the node to root status.
+    // Requires CPU ≥ 3 GHz AND cracker tier ≥ 3 (cracker_v3 or v4 or v5). Adds a one-shot trace spike.
+    escalatePrivileges: (networkId, nodeId) => {
+      let result: 'ok' | 'no_breach' | 'underqualified' | 'already_root' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'no_breach'; return }
+        const network = s.networks[networkId]
+        const node = network?.nodes.find((n) => n.id === nodeId)
+        if (!node) { result = 'no_breach'; return }
+        if (!node.isBreached) { result = 'no_breach'; return }
+        if (node.hasRoot) { result = 'already_root'; return }
+        if (s.player.hardware.cpuSpeed < 3) { result = 'underqualified'; return }
+        const hasTier3Cracker = s.player.software.passwordCrackers.some((c) =>
+          c.toolId === 'cracker_v3' || c.toolId === 'cracker_v4' || c.toolId === 'cracker_v5')
+        if (!hasTier3Cracker) { result = 'underqualified'; return }
+        node.hasRoot = true
+        // Trace spike: + tier × 2.5%
+        if (s.traceState) {
+          s.traceState.level = Math.min(100, s.traceState.level + node.securityTier * 2.5)
+        }
+        s.terminalLines.push({
+          id: `log_root_${Date.now()}`, type: 'success',
+          text: `[ROOT] Privileges escalated on ${node.label}. All log entries on this node are now suppressed.`,
+        })
+      })
+      return result
+    },
+
+    // M15 — plant persistent backdoor. Requires root. Sets a player flag that
+    // future missions to the same network check on accept.
+    plantBackdoor: (networkId, nodeId) => {
+      let result: 'ok' | 'no_root' | 'already_planted' = 'ok'
+      set((s) => {
+        if (!s.player) { result = 'no_root'; return }
+        const network = s.networks[networkId]
+        const node = network?.nodes.find((n) => n.id === nodeId)
+        if (!node?.hasRoot) { result = 'no_root'; return }
+        if (node.hasBackdoor) { result = 'already_planted'; return }
+        node.hasBackdoor = true
+        // Save persistent backdoor key on player.activeFlags so it survives across missions
+        const mission = s.missions.find((m) => m.id === s.activeMissionId)
+        if (mission) {
+          const corpId = mission.briefing.clientHandle
+          s.player.activeFlags[`backdoor_${corpId}_${node.type}`] = Date.now()
+        }
+        s.terminalLines.push({
+          id: `log_bd_${Date.now()}`, type: 'success',
+          text: `[BACKDOOR] Persistent access planted on ${node.label}. Future operations against this target will start with this node pre-breached.`,
+        })
       })
       return result
     },
