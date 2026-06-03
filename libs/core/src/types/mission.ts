@@ -99,6 +99,12 @@ export interface Mission {
   currentPhaseIndex?: number
   /** When the player completes a phase, a news headline can be queued to fire after disconnect. */
   newsEchoes?: Record<number, MissionNewsEcho>
+
+  // ── M14o: Choice missions ─────────────────────────────────────────────
+  /** When set, a phase has just completed AND that phase had choices — the UI presents the player with these options. */
+  pendingChoiceFromPhaseIndex?: number
+  /** Tracks which choice IDs the player has taken across phases (key = phase index). */
+  takenChoices?: Record<number, string>
 }
 
 export interface MissionPhase {

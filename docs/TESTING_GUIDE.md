@@ -920,3 +920,39 @@ The big sweep. Test everything below.
 - [ ] Regular savings interest still accrues outside of MARKET CRASH
 - [ ] Regular stock random-walk still works outside of MARKET CRASH
 - [ ] Buying/selling stocks during MARKET CRASH still works (just at crashed prices)
+
+---
+
+## 29. M14o — Choice Missions (2199-01-01)
+
+### 29.1 BLACK HALO visible
+- [ ] On a fresh session, MISSION BOARD shows "Operation: BLACK HALO" (difficulty 4, 24,000 Cr + 80 REP, client: CIPHER)
+- [ ] Briefing mentions a 3-phase structure with a decision point in phase 2
+
+### 29.2 Phase 1 — Trace
+- [ ] Accept the mission, breach corporate_intranet, transfer identity_dossier.enc
+- [ ] Phase strip shows "PHASE 1 / 3 — TRACE"
+- [ ] On phase 1 complete, the choice overlay appears full-screen with cyan border
+
+### 29.3 Choice overlay
+- [ ] Title: "◆ DECISION POINT"
+- [ ] Subtitle: "PHASE 1 — TRACE COMPLETE"
+- [ ] Two large buttons: "TURN THEM" (green effects badges) and "BURN THEM" (mixed effects)
+- [ ] Each button shows: label, description, effect badges (rep + faction deltas)
+- [ ] Game is paused behind the overlay (cannot click anything else)
+
+### 29.4 TURN THEM path
+- [ ] Click TURN THEM → overlay dismisses, terminal logs "Choice taken: 'TURN THEM'"
+- [ ] +15 REP applied, Underground faction +20, Arunmor faction -10
+- [ ] Phase strip now shows "PHASE 2 / 3 — RECRUIT"
+- [ ] New objective: "Upload contact_handshake.enc to the gateway file_server"
+
+### 29.5 BURN THEM path (try in a separate playthrough)
+- [ ] Click BURN THEM → skips the Recruit phase entirely
+- [ ] Goes directly to phase 3 — Cover
+- [ ] +10 REP, Underground -15, Arunmor +25, Ares +10
+
+### 29.6 No regressions
+- [ ] PROJECT GHOST (no choices) still works exactly as before — auto-advances phases
+- [ ] Legacy single-phase missions still work
+- [ ] Choice overlay doesn't appear on non-choice missions

@@ -21,6 +21,17 @@ function tryAdvanceMissionPhase(mission: Mission, draft: { terminalLines: Array<
   if (!allDone) return false
   if (idx >= mission.phases.length - 1) return false  // already on final phase
 
+  // M14o: if this phase has choices, pause for the player to decide before advancing
+  if (phase.choices && phase.choices.length > 0 && !mission.takenChoices?.[idx]) {
+    mission.pendingChoiceFromPhaseIndex = idx
+    draft.terminalLines.push({
+      id: `log_phase_choice_${mission.id}_${idx}_${Date.now()}`,
+      type: 'system',
+      text: `▶ PHASE ${idx + 1} COMPLETE — choose your next move.`,
+    })
+    return false  // pause; the next phase will advance when the player picks a choice
+  }
+
   const nextIdx = idx + 1
   mission.currentPhaseIndex = nextIdx
   const next = mission.phases[nextIdx]
@@ -217,6 +228,7 @@ interface GameActions {
   minimizeWindow: (id: string) => void
   loadMissions: (missions: Mission[]) => void
   acceptMission: (missionId: string) => void
+  chooseMissionOption: (choiceId: string) => 'ok' | 'no_pending_choice'
   loadNetwork: (network: Network) => void
   selectNode: (nodeId: string | null) => void
   scanNode: (networkId: string, nodeId: string) => void
@@ -528,6 +540,63 @@ export const useGameStore = create<GameState & GameActions>()(
           }
         }
       }),
+
+    // M14o: pick a choice presented by a pending phase
+    chooseMissionOption: (choiceId) => {
+      let result: 'ok' | 'no_pending_choice' = 'ok'
+      set((s) => {
+        const mission = s.missions.find((m) => m.id === s.activeMissionId)
+        if (!mission || mission.pendingChoiceFromPhaseIndex === undefined) { result = 'no_pending_choice'; return }
+        const fromIdx = mission.pendingChoiceFromPhaseIndex
+        const phase = mission.phases?.[fromIdx]
+        if (!phase?.choices) { result = 'no_pending_choice'; return }
+        const choice = phase.choices.find((c) => c.id === choiceId)
+        if (!choice) { result = 'no_pending_choice'; return }
+
+        // Apply choice effects
+        if (choice.effects) {
+          if (choice.effects.repDelta && s.player) {
+            s.player.reputation = Math.max(0, s.player.reputation + choice.effects.repDelta)
+          }
+          if (choice.effects.factionDeltas && s.player) {
+            for (const [fid, delta] of Object.entries(choice.effects.factionDeltas)) {
+              const fs = s.player.factionStandings.find((f) => f.factionId === fid)
+              if (fs) fs.score += delta
+            }
+          }
+          if (choice.effects.setFlag && s.player) {
+            s.player.activeFlags[choice.effects.setFlag.flag] = choice.effects.setFlag.value
+          }
+        }
+        // Record the choice
+        if (!mission.takenChoices) mission.takenChoices = {}
+        mission.takenChoices[fromIdx] = choiceId
+        // Determine next phase
+        const nextIdx = choice.nextPhaseIndex ?? (fromIdx + 1)
+        if (nextIdx >= (mission.phases?.length ?? 0)) {
+          // Choice ended the mission — all objectives auto-marked complete to allow disconnect
+          mission.objectives.forEach((o) => { if (!o.isOptional) o.isCompleted = true })
+          s.terminalLines.push({
+            id: `log_choice_end_${Date.now()}`, type: 'success',
+            text: `Choice taken: "${choice.label}". Mission concluded.`,
+          })
+        } else {
+          mission.currentPhaseIndex = nextIdx
+          const next = mission.phases![nextIdx]
+          for (const po of next.objectives) {
+            if (!mission.objectives.some((o) => o.id === po.id)) {
+              mission.objectives.push({ ...po, isCompleted: false })
+            }
+          }
+          s.terminalLines.push({
+            id: `log_choice_${Date.now()}`, type: 'success',
+            text: `Choice taken: "${choice.label}". ▶ Advancing to phase ${nextIdx + 1} — ${next.label.toUpperCase()}.`,
+          })
+        }
+        mission.pendingChoiceFromPhaseIndex = undefined
+      })
+      return result
+    },
 
     loadNetwork: (network) => set((s) => { s.networks[network.id] = network }),
 
