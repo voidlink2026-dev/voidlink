@@ -862,6 +862,29 @@ export const useGameStore = create<GameState & GameActions>()(
             isPlayerAction: true,
           })
           if (s.newsFeed.length > 100) s.newsFeed.splice(100)
+
+          // M14m: post any queued multi-phase news echoes
+          if (mission.newsEchoes && mission.phases) {
+            const phasesDone = mission.currentPhaseIndex ?? 0
+            // Phases 0..phasesDone-1 are completed (player advanced past them);
+            // if the player completed the final phase too, include it.
+            const finalPhaseDone = mission.objectives
+              .filter((o) => !o.isOptional).every((o) => o.isCompleted)
+            const completedThrough = finalPhaseDone ? mission.phases.length - 1 : phasesDone - 1
+            for (let i = 0; i <= completedThrough; i++) {
+              const echo = mission.newsEchoes[i]
+              if (!echo) continue
+              s.newsFeed.unshift({
+                id: `news_echo_${mission.id}_${i}_${Date.now()}`,
+                timestamp: Date.now() + ((echo.delaySeconds ?? 0) * 1000),
+                headline: echo.headline,
+                body: echo.body,
+                category: echo.category,
+                isPlayerAction: false,
+              })
+            }
+            if (s.newsFeed.length > 100) s.newsFeed.splice(100)
+          }
         } else {
           // Incomplete disconnect — objectives not done, not traced.
           // Reset the mission to 'available' so the player can retry.

@@ -579,3 +579,42 @@ When you spot a fix you want me to make, the relevant doc sections are:
 If you find something broken, note its Phase + step number — that makes it instant to find again.
 
 **Have fun. Take notes.**
+
+---
+
+## Phase 17 — Multi-Phase Mission: PROJECT GHOST (M14m)
+
+Goal: validate the new multi-phase mission framework end-to-end.
+
+> **Prerequisite:** Tutorial completed and at least one other mission cleared, so the player has some XP/REP and the procedural pool is populated. PROJECT GHOST requires 30 REP minimum.
+
+| # | Action | Expected |
+|---|---|---|
+| 17.1 | Open MISSION BOARD, find "Operation: PROJECT GHOST" | Client: NIGHTOWL_22, reward: 18,000 Cr + 60 REP, difficulty 3 |
+| 17.2 | Read the briefing | Explains 3 phases: OSINT → Breach → Decoy, with advance payments |
+| 17.3 | Accept the mission | Connection animation plays; trace stays at 0% during the dial-up |
+| 17.4 | Look at HACKING INTERFACE | New cyan-bordered PHASE STRIP visible above the regular step guide |
+| 17.5 | Phase strip should show | "PHASE 1 / 3 — OSINT", three dots (first cyan, others grey), description text |
+| 17.6 | Complete phase 1 objective (transfer directory.enc from a file_server) | Terminal logs phase advance + 4,000 Cr advance payment + 15 REP |
+| 17.7 | Phase strip updates | First dot turns green ✓, second dot turns cyan, label is now "BREACH" |
+| 17.8 | New objective injected into the active list | "Corrupt the GHOST package database" appears in the objectives section |
+| 17.9 | Complete phase 2 (corrupt the database — node with database type, CORRUPT DATABASE action) | Terminal: phase 3 advance + 4,000 Cr + 20 REP |
+| 17.10 | Phase 3 — "DECOY" label active, third dot cyan | New objective: upload decoy.enc to file_server |
+| 17.11 | Find or scan a file_server, execute the EVIDENCE PLANT / UPLOAD action | Note: current mission system may need adjustments here — note any quirks |
+| 17.12 | Wipe all logs, secure disconnect | Mission Result: success, full payout (18,000 Cr + 60 REP) |
+| 17.13 | Open NEWS feed after disconnect | THREE new news echoes posted: "Anonymous Audit..." / "Database Corruption..." / "Investigators Chase False Lead..." |
+| 17.14 | Confirm echo timestamps are staggered | Yes (60s / 120s / 240s offsets — they may appear with future timestamps if your clock is correct) |
+
+**Tick everything that worked:**
+- [ ] PROJECT GHOST visible in mission board
+- [ ] Phase strip renders above step guide
+- [ ] Phase advance fires on each objective completion
+- [ ] Advance payments paid correctly
+- [ ] News echoes posted after mission complete
+- [ ] Legacy single-phase missions still work (test one to confirm no regressions)
+
+**Notes / Defects:**
+```
+
+```
+

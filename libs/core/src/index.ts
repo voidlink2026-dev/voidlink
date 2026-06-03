@@ -15,6 +15,7 @@ export * from './network/generator.ts'
 
 // Missions
 export * from './missions/generator.ts'
+export * from './missions/multiphase.ts'
 
 // Story
 export type { StoryMission } from './story/storyMissions.ts'

@@ -32,6 +32,7 @@
 24. [Audio Design](#24-audio-design)
 25. [Bounce Chain Window](#25-bounce-chain-window)
 26. [What's New (M11–M14h)](#26-whats-new-m11m14h)
+27. [Multi-Phase Missions (M14m)](#27-multi-phase-missions-m14m)
 
 ---
 
@@ -983,3 +984,23 @@ The chain persists across missions. Burned hops automatically appear as "dirty" 
 - Sabotage trace rebalance (60s + 15s/hop escape window)
 - Auto-opening Hacking Interface + Bounce Chain window
 - Bounce library auto-expands when you breach entry_points/routers
+
+---
+
+## 27. Multi-Phase Missions (M14m)
+
+Some contracts are bigger than a single connect → click → wipe loop. **Multi-phase missions** chain 2–4 phases together — typically:
+
+1. **OSINT** — find your target (which subsidiary holds the file, which person owns the account)
+2. **Breach** — the actual technical attack
+3. **Cover** — wipe traces or plant decoys
+
+Each phase has its own objectives. As you complete a phase's primary objectives, the next phase unlocks automatically. Most phases pay an **advance reward** (a fraction of the final payout) the moment you finish them.
+
+The Hacking Interface shows a **phase strip** at the top: phase number, label (OSINT / Breach / Decoy etc.), three dots showing your progress (green = done, cyan = current, grey = locked).
+
+After you secure-disconnect, **news echoes** for each completed phase trickle into your news feed at staggered intervals — reflecting how the corporate world reacts to your operation in real time.
+
+**Currently available:** PROJECT GHOST (3 phases, corporate → cloud → gateway, 18,000 Cr final + 8,000 Cr in advances).
+
+More multi-phase contracts will land in M14n (mid-mission events) and M14o (choice branches), then expand to the full §5 advanced mission roster in M20+ (identity fraud, gov DB manipulation, stock market manipulation, supply chain compromise, AI compromise, IoT/SCADA, ransomware, insider threats).

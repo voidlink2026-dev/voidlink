@@ -440,7 +440,7 @@ Multiple operational aliases:
 **Current state (pre-M14m):** Missions are single-phase: connect → scan → breach → click action → wipe → disconnect. Each contract takes ~3-5 minutes. The five base types (file_theft / account_deletion / database_corruption / network_sabotage / bounty_hunt) cover the foundational mechanics but are not yet "operations" — they're tasks.
 
 **Mission depth roadmap** — directly addressing player request:
-- **M14m (next)** — Multi-phase missions: 2-3 phases per contract, with OSINT pre-phase, intra-mission decision points, news-feed echoes after completion. Reuses existing mission framework + adds a `phases: MissionPhase[]` field.
+- **M14m** ✅ SHIPPED 2199-01-01 — Multi-phase missions framework + first example (PROJECT GHOST). Per-phase objectives, rewards, news echoes. Phase progress UI in HI.
 - **M14n** — Mission events at runtime: timed pop-ups during a mission ("INTERPOL hit the network 90 seconds ago, your trace is now critical"), forcing tactical decisions
 - **M14o** — Choice missions: mid-mission branches that change the outcome (rob the file_server quietly OR sabotage the admin_console loudly — different rep, news, faction effects)
 - **M20** — Full implementation of §5.0–5.7 below (identity fraud, gov DB manipulation, stock manip, etc.)
@@ -1131,7 +1131,7 @@ Architecture for vertical layout:
 | **M14j** | Loadout slots — save/swap tool configurations between missions (Stealth / Brute / Bank-Run presets) | Tier 1 | 2 |
 | **M14k** | Implants / Wetware — permanent player buffs (Ghost reflexes +20% wipe speed, Brute synapse +1 max bounce, etc.) | Tier 1 | 2 |
 | **M14l** | Vehicle Gateways — physical-location gateways (Tor relay home / safehouse / corporate VPN) affecting starting trace rate | Tier 1 | 2 |
-| **M14m** | Multi-phase missions — OSINT pre-phase + intra-mission decision points + news echoes (precursor to §5) | Tier 1 | 3 |
+| **M14m** ✅ | Multi-phase missions — MissionPhase state machine, phase progress UI in HI, PROJECT GHOST 3-phase example (OSINT → Breach → Decoy), per-phase rewards, news echoes posted after disconnect | Tier 1 | SHIPPED 2199-01-01 |
 | **M14n** | Mission runtime events — timed pop-ups during active missions ("INTERPOL has joined the network", rival hacker offers a trade) | Tier 1 | 2 |
 | **M14o** | Choice missions — mid-mission branches with rep/news/faction consequences | Tier 1 | 2 |
 | **M15** | Privilege escalation + backdoors + traffic sniffing | Tier 1 | 3 |

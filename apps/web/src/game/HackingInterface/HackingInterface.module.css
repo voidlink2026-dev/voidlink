@@ -572,3 +572,65 @@
   margin-top: 6px;
   width: 100%;
 }
+
+/* ── M14m: phase indicator ──────────────────────────────────────────────── */
+.phaseStrip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  background: rgba(0, 229, 255, 0.04);
+  border-radius: 2px;
+  margin-bottom: 8px;
+}
+
+.phaseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.phaseBadge {
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: var(--color-cyan, #00e5ff);
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+.phaseLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-cyan, #00e5ff);
+}
+
+.phaseDots {
+  display: flex;
+  gap: 4px;
+}
+
+.phaseDot {
+  height: 4px;
+  flex: 1;
+  background: var(--color-border, #2a2a2a);
+  border-radius: 1px;
+  transition: background 0.2s;
+}
+
+.phaseDotDone   { background: var(--color-green, #39ff14); }
+.phaseDotCurrent {
+  background: var(--color-cyan, #00e5ff);
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+}
+
+.phaseDesc {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--color-text-muted, #909090);
+  letter-spacing: 0.02em;
+}

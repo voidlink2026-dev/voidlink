@@ -18,7 +18,7 @@ import { TargetInfoWindow } from '../../game/TargetInfo/TargetInfoWindow.tsx'
 import { BounceChainWindow } from '../../game/BounceChain/BounceChainWindow.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
-import { generateContract, STORY_MISSIONS } from '@voidlink/core'
+import { generateContract, STORY_MISSIONS, MULTIPHASE_TEMPLATES, generateMultiPhaseMission } from '@voidlink/core'
 import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
 import { TraceSweep } from '../../components/TraceSweep/TraceSweep.tsx'
 import styles from './DesktopScreen.module.css'
@@ -179,6 +179,8 @@ export function DesktopScreen() {
         generateContract('database_corruption', 5, 'government_classified', 0xf00dface),
         generateContract('network_sabotage', 4, 'corporate_intranet', 0xabad1dea),
         generateContract('bounty_hunt', 1, 'personal_gateway', 0x1337c0de),
+        // M14m: hand-crafted multi-phase missions — one of each template
+        ...MULTIPHASE_TEMPLATES.map((t) => generateMultiPhaseMission(t)),
       ]
       loadMissions(missions)
     }

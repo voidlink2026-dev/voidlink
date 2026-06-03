@@ -806,3 +806,48 @@ The big sweep. Test everything below.
 - [ ] Drag to rotate → movement is much slower / easier to focus on a region
 - [ ] Zoom out → rotate speed scales back up to default
 - [ ] Wheel zoom itself is also gentler (0.6× speed, was 1.0)
+
+---
+
+## 26. M14m — Multi-Phase Missions (2199-01-01)
+
+### 26.1 PROJECT GHOST mission visibility
+- [ ] On a FRESH session (delete save, sign up new operative), open MISSION BOARD
+- [ ] After completing the tutorial, "Operation: PROJECT GHOST" mission visible
+- [ ] Client handle: NIGHTOWL_22, base reward 18,000 Cr + 60 REP
+
+### 26.2 Phase 1 — OSINT
+- [ ] Accept PROJECT GHOST → connects to a corporate_intranet network
+- [ ] HI shows a new PHASE STRIP above the step guide:
+  - "PHASE 1 / 3 — OSINT" label
+  - Three phase dots — first one cyan (current), other two grey
+  - Phase description: "Locate the subsidiary holding the GHOST package..."
+- [ ] Objective: "Transfer directory.enc from the corporate file_server"
+- [ ] Complete the objective → terminal logs phase advance + 4,000 Cr advance payment
+
+### 26.3 Phase 2 — Breach
+- [ ] After phase 1 completes, terminal logs "▶ PHASE 2 — BREACH: Connect to the cloud infrastructure..."
+- [ ] HI phase strip updates: first dot green ✓, second cyan, third grey
+- [ ] New objective injected: "Corrupt the GHOST package database"
+- [ ] Player must still complete this within the same active connection (single network for now)
+- [ ] After phase 2: another 4,000 Cr advance + 20 REP
+
+### 26.4 Phase 3 — Decoy
+- [ ] Terminal: "▶ PHASE 3 — DECOY"
+- [ ] HI phase strip: two dots green, third cyan
+- [ ] Objective: "Upload decoy.enc to the personal_gateway file_server"
+- [ ] Complete + wipe + secure disconnect
+
+### 26.5 News Echoes
+- [ ] After successful mission completion, check NEWS feed
+- [ ] Three new news articles, one per completed phase:
+  - "Anonymous Audit Reveals Subsidiary Mismanagement" (corporate)
+  - "Corporate Database Corruption — Investigation Opens" (crime)
+  - "Investigators Chase False Lead in Recent Breach" (crime)
+- [ ] Timestamps are staggered (60s / 120s / 240s offsets)
+- [ ] None of them are tagged as YOUR action (no player-action badge)
+
+### 26.6 Legacy missions unaffected
+- [ ] Other procedural missions (file_theft, etc.) work as before — no phase strip
+- [ ] Story missions (story_arc01 etc.) still work — no phase strip
+- [ ] Only PROJECT GHOST shows the phase UI

@@ -731,6 +731,35 @@ export function HackingInterface() {
         </div>
       )}
 
+      {/* M14m: phase indicator — only shown if the mission has phases */}
+      {activeMission?.phases && activeMission.phases.length > 1 && (
+        <div className={styles.phaseStrip}>
+          <div className={styles.phaseHeader}>
+            <span className={styles.phaseBadge}>
+              PHASE {(activeMission.currentPhaseIndex ?? 0) + 1} / {activeMission.phases.length}
+            </span>
+            <span className={styles.phaseLabel}>
+              {activeMission.phases[activeMission.currentPhaseIndex ?? 0]?.label.toUpperCase()}
+            </span>
+          </div>
+          <div className={styles.phaseDots}>
+            {activeMission.phases.map((_, i) => {
+              const done = i < (activeMission.currentPhaseIndex ?? 0)
+              const current = i === (activeMission.currentPhaseIndex ?? 0)
+              return (
+                <span
+                  key={i}
+                  className={`${styles.phaseDot} ${done ? styles.phaseDotDone : ''} ${current ? styles.phaseDotCurrent : ''}`}
+                />
+              )
+            })}
+          </div>
+          <div className={styles.phaseDesc}>
+            {activeMission.phases[activeMission.currentPhaseIndex ?? 0]?.description}
+          </div>
+        </div>
+      )}
+
       {/* Step guide */}
       {missionStep && (
         <div className={`${styles.stepGuide} ${missionStep.done ? styles.stepGuideDone : ''}`}>
