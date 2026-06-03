@@ -851,3 +851,39 @@ The big sweep. Test everything below.
 - [ ] Other procedural missions (file_theft, etc.) work as before — no phase strip
 - [ ] Story missions (story_arc01 etc.) still work — no phase strip
 - [ ] Only PROJECT GHOST shows the phase UI
+
+---
+
+## 27. M14n — Mission Runtime Events (2199-01-01)
+
+### 27.1 Events fire on triggers
+- [ ] Accept a difficulty 3+ procedural mission
+- [ ] Watch the trace bar climb — at 35% a banner pops in top-centre: "INTERPOL backbone has joined the trace..."
+- [ ] Banner has a severity colour (red border = bad, cyan = neutral, green = good)
+- [ ] Banner has a tag: ⚠ ALERT / EVENT / ◆ INTEL
+- [ ] Plays a brief SFX (error sound for bad, tick for good)
+- [ ] After ~6 seconds banner auto-dismisses with a fade
+- [ ] Trace speed increases (or decreases for good events) by the event's delta
+
+### 27.2 Multiple events can stack
+- [ ] If multiple events fire close together, they stack vertically with gaps
+- [ ] Each dismisses independently after its 6s lifetime
+
+### 27.3 Per-difficulty event count
+- [ ] Difficulty 1 missions: 2 events
+- [ ] Difficulty 3 missions: 2–3 events
+- [ ] Difficulty 5 missions: 3–4 events
+- [ ] Difficulty 7+ missions: 4–5 events
+
+### 27.4 Event types
+- **Trace-threshold:** "INTERPOL joined" at 35%, "Corporate SOC" at 55%, "Rival operative" at 70%
+- **Time-elapsed:** Auto-audit at 45s, backup slowdown (good!) at 90s, shift change at 120s
+- **Node-breach:** Database alert on database breach, admin alert on admin_console, firewall alert on firewall
+
+### 27.5 Effects applied
+- [ ] When "Backup process" event fires (-0.4 delta), trace climbs visibly slower
+- [ ] When "Rival operative" event fires, rivalHacker spawns in the network
+
+### 27.6 No regressions
+- [ ] Tutorial mission (FIRST CONTACT) has no procedural events (story missions use authored events)
+- [ ] Toast pop-ups don't break the existing terminal log of events (both fire)

@@ -18,6 +18,7 @@ import { TargetInfoWindow } from '../../game/TargetInfo/TargetInfoWindow.tsx'
 import { BounceChainWindow } from '../../game/BounceChain/BounceChainWindow.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
+import { MissionEventToast } from '../../game/MissionEventToast/MissionEventToast.tsx'
 import { generateContract, STORY_MISSIONS, MULTIPHASE_TEMPLATES, generateMultiPhaseMission } from '@voidlink/core'
 import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
 import { TraceSweep } from '../../components/TraceSweep/TraceSweep.tsx'
@@ -260,6 +261,7 @@ export function DesktopScreen() {
 
       {/* System console — always visible, shows background processes */}
       <SystemConsole />
+      <MissionEventToast />
     </main>
   )
 }
