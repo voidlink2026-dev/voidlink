@@ -1,6 +1,9 @@
 import { useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { useGameStore } from '../../store/gameStore.ts'
 import type { NetworkNode, FileEntry, MissionType, PlayerProfile } from '@voidlink/core'
 import styles from './NetworkMap.module.css'
@@ -134,8 +137,10 @@ function NetworkCanvas({
     // ── Renderer ───────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
-    renderer.setClearColor(0x080808)
+    renderer.setClearColor(0x02040a)  // very dark navy — M14h.7 cyber backdrop
     renderer.setSize(mount.clientWidth || 600, mount.clientHeight || 400)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1.0
     mount.appendChild(renderer.domElement)
 
     // ── Scene / camera ─────────────────────────────────────
@@ -153,6 +158,45 @@ function NetworkCanvas({
     const pl = new THREE.PointLight(0xffffff, 1.4)
     pl.position.set(0, 10, 10)
     scene.add(pl)
+
+    // ── M14h.7 cyber backdrop: starfield + scan grid + bloom ─────────────
+    // Starfield — distant points, low brightness, gentle parallax
+    {
+      const count = 600
+      const pos = new Float32Array(count * 3)
+      for (let i = 0; i < count; i++) {
+        const r = 50 + Math.random() * 80
+        const theta = Math.random() * Math.PI * 2
+        const phi = Math.acos(Math.random() * 2 - 1)
+        pos[i * 3]     = r * Math.sin(phi) * Math.cos(theta)
+        pos[i * 3 + 1] = r * Math.cos(phi)
+        pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta)
+      }
+      const geo = new THREE.BufferGeometry()
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+      scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+        color: 0x99ccff, size: 0.15, transparent: true, opacity: 0.45, sizeAttenuation: true,
+      })))
+    }
+    // Scan-grid plane — sits well below the node graph; cyan wireframe
+    {
+      const grid = new THREE.GridHelper(80, 40, 0x004466, 0x002233)
+      grid.position.y = -8
+      ;(grid.material as THREE.Material).transparent = true
+      ;(grid.material as THREE.Material).opacity = 0.35
+      scene.add(grid)
+    }
+    // Bloom composer — small scene + clickable nodes → softer settings
+    const composer = new EffectComposer(renderer)
+    composer.setSize(mount.clientWidth || 600, mount.clientHeight || 400)
+    composer.addPass(new RenderPass(scene, camera))
+    const bloom = new UnrealBloomPass(
+      new THREE.Vector2(mount.clientWidth || 600, mount.clientHeight || 400),
+      0.55,   // strength — matches WorldMap so dots don't smear
+      0.4,    // radius
+      0.22,   // threshold — only bright emissives bloom
+    )
+    composer.addPass(bloom)
 
     // ── Controls ───────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -238,7 +282,11 @@ function NetworkCanvas({
           mapPos(target.position.x, target.position.y, target.securityTier),
         ]
         const geo = new THREE.BufferGeometry().setFromPoints(pts)
-        const mat = new THREE.LineBasicMaterial({ color: 0x1a1a1a })
+        // M14h.7 — edges are now cyan-tinted so the network graph reads as
+        // a live data-link diagram instead of grey scaffolding. Subtle, but
+        // bloom catches the brighter pixels and gives the whole topology a
+        // soft glow that follows the camera.
+        const mat = new THREE.LineBasicMaterial({ color: 0x2a4a6a, transparent: true, opacity: 0.8 })
         edgeMats.push(mat)
         scene.add(new THREE.Line(geo, mat))
       }
@@ -281,6 +329,8 @@ function NetworkCanvas({
       const w = mount.clientWidth
       const h = mount.clientHeight
       renderer.setSize(w, h)
+      composer.setSize(w, h)
+      bloom.setSize(w, h)
       camera.aspect = w / h
       camera.updateProjectionMatrix()
     })
@@ -340,7 +390,7 @@ function NetworkCanvas({
       // Skipping per-frame edge colour update for perf — edges stay dim
 
       controls.update()
-      renderer.render(scene, camera)
+      composer.render()
     }
     animate()
 
