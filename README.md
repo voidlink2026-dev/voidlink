@@ -57,13 +57,22 @@ uplink2/
 
 All documentation lives in [`docs/`](docs/):
 
+All planning lives in **three docs** (single source of truth — kept in sync after every milestone):
+
+| Document | Contents |
+|----------|----------|
+| [COMPLETE_TASKS.md](docs/COMPLETE_TASKS.md) | Shipped ledger — append-only, every milestone with date |
+| [NEXT_STAGE.md](docs/NEXT_STAGE.md) | Future work — unshipped milestones, design detail, launch plan, disclosure policy |
+| [ROADMAP.md](docs/ROADMAP.md) | Visual timeline — phases, sprint plan, season cadence |
+
+Reference docs (unchanged):
+
 | Document | Contents |
 |----------|----------|
 | [GAME_GUIDE.md](docs/GAME_GUIDE.md) | Complete player guide — every mechanic, all five arcs, all three endings |
-| [NEXT_STAGE.md](docs/NEXT_STAGE.md) | Feature roadmap — dark web, satellite hacking, social engineering, co-op, and more |
-| [DEV_DOCS_INDEX.md](docs/DEV_DOCS_INDEX.md) | Implementation status, all milestones, file index |
-| [GAME_DESIGN_MASTER.md](docs/GAME_DESIGN_MASTER.md) | Full game design specification |
-| [UPLINK_NG_OVERVIEW.md](docs/UPLINK_NG_OVERVIEW.md) | Project overview and architecture summary |
+| [GAME_DESIGN_MASTER.md](docs/GAME_DESIGN_MASTER.md) | Game-design canon — vision, design pillars, system specs |
+| [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) | Manual QA checklist per milestone |
+| [PLAYTEST_WALKTHROUGH.md](docs/PLAYTEST_WALKTHROUGH.md) | Phase-by-phase playtest script |
 | [DEV_GUIDE_01–10](docs/) | Step-by-step implementation guides for each system |
 
 ---

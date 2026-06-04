@@ -1,33 +1,32 @@
-# Voidlink — The Definitive Roadmap
+# Voidlink — Future Plan
 
-> *"We're not building a hacking game. We're building the hacking game. The one where you feel like you're actually inside the machine — and the machine fights back."*
+> *"We're not building a hacking game. We're building **the** hacking game. The one where you feel like you're actually inside the machine — and the machine fights back."*
 
-This is the master plan. Every idea. Every mechanic. Everything Uplink did, everything Hacknet did, everything Mr. Robot showed us was possible — and then 10× beyond that. World-class. No corners cut.
+This document is **forward-looking only**. Everything that has shipped lives in [COMPLETE_TASKS.md](./COMPLETE_TASKS.md). For the visual timeline see [ROADMAP.md](./ROADMAP.md).
 
-**Status: Pre-alpha feature-complete as of 2026-05-27. Active development 2026-05-28+.**
+**Status (2026-06-04):** Pre-alpha feature-complete. ~36 milestones shipped. Next focus: pre-launch polish for Steam Early Access (target 2026-09).
 
-**Shipped (2026-05-27):** Core loop, 9 procedural mission types, 5 story arcs, 3 endings, multi-rate trace system, 3D network map (Three.js), bounce network (§1.0), XP/levels 1–1000 (§9.0), factions + invite codes, 3D world map (globe), system console overlay, operative profile tabs, audio engine, 9-step tutorial, 4 specialisations, 7 world events, rival hacker AI, Electron wrapper, i18n scaffold.
+**The three-doc model — single source of truth:**
+1. **[COMPLETE_TASKS.md](./COMPLETE_TASKS.md)** — append-only ledger of shipped work.
+2. **NEXT_STAGE.md** (this file) — unshipped milestones, design vision, launch + disclosure plans.
+3. **[ROADMAP.md](./ROADMAP.md)** — the visual phase + sprint timeline.
 
-**Shipped (2026-05-28):** Lateral movement + credential reuse (§1.1), memory scraping (§1.12), bounce hop cleanup (M11), service-specific exploits with protocol effects (§1.3), brute force lockout (§1.9), subnet zones Zone A/B with pivot gate (§1.10).
+When a milestone ships, its row moves OUT of this file and into COMPLETE_TASKS.md. This file should never grow stale shipped detail.
 
-**Shipped (2199-01-01 — pre-alpha polish pass, M14a):**
-- **Settings menu (⚙)**: music/SFX volume + toggles, dark/light theme, UI scale slider (70–150%), reduce-motion + FPS toggle, shortcuts reference. Persists to `localStorage`.
-- **Idle music**: 4:26 looped track during idle, fades out when mission active, fades back when disconnected. Zero-cross spliced for click-free loop.
-- **Trace beep system**: linear-cadence proximity beep replaces the old wirring alarm. Starts at 10% trace, accelerates linearly to 100%.
-- **Window position memory**: dragging a window saves its position; reopening restores it.
-- **Newsfeed launcher button**: now accessible from the taskbar.
-- **In-game clock**: epoch 2199-01-01 00:01:01, advances 1:1 with real time from player creation. All in-game lore references updated to year 2199.
-- **Bounce network moved to WORLD MAP globe**: click green bounce nodes on the 3D globe to add to chain. Max hops scale with proxy software tier (basic=3, v2=5, v3=7). HI bounce panel removed.
-- **Neon digital globe**: green lat/lon grid, intersection dots, atmosphere halo, starfield, country outlines (110m world-atlas topojson, ~100KB).
-- **Performance**: CRT WebGL canvas removed (CSS-only now), DataRain throttled to 18fps, game loop runs as `setInterval` at 20Hz, all loops pause on tab hide. ~75% CPU drop.
-- **Mission retry**: incomplete disconnect (not traced) resets mission to `available`. No penalty.
-- **Cracker version mapping fix**: shop purchases now register their tier correctly (e.g. `cracker_v2` → level 2 for mission requirements).
-- **Light theme**: full CSS variable system; high-contrast palette for accessibility.
-- **Tutorial overhaul**: spotlight-only (soft dim, no hard blockers), 25 steps, file transfer step, conditional auto-advance, requireConfirm option, window-cleanup option for focused steps. Time-based trace accumulation paused during tutorial. First contract forced.
-- **Audio polish**: master music/SFX buses, click + tick + window-open/close + error SFX, autoplay-policy-safe resume.
-- **Performance/accessibility**: `<main>` landmarks for axe-clean console, `@fontsource` self-hosted fonts (no CORS dependency).
+### Tech stack snapshot
 
-Everything below is what comes next.
+| | |
+|---|---|
+| **Runtime** | Electron (desktop) + browser (web) |
+| **Frontend** | React 18, TypeScript strict, Vite |
+| **State** | Zustand + Immer |
+| **Animation** | Framer Motion |
+| **Styling** | CSS Modules + design tokens |
+| **Monorepo** | pnpm workspaces |
+| **Testing** | Vitest (60 unit tests passing) |
+| **Audio** | Web Audio API procedural SFX + file-based looped music |
+| **3D** | Three.js + UnrealBloomPass (WorldMap, NetworkMap, background globe) |
+| **Packages** | `apps/web`, `apps/desktop`, `libs/core`, `libs/ui` |
 
 ---
 
@@ -1113,36 +1112,17 @@ Architecture for vertical layout:
 
 ---
 
-## 13. Milestone Priority Table
+## 13. Milestone Priority Table — Unshipped Only
+
+For shipped milestones see [COMPLETE_TASKS.md](./COMPLETE_TASKS.md). Effort estimates are in "sessions" (~3-hour focused blocks).
 
 | Milestone | Scope | Priority | Est. Sessions |
 |-----------|-------|----------|---------------|
-| **M11** ✅ | Bounce log wipe sub-missions + hop health | Tier 1 | SHIPPED 2026-05-28 |
-| **M12** ✅ | Lateral movement + credential reuse + memory scraping | Tier 1 | SHIPPED 2026-05-28 |
-| **M13** ✅ | Service-specific exploits + brute lockout + subnet zones | Tier 1 | SHIPPED 2026-05-28 |
-| **M14a** ✅ | Pre-alpha polish: settings, neon globe, idle music, in-game clock, perf throttling, tutorial overhaul, light theme, mission retry, cracker fix | Tier 1 | SHIPPED 2199-01-01 |
-| **M14b** ✅ | Banking foundations: bank window, deposits/withdrawals, savings interest | Tier 1 | SHIPPED 2199-01-01 |
-| **M14c** ✅ | Banking expansion: loans, Cr↔Darkcoin trading, equities (4 stocks), offshore banks (Cayman + Zurich), tabbed bank UI, market simulation | Tier 1 | SHIPPED 2199-01-01 |
-| **M14d** ✅ | UX & balance: mandatory log wipe + WIPE ALL button, OPEN WORLD MAP from HI, connection effect overlay (dial-tone + animated chain), clickable Corp/Gov/Underground targets with TARGET INTEL window, sabotage router injection, rep gating rebalanced | Tier 1 | SHIPPED 2199-01-01 |
-| **M14e** ✅ | Banking polish: sabotage → stock drop (-15%), MARKET CRASH world event (stocks crash, savings APR zero'd), loan defaulting (-50 REP + news article when principal > 5× liquid) | Tier 1 | SHIPPED 2199-01-01 |
-| **M14f** ✅ PARTIAL | Exfiltration channels — 4 channels (Direct FTP / Encrypted Tunnel / DNS Tunneling / ICMP Exfil) with speed-vs-stealth tradeoffs + tool/spec gating, selector bar in Network Map | Tier 1 | SHIPPED 2199-01-01 |
 | **M14f.1** | Canary files + timestomping — completing followup to M14f | Tier 1 | 2 |
-| **M14g** ✅ | Upgrade Shop → skill-tree graph UI (SVG node-link diagram, 10 columns, prereq edges, colour-coded states, side detail panel, LIST fallback) | Tier 1 | SHIPPED 2199-01-01 |
-| **M14h** ✅ | Shop expansion — 2 new HW slots (GPU, Cooling), 3 new SW categories (Sniffer, MemScrape, Anti-Forensic), 5 tier extensions (Cracker v5, Proxy v4, etc.), 7 consumables with armed-flag effects (panic kit, zero-day pack, decoy log, false flag, rep tokens, cred pack), wired into crack speed / scan / heat / breach reveal | Tier 1 | SHIPPED 2199-01-01 |
-| **M14h.1** ✅ | UX hotfixes: sabotage trace rebalance (60s base + 15s/hop, lower spike), audio master bus + volume responsiveness, HI/Bounce Chain auto-open on desktop, dedicated BounceChainWindow, breach-acquired bounce nodes added to library, richer DTMF/handshake dial-up SFX | Tier 1 | SHIPPED 2199-01-01 |
-| **M14h.2** ✅ | UX hotfixes: full window-layout persistence (v3 save schema), HACK TOOLS no longer requires active mission, WorldMap rotate-speed scales with zoom (less twitchy when zoomed in), Window onMove fires on resize too | Tier 1 | SHIPPED 2199-01-01 |
-| **M14h.3** ✅ | UX polish batch: neon-Earth Data Globe background AND interactive WorldMap (UnrealBloomPass post-processing + real continent outlines from world-atlas TopoJSON + cyan/magenta palette + ACESFilmic tone mapping), tutorial auto-focuses spotlit windows, bounce→RELAY rename, node colour state YELLOW when scanned / GREEN when breached, 3-pulse intruder beep when rival hacker spawns. WorldMap bloom tuned softer (0.55 strength) so target dots don't smear. | Tier 1 | SHIPPED 2199-01-01 |
-| **M14h.4** ✅ | Signup email confirmation code (6-digit one-time code, dispatched in-fiction as "DARKNET RELAY" — code visible in demo build) + password reset flow (email lookup → code → new password). New `updatePassword` + `findSaveByEmail` persistence helpers. FORGOT link in existing-operative connect prompt. | Tier 1 | SHIPPED 2199-01-01 |
-| **M14h.6** ✅ | Encrypted email inbox — replaces the never-shipped phone/contacts concept. New `EmailInbox` window (sidebar list + reader pane), `inbox` store slice persisted as save v4, `sendInboxMessage()` API, seed inbox on first login (Welcome from VoidLink Dispatch + advice from CIPHER + automated billing note), mission-accept dispatches an ENCRYPTED contract email auto-decrypted via DECRYPT WITH KEY, mock-PGP fingerprint badges, category colour-coding (mission/contact/faction/system/darknet/rival), star + delete + mark-all-read. Also: mission relay-hop gating added (`minRelayHops` scaled D1=0 → D10=9) with on-card "Build a N-hop relay" hint. | Tier 1 | SHIPPED 2199-01-01 |
-| **M14h.5** ✅ | Mid-game rebalance + plumbing batch: (1) trace divisor 20→28 + per-hop reduction 0.7→0.65 (gentler global tracer, stronger relay payoff); (2) +PROXY/-PROXY buttons removed from HI — relay-chain length on WORLD MAP is now the sole bounceCount source; (3) `getMaxRelayHops()` centralized in core, hop caps raised (basic=3, v2=6, v3=8, v4=10, v5=12); (4) sabotage briefing reworded to cover both router and admin_console targets; (5) banking rebalance — APRs inflated to game-time scale (Global 12%, Pacific 22%, Cayman 6%, Zurich 15%), new `notorietyPerHour` per bank, `player.notoriety` accrues from balance × hours, applied to mission baseRate at +0.10%/s per point (clamp [-5,+10]); (6) login save-list staggered reveal with click SFX per card; (7) global world clock — `getWorldClockMs()`/`formatWorldClock()` anchored at real 2026-01-01 → game 2199-01-01, taskbar now displays VST instead of per-player session time (groundwork for shared MMO events). | Tier 1 | SHIPPED 2199-01-01 |
 | **M14i** | Research Tech Tree — 5 branches (Crypto / Stealth / Hardware / Social / AI), 30+ research nodes, slow-burn unlocks via paid research bench, hidden nodes gated by story flags | Tier 1 | 4 |
 | **M14j** | Loadout slots — save/swap tool configurations between missions (Stealth / Brute / Bank-Run presets) | Tier 1 | 2 |
 | **M14k** | Implants / Wetware — permanent player buffs (Ghost reflexes +20% wipe speed, Brute synapse +1 max bounce, etc.) | Tier 1 | 2 |
 | **M14l** | Vehicle Gateways — physical-location gateways (Tor relay home / safehouse / corporate VPN) affecting starting trace rate | Tier 1 | 2 |
-| **M14m** ✅ | Multi-phase missions — MissionPhase state machine, phase progress UI in HI, PROJECT GHOST 3-phase example (OSINT → Breach → Decoy), per-phase rewards, news echoes posted after disconnect | Tier 1 | SHIPPED 2199-01-01 |
-| **M14n** ✅ | Mission runtime events — procedural events (2–5 per contract) trigger by trace/time/breach, surface as on-screen toast banners (good/bad/neutral severity colours), real trace-rate modulation effects | Tier 1 | SHIPPED 2199-01-01 |
-| **M14o** ✅ | Choice missions — MissionChoice + pendingChoiceFromPhaseIndex state, full-screen MissionChoiceOverlay UI, BLACK HALO mission with TURN-vs-BURN fork (different faction consequences + skipped phase) | Tier 1 | SHIPPED 2199-01-01 |
-| **M15** ✅ PARTIAL | Privilege escalation + persistent backdoors — ESCALATE on breached nodes (needs CPU≥3 + Cracker v3+, +tier×2.5% trace), PLANT BACKDOOR after root, pre-breaches the node on future missions against the same corp via `backdoor_<corp>_<type>` flag. Traffic sniffing partially shipped via M14h Sniffer tools. | Tier 1 | SHIPPED 2199-01-01 |
 | **M16** | Terminal expanded commands + Lua scripting layer | Tier 2 | 4 |
 | **M17** | Dark web layer: architecture + black market + contracts | Tier 2 | 5 |
 | **M18** | Social engineering: OSINT + phishing + vishing + insider | Tier 2 | 5 |

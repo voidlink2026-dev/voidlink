@@ -583,11 +583,11 @@ When you're done, paste the below into a fresh document or paste in the chat. Fi
 When you spot a fix you want me to make, the relevant doc sections are:
 
 - **Player-facing mechanics:** `docs/GAME_GUIDE.md`
-- **What's shipped / roadmap:** `docs/NEXT_STAGE.md`
-- **Per-milestone test checklists:** `docs/TESTING_GUIDE.md` (§17 → §25)
+- **Shipped milestones (ledger):** `docs/COMPLETE_TASKS.md`
+- **What's next (future plan):** `docs/NEXT_STAGE.md`
+- **Visual timeline:** `docs/ROADMAP.md`
+- **Per-milestone test checklists:** `docs/TESTING_GUIDE.md`
 - **Architecture / system spec:** `docs/GAME_DESIGN_MASTER.md`
-- **Pre-alpha summary:** `docs/UPLINK_NG_OVERVIEW.md`
-- **Doc index + status:** `docs/DEV_DOCS_INDEX.md`
 
 If you find something broken, note its Phase + step number — that makes it instant to find again.
 
