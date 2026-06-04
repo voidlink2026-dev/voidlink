@@ -1,8 +1,23 @@
-# Voidlink — Manual Testing Guide
+# Voidlink — Testing Guide
 
-> Run through this document after every significant feature addition. Each section covers one system. Test the golden path first, then the edge cases listed beneath it.
+The single QA document. Two halves:
 
-**Dev server:** `cd apps/web && npm run dev` → open at http://localhost:5173
+- **Part A** — milestone-by-milestone checklists. Run the relevant section after every milestone ship.
+- **Part B** — end-to-end playtest walkthrough. 90–120 minutes for a full pass.
+
+This file is the **only** QA reference — playtest walkthrough was merged in M14h.8.
+
+For unshipped work see [Next_Stage.md](./Next_Stage.md). For the master plan see [Full_Plan.md](./Full_Plan.md).
+
+**Dev server:** `cd apps/web && pnpm run dev` → open at http://localhost:5173
+**Tests:** `pnpm test` (60 unit tests in `libs/core`) must pass before any commit.
+**TypeCheck:** `pnpm --filter @voidlink/web exec tsc --noEmit` must be clean.
+
+---
+
+# Part A — Per-Milestone Checklists
+
+Run the section corresponding to the milestone you just shipped. Test the golden path first, then the edge cases.
 
 ---
 
@@ -1086,3 +1101,435 @@ The big sweep. Test everything below.
 
 ### 33.7 Login save-list reveal
 - [ ] On login screen with ≥2 saves, the cards slide in left-to-right one at a time (~220 ms apart) with a soft click SFX per card
+
+---
+
+## 34. M14h.6 — Encrypted Email Inbox + Mission Relay Gating (2026-06)
+
+### 34.1 Inbox seed + UI
+- [ ] First login (or first ever for a fresh save): INBOX taskbar button shows 3 unread badge
+- [ ] Click INBOX — window opens 720×480 with sidebar + reader pane
+- [ ] Three seed messages present: VoidLink Dispatch welcome, CIPHER advice, sys.ops billing
+- [ ] CIPHER's message and VoidLink's are ENCRYPTED (purple cipher grid until DECRYPT WITH KEY)
+- [ ] sys.ops is plain (no decrypt step)
+- [ ] Category chips colour-coded: cyan (contact), mid-grey (system), gold (mission), purple (faction), pink (darknet), red (rival)
+- [ ] Star toggle works (gold ★)
+- [ ] DELETE removes the row
+- [ ] MARK READ button clears unread badge
+
+### 34.2 Mission-accept inbox dispatch
+- [ ] Accept any mission — terminal logs as usual
+- [ ] Open INBOX — new ENCRYPTED `mission` category message at top from the contract client
+- [ ] Decrypt — body matches briefing + reward/difficulty/contract-ID footer
+- [ ] Inbox persists across logout (save v4)
+- [ ] Inbox count cap at 100 (verify by opening DevTools localStorage if you've cycled through enough)
+
+### 34.3 Mission relay-hop gating
+- [ ] Open MISSION BOARD with zero active route
+- [ ] Mission cards Difficulty 2+ show new `✗ RELAY ≥N HOPS` chip in red
+- [ ] ACCEPT disabled for any card whose RELAY check fails
+- [ ] Hint when ONLY relay fails: "Build a N-hop relay on WORLD MAP" (not the generic shop hint)
+- [ ] Hint when relay + something else fail: defaults to "Upgrade in SHOP to unlock"
+- [ ] Open WORLD MAP, build a relay chain to satisfy the missing hop count
+- [ ] Return to MISSION BOARD — relay chip now green ✓, ACCEPT enabled
+
+---
+
+## 35. M14h.7 — NetworkMap Cyberpunk Visual Rework (2026-06)
+
+- [ ] Accept any mission to render NetworkMap
+- [ ] Verify cyan starfield visible at distance (small bright dots, parallax on rotate)
+- [ ] Verify scan-grid plane visible below the node graph (cyan thin lines, semi-transparent)
+- [ ] Node emissives glow softly (bloom) — not blown out / smeared
+- [ ] Selection ring still works (click a node, cyan torus appears)
+- [ ] Rival ring still spins orange (spawn rival via mission events to verify)
+- [ ] Edges read as cyan (was grey 0x1a1a1a, now ~0x2a4a6a)
+- [ ] Resize window — composer scales without artifacts
+- [ ] Disconnect — graph tears down without WebGL warnings
+
+---
+
+## 36. M14h.8 — Docs Consolidation (2026-06)
+
+This is a docs-only milestone; verify the file tree only.
+
+- [ ] `docs/` contains exactly: `Full_Plan.md`, `Complete_Tasks.md`, `Next_Stage.md`, `Roadmap.md`, `Testing_Guide.md` (plus subdirs if any)
+- [ ] No `GAME_GUIDE.md`, `GAME_DESIGN_MASTER.md`, `PLAYTEST_WALKTHROUGH.md`, `DEV_GUIDE_*.md`, `ARCHIVE_*.md`, `UPLINK_NG_OVERVIEW.md`, `DEV_DOCS_INDEX.md`, or the old TitleCASE TESTING_GUIDE.md / NEXT_STAGE.md / COMPLETE_TASKS.md / ROADMAP.md
+- [ ] `README.md` updated to reference the 5 docs only
+- [ ] `CLAUDE.md` references the 5-doc model and the no-`Co-Authored-By: Claude` rule
+
+---
+
+# Part B — End-to-End Playtest Walkthrough
+
+> Old-school walkthrough format: do each step in order, tick the box, note anything that doesn't match the **Expected** column. At the end of each phase there's a "Notes / Defects" space — jot anything weird, missing, or broken there. Estimated playtest time: **90–120 minutes** for a full pass.
+
+**How to use this section:**
+
+1. **Start with a clean slate** — DELETE SAVE on every save in the login screen so you're starting fresh
+2. **Open browser DevTools (F12)** and keep the **Console** tab visible — flag any red errors
+3. **Read each step's Expected column BEFORE doing the step** so you know what to look for
+4. **Tick the checkbox** if it matches. If it doesn't, write what happened in the Notes section at the end of that phase
+5. **Do not skip steps** — many later tests depend on state set up by earlier steps
+6. **At the end** — go to the "Final Report Template" section at the bottom and fill it in
+
+---
+
+## Phase 0 — First Boot
+
+Goal: app loads cleanly, no console errors.
+
+| # | Action | Expected |
+|---|---|---|
+| 0.1 | Hard-refresh the browser tab (Ctrl+Shift+R) | Boot screen appears within 1 second |
+| 0.2 | Watch the boot screen for ~3 seconds | Glowing Voidlink logo, "VOIDLINK BIOS v2.1.0 © 2199…", boot log lines scrolling, neon-Earth globe rotating in the background |
+| 0.3 | Wait for the auto-advance | Boot fades out smoothly, Login screen appears |
+| 0.4 | Open DevTools → Console | **No red errors.** Yellow/orange axe-core "potential a11y" warnings are OK. |
+
+**Tick everything that worked:**
+- [ ] App loads with no white-screen
+- [ ] Background is the neon-Earth bloom globe (NOT falling characters)
+- [ ] Console is clean
+
+---
+
+## Phase 1 — Account Creation
+
+Goal: create a fresh operative and reach the desktop.
+
+| # | Action | Expected |
+|---|---|---|
+| 1.1 | Click "NEW OPERATIVE" tab if not already on it (only appears when there's at least one existing save) | Signup form visible |
+| 1.2 | Enter handle: `PLAYTEST_001` | Field accepts input |
+| 1.3 | Enter username: `playtest1` | Field accepts |
+| 1.4 | Enter email: `test@playtest.local` | Field accepts (no live validation until submit) |
+| 1.5 | Enter password: `pass!1234` and confirm | Fields type as masked dots by default |
+| 1.6 | Click the SHOW button next to PASSWORD | Both fields become plain text. Click HIDE → back to dots |
+| 1.7 | Try clicking REGISTER with an invalid email like `nope` | Red error banner: "INVALID EMAIL ADDRESS" |
+| 1.8 | Fix email, click REGISTER | Verification panel appears: "DARKNET RELAY — CONFIRMATION REQUIRED", with a 6-digit code visible in a dashed purple box (demo build). |
+| 1.9 | Type the displayed 6-digit code, click VERIFY & CONNECT | DesktopScreen loads. Terminal shows "Email verified." |
+| 1.10 | Note the auto-opened windows | SYSTEM TERMINAL, MISSION BOARD, OPERATIVE PROFILE, VOIDLINK NEWSFEED, HACKING INTERFACE, RELAY CHAIN — six windows |
+
+**Tick everything that worked:**
+- [ ] SHOW/HIDE password toggle works
+- [ ] Email validation rejects `nope`
+- [ ] Confirmation code panel appears with code shown in purple dashed box
+- [ ] Wrong code rejected with "INCORRECT CODE — CHECK YOUR INBOX"
+- [ ] Correct code accepted and operative committed
+- [ ] All 6 default windows appear after signup
+- [ ] Tutorial overlay appears bottom-right with step 1/25
+
+### Phase 1b — Password Reset (optional)
+
+| # | Action | Expected |
+|---|---|---|
+| 1b.1 | Log out, click your saved operative, then click FORGOT? next to the password input | Reset panel appears asking for the account email |
+| 1b.2 | Enter the email you signed up with, click SEND RESET CODE | Code panel appears with the demo code shown |
+| 1b.3 | Type the code, enter a new password (min 6 + 1 special), confirm, click UPDATE PASSWORD | Returned to operative picker, terminal logs "Password reset" |
+| 1b.4 | Click CONNECT and use the new password | Account opens normally |
+
+---
+
+## Phase 2 — First Desktop & Tutorial Walkthrough
+
+Goal: complete the tutorial as a brand new player would.
+
+| # | Action | Expected |
+|---|---|---|
+| 2.1 | Look at the taskbar | Left: launcher buttons. Right: VST clock (01.JAN.2199 …), trace placeholder ("NO ACTIVE CONNECTION"), handle / 5,000 Cr / REP 0, then ⊞ / ⚙ / ⏻ |
+| 2.2 | Watch the VST clock for 10 seconds | Time advances 1:1 with real time |
+| 2.3 | Click NEXT through tutorial steps 1–8 (info-only) | Each step has a cyan glowing spotlight ring on the relevant UI element. Game stays fully interactive. |
+| 2.4 | At step 9 ("ACCEPT YOUR FIRST CONTRACT"), open MISSION BOARD if not already | See `FIRST CONTACT` story mission at the top (yellow border, "STORY" badge). All other missions show "Complete tutorial to unlock" instead of ACCEPT |
+| 2.5 | Click the FIRST CONTACT card to expand, then ACCEPT | Connection animation plays full-screen (~3.5s). Dial-up SFX. Network Map auto-opens. Tutorial advances to step 10. |
+| 2.6 | Note: trace bar should be **NOT** climbing during the animation | Trace bar shows 0% throughout the dial-up sequence |
+| 2.7 | After connection animation completes, trace bar begins to climb | Trace starts to inch up from 0% |
+| 2.8 | Tutorial step 11 says "SELECT A NODE" — click any node in NETWORK MAP | Node selected (cyan highlight), tutorial says "NODE SELECTED ✓ — CLICK NEXT WHEN READY". |
+| 2.9 | Click NEXT | Step 12 |
+| 2.10 | Continue through scan / crack / objective / wipe steps | Each conditional step auto-advances when you complete the action |
+| 2.11 | At "TRANSFER THE FILE" step, locate the ★ marked file in the file_server panel and click TRANSFER | Progress bar runs ~3s, file appears in your local storage, objective ticks |
+| 2.12 | Wipe logs on every breached node (use WIPE ALL LOGS button) | All ✓ ticks in COVER YOUR TRACKS panel |
+| 2.13 | Click SECURE DISCONNECT | Mission Result overlay: Success, credits earned, REP earned. XP awarded in terminal. |
+| 2.14 | Tutorial advances toward upgrades — opens shop step | Shop window auto-spotlight |
+| 2.15 | Continue all the way to step 25 (FACTION STANDINGS) | Profile window comes to focus. Final "BEGIN" button. |
+| 2.16 | Click BEGIN | Tutorial dismisses. Game persists tutorial_done flag. |
+
+**Tick everything that worked:**
+- [ ] Tutorial spotlight is a glowing ring, not a hard-blocking overlay
+- [ ] Game is fully clickable through the tutorial
+- [ ] Trace bar does NOT climb during the tutorial (paused)
+- [ ] Trace bar does NOT climb during the connection animation
+- [ ] All required action-gated steps advanced correctly
+- [ ] First mission completed successfully
+- [ ] BOUNCE NODE ACQUIRED terminal log appeared
+
+---
+
+## Phase 3 — Window Management
+
+| # | Action | Expected |
+|---|---|---|
+| 3.1 | Drag MISSION BOARD by its title bar to a new position | Window follows cursor smoothly |
+| 3.2 | Resize MISSION BOARD by dragging the bottom-right corner | Resizes from corner, contents reflow |
+| 3.3 | Minimise via the orange dot | Window disappears, launcher button now has amber dot |
+| 3.4 | Click MISSIONS in the launcher | Window restores to its previous position + size |
+| 3.5 | Click MISSIONS again | Window minimises (toggle from launcher) |
+| 3.6 | Close MISSION BOARD via the red dot | Window closes, launcher green dot disappears |
+| 3.7 | Click MISSIONS to re-open | Opens at the position you dragged/resized it to |
+| 3.8 | Hold Ctrl and scroll the mouse wheel | Whole window layer zooms 40–200% |
+| 3.9 | Click ⊞ in the taskbar | All open windows cascade into a tidy layout |
+| 3.10 | Open SETTINGS ⚙, slide UI SCALE to 130% | Everything scales up |
+
+**Tick:**
+- [ ] Drag/resize/minimise/close all work
+- [ ] Closed windows reopen at saved positions
+- [ ] Ctrl+Scroll zoom works
+- [ ] No duplicate launcher buttons
+
+---
+
+## Phase 4 — Settings
+
+| # | Action | Expected |
+|---|---|---|
+| 4.1 | Open SETTINGS ⚙ | Sections: AUDIO, DISPLAY, SHORTCUTS |
+| 4.2 | Toggle MUSIC off then on | Idle music fades out/in |
+| 4.3 | Click TEST SFX | 3-note rising scan sound |
+| 4.4 | Click ◻ LIGHT theme | Whole UI switches to light mode |
+| 4.5 | Click ◼ DARK | Back to dark |
+
+---
+
+## Phase 5 — System Terminal & News Feed
+
+| # | Action | Expected |
+|---|---|---|
+| 5.1 | Open SYSTEM TERMINAL | Shows previous mission log lines |
+| 5.2 | Open NEWS feed | Multiple seeded articles + your post-mission article |
+
+---
+
+## Phase 6 — Operative Profile
+
+| # | Action | Expected |
+|---|---|---|
+| 6.1 | Open PROFILE | OVERVIEW tab default |
+| 6.2 | Hardware section | CPU 1 GHz, RAM 2, HDD 10GB, Modem 10 Mb/s, Gateway 10 Mb/s |
+| 6.3 | Statistics | Total Missions: 1, Successful Breaches: ≥1, Credits Earned: ≥5000 |
+| 6.4 | FACTIONS tab | "FOUND A FACTION" form (rank-locked) |
+| 6.5 | STANDINGS tab | Voidlink +10, others at base |
+
+---
+
+## Phase 7 — World Map Exploration
+
+| # | Action | Expected |
+|---|---|---|
+| 7.1 | Open WORLD MAP | Neon-Earth globe (bloom + real continent outlines, cyan/magenta) |
+| 7.2 | Drag to rotate, scroll to zoom | Rotation slows as zoom increases |
+| 7.3 | Click a green bounce node | Added to relay chain, arc drawn on globe |
+| 7.4 | Click a yellow dot (bank) | BANK TERMINAL opens |
+| 7.5 | Click a cyan/red/purple dot (corp/gov/underground) | TARGET INTEL window opens |
+
+---
+
+## Phase 8 — Banking Deep-Dive
+
+| # | Action | Expected |
+|---|---|---|
+| 8.1 | Click GLOBAL TRUST on globe | Bank window — APR 12% (M14h.5) |
+| 8.2 | Open account (500 Cr) | Tabs appear: SAVINGS / LOAN / TRADE / STOCKS |
+| 8.3 | Deposit 2000, withdraw later | Balance moves, interest accrues |
+| 8.4 | Check notoriety chip on bank card | "+0.4 NOTORIETY/h" in amber |
+| 8.5 | Click CAYMAN | Only SAVINGS tab. "-0.6 NOTORIETY/h" in green |
+| 8.6 | Click PACIFIC | All 4 tabs. "+0.8 NOTORIETY/h" in amber |
+| 8.7 | Open System Console | If notoriety ≠ 0, NOTORIETY row visible |
+
+---
+
+## Phase 9 — Upgrade Shop
+
+| # | Action | Expected |
+|---|---|---|
+| 9.1 | Open SHOP | Graph view default, 15 columns |
+| 9.2 | Click cracker_v2 node | Cyan outline, BUY button enabled |
+| 9.3 | BUY | Cash deducted, node turns green ✓, terminal logs |
+| 9.4 | Open PROFILE → Software | Cracker v2 listed |
+| 9.5 | CONSUMABLES toggle | 7 items visible with stack counters |
+
+---
+
+## Phase 10 — Second Mission (Procedural)
+
+| # | Action | Expected |
+|---|---|---|
+| 10.1 | Open MISSION BOARD | Procedural contracts visible. Each shows RELAY hop chip |
+| 10.2 | Pick a Difficulty-3 mission (requires 2 hops) | Card expands |
+| 10.3 | Open WORLD MAP, build 2-hop relay | Chain visible. Mission card chip flips green ✓ |
+| 10.4 | Accept | Connection animation, NetworkMap opens (new cyber visuals — bloom + scan grid + starfield) |
+| 10.5 | Scan a node | Services + CVE revealed |
+| 10.6 | Crack/Exploit | Faster than Tier 1 |
+| 10.7 | Complete objective + WIPE ALL LOGS | All ✓ |
+| 10.8 | SECURE DISCONNECT | Reward overlay |
+| 10.9 | Open INBOX | NEW unread ENCRYPTED contract email from the client |
+
+---
+
+## Phase 11 — Mission Variety
+
+| Mission type | Test |
+|--------------|------|
+| Account Deletion | Breach DB → DELETE ACCOUNT |
+| Database Corruption | Breach DB → CORRUPT |
+| Network Sabotage | Breach router OR admin_console → SABOTAGE |
+| Bounty Hunt | Find + breach named target |
+
+For sabotage specifically:
+- [ ] Briefing reads "Disable the network — breach a core router OR an admin console to take it offline" (M14h.5)
+- [ ] Both node types complete the objective
+
+---
+
+## Phase 12 — Mid-Mission Mechanics
+
+- [ ] SCAN reveals services + CVE
+- [ ] DUMP CREDENTIALS on admin/database/endpoint adds creds to cache
+- [ ] USE CREDENTIALS on adjacent node bypasses crack
+- [ ] Sniffer auto-reveal on router breach (if `sniffer_v1` owned)
+- [ ] PANIC KIT consumable: instant disconnect with no rep hit
+- [ ] ESCALATE (CPU≥3, Cracker v3+) shows ROOT badge after breach
+- [ ] PLANT BACKDOOR after root logs to terminal
+- [ ] Next mission against same corp: backdoor pre-breaches the same node type
+
+---
+
+## Phase 13 — System Console
+
+- [ ] SYS panel bottom-right shows live state: trace level, relay hops, world events, gateway speed, notoriety (if non-zero)
+- [ ] Collapsing header works
+- [ ] Mission-active state shows MISSION ACTIVE row
+
+---
+
+## Phase 14 — Audio Verification
+
+| Sound | When | Expected |
+|---|---|---|
+| Idle music | Desktop | Looped track plays softly |
+| Music fade-out | Mission accept | Fades out over ~2.5s |
+| Music fade-in | Disconnect | Fades back in over ~3s |
+| Dial-up | Mission accept | DTMF + ring + hiss + warble + chirp (~3.5s) |
+| Trace beep | ≥10% trace | Digital ping, accelerates |
+| Per-action SFX | Scan/crack/wipe/etc. | All play |
+| Intruder beep | Rival hacker spawns | 3-pulse warning beep |
+| Mission success/fail stings | Disconnect | Distinct rising/falling stings |
+
+---
+
+## Phase 15 — Layout Persistence
+
+| # | Action | Expected |
+|---|---|---|
+| 15.1 | Arrange windows custom | Layout is your config |
+| 15.2 | Logout | Saves and returns to login |
+| 15.3 | Reconnect with password | Desktop reloads with exact layout (positions, sizes, minimised state) |
+| 15.4 | Hard-refresh browser (F5) | Layout still restored |
+| 15.5 | INBOX state persists | Read/unread + starred + cipher-decrypted state retained |
+
+---
+
+## Phase 16 — Edge Cases & Polish
+
+- [ ] LOGOUT during active mission: ⏻ button disabled
+- [ ] Try to accept a second mission while one is active: blocked
+- [ ] Bounce Chain window editable via "▶ EDIT ON WORLD MAP"
+- [ ] Light theme covers EVERY window
+- [ ] Tutorial re-runs on a fresh save (DELETE SAVE then register fresh)
+
+---
+
+## Phase 17 — Multi-Phase Mission: PROJECT GHOST (M14m)
+
+> **Prerequisite:** Tutorial complete + 1 procedural mission cleared. PROJECT GHOST requires 30 REP minimum.
+
+| # | Action | Expected |
+|---|---|---|
+| 17.1 | MISSION BOARD → "Operation: PROJECT GHOST" | Client: NIGHTOWL_22, reward 18,000 Cr + 60 REP, difficulty 3 |
+| 17.2 | Briefing | Explains 3 phases: OSINT → Breach → Decoy |
+| 17.3 | Accept | Connection animation; trace stays 0% during dial-up |
+| 17.4 | HI shows new cyan-bordered PHASE STRIP above step guide | "PHASE 1 / 3 — OSINT", three dots |
+| 17.5 | Complete phase 1 (transfer directory.enc from file_server) | Phase advance + 4,000 Cr advance + 15 REP |
+| 17.6 | Phase strip updates | First dot ✓ green, second cyan, label "BREACH" |
+| 17.7 | Complete phase 2 (corrupt the GHOST package DB) | Phase 3 + 4,000 Cr + 20 REP |
+| 17.8 | Phase 3 "DECOY" — upload decoy.enc to a file_server | Objective ticks |
+| 17.9 | Wipe all logs, secure disconnect | Mission result: 18,000 Cr + 60 REP |
+| 17.10 | Open NEWS after disconnect | THREE staggered news echoes posted (60s / 120s / 240s offsets) |
+
+---
+
+## Phase 18 — Choice Mission: BLACK HALO (M14o)
+
+| # | Action | Expected |
+|---|---|---|
+| 18.1 | MISSION BOARD → "Operation: BLACK HALO" (requires arc progress) | Story mission visible |
+| 18.2 | Accept + complete phases 1–2 | Standard flow |
+| 18.3 | At phase 3, full-screen choice overlay appears | Two cards: TURN (faction reward) vs BURN (different faction reward, skipped phase) |
+| 18.4 | Pick one | Overlay dismisses, mission proceeds with chosen branch |
+| 18.5 | After disconnect | Faction standings reflect the choice |
+
+---
+
+## Phase 19 — Encrypted Inbox Smoke Test (M14h.6)
+
+| # | Action | Expected |
+|---|---|---|
+| 19.1 | Open INBOX | 3+ seed messages, mission emails for completed contracts |
+| 19.2 | Click an encrypted message | Cipher grid renders blurred; DECRYPT button at bottom |
+| 19.3 | DECRYPT WITH KEY | Body reveals; success SFX plays |
+| 19.4 | Star a message, delete another | Visual update + list count |
+| 19.5 | Logout + reconnect | Inbox state survives |
+
+---
+
+## 🏁 Final Report Template
+
+```
+# Voidlink Playtest Report — <date>
+
+## Overall impression
+(One paragraph: how does it feel? What stands out?)
+
+## What worked well
+- ...
+
+## What needs fixing (defects)
+| Severity | Where (Phase/step) | Description |
+|---|---|---|
+| Critical | (e.g. Phase 7.6) | ... |
+| Medium   | ... | ... |
+| Minor    | ... | ... |
+
+## What needs improving (UX / feel)
+- ...
+
+## What I want next
+- ...
+
+## Time spent
+~ X minutes
+```
+
+---
+
+## Cheat sheet — quick reference
+
+When you spot a fix, the relevant doc sections are:
+
+- **Master plan + game systems reference:** `docs/Full_Plan.md`
+- **Shipped milestones (ledger):** `docs/Complete_Tasks.md`
+- **Forward plan:** `docs/Next_Stage.md`
+- **Timeline:** `docs/Roadmap.md`
+- **This file:** `docs/Testing_Guide.md`
+
+If you find something broken, note its Phase + step number — it makes the fix-cycle quick.
+
+**Have fun. Take notes.**

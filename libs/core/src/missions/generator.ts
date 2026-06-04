@@ -46,7 +46,7 @@ const BRIEFING_TEMPLATES: Record<MissionType, string[]> = {
   story: [],
 }
 
-// From GAME_DESIGN_MASTER.md §6.2
+// From Full_Plan.md §14.5 — requirements scale by difficulty.
 // M14h.5 — minRelayHops added. Difficulty-1/2 missions are still ungated so
 // brand-new operatives aren't locked out before they've earned a single
 // bounce node, but everything from D3 up requires building a relay chain

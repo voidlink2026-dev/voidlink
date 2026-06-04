@@ -57,23 +57,15 @@ uplink2/
 
 All documentation lives in [`docs/`](docs/):
 
-All planning lives in **three docs** (single source of truth — kept in sync after every milestone):
+All planning, reference, and QA lives in **five docs** (consolidated 2026-06 in M14h.8). Updated after every milestone:
 
 | Document | Contents |
 |----------|----------|
-| [COMPLETE_TASKS.md](docs/COMPLETE_TASKS.md) | Shipped ledger — append-only, every milestone with date |
-| [NEXT_STAGE.md](docs/NEXT_STAGE.md) | Future work — unshipped milestones, design detail, launch plan, disclosure policy |
-| [ROADMAP.md](docs/ROADMAP.md) | Visual timeline — phases, sprint plan, season cadence |
-
-Reference docs (unchanged):
-
-| Document | Contents |
-|----------|----------|
-| [GAME_GUIDE.md](docs/GAME_GUIDE.md) | Complete player guide — every mechanic, all five arcs, all three endings |
-| [GAME_DESIGN_MASTER.md](docs/GAME_DESIGN_MASTER.md) | Game-design canon — vision, design pillars, system specs |
-| [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) | Manual QA checklist per milestone |
-| [PLAYTEST_WALKTHROUGH.md](docs/PLAYTEST_WALKTHROUGH.md) | Phase-by-phase playtest script |
-| [DEV_GUIDE_01–10](docs/) | Step-by-step implementation guides for each system |
+| [Full_Plan.md](docs/Full_Plan.md) | Master plan — vision, pillars, every system spec, multiplayer + modding intent, security policy, launch + disclosure, monetisation guardrails |
+| [Complete_Tasks.md](docs/Complete_Tasks.md) | Shipped ledger — append-only, every milestone with date |
+| [Next_Stage.md](docs/Next_Stage.md) | Future work — world-class detail on every unshipped milestone |
+| [Roadmap.md](docs/Roadmap.md) | Visual timeline — phases, sprint plan, EA season cadence, post-1.0 DLC |
+| [Testing_Guide.md](docs/Testing_Guide.md) | QA — per-milestone checklists + end-to-end playtest walkthrough |
 
 ---
 

@@ -4,31 +4,36 @@ Project-root instructions for any AI assistant working in this repo.
 
 ## Documentation rule — MANDATORY
 
-Every code change that ships a milestone or fix must update **all three planning docs in the same commit**:
+The repo has exactly **5 docs in `docs/`** (consolidated 2026-06 in M14h.8). No others. If you find yourself wanting to create a new markdown file in `docs/`, you almost certainly want to extend one of these instead.
 
-1. **[docs/COMPLETE_TASKS.md](docs/COMPLETE_TASKS.md)** — append a row describing what was shipped (top of the current month's section).
-2. **[docs/NEXT_STAGE.md](docs/NEXT_STAGE.md)** — remove the corresponding "unshipped" row (or trim a planned scope).
-3. **[docs/ROADMAP.md](docs/ROADMAP.md)** — flip the matching phase row from 🚧/🎯 → ✅ with the date.
+1. **[docs/Full_Plan.md](docs/Full_Plan.md)** — master plan / design canon
+2. **[docs/Complete_Tasks.md](docs/Complete_Tasks.md)** — append-only shipped ledger
+3. **[docs/Next_Stage.md](docs/Next_Stage.md)** — world-class detail on unshipped work only
+4. **[docs/Roadmap.md](docs/Roadmap.md)** — visual phase + sprint timeline
+5. **[docs/Testing_Guide.md](docs/Testing_Guide.md)** — QA checklists + playtest walkthrough
 
-If a change is too small to be a milestone (typo fix, minor copy tweak) it does **not** need the planning-doc update. Anything user-visible or mechanically significant **does**.
+Every code change that ships a milestone or fix must update **all relevant docs in the same commit**:
 
-When player-facing behaviour changes, also update:
-- **docs/GAME_GUIDE.md** — if the change affects how the player understands a mechanic.
-- **docs/TESTING_GUIDE.md** — if there's a new thing to manually verify.
-- **docs/PLAYTEST_WALKTHROUGH.md** — if the change affects the scripted playtest path.
+- **Complete_Tasks.md** — append a concise row describing what was shipped (top of the current month's section).
+- **Next_Stage.md** — remove the corresponding "unshipped" row (or trim a planned scope).
+- **Roadmap.md** — flip the matching phase row from 🚧/🎯 → ✅ with the date.
+- **Full_Plan.md** — update if a system spec, policy, or architectural decision changed.
+- **Testing_Guide.md** — add or update the section for the milestone.
 
-## The three planning docs — ownership
+If a change is too small to be a milestone (typo fix, minor copy tweak) it does **not** need the doc update. Anything user-visible or mechanically significant **does**.
 
-- `COMPLETE_TASKS.md` is **append-only**. Never edit existing rows.
-- `NEXT_STAGE.md` is **forward-looking only**. Never contains shipped milestones.
-- `ROADMAP.md` is the **visual timeline**. Phases + sprints + season cadence.
+## The five docs — ownership
 
-Anything else (`GAME_DESIGN_MASTER.md`, `GAME_GUIDE.md`, `TESTING_GUIDE.md`, `PLAYTEST_WALKTHROUGH.md`, `DEV_GUIDE_01-10`) is reference, not planning.
+- `Full_Plan.md` — the design canon. Update when a system or policy changes.
+- `Complete_Tasks.md` is **append-only**. Never edit existing rows.
+- `Next_Stage.md` is **forward-looking only**. Never contains shipped milestones — when a milestone ships, its row MOVES out of Next_Stage into Complete_Tasks.
+- `Roadmap.md` is the **visual timeline**. Phases + sprints + season cadence.
+- `Testing_Guide.md` is QA. Add a section per milestone; keep evergreen.
 
 ## Commit style
 
 - Use conventional-commit prefixes: `feat(M14h.7):`, `fix(M14h.5):`, `docs:`.
-- **Do NOT** add `Co-Authored-By: Claude` lines — see [NEXT_STAGE.md §16](docs/NEXT_STAGE.md#16-ai-assistance-disclosure--pre-launch-cleanup-plan) for the disclosure policy.
+- **Do NOT** add `Co-Authored-By: Claude` lines — see [Full_Plan.md §22](docs/Full_Plan.md#22-ai-assistance-disclosure) for the disclosure policy.
 - Heredoc commit messages should describe **why**, not just **what**.
 
 ## Test/typecheck before commit
