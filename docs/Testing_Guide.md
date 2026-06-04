@@ -1149,6 +1149,41 @@ The big sweep. Test everything below.
 
 ---
 
+## 38. M14j — Loadout Slots (2026-06)
+
+### 38.1 Preset seed + UI
+- [ ] First time MissionBoard or Bounce Chain Window renders for a fresh save, three preset chips appear at the top: 👁 STEALTH, ⚡ BRUTE, 💎 BANK RUN
+- [ ] Each preset has a SAVE button to its right
+- [ ] Hovering a preset shows tooltip with `route (N hops), exfil <id>, arm <consumable>`
+
+### 38.2 Apply a preset
+- [ ] On WORLD MAP, build a 2-hop relay chain
+- [ ] In Bounce Chain Window, click SAVE next to STEALTH — terminal: `Loadout saved: STEALTH (2 hops).`
+- [ ] Clear the relay (`CLEAR ROUTE`)
+- [ ] Click the STEALTH chip — chip turns cyan (active), terminal: `Loadout applied: STEALTH (2/2 hops, exfil: dns).`
+- [ ] activeRoute restored to the 2 hops
+- [ ] exfilChannel changed to DNS (verify in NetworkMap exfil bar during next mission)
+
+### 38.3 Mission-active lockout
+- [ ] Accept any mission
+- [ ] LoadoutBar chips are disabled with tooltip "Disconnect first to apply a different loadout"
+- [ ] Hint text "locked while connected" appears on the right
+- [ ] SAVE still works during a mission (saves current state for next time)
+
+### 38.4 Armed consumable on apply
+- [ ] Buy a Decoy Log consumable
+- [ ] Click STEALTH preset — `consumable_decoy_log_armed` flag should be set (check via DevTools or by triggering a wipe — should consume the decoy)
+
+### 38.5 Persistence
+- [ ] Save settings: apply STEALTH preset with 2 hops, then log out
+- [ ] Reconnect — activeRoute restored, exfilChannel still DNS, active loadout chip still cyan
+
+### 38.6 Deletion guard
+- [ ] (Future custom-slot UI exists or via DevTools) — attempt to delete a preset → returns 'preset', no change
+- [ ] Custom slot can be deleted normally
+
+---
+
 ## 37. M14f.1 — Canary Files + Timestomping (2026-06)
 
 ### 37.1 Canary trip without detection tool

@@ -82,6 +82,30 @@ export interface PlayerProfile {
   // high-notoriety player begins under heavier passive trace pressure.
   // Range clamped [-5, +10]. 0 = neutral.
   notoriety?: number
+
+  // M14j — saved loadout presets.
+  // Each loadout captures the player's pre-mission setup: which relay nodes
+  // to chain (in order), which exfiltration channel to default to, and which
+  // consumable to auto-arm. Applying a loadout is a one-click swap; the
+  // current state can be overwritten back into the loadout at any time.
+  // The first 3 loadouts (`stealth`, `brute`, `bankrun`) are seeded as
+  // presets and cannot be deleted, though they can be overwritten.
+  loadouts?: Loadout[]
+  activeLoadoutId?: string | null
+}
+
+export type ExfilChannelId = 'direct' | 'tunnel' | 'dns' | 'icmp'
+
+export interface Loadout {
+  id: string
+  name: string
+  icon: string              // single char / emoji for the chip
+  isPreset: boolean         // first 3 cannot be deleted
+  preferredRoute: string[]  // bounce node IDs in order
+  exfilChannel: ExfilChannelId
+  armedConsumableId: string | null
+  createdAt: number
+  updatedAt: number
 }
 
 export interface BankAccount {

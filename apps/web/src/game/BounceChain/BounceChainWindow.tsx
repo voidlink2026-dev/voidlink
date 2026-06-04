@@ -2,6 +2,7 @@ import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import { getMaxRelayHops as getMaxHops } from '@voidlink/core'
+import { LoadoutBar } from '../Loadouts/LoadoutBar.tsx'
 import styles from './BounceChainWindow.module.css'
 
 export function BounceChainWindow() {
@@ -33,6 +34,7 @@ export function BounceChainWindow() {
 
   return (
     <div className={styles.root}>
+      <LoadoutBar />
       <div className={styles.header}>
         <span className={styles.title}>BOUNCE CHAIN</span>
         <span className={styles.slots}>{activeRoute.length}/{maxHops} HOPS</span>

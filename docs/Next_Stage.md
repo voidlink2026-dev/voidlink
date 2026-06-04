@@ -379,15 +379,6 @@ A persistent meta-progression layer outside the per-character upgrade shop.
 - UI: SVG tech tree similar to current Upgrade Shop, but separate window
 - Save: persists across operatives in the same account? No — per-operative.
 
-### M14j — Loadout Slots
-**Effort:** 2 sessions
-
-Save/swap tool configurations between missions:
-- 3 slots: Stealth / Brute / Bank-Run
-- Each loadout stores: equipped tools, default exfil channel, default consumable to arm
-- One-click swap from HI or Mission Board
-- Loadouts persist per save
-
 ### M14k — Implants / Wetware
 **Effort:** 2 sessions
 

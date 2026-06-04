@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage } from '@voidlink/core'
+import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
 import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
@@ -200,6 +200,7 @@ interface GameState {
   terminalLines: TerminalLine[]
   newsFeed: NewsItem[]
   inbox: EmailMessage[]  // M14h.6 — encrypted email inbox
+  exfilChannel: ExfilChannelId  // M14j — hoisted from NetworkMap so loadouts can manage it
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
   missionResult: 'success' | 'fail' | 'abandoned' | null
@@ -288,10 +289,19 @@ interface GameActions {
   deleteInboxMessage: (id: string) => void
   markAllInboxRead: () => void
   seedStarterInbox: () => void
+
+  // M14j — loadouts
+  setExfilChannel: (id: ExfilChannelId) => void
+  seedStarterLoadouts: () => void
+  applyLoadout: (id: string) => 'ok' | 'unknown'
+  saveCurrentAsLoadout: (id: string) => 'ok' | 'unknown'
+  createLoadout: (name: string, icon: string) => string  // returns new id
+  renameLoadout: (id: string, name: string) => void
+  deleteLoadout: (id: string) => 'ok' | 'preset' | 'unknown'
 }
 
 export const useGameStore = create<GameState & GameActions>()(
-  immer((set) => ({
+  immer((set, get) => ({
     screen: 'boot',
     player: null,
     activeWindows: [],
@@ -308,6 +318,7 @@ export const useGameStore = create<GameState & GameActions>()(
     terminalLines: [],
     newsFeed: [],
     inbox: [],
+    exfilChannel: 'direct',
     activeWorldEvents: [],
     nextWorldEventAt: null,
     missionResult: null,
@@ -1874,6 +1885,139 @@ export const useGameStore = create<GameState & GameActions>()(
         ]
       }),
 
+    // ── M14j — loadouts ─────────────────────────────────────────────────────
+    setExfilChannel: (id) => set((s) => { s.exfilChannel = id }),
+
+    seedStarterLoadouts: () =>
+      set((s) => {
+        if (!s.player) return
+        if (s.player.loadouts && s.player.loadouts.length > 0) return
+        const now = Date.now()
+        s.player.loadouts = [
+          {
+            id: 'preset_stealth',
+            name: 'STEALTH',
+            icon: '👁',
+            isPreset: true,
+            preferredRoute: [],
+            exfilChannel: 'dns',          // slowest, near-invisible
+            armedConsumableId: 'decoy_log',
+            createdAt: now, updatedAt: now,
+          },
+          {
+            id: 'preset_brute',
+            name: 'BRUTE',
+            icon: '⚡',
+            isPreset: true,
+            preferredRoute: [],
+            exfilChannel: 'direct',       // fastest, loudest
+            armedConsumableId: 'zero_day_pack',
+            createdAt: now, updatedAt: now,
+          },
+          {
+            id: 'preset_bankrun',
+            name: 'BANK RUN',
+            icon: '💎',
+            isPreset: true,
+            preferredRoute: [],
+            exfilChannel: 'tunnel',       // moderate balance
+            armedConsumableId: 'false_flag',
+            createdAt: now, updatedAt: now,
+          },
+        ]
+        s.player.activeLoadoutId = null
+      }),
+
+    applyLoadout: (id) => {
+      const s = get()
+      if (!s.player?.loadouts) return 'unknown'
+      const lo = s.player.loadouts.find((l) => l.id === id)
+      if (!lo) return 'unknown'
+      set((draft) => {
+        if (!draft.player) return
+        // Apply only the hops that still exist in the bounce library
+        const libIds = new Set(draft.player.bounceLibrary.map((b) => b.id))
+        draft.activeRoute = lo.preferredRoute.filter((rid) => libIds.has(rid))
+        draft.exfilChannel = lo.exfilChannel
+        draft.player.activeLoadoutId = id
+        // Arm the consumable if the player owns at least one
+        if (lo.armedConsumableId && (draft.player.consumables?.[lo.armedConsumableId] ?? 0) > 0) {
+          draft.player.activeFlags[`consumable_${lo.armedConsumableId}_armed`] = true
+        }
+        draft.terminalLines.push({
+          id: `log_loadout_apply_${Date.now()}`,
+          type: 'system',
+          text: `Loadout applied: ${lo.name} (${draft.activeRoute.length}/${lo.preferredRoute.length} hops, exfil: ${lo.exfilChannel}).`,
+        })
+      })
+      return 'ok'
+    },
+
+    saveCurrentAsLoadout: (id) => {
+      const s = get()
+      if (!s.player?.loadouts) return 'unknown'
+      const idx = s.player.loadouts.findIndex((l) => l.id === id)
+      if (idx === -1) return 'unknown'
+      set((draft) => {
+        if (!draft.player?.loadouts) return
+        const lo = draft.player.loadouts[idx]
+        // Pick the first armed consumable from active flags (if any)
+        const armedKey = Object.keys(draft.player.activeFlags).find((k) =>
+          k.startsWith('consumable_') && k.endsWith('_armed') && draft.player!.activeFlags[k],
+        )
+        const armed = armedKey ? armedKey.replace(/^consumable_/, '').replace(/_armed$/, '') : null
+        lo.preferredRoute = [...draft.activeRoute]
+        lo.exfilChannel = draft.exfilChannel
+        lo.armedConsumableId = armed
+        lo.updatedAt = Date.now()
+        draft.terminalLines.push({
+          id: `log_loadout_save_${Date.now()}`,
+          type: 'success',
+          text: `Loadout saved: ${lo.name} (${lo.preferredRoute.length} hops).`,
+        })
+      })
+      return 'ok'
+    },
+
+    createLoadout: (name, icon) => {
+      const newId = `custom_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+      set((draft) => {
+        if (!draft.player) return
+        if (!draft.player.loadouts) draft.player.loadouts = []
+        const now = Date.now()
+        draft.player.loadouts.push({
+          id: newId,
+          name: name.toUpperCase().slice(0, 20) || 'CUSTOM',
+          icon: icon || '★',
+          isPreset: false,
+          preferredRoute: [...draft.activeRoute],
+          exfilChannel: draft.exfilChannel,
+          armedConsumableId: null,
+          createdAt: now, updatedAt: now,
+        })
+      })
+      return newId
+    },
+
+    renameLoadout: (id, name) =>
+      set((draft) => {
+        const lo = draft.player?.loadouts?.find((l) => l.id === id)
+        if (lo) { lo.name = name.toUpperCase().slice(0, 20) || lo.name; lo.updatedAt = Date.now() }
+      }),
+
+    deleteLoadout: (id) => {
+      const s = get()
+      const lo = s.player?.loadouts?.find((l) => l.id === id)
+      if (!lo) return 'unknown'
+      if (lo.isPreset) return 'preset'
+      set((draft) => {
+        if (!draft.player?.loadouts) return
+        draft.player.loadouts = draft.player.loadouts.filter((l) => l.id !== id)
+        if (draft.player.activeLoadoutId === id) draft.player.activeLoadoutId = null
+      })
+      return 'ok'
+    },
+
     logTerminal: (text, type = 'output') =>
       set((s) => {
         s.terminalLines.push({
@@ -2564,6 +2708,7 @@ export const useGameStore = create<GameState & GameActions>()(
         terminalLines: [],
         newsFeed: [],
         inbox: [],
+        exfilChannel: 'direct',
         activeWorldEvents: [],
         nextWorldEventAt: null,
         missionResult: null,

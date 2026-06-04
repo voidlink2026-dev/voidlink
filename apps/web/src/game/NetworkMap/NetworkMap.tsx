@@ -10,7 +10,8 @@ import styles from './NetworkMap.module.css'
 
 // ── M14f: Exfiltration Channels ──────────────────────────────────────────────
 // File transfer can use one of several channels — faster = noisier.
-type ExfilChannelId = 'direct' | 'tunnel' | 'dns' | 'icmp'
+// M14j — type now sourced from core so loadouts + store share it
+import type { ExfilChannelId } from '@voidlink/core'
 
 interface ExfilChannelDef {
   id: ExfilChannelId
@@ -432,7 +433,9 @@ export function NetworkMap() {
 
   const [transferringFileId, setTransferringFileId] = useState<string | null>(null)
   const [transferProgress, setTransferProgress]     = useState(0)
-  const [exfilChannel, setExfilChannel]             = useState<ExfilChannelId>('direct')
+  // M14j — exfilChannel hoisted to gameStore so loadouts can drive it.
+  const exfilChannel    = useGameStore((s) => s.exfilChannel)
+  const setExfilChannel = useGameStore((s) => s.setExfilChannel)
   const transferIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const activeMissionType = missions.find((m) => m.id === activeMissionId)?.type ?? null

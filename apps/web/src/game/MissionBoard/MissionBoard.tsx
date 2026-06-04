@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
 import type { Mission, MissionRequirements, PlayerProfile, StoryMission } from '@voidlink/core'
+import { LoadoutBar } from '../Loadouts/LoadoutBar.tsx'
 import styles from './MissionBoard.module.css'
 
 const DIFFICULTY_LABEL = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
@@ -83,6 +84,7 @@ export function MissionBoard() {
 
   return (
     <div className={styles.board}>
+      <LoadoutBar />
       {active && player && (
         <div className={styles.activeSection}>
           <div className={styles.sectionLabel}>{t('missionBoard.activeHeader')}</div>
