@@ -129,6 +129,7 @@ Goal: **Steam Early Access ready by 2026-09**. See [§15.1 NEXT_STAGE.md](./NEXT
 | Story arcs underestimate writing time | Each arc has a writing-budget; cut scope before slipping the date |
 | Localisation quality varies | Community proofreader pass after professional translation |
 | Steam Deck perf below 30fps | Hard requirement — if not met, ship without Deck Verified badge and fix in EA-S1 |
+| **AI-assistance backlash** | Honest disclosure on Steam store + CREDITS.md + press kit. Lead with the human-developer story. See [§16 NEXT_STAGE.md](./NEXT_STAGE.md#16-ai-assistance-disclosure--pre-launch-cleanup-plan) for the full cleanup checklist (D1–D6) |
 
 ---
 

@@ -1280,3 +1280,81 @@ After 1.0 ship (~2027-07 onwards):
 - Procedural news that reacts harder to player actions (cross-mission consequences: sabotage corp → 24h later stock dips → recovery contract appears)
 - Steam Deck verified badge
 - Console ports — only consider after PC 1.0 stabilises; multiplayer LAST.
+
+---
+
+## 16. AI-Assistance Disclosure & Pre-Launch Cleanup Plan
+
+Added 2026-06-04 in response to the well-documented Steam community backlash against games that hide AI involvement. **Honest disclosure is the wedge — concealment is the trap.** The audience that will buy Voidlink (Uplink/Hacknet fans, sim-strategy players) is pragmatic about tooling; what nukes launches is being caught lying.
+
+### 16.1 The position we are taking
+
+**"AI-assisted, fully human-directed."** Every design decision, balance call, code review, art direction choice, narrative arc, and gameplay vision is the developer's. AI is used as a coding/writing assistant in the same way a senior dev might use linters, refactoring tools, and search. Nothing AI-generated runs in the shipped binary.
+
+This framing is **defensible and true**. It maps to Steam's "pre-generated content (AI used during development; final output human-authored or human-edited)" disclosure category, which is the friendlier of the two.
+
+### 16.2 Steam store-page disclosure
+
+Required field. Draft language:
+
+> *"This game was developed with AI coding assistance. All design decisions, balance, narrative, and creative direction are by the developer. No AI runs in the game itself; no AI-generated assets ship in the final binary."*
+
+Adjust wording before launch but keep it short, clear, and front-foot.
+
+### 16.3 Pre-launch cleanup checklist
+
+These are the things that signal "AI built this" to a determined investigator. Cleanup must NOT involve rewriting git history (forced pushes to main are themselves a red flag and detectable). Instead, do everything **going forward** and accept that early-history fingerprints exist.
+
+#### Going-forward (do now)
+
+| # | Action | Effort | Rationale |
+|---|--------|--------|-----------|
+| D1 | Drop `Co-Authored-By: Claude` line from all **new** commits | 5 min — change CLAUDE.md / commit template | Loudest possible fingerprint. Arguably misleading anyway — AI isn't a legal co-author |
+| D2 | Sanitise asset EXIF before bundling any AI-touched images (none currently shipped, but pipeline check) | Day | Auto-strip via build step |
+| D3 | Add a `CREDITS.md` with the developer's name + the honest disclosure language | 30 min | Front-foot the conversation |
+
+#### Pre-EA polish pass (do before 2026-09)
+
+| # | Action | Effort | Rationale |
+|---|--------|--------|-----------|
+| D4 | Tone pass on README, store-page copy, public docs — strip em-dash overuse, less listicle cadence, less "world-class" / "honestly" / "the bones are right" | 1 day | Tone is the second-loudest fingerprint |
+| D5 | Critical-file comment rewrite — tighten the most distinctive AI-flavour comment blocks (decorative section headers, exhaustive justification paragraphs) | 1–2 days | Code reviewers will look |
+| D6 | Bundle developer name + photo + short solo-dev story into press kit | 1 day | Marketing wedge — humans buy from humans |
+
+#### Never do
+
+| # | Anti-action | Why not |
+|---|-------------|---------|
+| ❌ | Rewrite git history to remove AI co-authors | Detectable, signals concealment, looks worse than the original |
+| ❌ | Force-push to main with "cleaned" history | Same problem; also breaks any cloned forks |
+| ❌ | Claim "made entirely by hand" or "no AI" | Demonstrably false; getting caught is the launch killer |
+| ❌ | Delete or hide `docs/` AI-flavoured planning files | Defensive — keep them, they prove the human direction |
+
+### 16.4 Marketing wedge — the human story
+
+Lead with the **solo developer narrative**, not the tooling. The interesting story for press and players is "one person built a love letter to Uplink in ~3 months, here's the design philosophy, here's why banking matters more than crackdown, here's the no-pay-to-win rule." That story sells itself; AI involvement is a footnote.
+
+Press-kit pillars:
+- Lifelong Uplink fan → wanted the modern sequel that never came
+- Built solo with modern tooling (AI included, disclosed)
+- Hard rule: never pay-to-win, only cosmetics and story DLC
+- Open about every design decision (the dev docs in the repo are part of the marketing — show the work)
+
+### 16.5 Owning the dev-doc volume
+
+The 1 800+ line NEXT_STAGE.md and the rest of `docs/` would look like a lot for a solo human dev. **Reframe it as a strength**, not a liability:
+
+- It proves the developer thinks deeply about design
+- It's an artefact of the "show your work" marketing pillar
+- Modders and content creators will love having this
+- A "behind the design" blog post series on Steam News derives directly from it
+
+We will NOT delete or thin these docs. We may light-edit tone (D4) but volume + depth is a feature.
+
+### 16.6 When to disclose
+
+- **Day 1 of Steam page going live** — store-page field filled accurately, CREDITS.md visible in repo
+- **First press outreach** — include the disclosure paragraph in the press kit's "About the developer" section so journalists never have to ask
+- **First trailer description** — one-line acknowledgement at the end of the video description
+
+Disclosure timing matters less than disclosure quality. Lead the conversation; don't get caught reacting to it.
