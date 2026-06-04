@@ -1149,6 +1149,39 @@ The big sweep. Test everything below.
 
 ---
 
+## 37. M14f.1 — Canary Files + Timestomping (2026-06)
+
+### 37.1 Canary trip without detection tool
+- [ ] On a fresh account (no `port_scanner_stealth` / `_v3` / `sniffer_v2`), accept a mission targeting a `corporate_intranet` or `government_classified` network (IDS present)
+- [ ] Breach a file_server / database / mail_server node — multiple times across missions if needed until a canary spawns (chance scales with tier; T3 ≈ 30% per data node)
+- [ ] File list shows the canary as a normal file (no special marker visible)
+- [ ] Click TRANSFER on the canary
+- [ ] Terminal: "⚠ CANARY TRIPPED: ... was a honeypot. IDS auto-alerted security."
+- [ ] Trace jumps +25% immediately
+- [ ] Alarm rate kicks in for ~15s (visible as accelerated bar)
+- [ ] No actual file transfer happens (transferringFileId stays null)
+- [ ] Next mission against the same corp starts with `heat_<corp>` flag → +2 %/s baseline + warning terminal line
+
+### 37.2 Canary visibility with detection tool
+- [ ] Buy `port_scanner_stealth` (or `port_scanner_v3` / `sniffer_v2`)
+- [ ] On the next mission, a canary file shows a red `⚠ CANARY` chip next to its name
+- [ ] Click TRANSFER anyway → same penalty (the tool reveals it, doesn't disarm it)
+
+### 37.3 Timestomp + heat suppression
+- [ ] Without any timestomper tool, complete a mission with clean wipe (all logs wiped, no IDS triggered)
+- [ ] Disconnect — terminal warns "X nodes not timestomped. <corp> will start your next visit on heightened alert."
+- [ ] `heat_<corp>` flag set; next mission baseRate +2 %/s
+- [ ] Buy `timestomper_v1` (Chrono Stomper)
+- [ ] Repeat clean-wipe mission against the same corp — terminal should NOT show the unstomped warning
+- [ ] `heat_<corp>` deleted on clean exit; next mission has no heat penalty
+
+### 37.4 Edge cases
+- [ ] Tripping a canary still allows the player to disconnect (it's painful but not auto-fail)
+- [ ] Trip + wipe sequence: canary trip raises heat → clean wipe + timestomp does NOT clear it (the canary already alerted them, timestomping wipes is too late). Verify: `heat_<corp>` persists even after timestomped wipe if the canary was tripped earlier in the same session.
+- [ ] On a network with no IDS (e.g. `personal_gateway`), no canaries spawn
+
+---
+
 ## 36. M14h.8 — Docs Consolidation (2026-06)
 
 This is a docs-only milestone; verify the file tree only.

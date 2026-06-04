@@ -100,15 +100,18 @@ Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next
 
 ### Sprint plan (~12–14 weeks)
 
+**Rule:** L2 (tutorial rewrite) is the **last** gameplay-touching sprint. Any new mechanic, mission type, or UI surface ships *before* the tutorial is rewritten, so the tutorial only ever teaches the actually-final game.
+
 | Sprint | Window | Block | Output |
 |--------|--------|-------|--------|
 | **S1** | 2026-06-W1 → 2026-06-W3 | **L1 Audio** | 6 looping tracks (boot/desktop/mission/critical/victory/fail) + per-bus volume |
-| **S2** | 2026-06-W3 → 2026-07-W1 | **L2 Tutorial rewrite** | Cipher's First Contract — replaces 25-step overlay |
-| **S3** | 2026-07-W1 → 2026-08-W1 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content |
+| **S2** | 2026-06-W3 → 2026-07-W2 | **Backlog mechanics close-out** (M14f.1 canary+timestomping, M14j loadouts, M14k implants, M14l vehicle gateways, M14i research tree as scope permits) | Mechanics locked-in before tutorial work begins |
+| **S3** | 2026-07-W2 → 2026-08-W1 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content |
 | **S4** | 2026-07-W3 → 2026-08-W1 | **L4 Steam Cloud + L5 Achievements** | Steamworks SDK integration, 40+10 achievements wired |
 | **S5** | 2026-08-W1 → 2026-08-W2 | **L6 Perf + L10 Steam Deck** | Low-Quality toggle, controller mapping, Deck verified |
-| **S6** | 2026-06-W2 → 2026-08-W3 (parallel) | **L8 Localisation** | ES/DE/FR/RU/zh-CN/JA |
-| **S7** | 2026-08-W2 → 2026-08-W4 | **L7 Trailer + L9 EULA + CREDITS + Press kit** | Store-page-ready package |
+| **S6** | 2026-06-W2 → 2026-08-W3 (parallel) | **L8 Localisation** | ES/DE/FR/RU/zh-CN/JA (tutorial strings translated LAST after L2 lands) |
+| **S7** | 2026-08-W2 → 2026-08-W3 | **L2 Tutorial rewrite** (LAST gameplay-touching sprint) | Cipher's First Contract teaches the actually-final game |
+| **S8** | 2026-08-W3 → 2026-08-W4 | **L7 Trailer + L9 EULA + CREDITS + Press kit** | Store-page-ready package (trailer can feature the new tutorial) |
 
 ### Risk register
 

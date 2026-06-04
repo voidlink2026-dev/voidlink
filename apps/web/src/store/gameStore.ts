@@ -870,6 +870,13 @@ export const useGameStore = create<GameState & GameActions>()(
         const node = network.nodes.find((n) => n.id === nodeId)
         if (!node?.isBreached) return
         node.isLogWiped = true
+        // M14f.1 — if the player owns a timestomper, mark the node as
+        // timestomped too. This is what stops the wipe leaving a temporal
+        // fingerprint that would otherwise raise cross-session heat.
+        const stomperOwned = s.player?.software.misc?.some(
+          (t) => t.toolId === 'timestomper_v1' || t.toolId === 'timestomper_v2',
+        ) ?? false
+        if (stomperOwned) node.isTimestomped = true
       }),
 
     executeMissionObjective: (networkId, nodeId) =>
@@ -1131,7 +1138,21 @@ export const useGameStore = create<GameState & GameActions>()(
               })
               delete s.player.activeFlags[`heat_${corpId}`]
             } else {
-              delete s.player.activeFlags[`heat_${corpId}`]
+              // M14f.1 — even a clean wipe leaves a temporal fingerprint
+              // unless every breached node was timestomped. Without a
+              // timestomper tool, the player still picks up a low-grade heat
+              // flag scaled by how many nodes were touched.
+              const wipedNodes = network.nodes.filter((n) => n.isBreached && n.isLogWiped)
+              const unstomped = wipedNodes.filter((n) => !n.isTimestomped)
+              if (unstomped.length > 0) {
+                s.player.activeFlags[`heat_${corpId}`] = Date.now()
+                s.terminalLines.push({
+                  id: `log_stomp_${Date.now()}`, type: 'warn',
+                  text: `Wipe complete but ${unstomped.length} node${unstomped.length > 1 ? 's' : ''} not timestomped. ${corpId} will start your next visit on heightened alert.`,
+                })
+              } else {
+                delete s.player.activeFlags[`heat_${corpId}`]
+              }
               // patch_<corpId> intentionally kept — corp continues patching regardless of clean exit
             }
           }

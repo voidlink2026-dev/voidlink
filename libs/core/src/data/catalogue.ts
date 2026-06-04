@@ -484,6 +484,31 @@ export const SOFTWARE_CATALOGUE: ToolDefinition[] = [
     unlockReputation: 220,
     unlockPrice: 22000,
   },
+  // M14f.1 — timestomper tools.
+  {
+    id: 'timestomper_v1',
+    name: 'Chrono Stomper v1',
+    description: 'Wipes filesystem timestamps on log-wipe. Removes the temporal fingerprint that would otherwise raise cross-session heat on the same corp.',
+    category: 'anti_forensic',
+    maxLevel: 3,
+    upgradeSlots: 2,
+    baseDurationMs: () => 0,
+    ramCost: 1,
+    unlockReputation: 30,
+    unlockPrice: 4500,
+  },
+  {
+    id: 'timestomper_v2',
+    name: 'Chrono Stomper v2 — Ghost Clock',
+    description: 'Stomp is invisible to forensic audit. Even high-tier IDS reports show normal access patterns post-wipe.',
+    category: 'anti_forensic',
+    maxLevel: 3,
+    upgradeSlots: 3,
+    baseDurationMs: () => 0,
+    ramCost: 1,
+    unlockReputation: 180,
+    unlockPrice: 18000,
+  },
 ]
 
 // ── Consumables ───────────────────────────────────────────────────────────

@@ -234,6 +234,29 @@ export function generateNetwork(
   const laid = layoutNodes(connected, rng)
   const zoned = assignZones(laid, archetype)
 
+  // M14f.1 — seed canary files on data-bearing nodes if the network has IDS
+  // coverage. Chance scales with node tier (T1=10%, T5=50%) so high-value
+  // government and corporate networks are riskier to rummage through.
+  const hasIDS = zoned.some((n) => n.type === 'intrusion_detector')
+  if (hasIDS) {
+    const DATA_TYPES = new Set<NodeType>(['file_server', 'database', 'mail_server'])
+    for (const node of zoned) {
+      if (!DATA_TYPES.has(node.type)) continue
+      const chance = node.securityTier * 0.10
+      if (rng() < chance) {
+        node.files.push({
+          id: `canary_${node.id}_${seed}`,
+          // Innocuous-looking names — these are the trap.
+          name: rng() < 0.5 ? 'payroll_q3.enc' : 'access_audit.log',
+          sizeKb: 2 + Math.floor(rng() * 14),
+          isEncrypted: rng() < 0.5,
+          isLog: false,
+          isCanary: true,
+        })
+      }
+    }
+  }
+
   return {
     id: `net_${seed}`,
     archetype,

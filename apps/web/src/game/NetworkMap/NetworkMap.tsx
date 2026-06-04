@@ -458,6 +458,26 @@ export function NetworkMap() {
     if (!activeNetwork) return
     if (transferringFileId) { logTerminal('Transfer already in progress.', 'dim'); return }
 
+    // M14f.1 — Canary trip. Touching a honeypot file is catastrophic:
+    // immediate +25% trace, +3 %/s alarm for 15s, persistent heat flag on
+    // this corp for the next session. NO transfer happens — the file was bait.
+    if (file.isCanary) {
+      const corpId = activeNetwork.ownerId
+      useGameStore.setState((s) => {
+        if (s.traceState) {
+          s.traceState.level = Math.min(100, s.traceState.level + 25)
+          s.traceState.alarmRate = Math.max(s.traceState.alarmRate, 3.0)
+          s.traceState.alarmDecaysAt = Math.max(s.traceState.alarmDecaysAt, Date.now() + 15_000)
+        }
+        if (s.player) s.player.activeFlags[`heat_${corpId}`] = Date.now()
+      })
+      logTerminal(`⚠ CANARY TRIPPED: ${file.name} was a honeypot. IDS auto-alerted security.`, 'error')
+      logTerminal('Trace +25%, alarm rate +3%/s for 15s, this corp will start every future mission on heightened alert.', 'error')
+      // Mark it visible so future glances at this node show the trap was sprung
+      file.isCanary = false  // mutate is OK — it's a transient session state
+      return
+    }
+
     // M14f — Exfiltration channel selection
     // Channel determines transfer speed AND trace impact
     const channel = exfilChannel  // from state, default 'direct'
@@ -579,6 +599,12 @@ export function NetworkMap() {
             transferringFileId={transferringFileId}
             transferProgress={transferProgress}
             hasFirewallBypasser={(player?.software.firewallBypassers.length ?? 0) > 0}
+            // M14f.1 — canary detection requires either a stealth scanner OR
+            // a sniffer. Without one the canary looks like any other file.
+            canSeeCanaries={
+              (player?.software.portScanners.some((t) => t.toolId === 'port_scanner_stealth' || t.toolId === 'port_scanner_v3') ?? false) ||
+              (player?.software.misc?.some((t) => t.toolId === 'sniffer_v2') ?? false)
+            }
             onCollect={(file) => handleCollect(selectedNode, file)}
             onExecuteObjective={() => handleExecuteObjective(selectedNode)}
             onEscalate={() => handleEscalate(selectedNode)}
@@ -606,12 +632,13 @@ const OBJECTIVE_ACTIONS: Partial<Record<MissionType, { nodeTypes: string[]; labe
 
 function NodePanel({
   node, activeMissionType, transferringFileId, transferProgress,
-  hasFirewallBypasser, onCollect, onExecuteObjective, onEscalate, onBackdoor,
+  hasFirewallBypasser, canSeeCanaries, onCollect, onExecuteObjective, onEscalate, onBackdoor,
   canEscalate,
 }: {
   node: NetworkNode; networkId: string; activeMissionType: MissionType | null
   transferringFileId: string | null; transferProgress: number
   hasFirewallBypasser: boolean
+  canSeeCanaries: boolean
   canEscalate: boolean
   onCollect: (f: FileEntry) => void
   onExecuteObjective: () => void
@@ -667,6 +694,9 @@ function NodePanel({
               <div key={file.id} className={styles.fileRow}>
                 <span className={file.missionObjective ? styles.fileTarget : styles.fileName}>
                   {file.missionObjective ? '★ ' : ''}{file.name}
+                  {file.isCanary && canSeeCanaries && (
+                    <span style={{ marginLeft: 6, color: '#ff2d20', fontSize: 8, letterSpacing: '0.12em' }}> ⚠ CANARY</span>
+                  )}
                 </span>
                 <span className={styles.fileSize}>{file.sizeKb} KB</span>
                 {node.isBreached && !isXfr && (

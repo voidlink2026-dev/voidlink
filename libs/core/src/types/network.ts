@@ -34,6 +34,10 @@ export interface NetworkNode {
   isScanned: boolean  // true after player runs port scan
   isActive: boolean  // powered on / online
   isLogWiped: boolean // true after player wipes logs on this node
+  // M14f.1 — timestomping state. Even after a clean wipe, the timestamps on
+  // remaining files give away the access pattern unless stomped. Without a
+  // timestomper tool the wipe leaves "ghost evidence" → cross-session heat.
+  isTimestomped?: boolean
   services: NetworkService[]
   files: FileEntry[]
   connectedTo: NodeId[]
@@ -67,6 +71,10 @@ export interface FileEntry {
   isLog: boolean
   content?: string // only loaded when accessed
   missionObjective?: string // mission ID this file satisfies
+  // M14f.1 — canary files. Touched → big trace spike + persistent heat flag.
+  // Hidden in the HI file list unless the player has port_scanner_stealth
+  // or sniffer_v2; otherwise looks identical to any other file.
+  isCanary?: boolean
 }
 
 export interface Network {

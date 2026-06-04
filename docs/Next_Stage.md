@@ -6,6 +6,10 @@ For the timeline view see [Roadmap.md](./Roadmap.md). For the master design cano
 
 **Current focus: Pre-Launch sprints L1–L10** (Steam Early Access target 2026-09-15).
 
+### Sprint ordering rule
+
+**L2 (Tutorial rewrite) ships LAST among gameplay-affecting work.** Any new mechanic, mission type, or UI surface that the player needs to learn must land before the tutorial is rewritten — otherwise the tutorial teaches yesterday's game. Audio (L1), Steam Cloud (L4), achievements (L5), perf (L6), localisation (L8), trailer (L7), EULA (L9), and Steam Deck (L10) all *can* happen alongside; **L2 happens last in the queue, locked only when no further mechanics are due to ship before EA**.
+
 ---
 
 ## Table of Contents
@@ -57,9 +61,10 @@ These are launch-blockers. Order is the recommended sequence; some run in parall
 ---
 
 ### L2 — Tutorial rewrite: "Cipher's First Contract" 🎯
-**Window:** 2026-06-W3 → 2026-07-W1 (2 weeks)
+**Window:** 2026-08-W2 → 2026-08-W3 (deliberately LAST among gameplay-touching sprints)
 **Effort:** 2 weeks
-**Status:** Not started
+**Status:** Deferred until all gameplay/mechanic work is complete
+**Why last:** The tutorial must teach the *final* game — any mechanic shipped after L2 would invalidate the tutorial. L2 unlocks only when no further mechanic/mission/UI change is queued before EA.
 
 **Scope.** Replace the 25-step soft-spotlight overlay with a 10–12-minute first-mission story experience that teaches every core mechanic organically. Inspired by *Hitman 2*'s tutorial and *Half-Life: Alyx*'s opening.
 
@@ -347,13 +352,6 @@ Music: track from L1 mission-active set, brief tease only.
 ## 2. Backlog — Tier 1 (small, additive, pre-EA-friendly)
 
 These are nice-to-haves that can slot into idle weeks during the L1–L10 sprint or land as small EA-S1 polish.
-
-### M14f.1 — Canary files + timestomping
-**Effort:** 2 sessions
-
-Adds two stealth mechanics:
-- **Canary files** — IDS-deployed honeypot files on certain nodes. Touch one and trace spikes immediately. Tutorial via newsfeed event before they appear.
-- **Timestomping** — change file modified-timestamps to evade forensic detection. New tool `timestomper_basic` / `_elite`. Without it, even wiped logs leave a temporal fingerprint that raises cross-session heat.
 
 ### M14i — Research Tech Tree
 **Effort:** 4 sessions
