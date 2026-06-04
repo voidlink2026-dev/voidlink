@@ -1196,3 +1196,87 @@ A 3-second load ruins the atmosphere. Every component should render instantly. T
 ---
 
 *The bones are right. The foundation is there. Everything in this document is the path from "pre-alpha that impresses" to "genre-defining masterpiece." Build it one milestone at a time. Make it world class.*
+
+---
+
+## 15. Steam Launch Plan
+
+This section was added 2026-06-04 after the M14h.6 ship. It captures the agreed Steam release strategy, target dates, and the post-launch monetisation envelope (cosmetic-only, never pay-to-win). See `ROADMAP.md` for the visual timeline.
+
+### 15.1 Pre-Launch — what must ship BEFORE Early Access
+
+These are launch-blockers. Each maps to a milestone we will track.
+
+| # | Block | Why it's a blocker | Est. effort |
+|---|-------|--------------------|-------------|
+| L1 | **Soundtrack + ambient layer** | Single biggest perceived-quality jump. We have SFX, no music. Need: 4–6 looping cyberpunk tracks (boot, desktop ambient, mission-active, network-map tension, victory, fail), seamless cross-fade, settings volume slider per-bus | 3 weeks (licensing/contracting) |
+| L2 | **Tutorial rewrite — Cipher's first contract** | The 25-step overlay is comprehensive but exhausting for new players. Replace with a 10-min "your first contract, guided by CIPHER" story mission that teaches everything organically via inbox messages and live spotlight beats | 2 weeks |
+| L3 | **Two more story arcs (8 total)** | 5 arcs ≈ 8h. Reviewers count story hours. 8 arcs ≈ 15h = the £14.99 price floor | 4–5 weeks |
+| L4 | **Steam Cloud saves** | Expected for save-anywhere games. Maps onto our per-handle save shape with minor refactor | 1 week |
+| L5 | **30–50 achievements** | Cheap to wire (Steamworks API), big retention lift | 1 week |
+| L6 | **Perf pass + "low quality" toggle** | Bloom + Three.js choke integrated graphics. One-day toggle (disables bloom, halves star count, drops bounce arc resolution) | 3 days |
+| L7 | **Trailer + 6 screenshots** | Required for Steam page. Trailer: 60–90s cut showing tutorial → first hack → network → world map → choice mission → win | 1 week |
+| L8 | **Localisation (top 6)** | ES, DE, FR, RU, zh-CN, JA. i18n scaffold is ready — needs strings translated. ~6 000 words × £0.10 × 6 ≈ £3.6k or community proofreaders | 4 weeks (parallel) |
+| L9 | **EULA + privacy notice** | Trivial template work, but a launch-blocker for storefront | 1 day |
+| L10 | **Steam Deck verification pass** | Controller support + readable text at 1280×800. Boosts indie discoverability | 1 week |
+
+**Total pre-launch effort: ~12–14 weeks of focused work** (some parallel).
+
+### 15.2 When to launch
+
+- **Early Access**: target **2026-09 (September)** at **£11.99 / $14.99 / €13.49**. Clear roadmap published. "+£3 on 1.0" promise.
+- **1.0**: target **2027-06 (June)**, ~9 months of EA. Launch price **£14.99 / $19.99 / €16.99**. EA players pay nothing extra.
+
+Regional pricing via Steam's recommendation tool — do not undercut.
+
+### 15.3 Early Access content cadence (2026-09 → 2027-06)
+
+Three EA "seasons" of ~3 months each. Each delivers free content + ships a paid cosmetic.
+
+| Season | Window | Free narrative drop | Paid cosmetic (optional) |
+|--------|--------|---------------------|--------------------------|
+| **EA-S1: GHOSTNET** | 2026-09 → 2026-11 | New darknet faction (the Ghostnet collective), 5 new mission types, ARG-style hidden narrative begins | Amber palette UI theme (£2.99) |
+| **EA-S2: ARES** | 2026-12 → 2027-02 | Story arc 9 (Ares military complex), winter event with snow/ice ambient on world map for 2 weeks | Red palette + Ares boot skin (£2.99) |
+| **EA-S3: ZERO DAY** | 2027-03 → 2027-05 | Story arc 10 (final arc resolves ARG), modding SDK opens, Workshop integration | Purple palette + ARG-completist title flair (£3.99) |
+
+### 15.4 Post-1.0 — paid DLC + ongoing seasons
+
+After 1.0 ship (~2027-07 onwards):
+
+| Item | Type | Price | Notes |
+|------|------|-------|-------|
+| Voidlink — Original Soundtrack | OST SKU | £4.99 | Released same day as 1.0 |
+| Story DLC #1 — "DEEP BLACK" | Narrative DLC | £6.99 | 3 new arcs, 1 new faction, ~8h content. Target 2027-09 |
+| Story DLC #2 — "QUANTUM SHADOW" | Narrative DLC | £6.99 | 3 new arcs, AI-core breach mechanics, ~8h. Target 2028-03 |
+| Founder's Bundle | Bundle | £24.99 | Base + OST + 3 cosmetic themes + ASCII credit. Available first 30 days of 1.0 only |
+| Seasonal Darknet Drops | Free narrative event | £0 | One per quarter forever — one-off contracts, news, news arc. Optional cosmetic skin £2.99 each |
+
+### 15.5 Monetisation envelope — what we will and will NOT sell
+
+**Will sell:**
+- Cosmetic UI palettes / boot animations / wallpapers
+- Operative title flair (vanity only)
+- Soundtrack
+- Story DLC (everyone gets the same content; no fork)
+- Founder's bundle at launch
+
+**Will NEVER sell:**
+- Battle pass with mechanical rewards
+- Loot boxes of any kind
+- Cr / Darkcoin / XP / REP top-ups
+- "Premium" missions that drop better loot
+- Faster hacks, better tools, more bounce hops behind paywalls
+- Time-gated mechanical content
+- Energy systems or play-time gates
+
+**The single rule**: anything in the shop must be possible to ignore forever without missing mechanical depth.
+
+### 15.6 World-class polish (post-1.0, opportunistic)
+
+- ARG-style hidden narrative resolving over ~40h (begins EA-S1, resolves EA-S3 — see §15.3)
+- Lock-picking-style minigame for ai_core breaches (one good minigame elevates the whole game)
+- Workshop modding (M14h.x exposes generator hooks; SDK ships in EA-S3)
+- Twitch integration — chat votes on player's choice missions
+- Procedural news that reacts harder to player actions (cross-mission consequences: sabotage corp → 24h later stock dips → recovery contract appears)
+- Steam Deck verified badge
+- Console ports — only consider after PC 1.0 stabilises; multiplayer LAST.
