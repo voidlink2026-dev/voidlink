@@ -353,6 +353,22 @@ Music: track from L1 mission-active set, brief tease only.
 
 These are nice-to-haves that can slot into idle weeks during the L1–L10 sprint or land as small EA-S1 polish.
 
+### Faction Territory Map (future visual layer)
+**Effort:** 3 sessions (depends on M14i / M17 / M18 narrative scaffolding)
+
+Make the WorldMap continent outlines reflect live faction control / activity:
+- Each country (110m TopoJSON polygon) is owned by one of the 5 factions OR neutral
+- Country tint shifts based on:
+  - Current owner (cyan = Voidlink Intl, gold = Arunmor, magenta = Underground, red = Government, purple = REVELATION, dim grey = neutral)
+  - Activity intensity over the last in-game week (brighter = more contracts originating there)
+  - Player heat in the region (red flicker overlay if `heat_<corp>` flags are active for corps headquartered there)
+- As the globe rotates, the player can read at-a-glance "where the action is right now"
+- Faction ownership shifts dynamically: completing missions for a faction biases nearby countries toward that faction's tint over time
+- Persists in `WorldState.factionTerritories: Record<countryISO, factionId>`
+- Multiplayer-ready: when MMO lands, real player activity from all operatives feeds the activity intensity
+
+Until this is built, the WorldMap uses static cyan continent outlines (M14h.9 bloom-tuning kept the visual quiet for clarity).
+
 ### M14i — Research Tech Tree
 **Effort:** 4 sessions
 
