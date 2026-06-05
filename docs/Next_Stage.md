@@ -379,17 +379,6 @@ A persistent meta-progression layer outside the per-character upgrade shop.
 - UI: SVG tech tree similar to current Upgrade Shop, but separate window
 - Save: persists across operatives in the same account? No — per-operative.
 
-### M14l — Vehicle / Location Gateways
-**Effort:** 2 sessions
-
-Physical-location gateways affecting starting trace + heat:
-- **Home (default)** — neutral baseline
-- **Safehouse** — -10% starting trace, but costs 5k Cr/in-game-week rent
-- **Corporate VPN** — +15% starting trace BUT halves notoriety accrual (the corp's traffic shields you)
-- **Tor relay (community)** — random country every login (3 in-game days), -20% starting trace
-
-UI: Settings → Gateway, costs visible.
-
 ---
 
 ## 3. Backlog — Tier 2 (EA-season content)

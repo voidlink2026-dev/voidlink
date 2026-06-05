@@ -1149,6 +1149,48 @@ The big sweep. Test everything below.
 
 ---
 
+## 40. M14l — Physical-Location Gateways (2026-06)
+
+### 40.1 Gateway panel in profile
+- [ ] Open OPERATIVE PROFILE
+- [ ] Below the divider after stats, GATEWAY section visible with `Home Gateway` highlighted as active
+- [ ] Four cards in a 2×2 grid: Home (★ ACTIVE), Safehouse (15 000 Cr), Corporate VPN (25 000 Cr), Tor Relay (40 000 Cr)
+- [ ] Each card shows name + cost (or remaining rent days for active rented), effect summary, and acquire/switch button
+
+### 40.2 Acquire + activate Safehouse
+- [ ] With ≥ 20 000 Cr: click ACQUIRE on Safehouse → terminal: `Gateway acquired: Safehouse (UNDISCLOSED — EU-WEST). Switch in OPERATIVE PROFILE.`
+- [ ] Card flips to a SWITCH button
+- [ ] Click SWITCH → first week's rent (5 000 Cr) deducted, terminal: `Switched to Safehouse. First week's rent paid…`
+- [ ] Safehouse card now ★ ACTIVE with "7d rent" label
+
+### 40.3 Safehouse trace effect
+- [ ] Accept any mission with Safehouse active
+- [ ] Network's passive trace rate is ×0.90 of normal (e.g. traceSpeed-15 network ticks at ~0.49 %/s instead of ~0.54)
+
+### 40.4 Corporate VPN trade-off
+- [ ] Acquire + activate Corporate VPN
+- [ ] Accept any mission — baseRate is ×1.15 (higher pressure)
+- [ ] Hold ≥ 10 000 Cr at any public bank and let the next bank tick run
+- [ ] `player.notoriety` ticks up at HALF the normal rate (verify via System Console NOTORIETY row over a few minutes)
+
+### 40.5 Tor Relay
+- [ ] Activate Tor Relay → trace baseline ×0.80 on next mission
+- [ ] No rent, no notoriety mod
+
+### 40.6 Eviction
+- [ ] Activate Safehouse with low cash (say, 7 000 Cr)
+- [ ] Wait for the weekly tick (the rent timer counts down in real time — fast-forward in DevTools by setting `player.gatewayPaidUntil['safehouse']` to `Date.now() - 1`)
+- [ ] On the next bank-tick (~1 second after a transfer or wait), eviction fires
+- [ ] Terminal: `EVICTED from Safehouse — couldn't cover rent…`
+- [ ] Active gateway reverts to Home
+- [ ] Inbox: new SYSTEM message from `Property Management` with subject `[EVICTION NOTICE] Safehouse`
+
+### 40.7 Persistence
+- [ ] Acquire + activate any gateway, log out and back in
+- [ ] State persists: ownedGateways list intact, activeGatewayId preserved, paidUntil timer continues
+
+---
+
 ## 39. M14k — Implants / Wetware (2026-06)
 
 ### 39.1 Shop tab + grid

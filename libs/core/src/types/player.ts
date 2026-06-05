@@ -96,6 +96,15 @@ export interface PlayerProfile {
   // M14k — installed implants (permanent, irreversible). Array of implant
   // IDs from data/implants.ts. Buffs computed via helpers in that module.
   implants?: string[]
+
+  // M14l — physical-location gateway. Default 'home' if unset. Some gateways
+  // charge weekly rent — `gatewayPaidUntil` tracks the expiry timestamp per
+  // gateway ID. When `Date.now() > gatewayPaidUntil[id]`, the next weekly
+  // tick will attempt to charge rent; if the player can't pay they're
+  // evicted back to 'home'.
+  activeGatewayId?: string
+  ownedGateways?: string[]  // unlocked via unlockCost — 'home' is always free
+  gatewayPaidUntil?: Record<string, number>
 }
 
 export type ExfilChannelId = 'direct' | 'tunnel' | 'dns' | 'icmp'

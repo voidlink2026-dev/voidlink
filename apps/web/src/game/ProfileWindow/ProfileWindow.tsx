@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
-import { levelFromXp, xpProgressPercent, xpForNextLevel, levelTitle } from '@voidlink/core'
+import { levelFromXp, xpProgressPercent, xpForNextLevel, levelTitle, GATEWAYS, getActiveGateway } from '@voidlink/core'
 import { Button } from '@voidlink/ui'
+import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './ProfileWindow.module.css'
 
 const HW_LABEL_KEYS: Record<string, string> = {
@@ -267,6 +268,11 @@ export function ProfileWindow() {
 
       <div className={styles.divider} />
 
+      {/* M14l — Gateway */}
+      <GatewayPanel />
+
+      <div className={styles.divider} />
+
       {/* Software */}
       <div className={styles.colLabel}>{t('profile.software')}</div>
       {allTools.length === 0 ? (
@@ -294,5 +300,78 @@ export function ProfileWindow() {
       </>
       )}
     </div>
+  )
+}
+
+// ── M14l — Physical Gateway panel ──────────────────────────────────────────
+function GatewayPanel() {
+  const player           = useGameStore((s) => s.player)
+  const unlockGateway    = useGameStore((s) => s.unlockGateway)
+  const setActiveGateway = useGameStore((s) => s.setActiveGateway)
+  const logTerminal      = useGameStore((s) => s.logTerminal)
+
+  if (!player) return null
+  const active = getActiveGateway(player)
+
+  function handleUnlock(id: string, name: string) {
+    const r = unlockGateway(id)
+    if (r === 'ok') AudioEngine.playSfx('success')
+    else if (r === 'insufficient_funds') logTerminal(`DENIED: insufficient credits for ${name}.`, 'error')
+    else if (r === 'already_owned') logTerminal(`${name} already acquired.`, 'dim')
+  }
+
+  function handleActivate(id: string, name: string) {
+    const r = setActiveGateway(id)
+    if (r === 'ok') AudioEngine.playSfx('click')
+    else if (r === 'not_owned') logTerminal(`${name}: acquire first.`, 'error')
+  }
+
+  return (
+    <>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, fontSize: 11, letterSpacing: '0.12em', color: '#888', marginBottom: 6 }}>
+        <span>PHYSICAL GATEWAY</span>
+        <span style={{ color: '#00e5ff', fontSize: 10 }}>— {active.name}</span>
+        <span style={{ color: '#606060', fontSize: 9 }}>({active.region})</span>
+      </div>
+      <div style={{ fontSize: 10, color: '#909090', marginBottom: 8 }}>{active.effectLabel}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+        {GATEWAYS.map((gw) => {
+          const owned = gw.id === 'home' || (player.ownedGateways?.includes(gw.id) ?? false)
+          const isActive = (player.activeGatewayId ?? 'home') === gw.id
+          const paidUntil = player.gatewayPaidUntil?.[gw.id] ?? 0
+          const daysLeft = paidUntil > Date.now() ? Math.max(0, Math.round((paidUntil - Date.now()) / (24 * 3600 * 1000))) : 0
+          return (
+            <div key={gw.id} style={{
+              border: `1px solid ${isActive ? '#00e5ff' : owned ? '#39ff14' : '#2a2a2a'}`,
+              background: isActive ? 'rgba(0, 229, 255, 0.06)' : 'transparent',
+              borderRadius: 2,
+              padding: '6px 8px',
+              fontSize: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontWeight: 700, color: isActive ? '#00e5ff' : '#d4d4d4' }}>{gw.name}</span>
+                {gw.unlockCost > 0 && !owned && <span style={{ color: '#ffd700', fontSize: 9 }}>{gw.unlockCost.toLocaleString()} Cr</span>}
+                {owned && gw.rentPerWeek > 0 && isActive && (
+                  <span style={{ color: daysLeft <= 1 ? '#ff9900' : '#909090', fontSize: 9 }}>{daysLeft}d rent</span>
+                )}
+              </div>
+              <div style={{ fontSize: 9, color: '#606060' }}>{gw.effectLabel}</div>
+              {!owned ? (
+                <Button variant="secondary" size="sm" onClick={() => handleUnlock(gw.id, gw.name)} disabled={player.credits < gw.unlockCost}>
+                  ACQUIRE
+                </Button>
+              ) : isActive ? (
+                <span style={{ fontSize: 9, color: '#39ff14', letterSpacing: '0.1em' }}>★ ACTIVE</span>
+              ) : (
+                <Button variant="ghost" size="sm" onClick={() => handleActivate(gw.id, gw.name)}>SWITCH</Button>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </>
   )
 }

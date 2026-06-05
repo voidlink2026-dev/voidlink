@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -301,6 +301,10 @@ interface GameActions {
 
   // M14k — implants
   installImplant: (id: string) => 'ok' | 'unknown' | 'already_owned' | 'insufficient_funds' | 'faction_locked'
+
+  // M14l — gateways
+  unlockGateway: (id: string) => 'ok' | 'unknown' | 'already_owned' | 'insufficient_funds'
+  setActiveGateway: (id: string) => 'ok' | 'unknown' | 'not_owned'
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -565,6 +569,13 @@ export const useGameStore = create<GameState & GameActions>()(
         const implantDelta = traceBaseRateDelta(s.player ?? null)
         if (implantDelta !== 0) {
           s.traceState.baseRate = Math.max(0, s.traceState.baseRate + implantDelta)
+        }
+
+        // M14l — physical gateway multiplier. Applied AFTER additive deltas
+        // so it scales the (network + implant) rate cleanly.
+        const gwMul = gatewayBaseRateMul(s.player ?? null)
+        if (gwMul !== 1.0) {
+          s.traceState.baseRate = Math.max(0, s.traceState.baseRate * gwMul)
         }
 
         // M14h.5 — notoriety raises passive trace pressure. Each notoriety
@@ -2028,6 +2039,71 @@ export const useGameStore = create<GameState & GameActions>()(
       return 'ok'
     },
 
+    // ── M14l — gateways ──────────────────────────────────────────────────────
+    unlockGateway: (id) => {
+      const s = get()
+      if (!s.player) return 'unknown'
+      const gw = getGateway(id)
+      if (!gw) return 'unknown'
+      if (s.player.ownedGateways?.includes(id) || id === 'home') return 'already_owned'
+      if (s.player.credits < gw.unlockCost) return 'insufficient_funds'
+      set((draft) => {
+        if (!draft.player) return
+        draft.player.credits -= gw.unlockCost
+        draft.player.stats.creditsSpent += gw.unlockCost
+        if (!draft.player.ownedGateways) draft.player.ownedGateways = ['home']
+        if (!draft.player.ownedGateways.includes(id)) draft.player.ownedGateways.push(id)
+        draft.terminalLines.push({
+          id: `log_gateway_unlock_${Date.now()}`,
+          type: 'success',
+          text: `Gateway acquired: ${gw.name} (${gw.region}). Switch in OPERATIVE PROFILE.`,
+        })
+      })
+      return 'ok'
+    },
+
+    setActiveGateway: (id) => {
+      const s = get()
+      if (!s.player) return 'unknown'
+      const gw = getGateway(id)
+      if (!gw) return 'unknown'
+      const owned = id === 'home' || (s.player.ownedGateways?.includes(id) ?? false)
+      if (!owned) return 'not_owned'
+      set((draft) => {
+        if (!draft.player) return
+        draft.player.activeGatewayId = id
+        // Pay first week's rent up-front when switching to a paid gateway.
+        if (gw.rentPerWeek > 0) {
+          if (draft.player.credits >= gw.rentPerWeek) {
+            draft.player.credits -= gw.rentPerWeek
+            draft.player.stats.creditsSpent += gw.rentPerWeek
+            if (!draft.player.gatewayPaidUntil) draft.player.gatewayPaidUntil = {}
+            draft.player.gatewayPaidUntil[id] = Date.now() + 7 * 24 * 3600 * 1000
+            draft.terminalLines.push({
+              id: `log_gateway_rent_${Date.now()}`,
+              type: 'system',
+              text: `Switched to ${gw.name}. First week's rent paid (${gw.rentPerWeek.toLocaleString()} Cr).`,
+            })
+          } else {
+            // Bail — can't afford rent
+            draft.terminalLines.push({
+              id: `log_gateway_rent_fail_${Date.now()}`,
+              type: 'error',
+              text: `Switch failed: can't cover first week's rent (need ${gw.rentPerWeek.toLocaleString()} Cr).`,
+            })
+            return
+          }
+        } else {
+          draft.terminalLines.push({
+            id: `log_gateway_switch_${Date.now()}`,
+            type: 'system',
+            text: `Switched to ${gw.name}. ${gw.effectLabel}.`,
+          })
+        }
+      })
+      return 'ok'
+    },
+
     // ── M14k — implants ──────────────────────────────────────────────────────
     installImplant: (id) => {
       const s = get()
@@ -2533,10 +2609,47 @@ export const useGameStore = create<GameState & GameActions>()(
             }
           }
         }
+        // M14l — gateway rent. If the active gateway charges rent and the
+        // week's grace has expired, attempt to renew. Eviction back to HOME
+        // if the player can't cover.
+        const activeGw = s.player.activeGatewayId ? getGateway(s.player.activeGatewayId) : null
+        if (activeGw && activeGw.rentPerWeek > 0) {
+          const paidUntil = s.player.gatewayPaidUntil?.[activeGw.id] ?? 0
+          if (now >= paidUntil) {
+            if (s.player.credits >= activeGw.rentPerWeek) {
+              s.player.credits -= activeGw.rentPerWeek
+              s.player.stats.creditsSpent += activeGw.rentPerWeek
+              if (!s.player.gatewayPaidUntil) s.player.gatewayPaidUntil = {}
+              s.player.gatewayPaidUntil[activeGw.id] = now + 7 * 24 * 3600 * 1000
+              s.terminalLines.push({
+                id: `log_rent_${Date.now()}`, type: 'dim',
+                text: `${activeGw.name} rent paid (${activeGw.rentPerWeek.toLocaleString()} Cr).`,
+              })
+            } else {
+              // Evicted
+              s.player.activeGatewayId = 'home'
+              s.terminalLines.push({
+                id: `log_rent_evict_${Date.now()}`, type: 'error',
+                text: `EVICTED from ${activeGw.name} — couldn't cover rent (${activeGw.rentPerWeek.toLocaleString()} Cr). Reverted to Home Gateway.`,
+              })
+              s.inbox.unshift({
+                id: `mail_evict_${activeGw.id}_${Date.now()}`,
+                receivedAt: now, isRead: false,
+                from: 'Property Management',
+                subject: `[EVICTION NOTICE] ${activeGw.name}`,
+                body: `Your weekly rent of ${activeGw.rentPerWeek.toLocaleString()} Cr could not be collected. Your access has been revoked and your gateway routing has reverted to the public residential ISP at your home address.\n\nYou may re-acquire this gateway at any time, subject to the original unlock fee.`,
+                category: 'system',
+              })
+            }
+          }
+        }
+
         // M14h.5 — commit notoriety delta, clamped to [-5, +10].
+        // M14l — Corporate VPN halves accrual (gatewayNotorietyMul).
         if (notorietyDelta !== 0) {
+          const gMul = gatewayNotorietyMul(s.player)
           const current = s.player.notoriety ?? 0
-          s.player.notoriety = Math.max(-5, Math.min(10, current + notorietyDelta))
+          s.player.notoriety = Math.max(-5, Math.min(10, current + notorietyDelta * gMul))
         }
       }),
 
