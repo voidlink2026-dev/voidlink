@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
 import type { CredentialEntry } from '../../store/gameStore.ts'
 import { Button, TraceBar } from '@voidlink/ui'
-import { startCrackJob, tickCrackJob } from '@voidlink/core'
+import { startCrackJob, tickCrackJob, ramBonus, wipeSpeedMultiplier } from '@voidlink/core'
 import type { CrackJob } from '@voidlink/core'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './HackingInterface.module.css'
@@ -352,7 +352,7 @@ export function HackingInterface() {
     }
 
     const tier = selectedNode.securityTier
-    const wipeMult = player?.specialization === 'ghost' ? 0.6 : 1
+    const wipeMult = wipeSpeedMultiplier(player ?? null)
     const durationMs = Math.max(2000, (tier * 1800 + Math.random() * 1000) * wipeMult)
     const startedAt = Date.now()
     setWipingNodeId(selectedNode.id)
@@ -380,7 +380,7 @@ export function HackingInterface() {
     if (remaining.length === 0) return
     logTerminal(`Wiping ${remaining.length} node${remaining.length === 1 ? '' : 's'}…`, 'system')
 
-    const wipeMult = player?.specialization === 'ghost' ? 0.6 : 1
+    const wipeMult = wipeSpeedMultiplier(player ?? null)
     const queue = [...remaining]
     let cancelled = false
 
@@ -472,7 +472,7 @@ export function HackingInterface() {
     return null
   })()
 
-  const ramSlots = (player?.hardware.ramSlots ?? 2) + (player?.specialization === 'architect' ? 1 : 0)
+  const ramSlots = (player?.hardware.ramSlots ?? 2) + (player?.specialization === 'architect' ? 1 : 0) + ramBonus(player ?? null)
   const activeToolCount = (!!scanningNodeId ? 1 : 0) + (!!activeJob ? 1 : 0) + (!!wipingNodeId ? 1 : 0) +
     (!!dumpingNodeId ? 1 : 0) + (!!scrapingNodeId ? 1 : 0)
   const ramFull = activeToolCount >= ramSlots

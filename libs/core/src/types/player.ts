@@ -92,6 +92,10 @@ export interface PlayerProfile {
   // presets and cannot be deleted, though they can be overwritten.
   loadouts?: Loadout[]
   activeLoadoutId?: string | null
+
+  // M14k — installed implants (permanent, irreversible). Array of implant
+  // IDs from data/implants.ts. Buffs computed via helpers in that module.
+  implants?: string[]
 }
 
 export type ExfilChannelId = 'direct' | 'tunnel' | 'dns' | 'icmp'

@@ -379,16 +379,6 @@ A persistent meta-progression layer outside the per-character upgrade shop.
 - UI: SVG tech tree similar to current Upgrade Shop, but separate window
 - Save: persists across operatives in the same account? No — per-operative.
 
-### M14k — Implants / Wetware
-**Effort:** 2 sessions
-
-Permanent buffs purchased from underground clinics (faction-gated):
-- **Ghost Reflexes** — +20% wipe speed (Ghost spec discount)
-- **Brute Synapse** — +1 max relay hop
-- **Architect Cortex** — +1 RAM concurrent tool slot
-- **Social Voicebox** — phishing 30% → 10% failure rate
-- Each implant: 50–250k Cr, one-time, irreversible (canonically "your body now"). Faction permission needed.
-
 ### M14l — Vehicle / Location Gateways
 **Effort:** 2 sessions
 

@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react'
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
-import { HARDWARE_CATALOGUE, SOFTWARE_CATALOGUE, CONSUMABLES_CATALOGUE } from '@voidlink/core'
+import { HARDWARE_CATALOGUE, SOFTWARE_CATALOGUE, CONSUMABLES_CATALOGUE, IMPLANTS, hasImplant } from '@voidlink/core'
 import type { HardwareDefinition, ToolDefinition, ConsumableDefinition } from '@voidlink/core'
+import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './UpgradeShop.module.css'
 
-type View = 'graph' | 'list' | 'consumables'
+type View = 'graph' | 'list' | 'consumables' | 'implants'
 type NodeState = 'starter' | 'owned' | 'affordable' | 'locked-rep' | 'locked-funds' | 'unbuyable-prev'
 type ItemDef =
   | { kind: 'hw'; data: HardwareDefinition }
@@ -188,6 +189,10 @@ export function UpgradeShop() {
             className={`${styles.toggleBtn} ${view === 'consumables' ? styles.toggleActive : ''}`}
             onClick={() => setView('consumables')}
           >CONSUMABLES</button>
+          <button
+            className={`${styles.toggleBtn} ${view === 'implants' ? styles.toggleActive : ''}`}
+            onClick={() => setView('implants')}
+          >IMPLANTS</button>
         </div>
       </div>
 
@@ -278,9 +283,85 @@ export function UpgradeShop() {
           onBuyHw={(it) => handleBuy({ kind: 'hw', data: it })}
           onBuySw={(it) => handleBuy({ kind: 'sw', data: it })}
         />
-      ) : (
+      ) : view === 'consumables' ? (
         <ConsumablesView player={player} />
+      ) : (
+        <ImplantsView player={player} />
       )}
+    </div>
+  )
+}
+
+// ── M14k — Implants view ─────────────────────────────────────────────────────
+function ImplantsView({ player }: { player: import('@voidlink/core').PlayerProfile }) {
+  const installImplant = useGameStore((s) => s.installImplant)
+  const logTerminal    = useGameStore((s) => s.logTerminal)
+
+  function buy(id: string, name: string) {
+    const r = installImplant(id)
+    if (r === 'ok') { AudioEngine.playSfx('success'); return }
+    if (r === 'insufficient_funds') logTerminal(`DENIED: insufficient credits for ${name}.`, 'error')
+    else if (r === 'faction_locked') logTerminal(`DENIED: ${name} requires faction standing the clinic doesn't see.`, 'error')
+    else if (r === 'already_owned') logTerminal(`${name} is already installed.`, 'dim')
+    else logTerminal(`${name}: install failed.`, 'error')
+    AudioEngine.playSfx('error')
+  }
+
+  return (
+    <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto', height: '100%' }}>
+      <div style={{ fontSize: 11, color: '#888', letterSpacing: '0.12em', lineHeight: 1.6 }}>
+        UNDERGROUND CLINIC — permanent neural / hardware augmentations. One-time, irreversible. Faction standing gates some procedures. Your body, your problem.
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
+        {IMPLANTS.map((impl) => {
+          const owned = hasImplant(player, impl.id)
+          const factionStanding = impl.factionId
+            ? player.factionStandings.find((f) => f.factionId === impl.factionId)?.score ?? 0
+            : 0
+          const factionMet = !impl.factionId || factionStanding >= (impl.factionStandingMin ?? 0)
+          const canAfford = player.credits >= impl.cost
+          return (
+            <div key={impl.id} style={{
+              border: `1px solid ${owned ? '#39ff14' : factionMet ? '#2a4a6a' : '#3a2030'}`,
+              background: owned ? 'rgba(57, 255, 20, 0.04)' : 'rgba(0, 229, 255, 0.02)',
+              borderRadius: 2,
+              padding: 12,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 6,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: owned ? '#39ff14' : '#00e5ff', letterSpacing: '0.06em' }}>
+                  {impl.name}
+                </div>
+                <div style={{ fontSize: 10, color: '#ffd700', fontVariantNumeric: 'tabular-nums' }}>
+                  {impl.cost.toLocaleString()} Cr
+                </div>
+              </div>
+              <div style={{ fontSize: 10, color: '#909090', fontStyle: 'italic' }}>{impl.blurb}</div>
+              <div style={{ fontSize: 10, color: '#c0c0c0', lineHeight: 1.5 }}>{impl.description}</div>
+              <div style={{ fontSize: 9, color: '#00e5ff', letterSpacing: '0.1em' }}>EFFECT — {impl.effectLabel}</div>
+              {impl.factionId && (
+                <div style={{ fontSize: 9, color: factionMet ? '#39ff14' : '#ff9900', letterSpacing: '0.08em' }}>
+                  {factionMet ? '✓' : '✗'} REQUIRES {impl.factionId.toUpperCase()} ≥ {impl.factionStandingMin} (have {factionStanding})
+                </div>
+              )}
+              <div style={{ marginTop: 6 }}>
+                {owned ? (
+                  <span style={{ fontSize: 10, color: '#39ff14', letterSpacing: '0.12em' }}>★ INSTALLED</span>
+                ) : (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    disabled={!canAfford || !factionMet}
+                    onClick={() => buy(impl.id, impl.name)}
+                  >INSTALL</Button>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

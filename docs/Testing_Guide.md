@@ -1149,6 +1149,49 @@ The big sweep. Test everything below.
 
 ---
 
+## 39. M14k — Implants / Wetware (2026-06)
+
+### 39.1 Shop tab + grid
+- [ ] Open SHOP — new IMPLANTS toggle button next to CONSUMABLES
+- [ ] Click IMPLANTS — 4 cards visible: Ghost Reflexes, Brute Synapse, Architect Cortex, Quantum Inhibitor
+- [ ] Each card shows name + cost + blurb + description + EFFECT row + faction requirement (where applicable)
+- [ ] Faction chip shows ✓/✗ based on current standing
+
+### 39.2 Install a non-gated implant
+- [ ] On a fresh save, buy Brute Synapse (Cr 120,000 — may need to grind first)
+- [ ] Terminal: `Implant installed: Brute Synapse. Max relay-chain hops +1. This is permanent.`
+- [ ] Inbox: new unread DARKNET message from "Underground Clinic" with procedure confirmation
+- [ ] Card now shows ★ INSTALLED in green; INSTALL button gone
+
+### 39.3 Verify Brute Synapse effect
+- [ ] Open WORLD MAP — relay-chain cap is now `baseCap + 1` for current proxy tier (basic: 4 instead of 3, v2: 7 instead of 6, etc.)
+- [ ] Bounce Chain Window shows the boosted cap in `N/X HOPS`
+
+### 39.4 Faction-gated implant
+- [ ] On a fresh save with 0 Underground standing, attempt to INSTALL Ghost Reflexes
+- [ ] Button disabled; chip shows ✗ REQUIRES UNDERGROUND ≥ 50
+- [ ] Grind to ≥ 50 Underground standing → button enables → install works
+
+### 39.5 Architect Cortex effect
+- [ ] Buy Architect Cortex (requires Voidlink Intl ≥ 100)
+- [ ] During a mission, HI shows RAM `N/(baseSlots + 1)` (or `+2` if Architect spec also chosen)
+- [ ] You can run one more simultaneous tool than before
+
+### 39.6 Ghost Reflexes effect
+- [ ] Install Ghost Reflexes
+- [ ] During a wipe operation, the duration is ~20% shorter than before (Ghost spec adds further ×0.6 multiplier on top)
+
+### 39.7 Quantum Inhibitor effect
+- [ ] Install Quantum Inhibitor (requires Arunmor ≥ 50)
+- [ ] Accept any mission — terminal shows the trace bar baseline visibly lower (the `-0.15 %/s` applies before notoriety)
+- [ ] On traceSpeed-15 networks the passive rate drops from ~0.54 %/s to ~0.39 %/s
+
+### 39.8 Persistence
+- [ ] Log out then back in — implants persist; effects still apply
+- [ ] Cannot re-install (button gone permanently)
+
+---
+
 ## 38. M14j — Loadout Slots (2026-06)
 
 ### 38.1 Preset seed + UI

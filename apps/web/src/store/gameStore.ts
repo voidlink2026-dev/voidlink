@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -298,6 +298,9 @@ interface GameActions {
   createLoadout: (name: string, icon: string) => string  // returns new id
   renameLoadout: (id: string, name: string) => void
   deleteLoadout: (id: string) => 'ok' | 'preset' | 'unknown'
+
+  // M14k — implants
+  installImplant: (id: string) => 'ok' | 'unknown' | 'already_owned' | 'insufficient_funds' | 'faction_locked'
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -556,6 +559,13 @@ export const useGameStore = create<GameState & GameActions>()(
         s.traceState.hopsRemaining = routeLen
         s.traceState.totalHops = routeLen
         s.traceState.bounceCount = routeLen
+
+        // M14k — Quantum Inhibitor implant lowers the passive baseline by
+        // 0.15 %/s for every mission. Stacks before notoriety.
+        const implantDelta = traceBaseRateDelta(s.player ?? null)
+        if (implantDelta !== 0) {
+          s.traceState.baseRate = Math.max(0, s.traceState.baseRate + implantDelta)
+        }
 
         // M14h.5 — notoriety raises passive trace pressure. Each notoriety
         // point adds 0.10 %/s to baseRate. Offshore banks can drive notoriety
@@ -2014,6 +2024,46 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!draft.player?.loadouts) return
         draft.player.loadouts = draft.player.loadouts.filter((l) => l.id !== id)
         if (draft.player.activeLoadoutId === id) draft.player.activeLoadoutId = null
+      })
+      return 'ok'
+    },
+
+    // ── M14k — implants ──────────────────────────────────────────────────────
+    installImplant: (id) => {
+      const s = get()
+      if (!s.player) return 'unknown'
+      const impl = getImplant(id)
+      if (!impl) return 'unknown'
+      if (s.player.implants?.includes(id)) return 'already_owned'
+      if (s.player.credits < impl.cost) return 'insufficient_funds'
+      if (impl.factionId && impl.factionStandingMin !== undefined) {
+        const standing = s.player.factionStandings.find((f) => f.factionId === impl.factionId)?.score ?? 0
+        if (standing < impl.factionStandingMin) return 'faction_locked'
+      }
+      set((draft) => {
+        if (!draft.player) return
+        draft.player.credits -= impl.cost
+        draft.player.stats.creditsSpent += impl.cost
+        if (!draft.player.implants) draft.player.implants = []
+        draft.player.implants.push(id)
+        draft.terminalLines.push({
+          id: `log_implant_${Date.now()}`,
+          type: 'success',
+          text: `Implant installed: ${impl.name}. ${impl.effectLabel}. This is permanent.`,
+        })
+        // Inbox echo so the install lands narratively
+        draft.inbox.unshift({
+          id: `mail_implant_${id}_${Date.now()}`,
+          receivedAt: Date.now(),
+          isRead: false,
+          from: 'Underground Clinic',
+          fromFingerprint: 'C1IN 1C45 W3TW 4R3X',
+          subject: `[CLINIC] Procedure complete — ${impl.name}`,
+          body: `Procedure complete.\n\nImplant: ${impl.name}\nEffect: ${impl.effectLabel}\nCost: ${impl.cost.toLocaleString()} Cr\n\n${impl.description}\n\nThis is permanent. There is no removal procedure. Your body, your problem.\n\n— The Clinic`,
+          category: 'darknet',
+          encrypted: false,
+        })
+        if (draft.inbox.length > 100) draft.inbox.length = 100
       })
       return 'ok'
     },
