@@ -17,6 +17,7 @@ import { BankWindow } from '../../game/Bank/BankWindow.tsx'
 import { TargetInfoWindow } from '../../game/TargetInfo/TargetInfoWindow.tsx'
 import { BounceChainWindow } from '../../game/BounceChain/BounceChainWindow.tsx'
 import { EmailInbox } from '../../game/EmailInbox/EmailInbox.tsx'
+import { ResearchBench } from '../../game/Research/ResearchBench.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
 import { MissionEventToast } from '../../game/MissionEventToast/MissionEventToast.tsx'
@@ -48,6 +49,7 @@ const WINDOW_COMPONENTS: Record<string, React.ComponentType> = {
   TargetInfoWindow,
   BounceChainWindow,
   EmailInbox,
+  ResearchBench,
 }
 
 export function DesktopScreen() {

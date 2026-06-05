@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
-import { getMaxRelayHops, relayHopBonus } from '@voidlink/core'
+import { getMaxRelayHops, relayHopBonus, researchRelayHopBonus } from '@voidlink/core'
 import { useGameStore } from '../../store/gameStore.ts'
 import styles from './WorldMap.module.css'
 
@@ -237,7 +237,7 @@ export function WorldMap() {
 
   const bounceLib   = player?.bounceLibrary ?? []
   const proxies     = player?.software?.proxies ?? []
-  const maxHops     = getMaxRelayHops(proxies) + relayHopBonus(player)
+  const maxHops     = getMaxRelayHops(proxies) + relayHopBonus(player) + researchRelayHopBonus(player)
 
   const [hoverNodeId, setHoverNodeId] = useState<string | null>(null)
 

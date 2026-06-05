@@ -1,7 +1,7 @@
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
 import { AudioEngine } from '../Audio/audioEngine.ts'
-import { getMaxRelayHops, relayHopBonus } from '@voidlink/core'
+import { getMaxRelayHops, relayHopBonus, researchRelayHopBonus } from '@voidlink/core'
 import { LoadoutBar } from '../Loadouts/LoadoutBar.tsx'
 import styles from './BounceChainWindow.module.css'
 
@@ -16,7 +16,7 @@ export function BounceChainWindow() {
   if (!player) return null
 
   const proxies   = player.software.proxies ?? []
-  const maxHops   = getMaxRelayHops(proxies) + relayHopBonus(player)
+  const maxHops   = getMaxRelayHops(proxies) + relayHopBonus(player) + researchRelayHopBonus(player)
   const bounceLib = player.bounceLibrary ?? []
 
   function openWorldMap() {

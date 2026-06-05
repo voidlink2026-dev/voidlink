@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
 import type { CredentialEntry } from '../../store/gameStore.ts'
 import { Button, TraceBar } from '@voidlink/ui'
-import { startCrackJob, tickCrackJob, ramBonus, wipeSpeedMultiplier } from '@voidlink/core'
+import { startCrackJob, tickCrackJob, ramBonus, wipeSpeedMultiplier, researchRamBonus, researchCrackSpeedMul, researchScanSpeedMul } from '@voidlink/core'
 import type { CrackJob } from '@voidlink/core'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './HackingInterface.module.css'
@@ -92,7 +92,8 @@ export function HackingInterface() {
       logTerminal('Scan already in progress.', 'dim')
       return
     }
-    const durationMs = selectedNode.securityTier * 1200 + Math.random() * 800
+    // M14i — research scan-speed multiplier (H3 Cache Prefetch ×0.75)
+    const durationMs = (selectedNode.securityTier * 1200 + Math.random() * 800) * researchScanSpeedMul(player ?? null)
     const startedAt = Date.now()
     setScanningNodeId(selectedNode.id)
     setScanProgress(0)
@@ -179,9 +180,11 @@ export function HackingInterface() {
     )
     // GPU acceleration: t1 = ×0.75 duration, t2 = ×0.55, t3 = ×0.35
     const gpuMult = { 0: 1, 1: 0.75, 2: 0.55, 3: 0.35 }[player.hardware.gpuTier ?? 0] ?? 1
+    // M14i — research crack-speed multiplier (C1 + H1, C4 if RDP/SSH)
+    const researchCrackMul = researchCrackSpeedMul(player, exploitProtocol)
     let job = player.specialization === 'brute'
-      ? { ...baseJob, durationMs: Math.round(baseJob.durationMs / 1.35 * gpuMult) }
-      : { ...baseJob, durationMs: Math.round(baseJob.durationMs * gpuMult) }
+      ? { ...baseJob, durationMs: Math.round(baseJob.durationMs / 1.35 * gpuMult * researchCrackMul) }
+      : { ...baseJob, durationMs: Math.round(baseJob.durationMs * gpuMult * researchCrackMul) }
 
     // Credential pack consumable: instant breach
     if (player.activeFlags.consumable_cred_pack_armed) {
@@ -472,7 +475,7 @@ export function HackingInterface() {
     return null
   })()
 
-  const ramSlots = (player?.hardware.ramSlots ?? 2) + (player?.specialization === 'architect' ? 1 : 0) + ramBonus(player ?? null)
+  const ramSlots = (player?.hardware.ramSlots ?? 2) + (player?.specialization === 'architect' ? 1 : 0) + ramBonus(player ?? null) + researchRamBonus(player ?? null)
   const activeToolCount = (!!scanningNodeId ? 1 : 0) + (!!activeJob ? 1 : 0) + (!!wipingNodeId ? 1 : 0) +
     (!!dumpingNodeId ? 1 : 0) + (!!scrapingNodeId ? 1 : 0)
   const ramFull = activeToolCount >= ramSlots

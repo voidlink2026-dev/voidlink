@@ -369,16 +369,6 @@ Make the WorldMap continent outlines reflect live faction control / activity:
 
 Until this is built, the WorldMap uses static cyan continent outlines (M14h.9 bloom-tuning kept the visual quiet for clarity).
 
-### M14i — Research Tech Tree
-**Effort:** 4 sessions
-
-A persistent meta-progression layer outside the per-character upgrade shop.
-- 5 branches: Crypto, Stealth, Hardware, Social, AI
-- 30+ research nodes, each requiring research-points (earned from missions) + a research-bench at the operative's gateway
-- Hidden nodes gated by story flags (e.g., Arc 4 unlock branch)
-- UI: SVG tech tree similar to current Upgrade Shop, but separate window
-- Save: persists across operatives in the same account? No — per-operative.
-
 ---
 
 ## 3. Backlog — Tier 2 (EA-season content)

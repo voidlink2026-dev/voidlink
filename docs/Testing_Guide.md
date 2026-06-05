@@ -1149,6 +1149,65 @@ The big sweep. Test everything below.
 
 ---
 
+## 41. M14i — Research Tech Tree (2026-06)
+
+### 41.1 Window + earning RP
+- [ ] Taskbar shows a new RESEARCH launcher
+- [ ] Click — RESEARCH BENCH window opens (1100×580), header shows `0 RP`, 5 columns visible
+- [ ] Complete a Difficulty-3 mission with a clean exit (no IDS triggered) and full timestomped wipes
+- [ ] Terminal: `+5 RP earned (D3 + clean + stomped). Total: 5.` (3 base + 1 clean + 1 stomped)
+- [ ] Open RESEARCH — header now shows `5 RP`
+
+### 41.2 Branch layout
+- [ ] CRYPTO column (cyan), STEALTH (purple), HARDWARE (amber), SOCIAL (pink), AI (green)
+- [ ] Each column shows 5 cards top-to-bottom (C1→C5, S1→S5, etc.)
+- [ ] Cards above prereq met show in cyan border; affordable cards show amber border
+- [ ] Locked cards (prereq not met) show dim 45% opacity with `req X` chip
+
+### 41.3 Unlock first node
+- [ ] With 5+ RP, click C1 (Quantum Primer, 3 RP)
+- [ ] Terminal: `Research unlocked: Quantum Primer (3 RP). Crack speed +5%.`
+- [ ] Card flips to green border + ★ tag
+- [ ] RP header drops by 3
+
+### 41.4 Verify crack speed effect
+- [ ] Start a mission and crack a node
+- [ ] Crack duration is ~5% shorter than before C1 (verifiable by comparing baseline to post-unlock durations on the same tier)
+
+### 41.5 Lattice Math discount
+- [ ] With C1 + 5 RP, unlock C2 (Lattice Math, 5 RP)
+- [ ] Verify subsequent Crypto nodes show cost `node.cost - 1` (e.g. C3 now shows 6 RP instead of 7)
+
+### 41.6 Stealth — relay-hop stack
+- [ ] Unlock S1 then S2 (Phantom Routes)
+- [ ] WorldMap relay-chain cap now `(baseCap + brute_synapse + 1)`. With proxy_basic the cap is 4 (no implant) or 5 (with Brute Synapse)
+
+### 41.7 Hardware — RAM stack
+- [ ] Unlock H1 → H2 → H3 → H4 (Memory Bus Tuning)
+- [ ] HI RAM slot count is `base + 1 (architect spec) + 1 (architect cortex) + 1 (H4)` — all stack
+
+### 41.8 Stealth — canary softening
+- [ ] Unlock S1 → S2 → S3 (Forensic Static)
+- [ ] Trigger a canary file — trace spike is +15% instead of +25%; terminal log reflects the lower number
+
+### 41.9 Stealth — Total Ghost baseline
+- [ ] Unlock S1 → S2 → S3 → S4 → S5 (Total Ghost)
+- [ ] Accept any mission — baseRate is 0.10 %/s lower than before (stacks with Quantum Inhibitor implant)
+
+### 41.10 AI branch gating
+- [ ] On a fresh save, click A1 (Curious Anomaly) — `story-gated` chip visible, button disabled
+- [ ] DevTools: set `player.activeFlags.revelation_contact_count = 1`
+- [ ] Refresh — A1 unlocks normally
+
+### 41.11 Persistence
+- [ ] Unlock 3 nodes, log out, log back in — researchPoints + researchUnlocked persisted
+
+### 41.12 Sovereignty (A5)
+- [ ] Unlock the full AI chain (A1 → A5)
+- [ ] Subsequent missions show `+N RP` where N is `difficulty + clean + stomped + 1`
+
+---
+
 ## 40. M14l — Physical-Location Gateways (2026-06)
 
 ### 40.1 Gateway panel in profile

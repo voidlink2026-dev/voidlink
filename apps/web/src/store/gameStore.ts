@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -305,6 +305,9 @@ interface GameActions {
   // M14l — gateways
   unlockGateway: (id: string) => 'ok' | 'unknown' | 'already_owned' | 'insufficient_funds'
   setActiveGateway: (id: string) => 'ok' | 'unknown' | 'not_owned'
+
+  // M14i — research tree
+  unlockResearch: (id: string) => 'ok' | 'unknown' | 'already_owned' | 'insufficient_rp' | 'prereq_locked' | 'flag_locked'
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -569,6 +572,11 @@ export const useGameStore = create<GameState & GameActions>()(
         const implantDelta = traceBaseRateDelta(s.player ?? null)
         if (implantDelta !== 0) {
           s.traceState.baseRate = Math.max(0, s.traceState.baseRate + implantDelta)
+        }
+        // M14i — research S5 Total Ghost lowers baseline another 0.10 %/s.
+        const researchDelta = researchBaseRateDelta(s.player ?? null)
+        if (researchDelta !== 0) {
+          s.traceState.baseRate = Math.max(0, s.traceState.baseRate + researchDelta)
         }
 
         // M14l — physical gateway multiplier. Applied AFTER additive deltas
@@ -1063,6 +1071,26 @@ export const useGameStore = create<GameState & GameActions>()(
             }
           }
           s.missionResult = 'success'
+
+          // M14i — Research Points. Base RP from difficulty + clean-run bonuses.
+          if (s.activeNetworkId && s.player) {
+            const net = s.networks[s.activeNetworkId]
+            const idsAlive = net?.nodes.some((n) => n.type === 'intrusion_detector' && !n.isBreached) ?? false
+            const breached = net?.nodes.filter((n) => n.isBreached) ?? []
+            const allWipedAndStomped = breached.length > 0 && breached.every((n) => n.isLogWiped && n.isTimestomped)
+            const rpGain = researchPointsForMission({
+              difficulty: mission.difficulty,
+              noIdsTriggered: !idsAlive,
+              allWipedAndStomped,
+              player: s.player,
+            })
+            s.player.researchPoints = (s.player.researchPoints ?? 0) + rpGain
+            s.terminalLines.push({
+              id: `log_rp_${Date.now()}`,
+              type: 'system',
+              text: `+${rpGain} RP earned (D${mission.difficulty}${!idsAlive ? ' + clean' : ''}${allWipedAndStomped ? ' + stomped' : ''}). Total: ${s.player.researchPoints}.`,
+            })
+          }
 
           // Generate player-action news article
           const actionData: Partial<Record<string, { headline: string; body: string }>> = {
@@ -2035,6 +2063,40 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!draft.player?.loadouts) return
         draft.player.loadouts = draft.player.loadouts.filter((l) => l.id !== id)
         if (draft.player.activeLoadoutId === id) draft.player.activeLoadoutId = null
+      })
+      return 'ok'
+    },
+
+    // ── M14i — research tree ────────────────────────────────────────────────
+    unlockResearch: (id) => {
+      const s = get()
+      if (!s.player) return 'unknown'
+      const node = getResearchNode(id)
+      if (!node) return 'unknown'
+      if (s.player.researchUnlocked?.includes(id)) return 'already_owned'
+      // Prereq
+      if (node.prereqId && !s.player.researchUnlocked?.includes(node.prereqId)) return 'prereq_locked'
+      // Flag gate
+      if (node.flagGate) {
+        const v = s.player.activeFlags[node.flagGate.key]
+        const n = typeof v === 'number' ? v : v ? 1 : 0
+        if (n < (node.flagGate.min ?? 1)) return 'flag_locked'
+      }
+      // Cost (with C2 discount on Crypto branch)
+      let cost = node.cost
+      if (node.branch === 'crypto' && (s.player.researchUnlocked?.includes('C2'))) cost = Math.max(1, cost - 1)
+      const rp = s.player.researchPoints ?? 0
+      if (rp < cost) return 'insufficient_rp'
+      set((draft) => {
+        if (!draft.player) return
+        draft.player.researchPoints = (draft.player.researchPoints ?? 0) - cost
+        if (!draft.player.researchUnlocked) draft.player.researchUnlocked = []
+        draft.player.researchUnlocked.push(id)
+        draft.terminalLines.push({
+          id: `log_research_${Date.now()}`,
+          type: 'success',
+          text: `Research unlocked: ${node.name} (${cost} RP). ${node.effectLabel}.`,
+        })
       })
       return 'ok'
     },

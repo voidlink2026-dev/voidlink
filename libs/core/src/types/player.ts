@@ -105,6 +105,10 @@ export interface PlayerProfile {
   activeGatewayId?: string
   ownedGateways?: string[]  // unlocked via unlockCost — 'home' is always free
   gatewayPaidUntil?: Record<string, number>
+
+  // M14i — Research Tech Tree.
+  researchPoints?: number          // unspent RP
+  researchUnlocked?: string[]      // node IDs unlocked
 }
 
 export type ExfilChannelId = 'direct' | 'tunnel' | 'dns' | 'icmp'

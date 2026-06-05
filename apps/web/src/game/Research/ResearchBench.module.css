@@ -1,0 +1,98 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--color-text, #d4d4d4);
+  background: var(--color-bg, #050505);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border, #1e1e1e);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--color-cyan, #00e5ff);
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+}
+
+.rpPill {
+  font-size: 11px;
+  color: #ffd700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+.branches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.branch { display: flex; flex-direction: column; gap: 6px; }
+
+.branchLabel {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-align: center;
+  padding: 4px 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.bCrypto   { color: #00e5ff; }
+.bStealth  { color: #bf5fff; }
+.bHardware { color: #ffd700; }
+.bSocial   { color: #ff66cc; }
+.bAi       { color: #39ff14; }
+
+.node {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+  background: rgba(255, 255, 255, 0.01);
+}
+.node:hover { border-color: var(--color-cyan, #00e5ff); background: rgba(0, 229, 255, 0.03); }
+
+.nodeOwned   { border-color: #39ff14; background: rgba(57, 255, 20, 0.06); }
+.nodeLocked  { opacity: 0.45; cursor: not-allowed; }
+.nodeAffordable { border-color: #ffd700; }
+
+.nodeHead {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+}
+.nodeId   { color: #888; letter-spacing: 0.1em; }
+.nodeCost { color: #ffd700; font-variant-numeric: tabular-nums; }
+
+.nodeName  { font-size: 10px; font-weight: 700; color: #d4d4d4; }
+.nodeEffect { font-size: 9px; color: #00e5ff; line-height: 1.4; }
+.nodePrereq { font-size: 8px; color: #ff9900; letter-spacing: 0.06em; }
+
+.ownedTag { color: #39ff14; font-size: 9px; letter-spacing: 0.12em; }
+
+.blurb {
+  padding: 8px 12px;
+  font-size: 10px;
+  color: #888;
+  line-height: 1.5;
+  border-top: 1px solid var(--color-border, #1e1e1e);
+}

@@ -6,6 +6,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { useGameStore } from '../../store/gameStore.ts'
 import type { NetworkNode, FileEntry, MissionType, PlayerProfile } from '@voidlink/core'
+import { researchCanarySpike } from '@voidlink/core'
 import styles from './NetworkMap.module.css'
 
 // ── M14f: Exfiltration Channels ──────────────────────────────────────────────
@@ -461,21 +462,21 @@ export function NetworkMap() {
     if (!activeNetwork) return
     if (transferringFileId) { logTerminal('Transfer already in progress.', 'dim'); return }
 
-    // M14f.1 — Canary trip. Touching a honeypot file is catastrophic:
-    // immediate +25% trace, +3 %/s alarm for 15s, persistent heat flag on
-    // this corp for the next session. NO transfer happens — the file was bait.
+    // M14f.1 — Canary trip. Touching a honeypot file is catastrophic.
+    // M14i — Forensic Static research (S3) softens the spike to +15%.
     if (file.isCanary) {
       const corpId = activeNetwork.ownerId
+      const spike = researchCanarySpike(player ?? null)
       useGameStore.setState((s) => {
         if (s.traceState) {
-          s.traceState.level = Math.min(100, s.traceState.level + 25)
+          s.traceState.level = Math.min(100, s.traceState.level + spike)
           s.traceState.alarmRate = Math.max(s.traceState.alarmRate, 3.0)
           s.traceState.alarmDecaysAt = Math.max(s.traceState.alarmDecaysAt, Date.now() + 15_000)
         }
         if (s.player) s.player.activeFlags[`heat_${corpId}`] = Date.now()
       })
       logTerminal(`⚠ CANARY TRIPPED: ${file.name} was a honeypot. IDS auto-alerted security.`, 'error')
-      logTerminal('Trace +25%, alarm rate +3%/s for 15s, this corp will start every future mission on heightened alert.', 'error')
+      logTerminal(`Trace +${spike}%, alarm rate +3%/s for 15s, this corp will start every future mission on heightened alert.`, 'error')
       // Mark it visible so future glances at this node show the trap was sprung
       file.isCanary = false  // mutate is OK — it's a transient session state
       return
