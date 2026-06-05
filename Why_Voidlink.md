@@ -2,7 +2,11 @@
 
 The pitch — for press, for players, for anyone wondering whether this game is worth their time and their money.
 
-If you're a planner or contributor, read [docs/Full_Plan.md](docs/Full_Plan.md) first. This document is the front door, not the engineering canon.
+Three companion docs sit alongside this one, written for different audiences:
+
+- **[Voidlink_Synopsis.md](Voidlink_Synopsis.md)** — the comprehensive game guide. "What is this, what will I do, what will I remember from it."
+- **[The_Voidlink_Codex.md](The_Voidlink_Codex.md)** — the world bible. The history of 2199 in full. Tolkien-depth lore. Read this if you want to *live* there.
+- **[docs/Full_Plan.md](docs/Full_Plan.md)** — the engineering canon. For planners and contributors.
 
 ---
 
@@ -238,6 +242,26 @@ These are real, specific things that already happen in the game:
 **Discord** opens at EA launch.
 
 **Press kit + AI-assistance disclosure paragraph** available on request from the developer.
+
+---
+
+## This is not a game with an end
+
+We are not building a game you finish.
+
+We are building a **world**. The story has a beginning (Arc 1 — The Revelation Arc). It has an ending — nine of them, in fact, branching on the coherence of your accumulated choices. But the world *doesn't stop* when you reach an ending.
+
+Every quarter, forever, a free narrative drop lands. Every nine months or so, a paid Chapter expands the story. Every September, an anniversary event drops free cosmetics for everyone. The world clock — **Voidlink Standard Time** — is anchored globally, so seasonal events happen to every operative simultaneously.
+
+Your ending choice **shapes the future content you see**. Principled LIBERATION? News articles cite your handle. Mercenary SOVEREIGNTY? REVELATION keeps sending you contracts and they get stranger.
+
+Closure exists. You can choose to stop. But if you keep playing, the world has been waiting for you.
+
+We have ambition for this world. We want operatives to talk about Voidlink the way *Red Dead* fans talk about Arthur. The way *Max Payne* fans talk about that staircase. The way Tolkien readers talk about the Long Lake. The way Harry Potter readers talk about going back to King's Cross every September.
+
+That ambition is in the docs. The Codex is real. The Synopsis is real. The world has been built to be lived in. Whether we get there depends on you.
+
+We were here. Here is what we made.
 
 ---
 

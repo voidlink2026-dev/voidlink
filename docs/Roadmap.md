@@ -98,20 +98,23 @@ All foundational gameplay shipped. 60/60 tests passing as of M14h.8. See [Comple
 
 Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next_Stage.md#1-pre-launch-sprints-l1l10) for full per-sprint detail.
 
-### Sprint plan (~12–14 weeks)
+### Sprint plan (~14–16 weeks)
 
 **Rule:** L2 (tutorial rewrite) is the **last** gameplay-touching sprint. Any new mechanic, mission type, or UI surface ships *before* the tutorial is rewritten, so the tutorial only ever teaches the actually-final game.
 
 | Sprint | Window | Block | Output |
 |--------|--------|-------|--------|
 | **S1** | 2026-06-W1 → 2026-06-W3 | **L1 Audio** | 6 looping tracks (boot/desktop/mission/critical/victory/fail) + per-bus volume |
-| **S2** | 2026-06-W3 → 2026-07-W2 | **Backlog mechanics close-out** (M14f.1 canary+timestomping, M14j loadouts, M14k implants, M14l vehicle gateways, M14i research tree as scope permits) | Mechanics locked-in before tutorial work begins |
-| **S3** | 2026-07-W2 → 2026-08-W1 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content |
-| **S4** | 2026-07-W3 → 2026-08-W1 | **L4 Steam Cloud + L5 Achievements** | Steamworks SDK integration, 40+10 achievements wired |
-| **S5** | 2026-08-W1 → 2026-08-W2 | **L6 Perf + L10 Steam Deck** | Low-Quality toggle, controller mapping, Deck verified |
-| **S6** | 2026-06-W2 → 2026-08-W3 (parallel) | **L8 Localisation** | ES/DE/FR/RU/zh-CN/JA (tutorial strings translated LAST after L2 lands) |
-| **S7** | 2026-08-W2 → 2026-08-W3 | **L2 Tutorial rewrite** (LAST gameplay-touching sprint) | Cipher's First Contract teaches the actually-final game |
-| **S8** | 2026-08-W3 → 2026-08-W4 | **L7 Trailer + L9 EULA + CREDITS + Press kit** | Store-page-ready package (trailer can feature the new tutorial) |
+| **S2** | 2026-06-W3 → 2026-07-W2 | **Backlog mechanics close-out** (M14f.1, M14j, M14k, M14l, M14i — all shipped) | ✅ Done |
+| **S2b** | 2026-07-W2 → 2026-07-W3 | **L11 Choice Architecture & Reflection Mechanic (M14p)** — new sprint added 2026-06 to support the deep narrative vision | NPC dialogue tone reads accumulated flags, news framing adapts to pattern, contract availability gates on track record, end-of-arc reflection scenes |
+| **S3** | 2026-07-W3 → 2026-08-W2 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content. Each arc writes flags that the Choice Architecture (S2b) reads |
+| **S4** | 2026-07-W4 → 2026-08-W2 | **L4 Steam Cloud + L5 Achievements** | Steamworks SDK integration, 40+10 achievements wired |
+| **S5** | 2026-08-W2 → 2026-08-W3 | **L6 Perf + L10 Steam Deck** | Low-Quality toggle, controller mapping, Deck verified |
+| **S6** | 2026-06-W2 → 2026-08-W4 (parallel) | **L8 Localisation** | ES/DE/FR/RU/zh-CN/JA (tutorial strings translated LAST after L2 lands) |
+| **S7** | 2026-08-W3 → 2026-08-W4 | **L2 Tutorial rewrite** (LAST gameplay-touching sprint) | Cipher's First Contract teaches the actually-final game |
+| **S8** | 2026-08-W4 → 2026-09-W1 | **L7 Trailer + L9 EULA + CREDITS + Press kit** | Store-page-ready package (trailer can feature the new tutorial) |
+
+**Sprint S2b added** in response to the deep-narrative pivot of 2026-06 — the Choice Architecture & Reflection Mechanic (M14p) is now a pre-launch deliverable because the lore, ongoing-world model, and ending fan-out all depend on it.
 
 ### Risk register
 
@@ -178,28 +181,56 @@ Day-1:
 
 ---
 
-## Phase 6 — Post-1.0 (2027-07 →) 🎯 / 💭
+## Phase 6 — The Ongoing World (2027-07 →) 🎯 / 💭
 
-### Confirmed paid DLC
+**Voidlink does not end at 1.0.** 1.0 is the stable launch of a world that keeps unfolding. This phase is open-ended — measured in years, not months.
 
-| When | DLC | Type | Price | Content |
-|------|-----|------|-------|---------|
-| 2027-09 | DEEP BLACK | Story DLC | £6.99 | 3 new arcs, 1 new faction, ~8h |
-| 2028-03 | QUANTUM SHADOW | Story DLC | £6.99 | 3 new arcs, ai-core breach mechanics, ~8h |
+### The cadence commitment
 
-### Ongoing — Seasonal Darknet Drops
+| Cadence | Type | Free / Paid | Size |
+|---------|------|-------------|------|
+| **Quarterly** | Darknet Drop — free narrative event | Free | 2-4h of contracts + news + one world-state change |
+| **Annual** | Anniversary Event — free cosmetic + double-RP week | Free | 1 week |
+| **~9 months** | Paid Chapter — major story expansion | £6.99 | 8h of authored arc + new mechanics |
+| **Quarterly** | Conviction Pass — cosmetic season pass | £4.99 (optional) | Pure cosmetic, two visual tracks |
 
-**Every quarter, forever.** One-off contracts + news + small narrative event. Free. Optional season cosmetic skin £2.99.
+### Confirmed paid Chapters
+
+| When | Chapter | Price | Content |
+|------|---------|-------|---------|
+| 2027-09 | DEEP BLACK | £6.99 | 3 new arcs, 1 new faction, ~8h |
+| 2028-03 | QUANTUM SHADOW | £6.99 | 3 new arcs, ai-core breach mechanics, ~8h |
+| 2028-Q4 | TBD | £6.99 | TBD |
+| 2029-Q3 | TBD | £6.99 | TBD |
+
+(Chapters slated approximately every 9 months. Slowing for quality is acceptable; disappearing is not.)
+
+### Ending-driven seasonal content
+
+Each player's ending choice shapes future seasonal content. The world *remembers* what you did:
+
+- **Principled LIBERATION** → news articles cite your handle. T+2 seasons: Truth & Reconciliation contract.
+- **Mercenary SOVEREIGNTY** → REVELATION keeps sending you contracts. Forever. They get stranger.
+- **Mercenary ERASURE** → quarterly drops contain an anonymous email from your new bank. Someone is trying to find you.
+- *(Other endings have their own ongoing threads — see [Full_Plan.md §14b.5](./Full_Plan.md#14b-player-purpose--choice-not-score) for the full set.)*
+
+### Anti-Destiny rules (non-negotiable)
+
+- ❌ No sunset content. Every paid Chapter remains playable forever, for everyone who bought it.
+- ❌ The base game stays the base game. Forever. No "Legacy Pack" repackaging.
+- ❌ Seasonal *events* are time-limited (you weren't there if you missed it). Seasonal *story* is not — it becomes optional procedural content after the season.
+- ❌ No catch-up packages priced higher than the original purchase.
 
 ### World-class polish (opportunistic) 💭
 
-- Full ARG resolution (begins EA-S1, resolves EA-S3)
+- Full ARG resolution (begins EA-S1, continues across multiple post-launch seasons)
 - Lock-picking-style minigame for ai_core breaches
 - Steam Workshop modding SDK refinement
 - Twitch integration — viewer-voted choice missions
 - Procedural cross-mission consequences (sabotage → stock dip → recovery contract 24h later)
 - Console ports — only after PC 1.0 stabilises
 - Mobile port (React Native) — explored after console; M29 in backlog
+- **Cinematic treatment** 💭 — animated shorts of the REVELATION arc resolution; faction reveal cinematics; "Voidlink Anthology" web series concept. Tracked as future opportunistic work; no schedule.
 
 ### Multiplayer — LAST 💭
 

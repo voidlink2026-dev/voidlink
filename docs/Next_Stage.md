@@ -60,6 +60,50 @@ These are launch-blockers. Order is the recommended sequence; some run in parall
 
 ---
 
+### L11 / M14p — Choice Architecture & Reflection Mechanic 🎯
+**Window:** 2026-07-W2 → 2026-07-W3 (1.5 weeks)
+**Effort:** 1.5 weeks
+**Status:** New sprint (added 2026-06 in response to the deep-narrative pivot — see [Full_Plan §14b](./Full_Plan.md#14b-player-purpose--choice-not-score))
+
+**Why this is now a launch-blocker.** The lore expansion, the 9-ending fan-out, the ongoing-world model, and the Codex-level immersion all depend on the world *reflecting* the player's accumulated choices. Without this system, the lore is just text — beautiful but inert. With it, the player's identity becomes the central mechanic.
+
+**Scope.**
+
+1. **Choice catalogue.** Audit every existing choice surface (Arc 1 key choice, M14o choice missions, mission-objective accepts/refusals, exfil sell-vs-leak, civilian-spare decisions, fellow-operative bounties) and ensure each writes a flag with consistent naming: `choice_<topic>_<value>` (e.g. `choice_arc1_key_upload`, `choice_civilian_spared_3`, `choice_op_bounty_accepted_2`).
+2. **Pattern reader.** Single core helper `getDecisionPattern(player): { principledScore, mercenaryScore, recentTrend, dominantTraits[] }`. **Never shown to the player.** Read-only, derived from flags.
+3. **Four reflection channels (wired):**
+   - **NPC dialogue tone** — CIPHER, NIGHTOWL_22, Dispatch, faction brokers each have 3-5 variant lines per scripted exchange. Pattern reader picks the right one.
+   - **News framing** — same news article body, different adjectives based on pattern. Headlines pick from 3 variants. Body uses 4-6 token substitutions.
+   - **Contract availability** — high-tier mercenary contracts gate on `mercenaryScore`. High-status principled contracts gate on `principledScore`. Mid-tier work is alignment-agnostic.
+   - **Faction induction events** — when pattern crosses a quiet threshold (e.g. `principledScore > 30 && underground_standing > 100`), trigger a one-time induction message in inbox. CIPHER's tone changes permanently.
+4. **Reflection scenes.** New mission type `ReflectionScene` with no network, no trace, no objective — just a styled terminal overlay. Five base scenes:
+   - End of Arc 1 (covers signup → Arc 1 climax)
+   - End of Arc 3
+   - End of Arc 5 (pre-ending)
+   - Annual anniversary
+   - Quarterly season transition
+   Each scene has 6-8 variant text blocks; pattern reader selects 4-5 to surface.
+5. **Ending fan-out.** Update Arc 5 climax to query `getDecisionPattern` + faction standings + spec. Offer the 1-3 endings that match. Reformer's Path triggers if `recentTrend != dominantTraits[0]`.
+
+**Tech.**
+- `libs/core/src/engine/decisionPattern.ts` — new module with `getDecisionPattern()` + helpers
+- `apps/web/src/game/Reflection/ReflectionOverlay.tsx` — new full-screen overlay component
+- `libs/core/src/data/dialogueVariants.ts` — keyed text variants for NPC tone
+- `libs/core/src/data/newsFraming.ts` — keyed adjective/token substitutions for news
+- Update mission `acceptMission` action to gate-check contract availability against pattern
+
+**Acceptance criteria.**
+- Playing through Arc 1 with a principled pattern → CIPHER's Arc 1 close message reads "Welcome to the deck. You've shown me what kind of operative you are."
+- Same playthrough with a mercenary pattern → CIPHER's message reads "Welcome to the deck. We'll see what kind of operative you become."
+- News article for the same successful sabotage mission produces "ruthless professional precision" for mercenary pattern, "anonymous vigilante action" for principled pattern, "another vicious Underground strike" for high-Underground-standing principled
+- End-of-Arc-1 reflection scene fires, surfacing 4-5 facts that match what the player actually did
+- Arc 5 climax offers 1-3 endings (not all 9) based on coherent decision pattern
+- No UI ever displays a score to the player
+
+This sprint unlocks the entire deep-narrative vision. Everything else in the post-1.0 Ongoing World model (ending-driven seasonal content, faction territory shifts, ARG personalisation) reads from `getDecisionPattern()`.
+
+---
+
 ### L2 — Tutorial rewrite: "Cipher's First Contract" 🎯
 **Window:** 2026-08-W2 → 2026-08-W3 (deliberately LAST among gameplay-touching sprints)
 **Effort:** 2 weeks

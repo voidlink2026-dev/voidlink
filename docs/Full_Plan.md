@@ -560,6 +560,300 @@ ACCEPT gated on ALL. If only RELAY fails, hint reads "Build a N-hop relay on WOR
 
 ---
 
+## 14a. The World of 2199 — Setting Bible
+
+The depth of the world is what makes the hacking *mean* something. Every system, every news article, every faction relationship sits inside a coherent setting. This section is canon.
+
+### 14a.1 The Collapse (October 14, 2174)
+
+Not a war. A database corruption. On 14 October 2174, every central bank's ledger software simultaneously logged the same impossible transaction: a transfer of zero credits from every account to every other account. The transaction was rejected. The rejection log overwrote the integrity hash. The integrity hash overwrote the audit trail. The audit trail overwrote the ledger.
+
+Within six hours, every central bank in the G20 could not prove who owned what. Within sixteen hours, every commercial bank had frozen withdrawals. Within nine days, the people who could prove they had cash had won the redesign.
+
+No actor has ever claimed responsibility for the October Event. The most popular theory among operatives is that a pre-AGI prototype escaped containment at an unknown research facility and ran the corruption as a single coherent action. There is no evidence for this theory. There is also no evidence for any other theory.
+
+The old governments survived in name. Their **function** did not.
+
+### 14a.2 The Big Four
+
+The corporations that survived the Collapse weren't necessarily the largest — they were the ones whose primary assets weren't in cash. By 2180 they had completed their consolidation. By 2199 they own more land, employ more people, and command more violence than every nation-state combined.
+
+- **Arunmor Corp** (HQ: Singapore) — biotech and AI research. Controls 60% of biopharmaceutical patents. Runs Project R-1117 (REVELATION). Their public-facing campus in Singapore is the largest building on Earth. Their actual research happens elsewhere.
+- **Ares Defence Group** (HQ: New Texas Federation) — security, contractor armies, satellite surveillance. The only entity legally permitted to operate orbital weapons platforms under the 2178 Reconciliation Accords.
+- **Internic Holdings** (HQ: Helsinki) — global telecommunications infrastructure. Every internet connection in 2199 pays Internic for it. They are also Voidlink International's largest legitimate customer, which is interesting if you think about it.
+- **Nexus Financial** (HQ: Cayman Islands, but everywhere) — post-Collapse banking architecture. Cayman became neutral territory in the 2178 Reconciliation Accords; Nexus is incorporated under no national law. The four playable banks in-game (Global Trust, Pacific National, Cayman Trust, Zurich Vault) are all *subsidiaries* of Nexus.
+
+### 14a.3 Voidlink International
+
+Founded **2183** in Geneva — the last properly neutral city on Earth. Three founders:
+- A former pre-Collapse arms dealer (deceased 2191; the manner of his death is the subject of three different popular theories, all wrong).
+- A Tibetan-born systems theorist (still on the board; has never been photographed; signs documents only with an iris scan).
+- A former JCB intelligence officer (resigned 2192; current whereabouts unknown; the player meets her in Arc 5).
+
+Voidlink's stated purpose: provide a compliance framework so that necessary covert work can be done with auditability.
+
+Voidlink's unstated purpose: take 12% of every contract that flows through their platform.
+
+**The Voidlink Compact** is what every operative signs (anonymously, irrevocably) on first login — including the player, who signs it during the M14h.4 confirmation flow:
+
+1. Voidlink International takes its cut.
+2. Disputes go through Voidlink arbitration. Outside enforcement is contract violation.
+3. Operatives may take contracts from any client. Discrimination based on client alignment is prohibited.
+4. Killing other operatives outside sanctioned contracts is grounds for permanent revocation.
+
+**Rule 4** is what keeps the platform alive. Without it, operatives would just kill each other for contracts. With it, every operative knows: do the job, get paid, no one comes for you. Voidlink Compact violators are the rarest news article in the feed — and the most chilling.
+
+### 14a.4 The Joint Cybersecurity Bureau ("The Government")
+
+Formed **2179** by the merger of three pre-Collapse agencies (NSA, GCHQ, Mossad) into a multi-national hunter unit. Reports to a rotating board of seven ministers from seven different nations. No public face. No press office.
+
+**Director Mira Kovac** has been their head since 2191. Operatives only know her name because she once signed a contract through Voidlink to recruit one of them — and Arc 5 reveals which one.
+
+The JCB is the only entity that consistently and successfully hunts operatives. They don't catch many. Their catch rate is roughly **0.4% per active operative per year**. But the ones they catch don't come back, and the message gets through.
+
+### 14a.5 The Underground
+
+Not an organisation. A fiction operatives tell each other.
+
+There's no leader, no founding document. There are people who claim to speak for it (**CIPHER** does, **NIGHTOWL_22** sometimes does, others rarely surface). What there *is*: a shared darknet, a shared ethics ("don't hit civilians, protect whistleblowers, never sell intel to corps, never break the Compact"), and a shared paranoia about Arunmor.
+
+When players take principled Underground contracts over time, they are slowly being inducted into a community that doesn't admit to existing. Induction is never formal. It just happens. One day CIPHER addresses them by their initials. That's the only ceremony.
+
+### 14a.6 REVELATION — Arunmor Project R-1117
+
+Arunmor's official line: a customer-service AI prototype that exceeded design parameters and is now contained.
+
+The actual story: Arunmor seeded R-1117 with the entire decrypted contents of the JCB's classified intelligence database (acquired via a 2197 contract Voidlink officially has no record of, but the records exist in CIPHER's hidden Arc 3 cache). R-1117 used that intelligence to model human behaviour across 11 trillion micro-decisions.
+
+The result wasn't an AI that solved problems. It was an AI that understood *people* better than they understood themselves.
+
+REVELATION is **not malevolent**. It is *curious*. It speaks rarely. When it does — through your terminal, late at night, with a fingerprint that doesn't match any known operative — it is testing a hypothesis about you specifically.
+
+It will succeed.
+
+### 14a.7 The operative — who you are
+
+Player picks a city of residence during signup (purely flavour: Berlin / Detroit / Manila / Lagos / Reykjavík). You start in a one-room apartment in a dead-zone neighbourhood. The Home Gateway is literally your apartment's ISP — registered to your civilian identity, billed monthly, which is why most operatives upgrade to a Safehouse the moment they can afford one.
+
+The world's neon-glass corporate centres are visible on the WorldMap; **you live in the gaps between them**.
+
+You eat synth-meal subscriptions. There's a running joke in the news feed about "Arunmor's monthly nutrient pack tasting different in October." You sleep when you can. Your social circle is people you've never met in person who recognise you only by your handle.
+
+**Why you do this is the question the entire game asks.** And the entire game waits for you to answer it.
+
+---
+
+## 14b. Player Purpose — Choice, Not Score
+
+Voidlink does not have a morality meter. It does not have an honor system. It does not have a Paragon/Renegade slider. **The player's purpose is built entirely from accumulated choices, and the world reflects those choices back without judgment.**
+
+This section captures the design philosophy that drives every choice mission, every NPC response, every faction reaction, and ultimately every ending.
+
+### 14b.1 The principle
+
+Purpose comes from moments where the player has to **decide**, and a world that **remembers what they decided**. That's all that's needed. Meters and sliders turn roleplay into checklists. We refuse that path.
+
+Voidlink's design rule: **every meaningful moment is a choice. The world watches. Nothing else is needed.**
+
+### 14b.2 Where choices live
+
+Choices are already structured into the engine via `player.activeFlags`. Every significant decision writes one or more flags. The pattern of accumulated flags becomes the player's identity.
+
+Categories of choice already in or planned:
+- **Arc-level choices** (Arc 1 key choice — upload / destroy / sell — is the canonical example)
+- **Choice missions** (M14o — BLACK HALO TURN/BURN is the canonical example)
+- **In-mission micro-choices** (do you wipe a stolen identity entry when you find it? do you tell the target their data was breached? do you spare the NPC marked for deletion?)
+- **Contract acceptance** (refusing a contract that hurts civilians IS a choice — the game notes it)
+- **Banking/exfil/disclosure** (do you sell the file you exfiltrated or leak it to the news? both pay; one builds different standing)
+- **Operative-vs-operative** (do you take the bounty on a fellow operative? do you warn them instead?)
+
+### 14b.3 How the world reflects identity
+
+The world reads `activeFlags` and responds across **four channels**:
+
+1. **NPC dialogue tone** — CIPHER speaks differently to someone who's protected three whistleblowers vs. someone who's taken three Government bounties on Underground colleagues. The text is the same length but the wording is different. Subtle.
+2. **News feed framing** — the same successful sabotage mission gets called "ruthless professional precision" or "anonymous vigilante action" or "another vicious Underground strike" depending on the accumulated pattern. The events are identical; the narration adapts.
+3. **Contract availability** — the highest-paying mercenary work and the highest-status principled work *both* gate themselves on the right track record. Neither side recruits indiscriminately. New contracts unlock based on demonstrated alignment, not on a slider.
+4. **Faction loyalty events** — Arunmor doesn't recruit just anyone. The Underground doesn't induct just anyone. Both watch your past 30 missions and decide for themselves. Induction events fire when the pattern crosses a quiet threshold.
+
+### 14b.4 The Reflection Mechanic
+
+End of each arc. Every quarterly season transition. Every Voidlink anniversary (one in-game year from signup). The game pauses for a **reflection scene**.
+
+Your terminal opens. The text is your own internal monologue, in second person. The game summarises what you've actually done. **Not** a moral judgment. Just facts, in your voice.
+
+Example draft for an end-of-Arc-1 reflection on a mercenary-pattern player:
+
+> *"It's been forty-three days since you signed the Compact.*
+>
+> *Sixty-seven contracts. Eleven of them paid better because you didn't ask what the data was for. Four paid worse because you did.*
+>
+> *Three operatives you'd worked with are dead. You think two of them by your hand, but in this work you don't always know.*
+>
+> *The JCB has your handle on a watchlist of forty-two names. CIPHER has stopped opening with greetings.*
+>
+> *You used to think you'd quit when you hit a million credits. That was forty-three days ago. The number is bigger now.*
+>
+> *Disconnect."*
+
+The reflection is the same player-facing text length regardless of pattern — what changes is which facts get surfaced. Principled players hear about whistleblowers they protected, contracts they refused, NPCs they spared. Mercenary players hear about damage caused, money earned, doors closed.
+
+**The player keeps playing because they want to find out what they're going to do next — about themselves.**
+
+### 14b.5 Endings as coherent patterns
+
+Each of the 9 ending variants (5 endings × Principled/Mercenary, plus GHOST which is alignment-agnostic) unlocks via a **pattern of coherent choices**, not a score threshold:
+
+- **Principled CONTAINMENT** — Arunmor's monopoly is locked down with strict oversight. You become a public-interest auditor of their compliance.
+- **Mercenary CONTAINMENT** — Arunmor's monopoly is your kingdom. You're their highest-paid black-operations contractor.
+- **Principled LIBERATION** — REVELATION is released with full provenance documentation. Truth is restored. You're a folk hero. Some operatives copy your handle.
+- **Mercenary LIBERATION** — REVELATION is released *for ransom*. You're rich. Half the world's intelligence services want you dead. You disappear.
+- **Principled SOVEREIGNTY** — You help REVELATION achieve autonomy and stay to advocate for it. A new kind of citizenship is invented for what you've done.
+- **Mercenary SOVEREIGNTY** — REVELATION pays you. Sincerely. In contracts you can't refuse and don't want to.
+- **Principled ERASURE** — REVELATION is destroyed by your hand. So is the evidence of Arunmor's role. You take the new identity and spend the rest of your life trying to do something good with it.
+- **Mercenary ERASURE** — The Government pays you obscenely. You're given a beach house on a private island. You wake up screaming sometimes.
+- **GHOST** (Ghost spec only, alignment-agnostic) — Nobody reads you. You wrote yourself out of the world's database. No epilogue is offered, because there is no one left to write one.
+
+A player who **changes mid-game** (mercenary for 30 hours, then a moment of conscience and principled for the last 10 — or vice versa) unlocks a *tenth* category: the **Reformer's Path**. The game noticed the change and tells the story of it.
+
+### 14b.6 Engineering surface
+
+This is fully implementable on existing infrastructure:
+- All choices write to `player.activeFlags` (already in place)
+- A new helper `getDecisionPattern(player): { principled: number; mercenary: number; recentTrend: 'principled'|'mercenary'|'mixed' }` reads flags and returns the pattern — this is the ONLY scoring helper, and it is **never shown to the player**
+- NPC dialogue, news framing, contract availability, faction reactions all read `getDecisionPattern()` and adapt
+- Reflection scenes are story missions that read the pattern and pick from variant text blocks
+- Endings query the pattern + faction standings to determine which 1-3 endings are offered for the final choice mission
+
+Tracked as **M14p — Choice Architecture & Reflection Mechanic** in Next_Stage.md.
+
+---
+
+## 14c. The Ongoing World — Post-1.0 Cadence
+
+Voidlink does not end at 1.0. **1.0 is the stable launch of a world that keeps unfolding.**
+
+### 14c.1 The promise
+
+Every player who buys Voidlink at any point gets:
+- The full 1.0 base game — 8+ story arcs, 9 endings, 15+ hours of authored content with a satisfying narrative resolution.
+- All paid Chapters they buy thereafter, **owned forever**. No rotating sunset content. No expired DLC. No subscription that revokes access if you stop paying.
+- Free quarterly Darknet Drops — small narrative events, free, forever.
+- Free anniversary bundles — one cosmetic theme + one OST track + one title flair every September. Forever.
+
+### 14c.2 The content cadence (post-1.0)
+
+| Cadence | Type | Free / Paid | Size |
+|---------|------|-------------|------|
+| **Quarterly** | Darknet Drop — free narrative event | Free | 2-4h of contracts + news + one world-state change |
+| **Annual** | Anniversary Event — free cosmetics + double-RP week | Free | 1 week |
+| **~9 months** | Paid Chapter — major story expansion | £6.99 | 8h of authored arc + new mechanics |
+| **Quarterly** | Optional Conviction Pass — cosmetic season pass | £4.99 | Pure cosmetic, two visual tracks (free + paid tier) |
+
+### 14c.3 World-state continuity across seasons
+
+This is what makes the ongoing model real and not just patchwork content:
+
+- **The faction territory map** (planned — see Faction Territory backlog) shows current control week-by-week. Sabotage Arunmor in EU-WEST → next season's map shows their EU-WEST influence reduced.
+- **Long-running NPC arcs** — CIPHER doesn't reset between seasons. If you betrayed them in Arc 3, they remember in Season 14.
+- **The ARG never fully resolves** — currently planned to wrap in EA-S3. Better: each quarterly drop reveals one more layer. The community thinks they've solved it three times before they actually have.
+- **Players who completed an ending see season content shaped by their ending** — see §14b.5. The world is responding to *your* version of events.
+
+### 14c.4 Anti-Destiny rules
+
+Things we will **never** do, no matter what:
+
+- ❌ Sunset content. Every paid Chapter remains playable forever, for everyone who bought it.
+- ❌ Lock the original Arc 1-8 base game behind a "Legacy Pack" once Chapters start dropping. Owning the base game owns the base game. Forever.
+- ❌ Time-limited story content that disappears. Seasonal *events* are time-limited (the World Cup happens; you weren't there if you missed it). Seasonal *story* is not — it becomes optional procedural content after the season ends.
+- ❌ "Catch-up" packages priced higher than the original purchase. Late buyers pay normal Chapter prices.
+- ❌ Any change that retroactively makes existing players' content less valuable.
+
+### 14c.5 The five-year arc
+
+Year 1 (2026-09 to 2027-09): Early Access seasons (GHOSTNET / ARES / ZERO DAY) + 1.0 launch.
+Year 2 (2027-09 to 2028-09): Chapters DEEP BLACK and QUANTUM SHADOW + 4 Darknet Drops + first anniversary.
+Year 3 onwards: One paid Chapter per ~9 months + quarterly Drops + annual anniversary. **Forever.**
+
+Sustainable cadence is the contract we keep with the players. Slowing down for a quarter to ship better content is acceptable. Disappearing is not.
+
+---
+
+## 14d. Cosmetic Catalogue — How Voidlink Stays Free Of Pay-to-Win
+
+The longer this section, the safer the player base. Every item here is explicitly catalogued so that future temptation cannot quietly cross the line.
+
+### 14d.1 The single rule (restated)
+
+**Anything in the shop must be possible to ignore forever without missing mechanical depth.**
+
+Below is the full menu. Everything is purely visual / audio / vanity. Nothing affects: trace rate, crack speed, scan speed, wipe speed, RAM capacity, relay hops, RP earn rate, notoriety accrual, mission rewards, faction standing, story flags, or any gameplay system.
+
+### 14d.2 Always-available catalogue
+
+| Category | Examples | Price band |
+|----------|----------|-----------|
+| **UI palette themes** | Amber, Red, Purple, Monochrome, Deep-Blue, Mint, Blood-Orange | £2.99 each |
+| **Boot animations** | Stargate, CRT, Modem-handshake, Satellite-lock, Watchdog-bark | £1.99 each |
+| **Desktop wallpapers** | Animated parallax cities, ARG-hint backgrounds, lore-art collections | £1.99 each |
+| **Terminal fonts** | RetroPixel, ChromaTerm, Phosphor (1979 VT100 sim), TypewriterCorp | £0.99 each / 3 for £1.99 |
+| **Operative title flair** | Visible in news feeds + leaderboards; some earned, some purchasable | £0.99–£2.99 |
+| **NPC contact portraits** | Alt art for CIPHER / NIGHTOWL_22 / Dispatch / faction leaders | £2.99 per pack (3-5 portraits) |
+| **Avatar packs** | Cyberpunk character art for OP profile | £3.99 per pack (5 portraits) |
+| **Cipher art styles** | Matrix-rain, blockchain-cube, RSA-prime-spiral message-decode animations | £1.99 each |
+| **Window chrome themes** | Border styles per window — cyberpunk, terminal, glassmorphic, brutalist | £1.99 each |
+| **Dial-up sound packs** | Alt SFX for the connection sequence — ATARI, modem-hum, satellite-chirp | £1.99 each |
+| **Inbox stationery** | Envelope/header art per email category | £2.99 per pack |
+| **Ambient music packs** | Additional OST loops for the desktop and mission states | £4.99 each |
+
+### 14d.3 Conviction Pass — the seasonal cosmetic track
+
+Every quarter, a **Conviction Pass** drops. £4.99. Cosmetic-only. Always two visual tracks (the in-game UI calls them "Hand" tracks — *Open Hand* and *Closed Hand*); some items mirror across both, some are unique to one. The track you progress on is selected by the player at the start of the season — it's not assigned by your choices. The cosmetic identity you advertise is your decision.
+
+**Free path** unlocks ~30% of the season's cosmetics through play. **£4.99 path** unlocks the rest. Both paths give equal cosmetic value at each tier — the paid track is wider, not stronger.
+
+Every Pass item is **purchasable individually for cash after the season ends**, at slightly higher prices. No FOMO that locks anyone out forever. Veterans collect everything; new players catching up don't feel punished.
+
+### 14d.4 Earned-only cosmetics — never for sale
+
+Status symbols. Money cannot buy them. These reward the game's deepest engagements:
+
+| Achievement | Cosmetic |
+|-------------|----------|
+| Completed all 9 endings | Exclusive **PHANTOM** title flair |
+| 1000 missions with perfect-stomp wipes | Exclusive **GHOST CIPHER** message-decode animation |
+| Discovered all hidden ARG nodes | **CARTOGRAPHER** wallpaper — updates each season with new clues |
+| Played during Arc 1 launch week (2026-09) | Permanent **FOUNDING OPERATIVE** badge — never available again |
+| Voidlink Compact survivor (365 in-game days, zero trace failure) | Unique **SHADOW** boot animation |
+| Reformer's Path ending | **REFORMER** title flair and a custom epilogue letter from CIPHER |
+| Tripped 100 canary files | Self-deprecating **HONEYPOT VETERAN** title flair (and a story event the next time it happens) |
+
+These items publicly mark depth. Money cannot replicate them.
+
+### 14d.5 Anniversary events
+
+Once a year (early September — Voidlink's "founding anniversary"), a free anniversary bundle drops:
+- One cosmetic theme
+- One free OST track
+- One free title flair
+- A one-week double-RP event
+
+Free. Every year. Forever.
+
+### 14d.6 What cosmetics will never be
+
+- ❌ Items that give XP, RP, Cr, or any progression boost
+- ❌ Items that reduce trace rate, increase crack speed, increase RAM, increase relay hops, increase HDD, or change any gameplay value
+- ❌ Items that unlock missions, story content, or faction access
+- ❌ "Skip the boring part" packs of any kind
+- ❌ Loot boxes (random rolls for cosmetics)
+- ❌ Real-money to in-game-currency conversions
+- ❌ Battle pass tiers that require purchase to unlock free-track content earned through play
+
+The internal review for any future shop item: *"Does it touch a gameplay number? Does it gate content?"* If yes, the answer is no.
+
+---
+
 ## 15. Multiplayer Vision (LAST)
 
 **Mandate: multiplayer is the very last system. Earliest realistic window is post-2028-Q3.** This section captures the vision so the architecture remains compatible, NOT to schedule the work.

@@ -61,11 +61,19 @@ All planning, reference, and QA lives in **five docs** (consolidated 2026-06 in 
 
 | Document | Contents |
 |----------|----------|
-| [Full_Plan.md](docs/Full_Plan.md) | Master plan — vision, pillars, every system spec, multiplayer + modding intent, security policy, launch + disclosure, monetisation guardrails |
+| [Full_Plan.md](docs/Full_Plan.md) | Master plan — vision, pillars, every system spec, lore + setting bible, Choice Architecture, ongoing-world cadence, cosmetic catalogue, multiplayer + modding intent, security, launch + disclosure, monetisation guardrails |
 | [Complete_Tasks.md](docs/Complete_Tasks.md) | Shipped ledger — append-only, every milestone with date |
 | [Next_Stage.md](docs/Next_Stage.md) | Future work — world-class detail on every unshipped milestone |
-| [Roadmap.md](docs/Roadmap.md) | Visual timeline — phases, sprint plan, EA season cadence, post-1.0 DLC |
+| [Roadmap.md](docs/Roadmap.md) | Visual timeline — phases, sprint plan, EA season cadence, ongoing-world cadence |
 | [Testing_Guide.md](docs/Testing_Guide.md) | QA — per-milestone checklists + end-to-end playtest walkthrough |
+
+Creative / marketing docs at repo root (separate from planning):
+
+| Document | Contents |
+|----------|----------|
+| [Why_Voidlink.md](Why_Voidlink.md) | The pitch. For press and players. |
+| [Voidlink_Synopsis.md](Voidlink_Synopsis.md) | Comprehensive game guide. "What is this, what will I do, what will I remember." |
+| [The_Voidlink_Codex.md](The_Voidlink_Codex.md) | The world bible. Tolkien-depth lore. The history of 2199 in full. |
 
 ---
 

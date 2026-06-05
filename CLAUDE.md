@@ -30,6 +30,18 @@ If a change is too small to be a milestone (typo fix, minor copy tweak) it does 
 - `Roadmap.md` is the **visual timeline**. Phases + sprints + season cadence.
 - `Testing_Guide.md` is QA. Add a section per milestone; keep evergreen.
 
+## Repo-root creative / marketing docs (separate from the 5 planning docs)
+
+These live at the **repo root**, not in `docs/`. They are creative/marketing, not planning. They are also single-source-of-truth for their domain:
+
+- `Why_Voidlink.md` — the pitch document. For press and players. Updated when the vision shifts.
+- `Voidlink_Synopsis.md` — comprehensive player-facing game guide. Updated when major systems ship that change the player experience.
+- `The_Voidlink_Codex.md` — the world bible / lore book. Tolkien-depth in-universe history. Updated when canonical lore is added or refined. Treat with care — this is the *story* of the world.
+- `README.md` — repository entry point. Updated on doc structure changes.
+- `CLAUDE.md` — agent instructions (this file).
+
+Adding new creative docs at repo root is allowed if they serve a clearly different purpose. Adding more planning docs is **not** — extend one of the five instead.
+
 ## Commit style
 
 - Use conventional-commit prefixes: `feat(M14h.7):`, `fix(M14h.5):`, `docs:`.
