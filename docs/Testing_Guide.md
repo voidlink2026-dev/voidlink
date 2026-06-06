@@ -1149,6 +1149,39 @@ The big sweep. Test everything below.
 
 ---
 
+## 43. M14p (Pass 2a) — NPC Dialogue Tone Variants (2026-06)
+
+### 43.1 CIPHER's first advice — pattern-aware
+- [ ] Start a new operative, complete 2 missions cleanly
+- [ ] CIPHER's "re: nice work" or similar message appears in inbox after the second mission complete
+- [ ] Tone matches pattern (principled: warm acknowledgement; neutral: formal observation; mercenary: terse one-line signoff)
+
+### 43.2 The Three Rules letter — silence for high mercenary
+- [ ] Build up to 8 successful missions with a strongly principled pattern (DevTools: set `arc1_key_choice='upload'` + several `choice_civilian_spared`)
+- [ ] After mission 8 complete, "three rules — by request" email arrives from CIPHER
+- [ ] Reset, build to 8 missions with strongly mercenary pattern (DevTools: `arc1_key_choice='sell'`, `choice_civilian_burned=5`)
+- [ ] After mission 8 complete: **CIPHER does NOT send the three-rules email**. That silence IS the message. Verify by inspecting inbox — no new CIPHER mail post-mission.
+
+### 43.3 Dispatch rank-3 — same event, different tone
+- [ ] Reach rank 3 (via faction standing / REP) with principled pattern → rank-3 email mentions "Stewardship contracts"
+- [ ] Reach rank 3 with mercenary pattern → rank-3 email mentions "Tier-2 Mercenary Listings"
+
+### 43.4 Arc-1 aftermath — three variants
+- [ ] Set `arc1_key_choice='upload'`, finish a mission → CIPHER's "you uploaded it" arrives
+- [ ] Reset, set `arc1_key_choice='destroy'` → CIPHER's "you destroyed it" arrives
+- [ ] Reset, set `arc1_key_choice='sell'` → CIPHER's "you sold it" arrives — for strong-principled it reads "I was wrong about you"; for strong-mercenary it's just "Sold. The credits clear in a few hours. Cipher."
+
+### 43.5 Underground induction
+- [ ] Reach Underground standing ≥ 50 AND set `choice_whistleblower_protected=1` with principled pattern
+- [ ] On next mission disconnect, CIPHER's "welcome" or "a note" induction email arrives
+- [ ] Reset, reach same conditions but with mercenary pattern: induction does NOT fire (verify inbox)
+
+### 43.6 Each entry fires at most once
+- [ ] After a dialogue entry has fired, complete another mission with same conditions still true
+- [ ] Verify the same entry does NOT re-fire (gated via `dialogue_fired_<id>` flag in activeFlags)
+
+---
+
 ## 42. M14p (Pass 1) — Choice Architecture + News Framing (2026-06)
 
 ### 42.1 Pattern reader (unit-tested, no UI)

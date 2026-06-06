@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, frameNewsArticle } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -1140,6 +1140,37 @@ export const useGameStore = create<GameState & GameActions>()(
             category: 'crime',
             isPlayerAction: true,
           })
+
+          // M14p Pass 2a — fire any NPC dialogue triggers that have just
+          // become true. Each entry's variant is picked by the player's
+          // pattern; some entries deliberately don't fire for some patterns
+          // (Cipher does not write to high-mercenary operatives — that
+          // silence IS the message).
+          if (!s.player) return  // unreachable: success path guarantees s.player
+          const dialogueDue = evaluateDialogueTriggers(s.player)
+          for (const entry of dialogueDue) {
+            // Mark the entry as fired regardless of whether a variant exists,
+            // so we don't keep re-evaluating.
+            s.player.activeFlags[`dialogue_fired_${entry.id}`] = Date.now()
+            const variant = pickDialogueVariant(entry, pattern)
+            if (!variant) continue  // deliberate silence for this pattern
+            const category =
+              entry.sender === 'CIPHER' || entry.sender === 'NIGHTOWL_22'
+                ? 'contact' as const
+                : 'system' as const
+            s.inbox.unshift({
+              id: `mail_${entry.id}_${Date.now()}`,
+              receivedAt: Date.now(),
+              isRead: false,
+              encrypted: entry.encrypted,
+              category,
+              from: entry.sender,
+              fromFingerprint: entry.fingerprint,
+              subject: variant.subject,
+              body: variant.body,
+            })
+            if (s.inbox.length > 100) s.inbox.length = 100
+          }
           if (s.newsFeed.length > 100) s.newsFeed.splice(100)
 
           // M14m: post any queued multi-phase news echoes

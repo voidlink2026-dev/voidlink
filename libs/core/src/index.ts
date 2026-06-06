@@ -14,6 +14,7 @@ export * from './engine/levels.ts'
 export * from './engine/worldClock.ts'
 export * from './engine/decisionPattern.ts'
 export * from './data/newsFraming.ts'
+export * from './data/npcDialogue.ts'
 
 // Network
 export * from './network/generator.ts'
