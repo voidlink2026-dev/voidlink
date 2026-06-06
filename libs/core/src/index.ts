@@ -15,6 +15,7 @@ export * from './engine/worldClock.ts'
 export * from './engine/decisionPattern.ts'
 export * from './data/newsFraming.ts'
 export * from './data/npcDialogue.ts'
+export * from './data/reflectionScenes.ts'
 
 // Network
 export * from './network/generator.ts'

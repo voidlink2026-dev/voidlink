@@ -1149,6 +1149,33 @@ The big sweep. Test everything below.
 
 ---
 
+## 45. M14p (Pass 2c) — Reflection Scenes (2026-06)
+
+### 45.1 Arc 1 reflection auto-fires
+- [ ] New operative, play through Arc 1 to the key choice
+- [ ] Pick any choice (upload / destroy / sell)
+- [ ] Full-screen REFLECTION overlay appears with title "REFLECTION — FIRST PASS"
+- [ ] Body text references `{DAYS}` (resolved to a number) and `{MISSIONS}` (resolved to the player's mission count)
+- [ ] 4-5 facts surfaced, appropriate to the pattern (sell → mercenary facts; upload + civilian protections → principled facts)
+- [ ] CONTINUE button dismisses the overlay
+- [ ] On next mission disconnect or save reload, the overlay does NOT re-appear (reflection_end_of_arc_1 flag persists)
+
+### 45.2 Pattern shapes the text
+- [ ] Reset, replay Arc 1, choose 'sell' with several `choice_civilian_burned` flags set
+- [ ] Reflection body reads with strong-mercenary lines ("you used to think you'd quit when you hit a million credits", "the JCB has your handle on a watchlist")
+- [ ] Reset, replay Arc 1, choose 'upload' with several `choice_whistleblower_protected` and `choice_civilian_spared` flags
+- [ ] Same scene, completely different text — strong-principled lines ("CIPHER addresses you by your initials now", "the Underground has a name for you")
+
+### 45.3 No numbers visible
+- [ ] The overlay shows: title, body, CONTINUE button. The body contains the player's mission count, days since signup, counts of specific choices (civilians spared, etc) — but NO `principledScore` / `mercenaryScore` / `netScore` is ever rendered. Verify by inspecting the text.
+
+### 45.4 Manual trigger (for story missions / future seasons)
+- [ ] In DevTools console run `useGameStore.getState().triggerReflection('anniversary')`
+- [ ] Anniversary reflection appears
+- [ ] Run it again: nothing happens (gated via flag)
+
+---
+
 ## 44. M14p (Pass 2b) — Contract Availability Gating (2026-06)
 
 ### 44.1 Pattern-gated procedural contracts appear at D5+

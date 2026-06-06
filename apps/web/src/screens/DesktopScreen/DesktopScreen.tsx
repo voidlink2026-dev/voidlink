@@ -22,6 +22,7 @@ import { SpecializationOverlay } from '../../game/SpecializationOverlay/Speciali
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
 import { MissionEventToast } from '../../game/MissionEventToast/MissionEventToast.tsx'
 import { MissionChoiceOverlay } from '../../game/MissionChoice/MissionChoiceOverlay.tsx'
+import { ReflectionOverlay } from '../../game/Reflection/ReflectionOverlay.tsx'
 import { generateContract, STORY_MISSIONS, MULTIPHASE_TEMPLATES, generateMultiPhaseMission } from '@voidlink/core'
 import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
 import { TraceSweep } from '../../components/TraceSweep/TraceSweep.tsx'
@@ -281,6 +282,7 @@ export function DesktopScreen() {
       <SystemConsole />
       <MissionEventToast />
       <MissionChoiceOverlay />
+      <ReflectionOverlay />
     </main>
   )
 }

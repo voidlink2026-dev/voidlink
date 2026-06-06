@@ -201,6 +201,7 @@ interface GameState {
   newsFeed: NewsItem[]
   inbox: EmailMessage[]  // M14h.6 — encrypted email inbox
   exfilChannel: ExfilChannelId  // M14j — hoisted from NetworkMap so loadouts can manage it
+  pendingReflection: string | null  // M14p Pass 2c — trigger ID of reflection waiting to render
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
   missionResult: 'success' | 'fail' | 'abandoned' | null
@@ -308,6 +309,10 @@ interface GameActions {
 
   // M14i — research tree
   unlockResearch: (id: string) => 'ok' | 'unknown' | 'already_owned' | 'insufficient_rp' | 'prereq_locked' | 'flag_locked'
+
+  // M14p Pass 2c — reflection scenes
+  triggerReflection: (id: string) => void
+  dismissReflection: () => void
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -329,6 +334,7 @@ export const useGameStore = create<GameState & GameActions>()(
     newsFeed: [],
     inbox: [],
     exfilChannel: 'direct',
+    pendingReflection: null,
     activeWorldEvents: [],
     nextWorldEventAt: null,
     missionResult: null,
@@ -1815,6 +1821,11 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!s.player) return
         if (s.player.activeFlags.arc1_key_choice) return // already chosen
         s.player.activeFlags.arc1_key_choice = choice
+        // M14p Pass 2c — schedule Arc 1 reflection scene
+        if (!s.player.activeFlags['reflection_end_of_arc_1']) {
+          s.player.activeFlags['reflection_end_of_arc_1'] = Date.now()
+          s.pendingReflection = 'end_of_arc_1'
+        }
 
         function shiftFaction(factionId: string, delta: number, rankFn: (n: number) => string) {
           if (!s.player) return
@@ -2102,6 +2113,20 @@ export const useGameStore = create<GameState & GameActions>()(
       })
       return 'ok'
     },
+
+    // ── M14p Pass 2c — reflection scenes ────────────────────────────────────
+    triggerReflection: (id) =>
+      set((s) => {
+        if (!s.player) return
+        // Gate: each trigger fires at most once. The flag `reflection_<id>`
+        // marks it as seen.
+        if (s.player.activeFlags[`reflection_${id}`]) return
+        s.player.activeFlags[`reflection_${id}`] = Date.now()
+        s.pendingReflection = id
+      }),
+
+    dismissReflection: () =>
+      set((s) => { s.pendingReflection = null }),
 
     // ── M14i — research tree ────────────────────────────────────────────────
     unlockResearch: (id) => {
