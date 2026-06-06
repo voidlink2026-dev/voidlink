@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, frameNewsArticle } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -1093,40 +1093,45 @@ export const useGameStore = create<GameState & GameActions>()(
           }
 
           // Generate player-action news article
+          // M14p — news framing tokens. Same event, different narration based
+          // on the player's accumulated decision pattern. Tokens left verbatim
+          // if the framing system doesn't know them.
           const actionData: Partial<Record<string, { headline: string; body: string }>> = {
             file_theft: {
-              headline: 'Data Exfiltration Confirmed at ' + mission.briefing.clientHandle,
-              body: `Internal audits at ${mission.briefing.clientHandle} have confirmed unauthorised access and data theft. Security teams are reviewing access logs. No attribution has been made.`,
+              headline: `Data {ACT_NOUN} Confirmed at ${mission.briefing.clientHandle}`,
+              body: `Internal audits at ${mission.briefing.clientHandle} have confirmed unauthorised access by what investigators describe as an {ACTOR_ADJ} operative. Security teams are reviewing access logs. The work is described as {WORK_TONE}; ${'{AFTERMATH}'}.`,
             },
             account_deletion: {
-              headline: 'Identity Erasure Operation Strikes ' + mission.briefing.clientHandle,
-              body: `A user account was permanently and irreversibly deleted from ${mission.briefing.clientHandle}'s systems in what investigators are calling a "precision intrusion". The target's identity has been scrubbed clean.`,
+              headline: `Identity Erasure Operation Strikes ${mission.briefing.clientHandle}`,
+              body: `A user account was permanently deleted from ${mission.briefing.clientHandle}'s systems in what investigators call a {WORK_TONE} {ACT_NOUN}. {AFTERMATH}.`,
             },
             database_corruption: {
-              headline: mission.briefing.clientHandle + ' Databases Critically Compromised',
-              body: `${mission.briefing.clientHandle} is reporting severe database corruption following what appears to be a deliberate cyberattack. Recovery efforts are ongoing; data loss is expected to be significant.`,
+              headline: `${mission.briefing.clientHandle} Databases Critically Compromised`,
+              body: `${mission.briefing.clientHandle} is reporting severe corruption following what appears to be a {WORK_TONE} {ACT_NOUN}. Recovery is ongoing; {AFTERMATH}.`,
             },
             network_sabotage: {
-              headline: mission.briefing.clientHandle + ' Network Goes Dark — Sabotage Suspected',
-              body: `Systems at ${mission.briefing.clientHandle} went offline following what engineers are calling "deliberate infrastructural damage". The incident is being treated as targeted sabotage.`,
+              headline: `${mission.briefing.clientHandle} Network Goes Dark — Sabotage Suspected`,
+              body: `Systems at ${mission.briefing.clientHandle} went offline following what engineers are calling {WORK_TONE} infrastructural damage. The incident is being treated as a targeted {ACT_NOUN}; {AFTERMATH}.`,
             },
             evidence_planting: {
-              headline: 'Planted Evidence Found in ' + mission.briefing.clientHandle + ' Audit',
-              body: `Digital forensics experts have discovered fabricated evidence in ${mission.briefing.clientHandle}'s systems. The origin of the forgery remains unknown, and legal proceedings may be affected.`,
+              headline: `Planted Evidence Found in ${mission.briefing.clientHandle} Audit`,
+              body: `Digital forensics experts have discovered fabricated evidence in ${mission.briefing.clientHandle}'s systems following what appears to be an {ACTOR_ADJ} {ACT_NOUN}. The origin of the forgery remains unknown; {AFTERMATH}.`,
             },
             bounty_hunt: {
-              headline: 'Target Located via Anonymous Tip — ' + mission.briefing.clientHandle,
-              body: `An anonymous intelligence package led to the identification of a target linked to ${mission.briefing.clientHandle}. The source of the information cannot be confirmed.`,
+              headline: `Target Located via Anonymous Tip — ${mission.briefing.clientHandle}`,
+              body: `An {ACTOR_ADJ} intelligence package led to the identification of a target linked to ${mission.briefing.clientHandle}. The source of the information cannot be confirmed; {AFTERMATH}.`,
             },
             corporate_espionage: {
-              headline: mission.briefing.clientHandle + ' Hit by Corporate Intelligence Theft',
-              body: `${mission.briefing.clientHandle} is investigating a suspected intelligence leak. Competitors may have benefited from stolen strategic data. Internal investigations are ongoing.`,
+              headline: `${mission.briefing.clientHandle} Hit by {WORK_TONE} Corporate Intelligence {ACT_NOUN}`,
+              body: `${mission.briefing.clientHandle} is investigating a suspected intelligence leak. Competitors may have benefited from stolen strategic data; {AFTERMATH}.`,
             },
           }
-          const nd = actionData[mission.type] ?? {
-            headline: 'Cyber Incident Reported — ' + mission.briefing.clientHandle,
-            body: `An unattributed cyber incident has been reported involving ${mission.briefing.clientHandle}. Authorities have opened an investigation but no suspects have been named.`,
+          const rawNd = actionData[mission.type] ?? {
+            headline: `Cyber Incident Reported — ${mission.briefing.clientHandle}`,
+            body: `An unattributed {ACT_NOUN} has been reported involving ${mission.briefing.clientHandle}. Authorities have opened an investigation; {AFTERMATH}.`,
           }
+          const pattern = getDecisionPattern(s.player)
+          const nd = frameNewsArticle(rawNd, pattern, Date.now())
           s.newsFeed.unshift({
             id: `news_${Date.now()}`,
             timestamp: Date.now(),

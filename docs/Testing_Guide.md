@@ -1149,6 +1149,30 @@ The big sweep. Test everything below.
 
 ---
 
+## 42. M14p (Pass 1) — Choice Architecture + News Framing (2026-06)
+
+### 42.1 Pattern reader (unit-tested, no UI)
+- [ ] 24 new unit tests in `libs/core/src/engine/decisionPattern.test.ts` + `libs/core/src/data/newsFraming.test.ts` pass (run `pnpm test`)
+- [ ] `getDecisionPattern(player)` returns sensible scores given known flags
+- [ ] **The pattern is NEVER rendered to the player as a number anywhere in the UI** — visually verify by searching the running app for any number derived from `principledScore`, `mercenaryScore`, `netScore`. (None should appear; if any does, M14p has been compromised.)
+
+### 42.2 News framing — visible reflection
+- [ ] Start a new operative and complete a sabotage mission cleanly. News article uses the **neutral** bucket adjectives (`anonymous`, `unattributed`, `skilled`).
+- [ ] DevTools: set `player.activeFlags.arc1_key_choice = 'sell'` and `player.activeFlags.choice_civilian_burned = 3` (forces strong mercenary pattern).
+- [ ] Complete another sabotage mission. News article should now use **strong mercenary** adjectives (`savage`, `merciless`, `vicious`).
+- [ ] DevTools: reset, set `player.activeFlags.choice_whistleblower_protected = 5` (forces strong principled).
+- [ ] Complete another mission. News article uses **strong principled** adjectives (`anonymous`, `principled`, `careful`).
+- [ ] Same mission type, three different framings — same event, different narration.
+
+### 42.3 Back-compat
+- [ ] Legacy `arc1_key_choice` flag still works as before. The Arc 1 ending mission still gates on it (`requiredFlagValue` check unchanged).
+- [ ] Existing saves with `arc1_key_choice` set load and their pattern reads correctly (the back-compat shim maps the legacy string to the pattern).
+
+### 42.4 Catalogue extension
+- [ ] Adding a new entry to `CHOICE_CATALOGUE` and setting the corresponding flag bumps the pattern score on next read. (No restart required — pure function.)
+
+---
+
 ## 41. M14i — Research Tech Tree (2026-06)
 
 ### 41.1 Window + earning RP

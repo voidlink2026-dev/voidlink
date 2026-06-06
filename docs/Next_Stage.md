@@ -60,10 +60,10 @@ These are launch-blockers. Order is the recommended sequence; some run in parall
 
 ---
 
-### L11 / M14p — Choice Architecture & Reflection Mechanic 🎯
+### L11 / M14p — Choice Architecture & Reflection Mechanic 🚧 IN PROGRESS
 **Window:** 2026-07-W2 → 2026-07-W3 (1.5 weeks)
-**Effort:** 1.5 weeks
-**Status:** New sprint (added 2026-06 in response to the deep-narrative pivot — see [Full_Plan §14b](./Full_Plan.md#14b-player-purpose--choice-not-score))
+**Effort:** 1.5 weeks total — **Pass 1 shipped 2026-06**
+**Status:** Pass 1 (pattern reader + News Framing channel) shipped. Pass 2 (NPC dialogue tone, contract availability gating, faction induction, Reflection Scenes, 9-ending fan-out) is next.
 
 **Why this is now a launch-blocker.** The lore expansion, the 9-ending fan-out, the ongoing-world model, and the Codex-level immersion all depend on the world *reflecting* the player's accumulated choices. Without this system, the lore is just text — beautiful but inert. With it, the player's identity becomes the central mechanic.
 
