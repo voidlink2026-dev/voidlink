@@ -68,6 +68,38 @@ export function requirementsForDifficulty(difficulty: MissionDifficulty): Missio
   return REQUIREMENTS_BY_DIFFICULTY[difficulty] ?? REQUIREMENTS_BY_DIFFICULTY[1]
 }
 
+/**
+ * M14p Pass 2b — at D5+ a fraction of contracts come from clients with
+ * track-record preferences. Three flavours, picked deterministically by the
+ * seeded RNG:
+ *   - none (60%)          — open contract, no pattern gate
+ *   - principled (20%)    — "Stewardship-vetted client" / "Underground-aligned broker"
+ *   - mercenary (20%)     — "Black-list listing" / "Discreet client, no oversight"
+ * Lower-difficulty contracts (D1-4) never gate on pattern.
+ */
+export function requirementsWithOptionalPatternGate(
+  difficulty: MissionDifficulty,
+  rng: () => number,
+): MissionRequirements {
+  const base = requirementsForDifficulty(difficulty)
+  if (difficulty < 5) return base
+  const roll = rng()
+  if (roll < 0.6) return base
+  if (roll < 0.8) {
+    // Principled gate — scales lightly with difficulty.
+    return {
+      ...base,
+      minPrincipledScore: 3 + (difficulty - 5) * 2,
+      patternGateLabel: 'Underground-vetted client',
+    }
+  }
+  return {
+    ...base,
+    minMercenaryScore: 3 + (difficulty - 5) * 2,
+    patternGateLabel: 'Discreet client — no oversight',
+  }
+}
+
 function seededRandom(seed: number) {
   let s = seed
   return () => {
@@ -127,7 +159,7 @@ export function generateContract(
     },
     objectives,
     targetNetworkId,
-    requirements: requirementsForDifficulty(difficulty),
+    requirements: requirementsWithOptionalPatternGate(difficulty, rng),
     reward: { credits, reputation },
     events: generateRuntimeEvents(difficulty, rng),
     timeLimitSeconds: difficulty >= 7 ? 300 - difficulty * 10 : undefined,

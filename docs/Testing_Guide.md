@@ -1149,6 +1149,29 @@ The big sweep. Test everything below.
 
 ---
 
+## 44. M14p (Pass 2b) — Contract Availability Gating (2026-06)
+
+### 44.1 Pattern-gated procedural contracts appear at D5+
+- [ ] Reach rank/REP that surfaces Difficulty-5 contracts on the board
+- [ ] Refresh contracts repeatedly (mission completions reroll) — over a sample of ~10 D5+ contracts, observe that some carry a chip "Underground-vetted client" and some "Discreet client — no oversight" (~20% each, ~60% open)
+- [ ] D1-D4 contracts NEVER show pattern gate chips
+
+### 44.2 Mismatched pattern disables ACCEPT
+- [ ] Open a contract with the "Underground-vetted client" chip while your pattern is mercenary-leaning
+- [ ] The chip shows red ✗
+- [ ] ACCEPT button is disabled
+- [ ] Hint reads: "Client wants a different kind of operative — earn the track record."
+
+### 44.3 Matching pattern enables ACCEPT
+- [ ] Build a strongly principled pattern (DevTools or natural play)
+- [ ] Same Underground-vetted contract now shows green ✓
+- [ ] ACCEPT enabled
+
+### 44.4 The chip never shows a number
+- [ ] Inspect the mission card carefully — the only label visible is `patternGateLabel` ("Underground-vetted client" / "Discreet client — no oversight"). NO numeric score is ever rendered.
+
+---
+
 ## 43. M14p (Pass 2a) — NPC Dialogue Tone Variants (2026-06)
 
 ### 43.1 CIPHER's first advice — pattern-aware

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
 import type { Mission, MissionRequirements, PlayerProfile, StoryMission } from '@voidlink/core'
+import { getDecisionPattern } from '@voidlink/core'
 import { LoadoutBar } from '../Loadouts/LoadoutBar.tsx'
 import styles from './MissionBoard.module.css'
 
@@ -31,12 +32,21 @@ function maxCrackerLevel(player: PlayerProfile): number {
 }
 
 function meetsRequirements(reqs: MissionRequirements, player: PlayerProfile, activeRouteLen: number) {
+  // M14p Pass 2b — pattern gates check the player's accumulated decision
+  // pattern. The pattern is internal; the UI only ever shows the
+  // human-readable `patternGateLabel`, never a number.
+  const pattern = getDecisionPattern(player)
+  const principledOk = reqs.minPrincipledScore === undefined
+    || pattern.principledScore >= reqs.minPrincipledScore
+  const mercenaryOk  = reqs.minMercenaryScore === undefined
+    || pattern.mercenaryScore  >= reqs.minMercenaryScore
   return {
     cracker: maxCrackerLevel(player) >= reqs.minCrackerLevel,
     cpu:     player.hardware.cpuSpeed >= reqs.minCpuSpeed,
     rep:     player.reputation >= reqs.minReputation,
     relay:   activeRouteLen >= (reqs.minRelayHops ?? 0),
-    get all() { return this.cracker && this.cpu && this.rep && this.relay },
+    pattern: principledOk && mercenaryOk,
+    get all() { return this.cracker && this.cpu && this.rep && this.relay && this.pattern },
   }
 }
 
@@ -173,15 +183,25 @@ function MissionCard({
             {reqs.relay ? '✓' : '✗'} RELAY ≥{mission.requirements.minRelayHops} HOPS
           </span>
         )}
+        {/* M14p Pass 2b — pattern gate chip. We display the human-readable
+            label, never the underlying number. */}
+        {(mission.requirements.minPrincipledScore !== undefined
+          || mission.requirements.minMercenaryScore !== undefined) && (
+          <span className={reqs.pattern ? styles.reqMet : styles.reqUnmet}>
+            {reqs.pattern ? '✓' : '✗'} {mission.requirements.patternGateLabel ?? 'TRACK RECORD'}
+          </span>
+        )}
       </div>
 
       {!isActive && (
         <div className={styles.acceptRow}>
           {!reqs.all && (
             <span className={styles.upgradeHint}>
-              {!reqs.relay && reqs.cracker && reqs.cpu && reqs.rep
-                ? `Build a ${mission.requirements.minRelayHops}-hop relay on WORLD MAP`
-                : 'Upgrade in SHOP to unlock'}
+              {!reqs.pattern && reqs.cracker && reqs.cpu && reqs.rep && reqs.relay
+                ? 'Client wants a different kind of operative — earn the track record'
+                : !reqs.relay && reqs.cracker && reqs.cpu && reqs.rep
+                  ? `Build a ${mission.requirements.minRelayHops}-hop relay on WORLD MAP`
+                  : 'Upgrade in SHOP to unlock'}
             </span>
           )}
           <Button

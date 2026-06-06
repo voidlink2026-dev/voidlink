@@ -23,6 +23,12 @@ export interface MissionRequirements {
   minCpuSpeed: number      // minimum hardware.cpuSpeed
   minReputation: number    // minimum player.reputation
   minRelayHops?: number    // M14h.5 — minimum active relay-chain hops required
+  // M14p Pass 2b — pattern gating. Each is OPTIONAL; missing = unrestricted.
+  // The hint shown to the player explicitly avoids exposing a number — it
+  // describes the *kind* of operative the client is looking for.
+  minPrincipledScore?: number  // gate: only available to principled-leaning ops
+  minMercenaryScore?: number   // gate: only available to mercenary-leaning ops
+  patternGateLabel?: string    // UI hint, e.g. "Underground vetted only"
 }
 
 export interface MissionReward {
