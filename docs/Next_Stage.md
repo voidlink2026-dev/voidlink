@@ -60,10 +60,8 @@ These are launch-blockers. Order is the recommended sequence; some run in parall
 
 ---
 
-### L11 / M14p — Choice Architecture & Reflection Mechanic 🚧 IN PROGRESS
-**Window:** 2026-07-W2 → 2026-07-W3 (1.5 weeks)
-**Effort:** 1.5 weeks total — **Pass 1 shipped 2026-06**
-**Status:** Pass 1 (pattern reader + News Framing channel) shipped. Pass 2 (NPC dialogue tone, contract availability gating, faction induction, Reflection Scenes, 9-ending fan-out) is next.
+### L11 / M14p — Choice Architecture & Reflection Mechanic ✅ SHIPPED 2026-06
+**Status:** All four passes complete. Pattern reader + News Framing + NPC Dialogue Tone + Contract Availability Gating + Reflection Scenes + 9-Ending Fan-out architecture all in. 120 unit tests passing (60 → 120 across the sprint). Detailed Arc 5 mission authoring for each of the 9 ending paths is a content task that lands as part of L3 story-arc writing.
 
 **Why this is now a launch-blocker.** The lore expansion, the 9-ending fan-out, the ongoing-world model, and the Codex-level immersion all depend on the world *reflecting* the player's accumulated choices. Without this system, the lore is just text — beautiful but inert. With it, the player's identity becomes the central mechanic.
 

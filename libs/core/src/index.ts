@@ -16,6 +16,7 @@ export * from './engine/decisionPattern.ts'
 export * from './data/newsFraming.ts'
 export * from './data/npcDialogue.ts'
 export * from './data/reflectionScenes.ts'
+export * from './data/endings.ts'
 
 // Network
 export * from './network/generator.ts'

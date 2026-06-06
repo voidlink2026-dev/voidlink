@@ -1149,6 +1149,40 @@ The big sweep. Test everything below.
 
 ---
 
+## 46. M14p (Pass 2d) — Arc 5 9-ending Fan-out (2026-06)
+
+### 46.1 Trigger and choice overlay
+- [ ] DevTools: `useGameStore.getState().triggerEndingChoice()` opens the EndingChoiceOverlay
+- [ ] Title reads "THE END OF ARC 5 — CHOOSE"
+- [ ] Heading reads "One/Two/Three paths remain open to you." matching the offered count
+- [ ] Each choice card shows family + conviction title + italic tagline
+
+### 46.2 Pattern + Arc 1 choice combinations
+- [ ] arc1_key_choice='upload' + principled flags → LIBERATION — The Folk Hero offered
+- [ ] arc1_key_choice='upload' + mercenary flags → LIBERATION — The Ransom offered
+- [ ] arc1_key_choice='destroy' + low Arunmor standing → only ERASURE family offered
+- [ ] arc1_key_choice='destroy' + Arunmor standing ≥40 → ERASURE + CONTAINMENT
+- [ ] arc1_key_choice='sell' → CONTAINMENT family
+- [ ] arc1_key_choice='upload' + `revelation_contact_count=5` → LIBERATION + SOVEREIGNTY
+
+### 46.3 Ghost spec
+- [ ] Ghost specialization always adds GHOST as a third option
+- [ ] Picking GHOST shows the "no epilogue" epilogue (it acknowledges that there is no summary)
+
+### 46.4 Reformer's Path
+- [ ] Heavy mercenary catalogue + recent_choice_direction = +6 → Reformer is offered
+- [ ] Picking it shows the late-conversion epilogue
+
+### 46.5 Epilogue transition
+- [ ] Click any choice card → card grid replaced by ending title + epilogue body
+- [ ] FINISH button dismisses the overlay
+- [ ] `ending_chosen` flag set to the ending ID; cannot re-trigger
+
+### 46.6 No numbers visible
+- [ ] At no point in the choice or epilogue overlay is any numeric score shown.
+
+---
+
 ## 45. M14p (Pass 2c) — Reflection Scenes (2026-06)
 
 ### 45.1 Arc 1 reflection auto-fires

@@ -202,6 +202,7 @@ interface GameState {
   inbox: EmailMessage[]  // M14h.6 — encrypted email inbox
   exfilChannel: ExfilChannelId  // M14j — hoisted from NetworkMap so loadouts can manage it
   pendingReflection: string | null  // M14p Pass 2c — trigger ID of reflection waiting to render
+  pendingEndingChoice: boolean      // M14p Pass 2d — Arc 5 climax pending
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
   missionResult: 'success' | 'fail' | 'abandoned' | null
@@ -313,6 +314,11 @@ interface GameActions {
   // M14p Pass 2c — reflection scenes
   triggerReflection: (id: string) => void
   dismissReflection: () => void
+
+  // M14p Pass 2d — Arc 5 ending choice
+  triggerEndingChoice: () => void
+  chooseEnding: (id: string) => void
+  dismissEnding: () => void
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -335,6 +341,7 @@ export const useGameStore = create<GameState & GameActions>()(
     inbox: [],
     exfilChannel: 'direct',
     pendingReflection: null,
+    pendingEndingChoice: false,
     activeWorldEvents: [],
     nextWorldEventAt: null,
     missionResult: null,
@@ -2127,6 +2134,24 @@ export const useGameStore = create<GameState & GameActions>()(
 
     dismissReflection: () =>
       set((s) => { s.pendingReflection = null }),
+
+    // ── M14p Pass 2d — Arc 5 ending choice ─────────────────────────────────
+    triggerEndingChoice: () =>
+      set((s) => {
+        if (!s.player) return
+        if (s.player.activeFlags.ending_chosen) return  // already ended
+        s.pendingEndingChoice = true
+      }),
+
+    chooseEnding: (id) =>
+      set((s) => {
+        if (!s.player) return
+        s.player.activeFlags.ending_chosen = id
+        s.player.activeFlags[`reflection_ended_${id}`] = Date.now()
+      }),
+
+    dismissEnding: () =>
+      set((s) => { s.pendingEndingChoice = false }),
 
     // ── M14i — research tree ────────────────────────────────────────────────
     unlockResearch: (id) => {
