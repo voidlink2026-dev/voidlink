@@ -1242,6 +1242,24 @@ export const useGameStore = create<GameState & GameActions>()(
           }
           if (s.newsFeed.length > 100) s.newsFeed.splice(100)
 
+          // M14t — WHO YOU WORK FOR reflection. Fires on disconnect (not
+          // immediately on completeMission) so the player gets the result
+          // UI first, then the quiet reflective beat. Threshold: ≥8 axis-
+          // tagged contracts and |collaborator − resistor| ≥ 4. Once-only.
+          if (s.player && !s.player.activeFlags['reflection_who_you_work_for'] && !s.pendingReflection) {
+            const corp = (s.player.activeFlags.choice_corp_contract_taken as number) ?? 0
+            const gov  = (s.player.activeFlags.choice_gov_contract_taken as number) ?? 0
+            const und  = (s.player.activeFlags.choice_underground_contract_taken as number) ?? 0
+            const ref  = (s.player.activeFlags.choice_corp_contract_refused as number) ?? 0
+            const collaborator = corp + gov
+            const resistor = und + 2 * ref
+            const total = collaborator + und + ref
+            if (total >= 8 && Math.abs(collaborator - resistor) >= 4) {
+              s.player.activeFlags['reflection_who_you_work_for'] = Date.now()
+              s.pendingReflection = 'who_you_work_for'
+            }
+          }
+
           // M14m: post any queued multi-phase news echoes
           if (mission.newsEchoes && mission.phases) {
             const phasesDone = mission.currentPhaseIndex ?? 0
@@ -1442,22 +1460,10 @@ export const useGameStore = create<GameState & GameActions>()(
             const prev = (s.player.activeFlags[factionFlag] as number | undefined) ?? 0
             s.player.activeFlags[factionFlag] = prev + 1
           }
-          // M14t — Schedule the "WHO YOU WORK FOR" reflection once the axis
-          // has visibly tilted. Fires when the player has done ≥8 axis-tagged
-          // contracts AND the net |collaborator - resistor| ≥ 4.
-          if (!s.player.activeFlags['reflection_who_you_work_for']) {
-            const corp = (s.player.activeFlags.choice_corp_contract_taken as number) ?? 0
-            const gov  = (s.player.activeFlags.choice_gov_contract_taken as number) ?? 0
-            const und  = (s.player.activeFlags.choice_underground_contract_taken as number) ?? 0
-            const ref  = (s.player.activeFlags.choice_corp_contract_refused as number) ?? 0
-            const collaborator = corp + gov
-            const resistor = und + 2 * ref
-            const total = collaborator + und + ref
-            if (total >= 8 && Math.abs(collaborator - resistor) >= 4) {
-              s.player.activeFlags['reflection_who_you_work_for'] = Date.now()
-              s.pendingReflection = 'who_you_work_for'
-            }
-          }
+          // M14t — The WHO YOU WORK FOR reflection is *scheduled* here but
+          // actually fires inside `disconnect` (below) so the player sees the
+          // mission-result UI first. The flag below is the eligibility test;
+          // the firing site reads it.
         } else if (!success && s.player) {
           s.player.stats.traceFailures++
         }
