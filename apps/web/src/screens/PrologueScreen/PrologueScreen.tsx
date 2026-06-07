@@ -10,12 +10,15 @@ const PROLOGUE_LINES: string[] = [
   'Twenty-five years ago, every central bank ledger on Earth was rewritten in nine hours.',
   'Nobody has ever claimed responsibility. The historians call it the October Event.',
   'The financial system collapsed in nine days. Seventy-four million people died.',
-  'The corporations whose wealth was not in cash survived. Four of them — biotech, defence, telecommunications, banking — now command more land, more people, and more violence than every nation-state combined.',
+  'Four corporations whose wealth was not in cash survived. They now own more land, more people, and more violence than every nation-state combined.',
   'The old governments are still there. Most of them do not, in any practical sense, govern anything.',
-  'Underneath all of it — undocumented, untaxed, unrecognised — there is a black-market contractor network called Voidlink International.',
-  'They have one contract. Four rules. They call it the Compact.',
+  'In the gaps between the new powers, in the unmapped places, there are people who do their work in the dark.',
+  'They take contracts no one else can afford to take. They steal data. They erase identities. They sabotage. They disappear without trace.',
+  'They call themselves operatives. They are the last truly independent people alive.',
+  'There is a network that connects them. It is called Voidlink International.',
+  'It has one contract. Four rules. They call it the Compact.',
   'You are about to sign it.',
-  'Welcome.',
+  'Welcome to the only career in 2199 that nobody owns.',
 ]
 
 const CHARS_PER_SECOND = 38  // typewriter speed

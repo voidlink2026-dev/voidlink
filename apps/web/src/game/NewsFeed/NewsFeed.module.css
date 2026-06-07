@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #606060;
+  color: #a0a0a0;
   font-size: 11px;
 }
 
@@ -58,7 +58,7 @@
 
 .timestamp {
   font-size: 9px;
-  color: #606060;
+  color: #a0a0a0;
   flex-shrink: 0;
 }
 
@@ -77,6 +77,6 @@
 
 .body {
   font-size: 10px;
-  color: #787878;
+  color: #a8a8a8;
   line-height: 1.5;
 }

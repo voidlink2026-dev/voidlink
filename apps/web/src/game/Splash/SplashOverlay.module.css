@@ -91,7 +91,7 @@
   right: 32px;
   font-size: 9px;
   letter-spacing: 0.24em;
-  color: #444;
+  color: #7a7a7a;
 }
 .skipHint kbd {
   background: rgba(255,255,255,0.04);
@@ -101,5 +101,5 @@
   margin: 0 2px;
   font-family: inherit;
   font-size: 9px;
-  color: #777;
+  color: #a8a8a8;
 }

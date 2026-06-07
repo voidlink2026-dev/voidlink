@@ -61,7 +61,7 @@
 }
 
 .launchBtn:disabled {
-  color: #505050;
+  color: #909090;
   cursor: not-allowed;
 }
 

@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #606060;
+  color: #a0a0a0;
   font-size: 9px;
   letter-spacing: 0.08em;
 }
@@ -38,8 +38,8 @@
   line-height: 1.2;
 }
 
-.username { font-size: 10px; color: #787878; margin-top: 1px; }
-.rank     { font-size: 9px; color: #686868; letter-spacing: 0.1em; margin-top: 3px; }
+.username { font-size: 10px; color: #a8a8a8; margin-top: 1px; }
+.rank     { font-size: 9px; color: #a0a0a0; letter-spacing: 0.1em; margin-top: 3px; }
 .spec     { font-size: 9px; color: #ff9900; letter-spacing: 0.12em; margin-top: 2px; font-weight: 700; }
 
 .balancePill {
@@ -77,7 +77,7 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #686868;
+  color: #a0a0a0;
   text-transform: uppercase;
   margin-bottom: 4px;
 }
@@ -89,7 +89,7 @@
   line-height: 1.6;
 }
 
-.statKey { color: #787878; }
+.statKey { color: #a8a8a8; }
 .statVal { color: #ccc; font-variant-numeric: tabular-nums; }
 .danger  { color: #ff2d20; }
 
@@ -111,18 +111,18 @@
 }
 
 .toolId   { font-size: 10px; color: #aaa; font-weight: 600; }
-.toolMeta { font-size: 9px; color: #686868; }
+.toolMeta { font-size: 9px; color: #a0a0a0; }
 
 /* Footer */
 .footer {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
-  color: #606060;
+  color: #a0a0a0;
   padding-top: 2px;
 }
 
-.empty { color: #606060; font-size: 11px; padding: 8px 0; }
+.empty { color: #a0a0a0; font-size: 11px; padding: 8px 0; }
 
 /* Faction standings */
 .factionList {
@@ -238,7 +238,7 @@
 }
 
 .xpNum {
-  color: #606060;
+  color: #a0a0a0;
   font-size: 9px;
   margin-left: auto;
 }
@@ -277,7 +277,7 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #606060;
+  color: #a0a0a0;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -339,7 +339,7 @@
   display: flex;
   gap: 12px;
   font-size: 9px;
-  color: #606060;
+  color: #a0a0a0;
 }
 
 .inviteRow {
@@ -356,7 +356,7 @@
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #606060;
+  color: #a0a0a0;
 }
 
 .inviteCode {
@@ -381,7 +381,7 @@
 
 .factionCreateMeta {
   font-size: 9px;
-  color: #606060;
+  color: #a0a0a0;
   letter-spacing: 0.04em;
 }
 
@@ -395,7 +395,7 @@
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #606060;
+  color: #a0a0a0;
 }
 
 .formInput {

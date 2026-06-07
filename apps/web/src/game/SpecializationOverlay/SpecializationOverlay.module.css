@@ -46,7 +46,7 @@
 
 .headerSub {
   font-size: 11px;
-  color: #666;
+  color: #a0a0a0;
   margin-top: 4px;
   letter-spacing: 0.04em;
 }
@@ -99,14 +99,14 @@
 
 .cardTagline {
   font-size: 10px;
-  color: #666;
+  color: #a0a0a0;
   font-style: italic;
   letter-spacing: 0.04em;
 }
 
 .cardDesc {
   font-size: 10px;
-  color: #787878;
+  color: #a8a8a8;
   line-height: 1.5;
 }
 
