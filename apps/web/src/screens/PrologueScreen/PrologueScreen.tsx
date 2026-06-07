@@ -25,8 +25,6 @@ const FINAL_PAUSE_MS = 1200
 // the intro replays every visit until the player commits — which is correct,
 // because the world setup is part of the *decision* to sign up.
 export const COMPACT_SIGNED_KEY = 'voidlink_compact_signed'
-// Legacy key — checked at boot for back-compat with older installs.
-export const PROLOGUE_SEEN_KEY_LEGACY = 'voidlink_prologue_seen'
 
 export function PrologueScreen() {
   const setScreen = useGameStore((s) => s.setScreen)

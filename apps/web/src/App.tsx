@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useGameStore } from './store/gameStore.ts'
 import { useSettingsStore } from './store/settingsStore.ts'
 import { BootScreen } from './screens/BootScreen/BootScreen.tsx'
-import { PrologueScreen, COMPACT_SIGNED_KEY, PROLOGUE_SEEN_KEY_LEGACY } from './screens/PrologueScreen/PrologueScreen.tsx'
+import { PrologueScreen, COMPACT_SIGNED_KEY } from './screens/PrologueScreen/PrologueScreen.tsx'
 import { OperativeIntroScreen } from './screens/OperativeIntroScreen/OperativeIntroScreen.tsx'
 import { LoginScreen } from './screens/LoginScreen/LoginScreen.tsx'
 import { DesktopScreen } from './screens/DesktopScreen/DesktopScreen.tsx'
@@ -39,16 +39,15 @@ export function App() {
         if (restored) return
       }
       // M14r — Prologue plays on every visit UNTIL the player completes signup.
-      // The gating flag is "compact signed" — set when an operative is bound.
-      // The legacy `prologue_seen` key is also respected for back-compat (older
-      // installs that already saw the prologue under the previous gating).
+      // The only gate is "compact signed" — set when an operative is actually
+      // bound. Seeing the old prologue does NOT count as having signed up.
       let compactSigned = false
-      let legacySeen = false
       try {
         compactSigned = !!localStorage.getItem(COMPACT_SIGNED_KEY)
-        legacySeen    = !!localStorage.getItem(PROLOGUE_SEEN_KEY_LEGACY)
+        // Clear the legacy one-shot key so existing testers get the new flow.
+        localStorage.removeItem('voidlink_prologue_seen')
       } catch { /**/ }
-      setScreen(compactSigned || legacySeen ? 'login' : 'prologue')
+      setScreen(compactSigned ? 'login' : 'prologue')
     }, 3200)
     return () => clearTimeout(t)
   }, [setScreen])
