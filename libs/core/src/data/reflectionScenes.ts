@@ -31,6 +31,7 @@ export type ReflectionTrigger =
   | 'pre_arc_5'
   | 'anniversary'
   | 'season_transition'
+  | 'who_you_work_for'
 
 type Bucket = 'strong_principled' | 'weak_principled' | 'neutral' | 'weak_mercenary' | 'strong_mercenary'
 
@@ -204,6 +205,48 @@ export const REFLECTION_SCENES: Record<ReflectionTrigger, ReflectionScene> = {
     },
   },
 
+  who_you_work_for: {
+    trigger: 'who_you_work_for',
+    title: 'REFLECTION — WHO YOU WORK FOR',
+    opening:
+      `You stop in the middle of a job.\n\n` +
+      `Not for long. Long enough.\n\n` +
+      `You think about the list of people who have paid you, in the order you took their money.`,
+    closing:
+      `You finish what you were doing.\n\n` +
+      `The Bond does not have anything to say about who you choose to work for. Nobody does. That was the point.\n\n` +
+      `History eventually does. You go back to work.`,
+    factPool: {
+      strong_principled: [
+        `{CORP_REFUSED} corporate contracts crossed your desk. You refused every one.`,
+        `{UNDERGROUND_TAKEN} jobs came from operatives like you. You took them at rates that would embarrass a Big Four accountant.`,
+        `When the Underground talks about who they can trust at your rank, your handle is on the short list.`,
+        `Cipher has stopped explaining why a contract matters before sending it to you. He knows you understand.`,
+      ],
+      weak_principled: [
+        `You have refused {CORP_REFUSED} corporate contracts on principle. You remember each of them.`,
+        `Most of your work has come from the Underground. The pay is worse. You sleep through the night.`,
+      ],
+      neutral: [
+        `Your client list is mixed. Some Underground, some corporate, some neither.`,
+        `You have not chosen a side. The work has not yet forced you to.`,
+        `Most operatives think they will know the moment when it matters. They do not.`,
+      ],
+      weak_mercenary: [
+        `{CORP_TAKEN} of your contracts came from the Big Four directly or their subsidiaries.`,
+        `The corporate pay scale is better than the Underground's. You know that with certainty now.`,
+        `You have stopped reading the briefings as carefully as you used to.`,
+      ],
+      strong_mercenary: [
+        `Arunmor sends you contracts now. So does Nexus. So does the JCB, in a roundabout way.`,
+        `You take them. You're good at them. You're paid well for them.`,
+        `You used to read the news. The thing you do not look at, when you look at the news now, is what your contracts have done.`,
+        `Cipher has not written to you in a long time. You have not noticed when this started.`,
+        `Twenty-five years ago the corporations and the governments did the October Event between them. You do not believe this. But you do not work *against* them either.`,
+      ],
+    },
+  },
+
   season_transition: {
     trigger: 'season_transition',
     title: 'REFLECTION — SEASON TURNS',
@@ -280,6 +323,10 @@ function buildTokenContext(player: PlayerProfile, now: number = Date.now()): Rec
     BOUNTIES_TAKEN: numFlag(player, 'choice_op_bounty_accepted'),
     LEAKS: numFlag(player, 'choice_data_leaked'),
     SOLD: numFlag(player, 'choice_data_sold'),
+    CORP_TAKEN: numFlag(player, 'choice_corp_contract_taken'),
+    GOV_TAKEN: numFlag(player, 'choice_gov_contract_taken'),
+    CORP_REFUSED: numFlag(player, 'choice_corp_contract_refused'),
+    UNDERGROUND_TAKEN: numFlag(player, 'choice_underground_contract_taken'),
     HANDLE: player.handle,
   }
 }

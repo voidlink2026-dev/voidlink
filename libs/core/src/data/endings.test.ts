@@ -19,8 +19,8 @@ function mockPlayer(over: Partial<PlayerProfile> = {}): PlayerProfile {
 }
 
 describe('ENDINGS catalogue', () => {
-  it('has all 10 ending variants', () => {
-    expect(Object.keys(ENDINGS).length).toBe(10)
+  it('has all 11 ending variants', () => {
+    expect(Object.keys(ENDINGS).length).toBe(11)
   })
 
   it('every ending has tagline + epilogue', () => {

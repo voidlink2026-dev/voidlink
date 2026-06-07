@@ -33,7 +33,7 @@
 17. [The Year Ahead — What We Are Watching In 2199](#17-the-year-ahead)
 18. [Appendix A — Timeline of Major Events 2174–2199](#a-timeline)
 19. [Appendix B — Glossary of Terms](#b-glossary)
-20. [Appendix C — The Voidlink Bond, in Full](#c-the-compact)
+20. [Appendix C — The Voidlink Bond, in Full](#c-the-bond)
 21. [Appendix D — A Note on Sources](#d-sources)
 
 ---
@@ -665,7 +665,7 @@ See §13 for the operative slang. Below are the formal, in-world terms:
 
 ---
 
-## Appendix C — The Voidlink Bond, in Full <a id="c-the-compact"></a>
+## Appendix C — The Voidlink Bond, in Full <a id="c-the-bond"></a>
 
 The Bond, as written by Yaakov Stern in February 2183:
 

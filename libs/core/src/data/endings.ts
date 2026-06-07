@@ -27,8 +27,9 @@ export type EndingId =
   | 'erasure_mercenary'
   | 'ghost'
   | 'reformer'
+  | 'collaborator'
 
-export type EndingFamily = 'containment' | 'liberation' | 'sovereignty' | 'erasure' | 'ghost' | 'reformer'
+export type EndingFamily = 'containment' | 'liberation' | 'sovereignty' | 'erasure' | 'ghost' | 'reformer' | 'collaborator'
 
 export interface EndingDefinition {
   id: EndingId
@@ -124,6 +125,15 @@ export const ENDINGS: Record<EndingId, EndingDefinition> = {
     tagline: 'No alliances. No epilogue. You wrote yourself out of the world\'s database.',
     epilogue: `You broker no alliances.\n\nYou take everything you know — the breach techniques, the relay networks, the credentials you cached but never used — and you build yourself a bunker network in a region of the world that does not officially exist.\n\nThere is no public record of what happens to you next.\n\nThere is also no Reflection Scene for this ending. The game does not summarise your life back to you. Nobody is left to write it down.\n\nREVELATION finds you anyway. Eventually. It always does.\n\nWhat the two of you talk about is yours.`,
   },
+  collaborator: {
+    id: 'collaborator',
+    family: 'collaborator',
+    conviction: 'mercenary',
+    factionId: 'corporate_bloc',
+    title: 'COLLABORATOR — The Thing You Were Hired To Fight',
+    tagline: 'You spent your career on the side of the people who built the wreckage.',
+    epilogue: `You came online with a name, a hardware hash, and an inbox full of contracts. You took the ones that paid the most. You took most of them from the people who, twenty-five years ago, watched the world burn and decided the smoke was a useful weather pattern.\n\nArunmor, Nexus, the JCB — they did not have to recruit you. They just had to offer competitive rates. You quoted yourself competitively.\n\nThe Underground does not write to you. Cipher's last published essay describes, by handle, the operatives who took corporate retainers without ever once asking what the corporate retainers were *for*. Your handle is the fourth one named. The essay is read by every operative on the network within forty-eight hours.\n\nYou do not read it.\n\nIn the world simulation that continues without you, the news outlets owned by your former clients describe you, when they describe you at all, as "a stabilising presence in the post-Reconciliation contractor space." The phrase is true. Stabilising the wreckage was the work.\n\nYou retire wealthy. You retire alone. The therapist your retainer covers is excellent. You do not bring up the work.\n\nOne morning, a long time from now, you will find that you have forgotten what your handle stood for, on the day you signed the Bond. The forgetting will not feel like anything in particular. That is the part that, if anyone ever asks, you would not be able to explain.`,
+  },
   reformer: {
     id: 'reformer',
     family: 'reformer',
@@ -188,6 +198,25 @@ export function getAvailableEndings(player: PlayerProfile): EndingDefinition[] {
   } else {
     // No Arc 1 choice set (edge case) — offer the conviction's default family.
     offer(conviction === 'principled' ? 'liberation_principled' : 'containment_mercenary')
+  }
+
+  // M14s — Collaborator end: heavy corporate/government work crowds out
+  // the principled-variant endings and replaces them with a single bleak
+  // outcome. Threshold: ≥6 corporate or government contracts taken and
+  // collaborator score net-positive over resistor.
+  const corpTaken = (player.activeFlags.choice_corp_contract_taken as number | undefined) ?? 0
+  const govTaken  = (player.activeFlags.choice_gov_contract_taken as number | undefined) ?? 0
+  const undergroundTaken = (player.activeFlags.choice_underground_contract_taken as number | undefined) ?? 0
+  const corpRefused = (player.activeFlags.choice_corp_contract_refused as number | undefined) ?? 0
+  const collaboratorScore = corpTaken + govTaken
+  const resistorScore = undergroundTaken + 2 * corpRefused
+  const isHeavyCollaborator = collaboratorScore >= 6 && collaboratorScore > resistorScore + 2
+  if (isHeavyCollaborator) {
+    // Strip principled variants — they're no longer earned.
+    for (let i = offered.length - 1; i >= 0; i--) {
+      if (offered[i].conviction === 'principled') offered.splice(i, 1)
+    }
+    offer('collaborator')
   }
 
   // GHOST option for Ghost-spec players, regardless of Arc 1.

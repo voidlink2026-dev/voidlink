@@ -83,6 +83,18 @@ export const CHOICE_CATALOGUE: ChoiceDefinition[] = [
   // Hard violations — these are rare, weighted heavily mercenary.
   { flag: 'choice_bond_rule4_violated', conviction: 'mercenary', weight: 3, trait: 'bond_violator' },
 
+  // ── M14s — The Collaborator Axis ─────────────────────────────────────────
+  // Orthogonal-ish to bond_clean/bond_grey: are you working *with* the new
+  // establishment (Big Four + JCB + surviving governments) or *against* it?
+  // The intro seeds the question — "history, eventually, [judges]" — and these
+  // flags accumulate the answer over time. Net direction surfaces in the
+  // "WHO YOU WORK FOR" reflection scene and in the bleak collaborator ending.
+  { flag: 'choice_corp_contract_taken',         conviction: 'mercenary',  weight: 1, trait: 'bond_collaborator' },
+  { flag: 'choice_gov_contract_taken',          conviction: 'mercenary',  weight: 1, trait: 'bond_collaborator' },
+  { flag: 'choice_corp_contract_refused',       conviction: 'principled', weight: 2, trait: 'bond_resistor' },
+  { flag: 'choice_underground_contract_taken',  conviction: 'principled', weight: 1, trait: 'bond_resistor' },
+  { flag: 'choice_big_four_sabotaged',          conviction: 'principled', weight: 2, trait: 'bond_resistor' },
+
   // ── Arc 6 — Dead Drop resolution ─────────────────────────────────────────
   { flag: 'choice_dead_drop_purge',           conviction: 'principled', weight: 3, trait: 'bond_clean' },
   { flag: 'choice_dead_drop_weaponise',       conviction: 'mercenary',  weight: 3, trait: 'magnus_collaborator' },
