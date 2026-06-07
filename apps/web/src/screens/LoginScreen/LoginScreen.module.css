@@ -460,3 +460,92 @@
   90%   { text-shadow: 4px 0 #0055ff, -4px 0 #ff2d20; color: #0055ff; }
   90.5% { text-shadow: 0 0 28px rgba(57,255,20,0.9), 0 0 80px rgba(57,255,20,0.3); color: #39ff14; }
 }
+
+/* ── M14r — Diegetic Compact intake ─────────────────────────────────────── */
+.intakeBlurb {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #b0b0b0;
+  margin: 4px 0 14px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--color-cyan, #00e5ff);
+  background: rgba(0, 229, 255, 0.04);
+  letter-spacing: 0.01em;
+}
+.intakeBlurb strong { color: var(--color-cyan, #00e5ff); letter-spacing: 0.14em; font-size: 10px; }
+.intakeBlurb em { color: #d4d4d4; font-style: italic; }
+
+.compactBox {
+  border: 1px solid var(--color-border, #2a2a2a);
+  border-radius: 2px;
+  margin-top: 6px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.compactToggle {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: var(--color-cyan, #00e5ff);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  transition: background 0.12s;
+}
+.compactToggle:hover { background: rgba(0, 229, 255, 0.04); }
+
+.compactToggleLabel { text-transform: uppercase; }
+
+.compactBody {
+  padding: 8px 16px 16px;
+  border-top: 1px solid var(--color-border, #2a2a2a);
+  max-height: 280px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.compactPara {
+  font-size: 11px;
+  line-height: 1.65;
+  color: #c0c0c0;
+  margin: 0 0 10px;
+  letter-spacing: 0.005em;
+}
+.compactPara strong {
+  color: var(--color-cyan, #00e5ff);
+  font-weight: 700;
+}
+
+.compactSig {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #808080;
+  font-style: italic;
+  margin: 14px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed #2a2a2a;
+}
+
+.compactCheckbox {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #b0b0b0;
+  margin: 6px 0 4px;
+  cursor: pointer;
+  padding: 8px 4px;
+}
+.compactCheckbox input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  accent-color: var(--color-cyan, #00e5ff);
+  cursor: pointer;
+}
+.compactCheckbox span { display: block; }

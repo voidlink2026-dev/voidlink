@@ -102,14 +102,29 @@ export function SettingsWindow() {
 
         {/* M14q Sub-sprint A — Replay Prologue */}
         <div className={styles.scaleRow} style={{ marginTop: 12 }}>
-          <span className={styles.sliderLabel}>PROLOGUE</span>
+          <span className={styles.sliderLabel}>SHORT INTRO</span>
           <button
             className={styles.testBtn}
             onClick={() => {
-              try { localStorage.removeItem('voidlink_prologue_seen') } catch { /**/ }
-              alert('Prologue will replay on next boot.')
+              try {
+                localStorage.removeItem('voidlink_prologue_seen')
+                localStorage.removeItem('voidlink_compact_signed')
+              } catch { /**/ }
+              alert('Short intro will replay on next boot (until you sign up again).')
             }}
           >REPLAY ON NEXT BOOT</button>
+        </div>
+
+        {/* M14r — Replay Operative Intro */}
+        <div className={styles.scaleRow}>
+          <span className={styles.sliderLabel}>OPERATIVE INTRO</span>
+          <button
+            className={styles.testBtn}
+            onClick={() => {
+              try { localStorage.removeItem('voidlink_operative_intro_seen') } catch { /**/ }
+              alert('Operative intro will replay the next time you sign in.')
+            }}
+          >REPLAY ON NEXT LOGIN</button>
         </div>
       </section>
 

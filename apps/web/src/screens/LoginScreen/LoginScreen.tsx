@@ -52,6 +52,10 @@ export function LoginScreen() {
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
 
+  // M14r — diegetic Compact signing
+  const [compactOpen, setCompactOpen] = useState(false)
+  const [compactAgreed, setCompactAgreed] = useState(false)
+
   // Per-card connect password
   const [connectingHandle, setConnectingHandle] = useState<string | null>(null)
   const [connectPassword, setConnectPassword] = useState('')
@@ -228,10 +232,15 @@ export function LoginScreen() {
     setActiveSession(newPlayer.handle)
     setPlayer(newPlayer)
     setPendingSignup(null)
-    logTerminal('VOIDLINK INTERNATIONAL — OPERATIVE REGISTERED.', 'system')
-    logTerminal(`Handle: ${newPlayer.handle} | User: ${newPlayer.username}`, 'success')
-    logTerminal('Email verified. Starting balance: 5,000 Cr. Open MISSIONS to begin.', 'system')
-    setScreen('desktop')
+    // M14r — mark Compact as signed so the Prologue stops replaying
+    try { localStorage.setItem('voidlink_compact_signed', String(Date.now())) } catch { /**/ }
+    logTerminal('VOIDLINK INTERNATIONAL — Compact bound. Hardware identity hash recorded.', 'system')
+    logTerminal(`Handle: ${newPlayer.handle} · You are now operative #${(Math.floor(Math.random() * 4000) + 47000).toString()}.`, 'success')
+    logTerminal('Onboarding balance: 5,000 Cr. Check inbox for intake confirmation. Open MISSIONS to begin.', 'system')
+    // M14r — first-time signup goes through the Operative Intro before the desktop.
+    let introSeen = false
+    try { introSeen = !!localStorage.getItem('voidlink_operative_intro_seen') } catch { /**/ }
+    setScreen(introSeen ? 'desktop' : 'intro')
   }
 
   function handleResendCode() {
@@ -322,15 +331,15 @@ export function LoginScreen() {
         {/* Logo */}
         <div className={styles.logo}>
           <span className={styles.logoMain}>VOIDLINK</span>
-          <span className={styles.logoSub}>OPERATIVE NETWORK</span>
+          <span className={styles.logoSub}>CONTRACTOR INTAKE — GENEVA</span>
         </div>
 
         <div className={styles.divider} />
 
         <p className={styles.intro}>
-          VOIDLINK INTERNATIONAL — ANONYMOUS CONTRACTOR NETWORK
+          VOIDLINK INTERNATIONAL — Founded 2183. Geneva.
           <br />
-          <span className={styles.muted}>All connections encrypted. All identities protected.</span>
+          <span className={styles.muted}>Article XII neutral territory. All connections encrypted. All identities protected.</span>
         </p>
 
         {/* Tab bar */}
@@ -454,7 +463,7 @@ export function LoginScreen() {
             </motion.div>
           )}
 
-          {/* --- New operative signup --- */}
+          {/* --- New operative signup (the Compact signing) --- */}
           {mode === 'signup' && (
             <motion.div
               key="signup"
@@ -463,11 +472,17 @@ export function LoginScreen() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.18 }}
             >
+              <p className={styles.intakeBlurb}>
+                <strong>CONTRACTOR INTAKE.</strong> Voidlink International binds new operatives via cryptographic
+                signature against the four-rule <em>Compact</em>. Once signed, the binding is irrevocable.
+                Choose your handle carefully. You will be known by it for the rest of your career.
+              </p>
+
               <form className={styles.form} onSubmit={handleSignup} noValidate>
                 <div className={styles.fieldGroup}>
                   <label className={styles.label} htmlFor="handle">
                     OPERATIVE HANDLE
-                    <span className={styles.fieldHint}>your alias — visible in-game</span>
+                    <span className={styles.fieldHint}>your professional alias — every contract bears this name</span>
                   </label>
                   <input
                     id="handle"
@@ -485,8 +500,8 @@ export function LoginScreen() {
 
                 <div className={styles.fieldGroup}>
                   <label className={styles.label} htmlFor="username">
-                    USERNAME
-                    <span className={styles.fieldHint}>your login identifier</span>
+                    REGISTRY NAME
+                    <span className={styles.fieldHint}>private — Voidlink's internal billing ledger only</span>
                   </label>
                   <input
                     id="username"
@@ -494,7 +509,7 @@ export function LoginScreen() {
                     type="text"
                     value={username}
                     onChange={(e) => { setUsername(e.target.value); setError('') }}
-                    placeholder="e.g. johndoe"
+                    placeholder="given name + initial — never disclosed to clients"
                     autoComplete="username"
                     spellCheck={false}
                     maxLength={32}
@@ -503,8 +518,8 @@ export function LoginScreen() {
 
                 <div className={styles.fieldGroup}>
                   <label className={styles.label} htmlFor="email">
-                    EMAIL
-                    <span className={styles.fieldHint}>for account recovery</span>
+                    RELAY ADDRESS
+                    <span className={styles.fieldHint}>encrypted — used for the one-time intake handshake only</span>
                   </label>
                   <input
                     id="email"
@@ -512,7 +527,7 @@ export function LoginScreen() {
                     type="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError('') }}
-                    placeholder="e.g. operative@darknet.io"
+                    placeholder="any valid relay — operative@darknet.io"
                     autoComplete="email"
                     spellCheck={false}
                     maxLength={254}
@@ -551,6 +566,63 @@ export function LoginScreen() {
                   </div>
                 </div>
 
+                {/* The Compact viewer — collapsible. Encourages reading, doesn't force it. */}
+                <div className={styles.compactBox}>
+                  <button
+                    type="button"
+                    className={styles.compactToggle}
+                    onClick={() => setCompactOpen((v) => !v)}
+                    aria-expanded={compactOpen}
+                  >
+                    <span className={styles.compactToggleLabel}>
+                      {compactOpen ? '▾' : '▸'} THE VOIDLINK COMPACT — read the four rules you are about to sign
+                    </span>
+                  </button>
+                  {compactOpen && (
+                    <div className={styles.compactBody}>
+                      <p className={styles.compactPara}>
+                        To the operatives of the Voidlink International contractor network. By signature you agree to the following,
+                        irrevocably, anonymously, and without right of resignation:
+                      </p>
+                      <p className={styles.compactPara}>
+                        <strong>One.</strong> Voidlink International is entitled to its contracted percentage of every transaction
+                        effected through the network. This percentage shall be <strong>twelve percent</strong>.
+                      </p>
+                      <p className={styles.compactPara}>
+                        <strong>Two.</strong> Disputes between operatives, between operatives and clients, or between operatives
+                        and Voidlink International shall be resolved through <strong>Voidlink arbitration</strong>.
+                        Outside enforcement is itself a breach of this Compact. The arbitrator's decision is final.
+                      </p>
+                      <p className={styles.compactPara}>
+                        <strong>Three.</strong> Operatives may take contracts from any client. <strong>Discrimination based on client
+                        identity, alignment, or stated purpose is prohibited.</strong> The operative is free to decline.
+                        The operative is not free to refuse on the basis of who is asking.
+                      </p>
+                      <p className={styles.compactPara}>
+                        <strong>Four.</strong> Killing other operatives outside the sanctioned arbitration process is grounds for the
+                        <strong> immediate, permanent, and public revocation</strong> of operative status. The revocation may include
+                        physical sanctions. <strong>No appeal will be heard. No statute of limitations applies.</strong>
+                      </p>
+                      <p className={styles.compactSig}>
+                        Signed by hardware identity hash. Recorded irrevocably. We are not changing this document.<br />
+                        — Yaakov Stern, February 2183
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Compact agreement */}
+                <label className={styles.compactCheckbox}>
+                  <input
+                    type="checkbox"
+                    checked={compactAgreed}
+                    onChange={(e) => { setCompactAgreed(e.target.checked); setError('') }}
+                  />
+                  <span>
+                    I bind my hardware identity hash to the Voidlink Compact, irrevocably and without right of resignation.
+                  </span>
+                </label>
+
                 {error && (
                   <span className={styles.error} role="alert">{error}</span>
                 )}
@@ -560,9 +632,9 @@ export function LoginScreen() {
                   variant="primary"
                   size="lg"
                   className={styles.submitBtn}
-                  disabled={loading}
+                  disabled={loading || !compactAgreed}
                 >
-                  {loading ? 'REGISTERING…' : 'REGISTER OPERATIVE'}
+                  {loading ? 'BINDING IDENTITY…' : 'SIGN THE COMPACT'}
                 </Button>
               </form>
             </motion.div>
@@ -742,7 +814,8 @@ export function LoginScreen() {
         </AnimatePresence>
 
         <p className={styles.disclaimer}>
-          By connecting you acknowledge that all activities conducted through this network are entirely your own responsibility.
+          Voidlink International — Article XII neutral territory. All operatives bound by the Compact.
+          Disputes resolved through Voidlink arbitration only.
         </p>
       </div>
     </motion.main>

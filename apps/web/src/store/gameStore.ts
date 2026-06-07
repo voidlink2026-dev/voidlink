@@ -68,7 +68,7 @@ function tryAdvanceMissionPhase(mission: Mission, draft: { terminalLines: Array<
   return true
 }
 
-export type Screen = 'boot' | 'prologue' | 'login' | 'desktop'
+export type Screen = 'boot' | 'prologue' | 'login' | 'intro' | 'desktop'
 
 export interface RivalHacker {
   handle: string
@@ -2022,8 +2022,8 @@ export const useGameStore = create<GameState & GameActions>()(
             receivedAt: now - 90_000,
             from: 'VoidLink Dispatch',
             fromFingerprint: '0001 0001 V01D L1NK',
-            subject: `Welcome to VoidLink, ${handle}`,
-            body: `Operative ${handle},\n\nYour account has been provisioned. All contract dispatch and faction correspondence will be delivered here in PGP-style encrypted form.\n\nMessages marked ENCRYPTED auto-decrypt when opened, using the key derived from your handle. Do not share fingerprints.\n\n— VoidLink Dispatch`,
+            subject: `Compact bound — intake confirmation, ${handle}`,
+            body: `Operative ${handle},\n\nThis message confirms that your hardware identity hash has been bound, irrevocably, to the Voidlink Compact. The binding is recorded against Voidlink International's master ledger and is not subject to revocation by any party, including yourself.\n\nThe four rules of the Compact, for your reference:\n\n  1. Voidlink takes twelve percent of every transaction.\n  2. Disputes go through Voidlink arbitration. Outside enforcement is itself a breach.\n  3. Operatives may take contracts from any client. Refusal on the basis of who is asking is prohibited.\n  4. Killing other operatives outside arbitration is grounds for immediate, permanent, public revocation.\n\nAll contract dispatch and faction correspondence will be delivered to this inbox in PGP-style encrypted form. Messages marked ENCRYPTED auto-decrypt on read.\n\nWelcome to the network.\n\n— VoidLink Dispatch`,
             category: 'system',
             isRead: false,
             encrypted: true,

@@ -3,7 +3,8 @@ import { AnimatePresence } from 'framer-motion'
 import { useGameStore } from './store/gameStore.ts'
 import { useSettingsStore } from './store/settingsStore.ts'
 import { BootScreen } from './screens/BootScreen/BootScreen.tsx'
-import { PrologueScreen, PROLOGUE_SEEN_KEY } from './screens/PrologueScreen/PrologueScreen.tsx'
+import { PrologueScreen, COMPACT_SIGNED_KEY, PROLOGUE_SEEN_KEY_LEGACY } from './screens/PrologueScreen/PrologueScreen.tsx'
+import { OperativeIntroScreen } from './screens/OperativeIntroScreen/OperativeIntroScreen.tsx'
 import { LoginScreen } from './screens/LoginScreen/LoginScreen.tsx'
 import { DesktopScreen } from './screens/DesktopScreen/DesktopScreen.tsx'
 import { TraceAmbient } from './components/TraceAmbient/TraceAmbient.tsx'
@@ -37,11 +38,17 @@ export function App() {
         const restored = loadGame(sessionHandle)
         if (restored) return
       }
-      // M14q Sub-sprint A — first-ever boot shows the Prologue before login.
-      // Settings can clear `voidlink_prologue_seen` from localStorage to replay it.
-      let seen = false
-      try { seen = !!localStorage.getItem(PROLOGUE_SEEN_KEY) } catch { /**/ }
-      setScreen(seen ? 'login' : 'prologue')
+      // M14r — Prologue plays on every visit UNTIL the player completes signup.
+      // The gating flag is "compact signed" — set when an operative is bound.
+      // The legacy `prologue_seen` key is also respected for back-compat (older
+      // installs that already saw the prologue under the previous gating).
+      let compactSigned = false
+      let legacySeen = false
+      try {
+        compactSigned = !!localStorage.getItem(COMPACT_SIGNED_KEY)
+        legacySeen    = !!localStorage.getItem(PROLOGUE_SEEN_KEY_LEGACY)
+      } catch { /**/ }
+      setScreen(compactSigned || legacySeen ? 'login' : 'prologue')
     }, 3200)
     return () => clearTimeout(t)
   }, [setScreen])
@@ -49,10 +56,11 @@ export function App() {
   return (
     <>
       <AnimatePresence mode="wait">
-        {screen === 'boot'     && <BootScreen     key="boot" />}
-        {screen === 'prologue' && <PrologueScreen key="prologue" />}
-        {screen === 'login'    && <LoginScreen    key="login" />}
-        {screen === 'desktop'  && <DesktopScreen  key="desktop" />}
+        {screen === 'boot'     && <BootScreen           key="boot" />}
+        {screen === 'prologue' && <PrologueScreen       key="prologue" />}
+        {screen === 'login'    && <LoginScreen          key="login" />}
+        {screen === 'intro'    && <OperativeIntroScreen key="intro" />}
+        {screen === 'desktop'  && <DesktopScreen        key="desktop" />}
       </AnimatePresence>
       <TraceAmbient />
       {screen === 'desktop' && <ConnectionEffect />}

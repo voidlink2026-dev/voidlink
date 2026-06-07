@@ -11,7 +11,8 @@ const PROLOGUE_LINES: string[] = [
   'The old governments are still there. Most of them do not, in any practical sense, govern anything.',
   'Four corporations are larger than every country combined. Their security divisions do most of the things that used to be done by ministries.',
   'Underneath all of it — undocumented, untaxed, unrecognised — there is a black-market contractor network called Voidlink International.',
-  'You are about to sign their Compact.',
+  'They have one contract. Four rules. They call it the Compact.',
+  'You are about to sign it.',
   'Welcome.',
 ]
 
@@ -19,7 +20,13 @@ const CHARS_PER_SECOND = 38  // typewriter speed
 const PAUSE_BETWEEN_LINES_MS = 600
 const FINAL_PAUSE_MS = 1200
 
-export const PROLOGUE_SEEN_KEY = 'voidlink_prologue_seen'
+// M14r — the prologue gate is "have they signed the Compact" (i.e. have they
+// ever completed signup), NOT "have they seen the prologue once". This means
+// the intro replays every visit until the player commits — which is correct,
+// because the world setup is part of the *decision* to sign up.
+export const COMPACT_SIGNED_KEY = 'voidlink_compact_signed'
+// Legacy key — checked at boot for back-compat with older installs.
+export const PROLOGUE_SEEN_KEY_LEGACY = 'voidlink_prologue_seen'
 
 export function PrologueScreen() {
   const setScreen = useGameStore((s) => s.setScreen)
@@ -28,7 +35,10 @@ export function PrologueScreen() {
   const [done, setDone] = useState(false)
 
   const finish = useCallback(() => {
-    try { localStorage.setItem(PROLOGUE_SEEN_KEY, String(Date.now())) } catch { /**/ }
+    // Note: we do NOT set the "compact signed" flag here. The prologue is the
+    // *invitation* to sign — the flag is only set when the player actually
+    // completes signup. This makes the prologue replay every visit until
+    // they commit, which is the intended design.
     setScreen('login')
   }, [setScreen])
 

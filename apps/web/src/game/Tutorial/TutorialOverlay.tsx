@@ -302,7 +302,10 @@ export function TutorialOverlay() {
         clearInterval(interval)
         setTimeout(() => {
           if (step < STEPS.length - 1) setStep((s) => s + 1)
-          else setPlayerFlag('tutorial_done', true)
+          else {
+            setPlayerFlag('tutorial_done', true)
+            try { localStorage.setItem('voidlink_tutorial_completed_once', String(Date.now())) } catch { /**/ }
+          }
         }, 600)
       }
     }, 250)
@@ -319,6 +322,9 @@ export function TutorialOverlay() {
 
   function dismiss() {
     setPlayerFlag('tutorial_done', true)
+    // M14r — mark that this machine has completed the tutorial at least once,
+    // which unlocks the SKIP TUTORIAL button for future operatives.
+    try { localStorage.setItem('voidlink_tutorial_completed_once', String(Date.now())) } catch { /**/ }
   }
 
   const showNextBtn = !current.condition
@@ -390,9 +396,18 @@ export function TutorialOverlay() {
           )}
 
           <div className={styles.actions}>
-            <button className={styles.skipBtn} onClick={dismiss}>
-              SKIP TUTORIAL
-            </button>
+            {/* M14r — tutorial is MANDATORY on first signup. SKIP only appears
+                for returning operatives who have completed a tutorial before
+                on this machine (localStorage flag set when tutorial finishes). */}
+            {(() => {
+              let hasCompletedTutorialBefore = false
+              try { hasCompletedTutorialBefore = !!localStorage.getItem('voidlink_tutorial_completed_once') } catch { /**/ }
+              return hasCompletedTutorialBefore
+            })() && (
+              <button className={styles.skipBtn} onClick={dismiss}>
+                SKIP TUTORIAL
+              </button>
+            )}
             {showNextBtn && (
               <Button variant="primary" size="sm" onClick={advance}>
                 {isLast ? 'BEGIN' : 'NEXT ›'}
