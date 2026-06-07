@@ -1,0 +1,22 @@
+# Voidlink — Railway service config (Phase A: static-site hosting).
+#
+# Tells Railway to:
+#   - Build via the Dockerfile at the repo root
+#   - Restart on failure with a sane backoff
+#   - Expose the port Railway provides via $PORT
+#
+# Phase B (cloud-saves API) will add a second service with its own
+# `apps/server/railway.toml` and its own Postgres reference.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# `serve` already binds to $PORT inside the container; no extra args needed.
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+# Healthcheck — Railway hits this path; serve returns 200 for index.html.
+healthcheckPath = "/"
+healthcheckTimeout = 30

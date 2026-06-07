@@ -39,6 +39,7 @@ These live at the **repo root**, not in `docs/`. They are creative/marketing, no
 - `The_Voidlink_Codex.md` — the world bible / lore book. Tolkien-depth in-universe history. Updated when canonical lore is added or refined. Treat with care — this is the *story* of the world.
 - `README.md` — repository entry point. Updated on doc structure changes.
 - `CLAUDE.md` — agent instructions (this file).
+- `DEPLOYMENT.md` — Railway deployment, Phase A/B/C infrastructure plan. Updated when infrastructure changes.
 
 Adding new creative docs at repo root is allowed if they serve a clearly different purpose. Adding more planning docs is **not** — extend one of the five instead.
 

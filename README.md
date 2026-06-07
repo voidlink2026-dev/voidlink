@@ -74,6 +74,7 @@ Creative / marketing docs at repo root (separate from planning):
 | [Why_Voidlink.md](Why_Voidlink.md) | The pitch. For press and players. |
 | [Voidlink_Synopsis.md](Voidlink_Synopsis.md) | Comprehensive game guide. "What is this, what will I do, what will I remember." |
 | [The_Voidlink_Codex.md](The_Voidlink_Codex.md) | The world bible. Tolkien-depth lore. The history of 2199 in full. |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | Railway deployment + Phase A/B/C infrastructure plan. |
 
 ---
 

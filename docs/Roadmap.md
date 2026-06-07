@@ -109,7 +109,7 @@ Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next
 | **S2b** | 2026-07-W2 → 2026-07-W3 | **L11 Choice Architecture & Reflection Mechanic (M14p)** ✅ **SHIPPED 2026-06** | All 4 passes done — pattern reader, news framing, NPC dialogue tone, contract gating, reflection scenes, 9-ending fan-out |
 | **S2c** | 2026-07-W3 → 2026-08-W1 | **M14q Lore Exposure Layer** — slotted before story arcs land so the player is already inside the world | Boot prologue, Codex window with unlockable entries + non-blocking notification toasts, Cipher essay drip in inbox, environmental flavour (BIOS line, bank subheaders, broker bylines), splash cards between major story beats |
 | **S3** | 2026-08-W1 → 2026-08-W3 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content. Each arc writes flags that the Choice Architecture (S2b) reads + unlocks Codex entries (S2c) |
-| **S4** | 2026-07-W4 → 2026-08-W2 | **L4 Steam Cloud + L5 Achievements** | Steamworks SDK integration, 40+10 achievements wired |
+| **S4** | 2026-07-W4 → 2026-08-W2 | **L4 Cloud Saves (Railway-Postgres) + Steamworks Cloud + L5 Achievements** | Railway Phase B: small Node/Hono API + Postgres + magic-link auth; sync the existing per-handle save JSON to the cloud; Steamworks SDK as a parallel save target; 40+10 achievements wired |
 | **S5** | 2026-08-W2 → 2026-08-W3 | **L6 Perf + L10 Steam Deck** | Low-Quality toggle, controller mapping, Deck verified |
 | **S6** | 2026-06-W2 → 2026-08-W4 (parallel) | **L8 Localisation** | ES/DE/FR/RU/zh-CN/JA (tutorial strings translated LAST after L2 lands) |
 | **S7** | 2026-08-W3 → 2026-08-W4 | **L2 Tutorial rewrite** (LAST gameplay-touching sprint) | Cipher's First Contract teaches the actually-final game |
@@ -179,6 +179,20 @@ Day-1:
 - Launch trailer (new cut emphasising story closure)
 - All 8 launch languages polished
 - Press review embargo lifts 24h pre-launch
+
+---
+
+## Phase 5b — Infrastructure (live now, scales with the game)
+
+A parallel infrastructure track that runs alongside the gameplay sprints. Pre-existing Railway connection used.
+
+| Phase | When | What |
+|-------|------|------|
+| **A — Static hosting** | Live as of 2026-06 | Railway hosts the built Vite static bundle. No backend, no DB. Players load the URL, saves stay in their browser. ~£5/month |
+| **B — Cloud Saves** | Pre-EA launch (S4) | Small Node/Hono API + Postgres + magic-link auth on Railway. Replaces (or supplements) Steam Cloud for sync across devices. ~£15/month at small scale |
+| **C — Multiplayer Backend** | Post-1.0, post-EA-S3 (2028+) | Full backend: WebSockets + Postgres + Redis. Persistent shared world. Contract competition. Bounty network. Co-op. **Per the "multiplayer LAST" mandate — does not start before 2028.** ~£200+/month at scale |
+
+The Phase B schema is designed to be Phase C-compatible — the `users` and `saves` tables map cleanly to multiplayer operative records. No throwaway architecture.
 
 ---
 
