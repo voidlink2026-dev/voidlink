@@ -298,7 +298,10 @@ All three arcs landed in 2026-06. See Complete_Tasks.md for per-arc detail.
 
 ---
 
-### L5 — Achievements (30–50) 🎯
+### L5 — Achievements ✅ SHIPPED 2026-06
+50 entries across six tiers wired in. See Complete_Tasks.md for the full detail. Steamworks SDK call is the only outstanding piece and rides with L4 Cloud Saves.
+
+### ~~L5 — Achievements (30–50)~~ 🎯
 **Window:** 2026-07-W3 → 2026-08-W1 (1 week, parallel with L4)
 **Effort:** 1 week
 **Status:** Not started

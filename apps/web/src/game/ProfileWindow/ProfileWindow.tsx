@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
-import { levelFromXp, xpProgressPercent, xpForNextLevel, levelTitle, GATEWAYS, getActiveGateway } from '@voidlink/core'
+import { levelFromXp, xpProgressPercent, xpForNextLevel, levelTitle, GATEWAYS, getActiveGateway, ACHIEVEMENTS } from '@voidlink/core'
+import type { AchievementDefinition, PlayerProfile } from '@voidlink/core'
 import { Button } from '@voidlink/ui'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './ProfileWindow.module.css'
@@ -22,7 +23,7 @@ const HW_UNIT_KEYS: Record<string, string> = {
   gatewayBandwidth: 'profile.unitMbps',
 }
 
-type ProfileTab = 'overview' | 'factions' | 'standings'
+type ProfileTab = 'overview' | 'factions' | 'standings' | 'achievements'
 
 export function ProfileWindow() {
   const { t } = useTranslation()
@@ -107,7 +108,7 @@ export function ProfileWindow() {
 
       {/* Tab bar */}
       <div className={styles.tabRow}>
-        {(['overview', 'factions', 'standings'] as ProfileTab[]).map((t2) => (
+        {(['overview', 'factions', 'standings', 'achievements'] as ProfileTab[]).map((t2) => (
           <button
             key={t2}
             className={`${styles.tabBtn} ${tab === t2 ? styles.tabBtnActive : ''}`}
@@ -213,8 +214,11 @@ export function ProfileWindow() {
         </div>
       )}
 
+      {/* ── ACHIEVEMENTS TAB ────────────────────────── */}
+      {tab === 'achievements' && <AchievementsTab player={player} />}
+
       {/* ── OVERVIEW TAB ────────────────────────────── */}
-      {tab !== 'factions' && tab !== 'standings' && (
+      {tab === 'overview' && (
       <>
       {/* Two-column body */}
       <div className={styles.columns}>
@@ -373,5 +377,94 @@ function GatewayPanel() {
         })}
       </div>
     </>
+  )
+}
+
+// L5 — Achievements tab. Grid of all 50 entries grouped by tier. Hidden
+// story/platinum entries display as locked silhouettes until earned.
+const TIER_ORDER: AchievementDefinition['tier'][] = ['platinum', 'gold', 'story', 'silver', 'bronze', 'trivial']
+const TIER_LABEL: Record<AchievementDefinition['tier'], string> = {
+  platinum: 'PLATINUM',
+  gold: 'GOLD',
+  story: 'STORY',
+  silver: 'SILVER',
+  bronze: 'BRONZE',
+  trivial: 'TRIVIAL',
+}
+const TIER_COLOR: Record<AchievementDefinition['tier'], string> = {
+  platinum: '#e5e4e2',
+  gold: '#ffd700',
+  story: '#00cfff',
+  silver: '#b6b6b6',
+  bronze: '#c47a3c',
+  trivial: '#888',
+}
+
+function AchievementsTab({ player }: { player: PlayerProfile }) {
+  const total = ACHIEVEMENTS.length
+  const unlockedCount = ACHIEVEMENTS.filter((a) => !!player.activeFlags[`achievement_${a.id}`]).length
+  const pct = Math.round((unlockedCount / total) * 100)
+
+  return (
+    <div style={{ padding: '8px 4px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+        <span style={{ fontSize: 10, letterSpacing: '0.16em', color: '#a8a8a8' }}>UNLOCKED</span>
+        <span style={{ fontSize: 18, fontWeight: 700, color: '#00cfff', letterSpacing: '0.04em' }}>
+          {unlockedCount} <span style={{ color: '#909090', fontWeight: 400 }}>/ {total}</span>
+        </span>
+        <span style={{ fontSize: 10, color: '#909090', letterSpacing: '0.1em', marginLeft: 'auto' }}>{pct}%</span>
+      </div>
+      <div style={{ height: 1, background: 'rgba(0,229,255,0.18)' }} />
+
+      {TIER_ORDER.map((tier) => {
+        const items = ACHIEVEMENTS.filter((a) => a.tier === tier)
+        if (items.length === 0) return null
+        const tierColor = TIER_COLOR[tier]
+        return (
+          <div key={tier} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{
+              fontSize: 9, letterSpacing: '0.22em', color: tierColor,
+              textShadow: tier === 'platinum' ? `0 0 10px ${tierColor}` : 'none',
+            }}>
+              {TIER_LABEL[tier]} · {items.filter((a) => !!player.activeFlags[`achievement_${a.id}`]).length} / {items.length}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 6 }}>
+              {items.map((a) => {
+                const unlocked = !!player.activeFlags[`achievement_${a.id}`]
+                const hideContent = a.hidden && !unlocked
+                return (
+                  <div
+                    key={a.id}
+                    style={{
+                      border: `1px solid ${unlocked ? tierColor : 'rgba(255,255,255,0.06)'}`,
+                      background: unlocked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.01)',
+                      padding: '8px 10px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 3,
+                      opacity: unlocked ? 1 : 0.55,
+                    }}
+                  >
+                    <div style={{
+                      fontSize: 10, fontWeight: 700,
+                      color: unlocked ? '#d4d4d4' : '#6a6a6a',
+                      letterSpacing: '0.04em',
+                    }}>
+                      {hideContent ? '— LOCKED —' : a.title}
+                    </div>
+                    <div style={{
+                      fontSize: 9, color: unlocked ? '#a0a0a0' : '#7a7a7a',
+                      fontStyle: 'italic', lineHeight: 1.4,
+                    }}>
+                      {hideContent ? 'Achievement criteria hidden until earned.' : a.description}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
+    </div>
   )
 }

@@ -20,6 +20,7 @@ import { EmailInbox } from '../../game/EmailInbox/EmailInbox.tsx'
 import { ResearchBench } from '../../game/Research/ResearchBench.tsx'
 import { CodexWindow } from '../../game/Codex/CodexWindow.tsx'
 import { CodexUnlockToast } from '../../game/Codex/CodexUnlockToast.tsx'
+import { AchievementUnlockToast } from '../../game/Achievements/AchievementUnlockToast.tsx'
 import { SplashOverlay } from '../../game/Splash/SplashOverlay.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
@@ -290,6 +291,7 @@ export function DesktopScreen() {
       <ReflectionOverlay />
       <EndingChoiceOverlay />
       <CodexUnlockToast />
+      <AchievementUnlockToast />
       <SplashOverlay />
     </main>
   )

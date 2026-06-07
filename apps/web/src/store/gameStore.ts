@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, evaluateAchievements, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -206,6 +206,7 @@ interface GameState {
   // M14q Sub-sprint B — Codex
   codexUnlockQueue: string[]        // queued unlock-notification entry IDs
   codexFocusId: string | null       // deep-link target for the Codex window
+  achievementUnlockQueue: string[]  // L5 — queued achievement notifications
   pendingSplash: string | null      // M14q Sub-sprint E — splash card ID
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
@@ -327,6 +328,7 @@ interface GameActions {
   // M14q Sub-sprint B — Codex
   evaluateCodexUnlockNotifications: () => void
   dismissCodexUnlock: (id: string) => void
+  dismissAchievementUnlock: (id: string) => void
   setCodexFocusId: (id: string | null) => void
   markCodexRead: (id: string) => void
 
@@ -358,6 +360,7 @@ export const useGameStore = create<GameState & GameActions>()(
     pendingEndingChoice: false,
     codexUnlockQueue: [],
     codexFocusId: null,
+    achievementUnlockQueue: [],
     pendingSplash: null,
     activeWorldEvents: [],
     nextWorldEventAt: null,
@@ -1207,6 +1210,15 @@ export const useGameStore = create<GameState & GameActions>()(
             for (const entry of dueCodex) {
               s.player.activeFlags[`codex_unlocked_${entry.id}`] = Date.now()
               if (!s.codexUnlockQueue.includes(entry.id)) s.codexUnlockQueue.push(entry.id)
+            }
+          }
+
+          // L5 — Achievement evaluation. Pure check function over player state.
+          if (s.player) {
+            const dueAchievements = evaluateAchievements(s.player)
+            for (const id of dueAchievements) {
+              s.player.activeFlags[`achievement_${id}`] = Date.now()
+              if (!s.achievementUnlockQueue.includes(id)) s.achievementUnlockQueue.push(id)
             }
           }
 
@@ -2264,6 +2276,9 @@ export const useGameStore = create<GameState & GameActions>()(
 
     dismissCodexUnlock: (id) =>
       set((s) => { s.codexUnlockQueue = s.codexUnlockQueue.filter((x) => x !== id) }),
+
+    dismissAchievementUnlock: (id) =>
+      set((s) => { s.achievementUnlockQueue = s.achievementUnlockQueue.filter((x) => x !== id) }),
 
     setCodexFocusId: (id) =>
       set((s) => { s.codexFocusId = id }),
