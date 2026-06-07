@@ -3182,4 +3182,614 @@ export const STORY_MISSIONS: StoryMission[] = [
     timeLimitSeconds: 480,
     narrativeFlags: { arc6_magnus_identified: true, arc6_choice_pending: true },
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Arc 7 — THE QUIET WAR
+  // ───────────────────────────────────────────────────────────────────────────
+  // Two corporations — Internic Holdings (telecom) and ARUNMOR-Δ5 (neural
+  // interface biotech) — are at corporate war over a contested IP portfolio.
+  // The player is hired by both sides in alternating missions. A hidden third
+  // party — NIGHTOWL_22, running an operation called LANTERN_BRIDGE — has been
+  // selectively leaking to both sides to keep the war *contained*. The reveal
+  // in M3 is that the war is the thing keeping each company busy enough not
+  // to do worse things to the people they crush. M4 forces a choice with the
+  // QUIET_WAR_RESOLUTION multi-phase template (see multiphase.ts).
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ─── Arc 7 Mission 1: Edge of the Knife ───────────────────────────────────
+  {
+    id: 'story_arc7_01',
+    type: 'database_corruption',
+    status: 'available',
+    difficulty: 4,
+    isStory: true,
+    briefing: {
+      clientHandle: 'Internic_Ops',
+      clientAvatarId: 'avatar_internic',
+      subject: 'Δ5 trial data — corruption contract',
+      body:
+        'Operative,\n\n' +
+        'Arunmor Subsidiary Five (ARUNMOR-Δ5) is currently running a Phase II clinical trial for a neural-interface ' +
+        'implant they have branded *Mira*. Their efficacy data is fabricated. We have independent reason to know this.\n\n' +
+        'Phase II is the gate that unlocks their FDA filing. If their database is corrupted before the September review, ' +
+        'they will be forced to restart the trial under independent observation, at which point the truth surfaces on its own.\n\n' +
+        'Your contract is to corrupt the trial records on their R&D database. Selectively — not a wipe. The corruption ' +
+        'must read as *internal*. We do not want this to look like an attack. We want it to look like incompetence.\n\n' +
+        'Pay: 17,000 Cr on completion. Bonus 4,000 if you also exfiltrate the audit log.\n\n' +
+        '— Internic Holdings | Operations',
+    },
+    objectives: [
+      {
+        id: 'obj_arc7_01_primary',
+        description: 'Corrupt the Phase II trial records on the Δ5 R&D database',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc7_01',
+      },
+      {
+        id: 'obj_arc7_01_optional',
+        description: 'Exfiltrate audit log for bonus payment (+4,000 Cr)',
+        isOptional: true,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc7_01',
+        targetFileId: 'f_arc7_01_audit',
+      },
+    ],
+    targetNetworkId: 'net_story_arc7_01',
+    requirements: requirementsForDifficulty(4),
+    reward: {
+      credits: 17_000,
+      reputation: 70,
+      factionStandingDeltas: { arunmor: -20, the_underground: -5 },
+    },
+    network: {
+      id: 'net_story_arc7_01',
+      archetype: 'corporate_intranet',
+      ownerId: 'arunmor_delta5',
+      label: 'ARUNMOR-Δ5 — RESEARCH NETWORK',
+      seed: 0x41d50100,
+      createdAt: 0,
+      traceSpeed: 14,
+      activeAdmins: 1,
+      entryNodeId: 'd0',
+      nodes: [
+        {
+          id: 'd0', type: 'entry_point', label: 'public r&d portal',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'HTTPS', port: 443, version: 'nginx 1.20', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2021-23017' }],
+          files: [], connectedTo: ['d1', 'd2'], position: { x: 110, y: 300 },
+        },
+        {
+          id: 'd1', type: 'firewall', label: 'r&d perimeter firewall',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['d0', 'd3'], position: { x: 280, y: 160 },
+        },
+        {
+          id: 'd2', type: 'router', label: 'lab-floor router',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'Telnet', port: 23, version: '1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2018-9866' }],
+          files: [], connectedTo: ['d0', 'd3', 'd4'], position: { x: 280, y: 440 },
+        },
+        {
+          id: 'd3', type: 'mail_server', label: 'trial coordinator mailbox',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'IMAP', port: 143, version: 'Dovecot 2.3', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc7_01_internal_mail',
+              name: 'lab_floor_thread.eml',
+              sizeKb: 12,
+              isEncrypted: false,
+              isLog: false,
+              content:
+                'A back-and-forth between three lab technicians. Two are uneasy about the Phase II numbers. ' +
+                'The third is the trial coordinator. Her replies are short and bureaucratic. She does not engage with the unease. ' +
+                'You read all four exchanges twice.',
+            },
+          ],
+          connectedTo: ['d1', 'd4', 'd5'], position: { x: 480, y: 200 },
+        },
+        {
+          id: 'd4', type: 'database', label: 'trial records database',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'MySQL', port: 3306, version: '8.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2023-21863' }],
+          files: [], connectedTo: ['d2', 'd3', 'd5'], position: { x: 480, y: 440 },
+        },
+        {
+          id: 'd5', type: 'file_server', label: 'audit & compliance archive',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SMB', port: 445, version: '3.1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2020-0796' }],
+          files: [
+            {
+              id: 'f_arc7_01_audit',
+              name: 'phase2_audit_log.enc',
+              sizeKb: 240,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc7_01',
+              content:
+                'A complete forensic record of every modification to the trial database in the last four months. ' +
+                'Reading it carefully, you see Δ5\'s internal auditor flagged the efficacy numbers three separate times. ' +
+                'All three flags were closed by the same trial coordinator within forty-five minutes. ' +
+                'You note that Internic asked you to corrupt the data — but the data was already a lie.',
+            },
+          ],
+          connectedTo: ['d3', 'd4'], position: { x: 680, y: 300 },
+        },
+      ],
+    },
+    events: [
+      {
+        id: 'arc7_01_evt_trial_corrupted',
+        triggerCondition: { type: 'node_breached', nodeType: 'database' },
+        message: 'Trial records corrupted. The lab coordinator\'s mailbox lights up in real time as automated integrity checks fail.',
+        effect: { type: 'set_flag', flag: 'arc7_delta5_data_corrupted', value: true },
+      },
+      {
+        id: 'arc7_01_evt_audit_seen',
+        triggerCondition: { type: 'node_breached', nodeType: 'file_server' },
+        message: 'The audit log paints a clear picture. Δ5\'s own auditor flagged the data three times. The coordinator buried it.',
+        effect: undefined,
+      },
+    ] satisfies MissionEvent[],
+    coda:
+      'You disconnect cleanly. Internic\'s payment hits Pacific National before you have closed your gateway tunnel.\n\n' +
+      'Two days later, Δ5 issues a press release describing a "database integrity incident" and announcing that the ' +
+      'Phase II trial will be paused for "voluntary internal review." The story carries on financial wires for about ' +
+      'six hours and then drops below the fold.\n\n' +
+      'Internic\'s share price rises 4.2 percent. Δ5\'s parent — Arunmor — issues a separate statement denying any ' +
+      'concerns about the underlying science.\n\n' +
+      'You sleep through both press cycles. When you wake, there is an encrypted message in your inbox. The sender ' +
+      'is *Arunmor_HR*. The subject is your handle, in lowercase. It reads: *"We would like to retain you. The retainer ' +
+      'is substantial. Read the attached."*\n\n' +
+      'You read the attached.',
+    unlockRequirement: {
+      rank: 4,
+    },
+    narrativeFlags: { arc7_started: true, arc7_internic_contract_taken: true },
+  },
+
+  // ─── Arc 7 Mission 2: Mirror Image ────────────────────────────────────────
+  {
+    id: 'story_arc7_02',
+    type: 'file_theft',
+    status: 'available',
+    difficulty: 4,
+    isStory: true,
+    briefing: {
+      clientHandle: 'Arunmor_HR',
+      clientAvatarId: 'avatar_arunmor',
+      subject: 'Retrieval — Phase II files (compromised)',
+      body:
+        'Operative,\n\n' +
+        'Following last week\'s database incident, ARUNMOR-Δ5 has identified the source of the corruption: a copy of our ' +
+        'unredacted Phase II files is currently held on Internic Holdings\' east-region data warehouse. We do not yet know ' +
+        'how it got there. We do know we want it back, and we want it removed from their systems.\n\n' +
+        'Your contract is twofold. One: retrieve the file *neural_interface_phase2.enc* from Internic\'s warehouse. Two: ' +
+        'delete it from their archive after retrieval. Confirm both before you disconnect.\n\n' +
+        'We are aware your previous contract was with the other party. We are not concerned. We pay better.\n\n' +
+        'Pay: 22,000 Cr on completion. Confidentiality is in the rate.\n\n' +
+        '— Arunmor Subsidiary Five | Human Resources Operations',
+    },
+    objectives: [
+      {
+        id: 'obj_arc7_02_primary',
+        description: 'Retrieve neural_interface_phase2.enc from Internic east-region warehouse',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc7_02',
+        targetFileId: 'f_arc7_02_phase2',
+      },
+      {
+        id: 'obj_arc7_02_delete',
+        description: 'Delete the file from Internic\'s archive after exfiltration',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc7_02',
+      },
+    ],
+    targetNetworkId: 'net_story_arc7_02',
+    requirements: requirementsForDifficulty(4),
+    reward: {
+      credits: 22_000,
+      reputation: 80,
+      factionStandingDeltas: { arunmor: 15, the_underground: -5 },
+    },
+    network: {
+      id: 'net_story_arc7_02',
+      archetype: 'corporate_intranet',
+      ownerId: 'internic_holdings',
+      label: 'INTERNIC — EAST REGION DATA WAREHOUSE',
+      seed: 0x1e7e62a5,
+      createdAt: 0,
+      traceSpeed: 15,
+      activeAdmins: 1,
+      entryNodeId: 'i0',
+      nodes: [
+        {
+          id: 'i0', type: 'entry_point', label: 'warehouse vpn gateway',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SSH', port: 22, version: '8.4', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['i1', 'i2'], position: { x: 110, y: 300 },
+        },
+        {
+          id: 'i1', type: 'firewall', label: 'edge firewall',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v2c', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2018-0473' }],
+          files: [], connectedTo: ['i0', 'i3'], position: { x: 280, y: 160 },
+        },
+        {
+          id: 'i2', type: 'proxy', label: 'load-balancing proxy',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'HTTPS', port: 443, version: 'haproxy 2.4', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['i0', 'i4'], position: { x: 280, y: 440 },
+        },
+        {
+          id: 'i3', type: 'admin_console', label: 'warehouse admin console',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'RDP', port: 3389, version: '10.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2019-0708' }],
+          files: [], connectedTo: ['i1', 'i4', 'i5'], position: { x: 480, y: 200 },
+        },
+        {
+          id: 'i4', type: 'database', label: 'metadata index',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'PostgreSQL', port: 5432, version: '14.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2022-1552' }],
+          files: [
+            {
+              id: 'f_arc7_02_metadata',
+              name: 'archive_metadata.json',
+              sizeKb: 4,
+              isEncrypted: false,
+              isLog: false,
+              content:
+                'The metadata entry for neural_interface_phase2.enc is dated nineteen days before ARUNMOR-Δ5 noticed it was missing. ' +
+                'The upload fingerprint is not internal to Internic. The chain-of-custody is two hops: an academic mesh relay called ' +
+                'LANTERN_BRIDGE, then to Internic\'s ingest. You know that name.',
+            },
+          ],
+          connectedTo: ['i2', 'i3', 'i5'], position: { x: 480, y: 440 },
+        },
+        {
+          id: 'i5', type: 'file_server', label: 'cold storage array',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SMB', port: 445, version: '3.1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2020-0796' }],
+          files: [
+            {
+              id: 'f_arc7_02_phase2',
+              name: 'neural_interface_phase2.enc',
+              sizeKb: 1840,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc7_02',
+              content:
+                'The complete unredacted Phase II clinical data. Reading the executive summary: the implant works. ' +
+                'It works very well. The efficacy numbers Δ5 published are *lower* than the reality. ' +
+                'They falsified their own data downward. You do not yet know why.',
+            },
+          ],
+          connectedTo: ['i3', 'i4'], position: { x: 680, y: 300 },
+        },
+      ],
+    },
+    events: [
+      {
+        id: 'arc7_02_evt_metadata',
+        triggerCondition: { type: 'node_breached', nodeType: 'database' },
+        message: 'The chain-of-custody record names LANTERN_BRIDGE as the relay. Same handle that brokered your Nordstar contract.',
+        effect: { type: 'set_flag', flag: 'arc7_lantern_bridge_observed', value: true },
+      },
+      {
+        id: 'arc7_02_evt_phase2_seen',
+        triggerCondition: { type: 'node_breached', nodeType: 'file_server' },
+        message: 'The Phase II numbers were faked *downward*. Δ5 buried good results. Internic paid to hold the file. Neither story is the one you were told.',
+        effect: undefined,
+      },
+    ] satisfies MissionEvent[],
+    coda:
+      'You complete the contract cleanly. The file lands on your local storage. The deletion confirms on Internic\'s archive. ' +
+      'You disconnect with a wipe pattern your tutor would have signed off on.\n\n' +
+      'Arunmor pays you within forty-five minutes. The payment carries no message.\n\n' +
+      'You sit with the contents of the file for a long time.\n\n' +
+      'You worked for Internic to corrupt records that were already a lie. You worked for Δ5 to recover a copy of those ' +
+      'records that they themselves *suppressed*. The third party — LANTERN_BRIDGE — was on both sides of the operation. ' +
+      'You have seen that handle before. You took a contract from them once. They thanked you for your *routing*.\n\n' +
+      'A new message arrives an hour later. The sender is *NIGHTOWL_22*. The subject is one word: *"Lunch."* The body is empty. ' +
+      'Attached: a connection bookmark to a network you do not recognise. The bookmark file is signed with a fingerprint ' +
+      'you have never seen, and one you have. The fingerprint you have seen is yours.',
+    unlockRequirement: {
+      completedMissionIds: ['story_arc7_01'],
+    },
+    narrativeFlags: { arc7_arunmor_contract_taken: true },
+  },
+
+  // ─── Arc 7 Mission 3: The Bridge ──────────────────────────────────────────
+  {
+    id: 'story_arc7_03',
+    type: 'file_theft',
+    status: 'available',
+    difficulty: 5,
+    isStory: true,
+    briefing: {
+      clientHandle: 'NIGHTOWL_22',
+      clientAvatarId: 'avatar_owl',
+      subject: 'Lunch.',
+      body:
+        'I have been the third client. The bookmark in this message connects to a dead-drop node I operate on a defunct academic ' +
+        'mesh. It has held my files for nine years. I am sending you to it because I want you to know, before the next contract ' +
+        'lands, what kind of operation you have been participating in.\n\n' +
+        'My handle on the corporate side is LANTERN_BRIDGE. You may have spoken to it. The cache on the dead-drop contains the ' +
+        'true picture: every contract I have brokered to Internic, every contract I have brokered to ARUNMOR-Δ5, and every piece ' +
+        'of evidence I have collected about what each of them has been doing while we kept them busy fighting each other.\n\n' +
+        'Read the cache. Then we will talk about what comes next. I owe you a conversation. You have earned a choice.\n\n' +
+        '— NIGHTOWL_22',
+    },
+    objectives: [
+      {
+        id: 'obj_arc7_03_primary',
+        description: 'Retrieve the LANTERN_BRIDGE evidence cache from the dead-drop mesh node',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc7_03',
+        targetFileId: 'f_arc7_03_cache',
+      },
+      {
+        id: 'obj_arc7_03_optional',
+        description: 'Read the operational log on the broker terminal (BONUS: reveals the third corp NIGHTOWL has been protecting)',
+        isOptional: true,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc7_03',
+      },
+    ],
+    targetNetworkId: 'net_story_arc7_03',
+    requirements: requirementsForDifficulty(5),
+    reward: {
+      credits: 9_000,
+      reputation: 100,
+      factionStandingDeltas: { the_underground: 25 },
+    },
+    network: {
+      id: 'net_story_arc7_03',
+      archetype: 'corporate_intranet',
+      ownerId: 'lantern_bridge',
+      label: 'LANTERN_BRIDGE — ACADEMIC MESH NODE',
+      seed: 0xbeac0117,
+      createdAt: 0,
+      traceSpeed: 9,
+      activeAdmins: 0,
+      entryNodeId: 'l0',
+      nodes: [
+        {
+          id: 'l0', type: 'entry_point', label: 'academic mesh handshake',
+          securityTier: 1, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SSH', port: 22, version: '7.4 (legacy)', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2018-15473' }],
+          files: [], connectedTo: ['l1'], position: { x: 110, y: 300 },
+        },
+        {
+          id: 'l1', type: 'router', label: 'mesh relay router',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'BGP', port: 179, version: '4 (legacy)', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2022-20934' }],
+          files: [], connectedTo: ['l0', 'l2', 'l3'], position: { x: 300, y: 300 },
+        },
+        {
+          id: 'l2', type: 'admin_console', label: 'broker operational terminal',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SSH', port: 22, version: '8.0', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc7_03_oplog',
+              name: 'broker_operational_log.txt',
+              sizeKb: 28,
+              isEncrypted: false,
+              isLog: true,
+              content:
+                'A ledger of every contract LANTERN_BRIDGE has brokered in the last nine years. 312 entries.\n\n' +
+                'Internic: 84 contracts. ARUNMOR-Δ5: 81 contracts. The numbers are deliberately balanced.\n\n' +
+                'A third recipient is named seven times, in the most recent entries: *Helios Marine Group*. Each entry is ' +
+                'flagged "DO NOT BROKER — REFER UPSTREAM." Helios Marine has not been involved in the Internic / Δ5 contest. ' +
+                'They appear to be the company NIGHTOWL is protecting *from* the contest.',
+            },
+          ],
+          connectedTo: ['l1', 'l4'], position: { x: 490, y: 180 },
+        },
+        {
+          id: 'l3', type: 'database', label: 'evidence archive index',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SQLite', port: 0, version: '3.40', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['l1', 'l4'], position: { x: 490, y: 420 },
+        },
+        {
+          id: 'l4', type: 'file_server', label: 'evidence cache',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SFTP', port: 22, version: 'OpenSSH 9.0', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc7_03_cache',
+              name: 'evidence_cache.tar.enc',
+              sizeKb: 12_400,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc7_03',
+              content:
+                'A nine-year evidence cache. The two largest folders are labelled INTERNIC and ARUNMOR-Δ5. Each contains documented ' +
+                'human-rights violations: forced-relocation contracts (Internic, cleared three coastal villages in the Bay of Bengal ' +
+                'for cable infrastructure); clinical-trial deaths (Δ5, eleven subjects across two prior implant trials, all classified ' +
+                'as "non-attributable adverse events"). A third folder is labelled HELIOS — eighty-three documents, mostly bank ' +
+                'transactions and one set of internal medical-records showing ARUNMOR-Δ5 was about to acquire Helios Marine and roll ' +
+                'their next trial against Helios\'s offshore labour force. NIGHTOWL\'s leaks have kept Δ5 too distracted to complete the ' +
+                'acquisition. That is what the war has been for.',
+            },
+          ],
+          connectedTo: ['l2', 'l3'], position: { x: 690, y: 300 },
+        },
+      ],
+    },
+    events: [
+      {
+        id: 'arc7_03_evt_oplog_seen',
+        triggerCondition: { type: 'objective_complete', objectiveId: 'obj_arc7_03_optional' },
+        message: 'HELIOS MARINE GROUP appears seven times in the broker log. NIGHTOWL is protecting them. The war is the protection.',
+        effect: { type: 'set_flag', flag: 'arc7_helios_revealed', value: true },
+      },
+      {
+        id: 'arc7_03_evt_cache_seen',
+        triggerCondition: { type: 'node_breached', nodeType: 'file_server' },
+        message: 'Nine years of evidence. Both corporations are doing worse things separately than they are while they fight each other.',
+        effect: { type: 'set_flag', flag: 'arc7_evidence_acquired', value: true },
+      },
+    ] satisfies MissionEvent[],
+    coda:
+      'NIGHTOWL_22 calls you twenty minutes after you disconnect. The call is on an encrypted relay you have not used before. Her voice ' +
+      'is older than her handle. You do not interrupt her.\n\n' +
+      '"I started LANTERN_BRIDGE eleven years ago," she says. "I was trying to keep a small company alive. I broker leaks to whichever ' +
+      'side is winning, so the other side stays in the fight. The companies do not know they are being managed. Neither does the Mesh."\n\n' +
+      'You ask why she is telling you.\n\n' +
+      '"Because Internic\'s CTO is forty-eight hours from realising the leaks are coming from one source. When he does, the war ends. ' +
+      'One of the two companies wins it outright. They then move on to whoever is in their way next. The current ‘whoever\' is a labour ' +
+      'cooperative in the South China Sea, eighty-three thousand people, with a medical study Δ5 wants. The war has been keeping them alive."\n\n' +
+      'A long pause.\n\n' +
+      '"You have the cache now. You can deliver it to Internic and let Δ5 collapse. You can deliver it to Δ5 and let Internic be sued ' +
+      'into nothing. You can expose me, and the war ends however the more vicious of the two finishes it. Or you can help me keep the ' +
+      'leaks going for one more cycle. Until I can move Helios somewhere safer.\n\n' +
+      'No outcome here is clean. I am not asking you to pretend it is. I am asking you to choose with all of the facts.\n\n' +
+      'You have forty-eight hours. The next contract will record what you choose."\n\n' +
+      'She disconnects.',
+    unlockRequirement: {
+      completedMissionIds: ['story_arc7_02'],
+    },
+    narrativeFlags: { arc7_nightowl_revealed: true, arc7_choice_pending: true },
+  },
+
+  // ─── Arc 7 Mission 4: Last Light ──────────────────────────────────────────
+  // The climax. The actual choice happens via the QUIET_WAR_RESOLUTION multi-
+  // phase template (see multiphase.ts) — this mission is the recon mission
+  // that confirms the CTO is forty-eight hours from the discovery. The
+  // resolution-mission card appears in the inbox after this lands.
+  {
+    id: 'story_arc7_04',
+    type: 'file_theft',
+    status: 'available',
+    difficulty: 5,
+    isStory: true,
+    briefing: {
+      clientHandle: 'YOURSELF',
+      clientAvatarId: 'avatar_self',
+      subject: 'Last Light — confirm the window',
+      body:
+        'You need to verify two things before you commit to a side.\n\n' +
+        'One: Internic\'s CTO. Daniel Park. Confirm he has begun mapping the leaks himself. If he has, the forty-eight-hour window ' +
+        'NIGHTOWL described is real and the war is genuinely about to end.\n\n' +
+        'Two: the bookmark on Park\'s personal device. If he has bookmarked the LANTERN_BRIDGE relay path even once, he has seen it. ' +
+        'At that point, the operation is past saving and you choose between aftermaths only.\n\n' +
+        'Get into Park\'s personal endpoint. Confirm or deny. Disconnect.\n\n' +
+        '— You',
+    },
+    objectives: [
+      {
+        id: 'obj_arc7_04_primary',
+        description: 'Breach Daniel Park\'s personal endpoint and confirm investigation status',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc7_04',
+        targetFileId: 'f_arc7_04_browser',
+      },
+    ],
+    targetNetworkId: 'net_story_arc7_04',
+    requirements: requirementsForDifficulty(5),
+    reward: {
+      credits: 14_000,
+      reputation: 90,
+    },
+    network: {
+      id: 'net_story_arc7_04',
+      archetype: 'corporate_intranet',
+      ownerId: 'internic_holdings',
+      label: 'DANIEL PARK — PERSONAL ENDPOINT',
+      seed: 0xda716a14,
+      createdAt: 0,
+      traceSpeed: 18,
+      activeAdmins: 1,
+      entryNodeId: 'p0',
+      nodes: [
+        {
+          id: 'p0', type: 'entry_point', label: 'home-office vpn',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'WireGuard', port: 51820, version: '1.0', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['p1'], position: { x: 110, y: 300 },
+        },
+        {
+          id: 'p1', type: 'firewall', label: 'personal firewall',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['p0', 'p2', 'p3'], position: { x: 290, y: 300 },
+        },
+        {
+          id: 'p2', type: 'endpoint', label: 'park personal laptop',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'RDP', port: 3389, version: '10.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2019-0708' }],
+          files: [
+            {
+              id: 'f_arc7_04_browser',
+              name: 'chrome_history.sqlite',
+              sizeKb: 84,
+              isEncrypted: false,
+              isLog: false,
+              missionObjective: 'story_arc7_04',
+              content:
+                'Daniel Park\'s browser history for the last six days. He has visited the LANTERN_BRIDGE relay handshake page ' +
+                'fourteen times. He has bookmarked it. He has begun systematically requesting traceroute logs from his ' +
+                'security team. NIGHTOWL was right about the timing. He has not yet identified her — but he will, ' +
+                'in less than forty-eight hours, by elimination.\n\n' +
+                'There is a draft email open in a tab. It is addressed to his Head of Threat Intelligence. The subject is ' +
+                '"Single source of leaks — preliminary findings." The body is half-written.',
+            },
+          ],
+          connectedTo: ['p1', 'p4'], position: { x: 490, y: 180 },
+        },
+        {
+          id: 'p3', type: 'mail_server', label: 'park personal mail',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'IMAP', port: 143, version: 'Dovecot 2.3', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['p1', 'p4'], position: { x: 490, y: 420 },
+        },
+        {
+          id: 'p4', type: 'file_server', label: 'personal documents',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SMB', port: 445, version: '3.1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2020-0796' }],
+          files: [], connectedTo: ['p2', 'p3'], position: { x: 690, y: 300 },
+        },
+      ],
+    },
+    events: [
+      {
+        id: 'arc7_04_evt_confirmed',
+        triggerCondition: { type: 'objective_complete', objectiveId: 'obj_arc7_04_primary' },
+        message: 'Park has bookmarked the LANTERN_BRIDGE relay path. The forty-eight-hour window is real. The resolution mission is now in your inbox.',
+        effect: { type: 'set_flag', flag: 'arc7_window_confirmed', value: true },
+      },
+    ] satisfies MissionEvent[],
+    coda:
+      'You disconnect from Park\'s endpoint with the browser-history file on your local storage. The wipe is clean. He will not know.\n\n' +
+      'You sit at your terminal and you look at the cache. The picture is complete now.\n\n' +
+      'You can warn INTERNIC: end the war with their side dominant. Helios Marine\'s coastal labour cooperative will be acquired ' +
+      'within a year. NIGHTOWL\'s long quiet protection of them will have been for nothing.\n\n' +
+      'You can warn ARUNMOR-Δ5: end the war with their side dominant. Internic\'s telecom infrastructure becomes a Δ5 asset. ' +
+      'NIGHTOWL\'s leaks are blamed on a junior at Internic who did not do it.\n\n' +
+      'You can EXPOSE NIGHTOWL: deliver her broker terminal to Park or to Δ5 HR. She disappears within a week. The war ends on ' +
+      'whichever side learned the truth first. Eighty-three thousand people lose their oblique guardian.\n\n' +
+      'You can PRESERVE THE BALANCE: feed Park a false thread, leak fabricated intel to both sides, keep the war warm for one ' +
+      'more cycle. NIGHTOWL gets the time to move Helios somewhere safer. You have made yourself complicit in the next round of ' +
+      'managed war.\n\n' +
+      'CIPHER writes to you the next morning. He says: *"Whatever you choose, I will not be the person who tells you it was the ' +
+      'right one. I will tell you, after, that you owned it. That is what I can do."*\n\n' +
+      '─────────────────────────────────────\n' +
+      'A choice mission card will appear in your inbox within 24 hours.\n' +
+      'Use the M14o choice mission interface to commit to WARN_INTERNIC / WARN_ARUNMOR / EXPOSE_NIGHTOWL / PRESERVE_BALANCE.\n' +
+      '─────────────────────────────────────',
+    unlockRequirement: {
+      completedMissionIds: ['story_arc7_03'],
+    },
+    timeLimitSeconds: 540,
+    narrativeFlags: { arc7_window_confirmed: true, arc7_resolution_pending: true },
+  },
 ]

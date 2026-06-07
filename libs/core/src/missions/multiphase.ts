@@ -337,7 +337,143 @@ const DEAD_DROP_RESOLUTION: MultiPhaseMissionTemplate = {
   },
 }
 
-export const MULTIPHASE_TEMPLATES: MultiPhaseMissionTemplate[] = [PROJECT_GHOST, BLACK_HALO, DEAD_DROP_RESOLUTION]
+// ═══════════════════════════════════════════════════════════════════════════
+// Arc 7 — THE QUIET WAR — Resolution
+// Four-way choice with three payoff phases. WARN_INTERNIC and WARN_ARUNMOR
+// share a single payoff phase (which side wins; faction deltas differ).
+// EXPOSE_NIGHTOWL and PRESERVE_BALANCE each have their own.
+// ═══════════════════════════════════════════════════════════════════════════
+const QUIET_WAR_RESOLUTION: MultiPhaseMissionTemplate = {
+  id: 'multiphase_quiet_war_resolution',
+  briefingSubject: 'QUIET WAR — resolution',
+  clientHandle: 'YOURSELF',
+  difficulty: 6,
+  baseCredits: 36000,
+  baseReputation: 140,
+  briefingBody:
+    'You have confirmed the window. Daniel Park is forty-eight hours from identifying NIGHTOWL. The cache is on your storage. ' +
+    'The choice is yours.\n\n' +
+    '  WARN INTERNIC — tip Park ahead of his own discovery. ARUNMOR-Δ5 collapses. Internic stock soars. Helios Marine acquired within a year.\n' +
+    '  WARN ARUNMOR — tip Δ5 HR. Internic is sued into bankruptcy. NIGHTOWL is blamed on a junior at Internic. Helios Marine acquired faster.\n' +
+    '  EXPOSE NIGHTOWL — deliver her broker terminal. War ends on whoever learns first. NIGHTOWL gone within a week.\n' +
+    '  PRESERVE BALANCE — leak fabricated thread to Park, leak counter to Δ5. War sustains for one more cycle. Bond-clean choice. Helios moves.\n\n' +
+    'No outcome here is innocent. Choose with all of the facts.',
+
+  phases: [
+    {
+      id: 'phase_qw_choice',
+      label: 'Decide',
+      description: 'Commit to a side. The phase you enter next will be determined by your selection.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_qw_decide', description: 'Commit to a resolution path', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 0, reputation: 0 },
+      choices: [
+        {
+          id: 'warn_internic',
+          label: 'WARN INTERNIC',
+          description: 'Tip Park before his own discovery. Internic\'s side wins outright. Helios falls within twelve months.',
+          nextPhaseIndex: 1,
+          effects: {
+            repDelta: 25,
+            factionDeltas: { arunmor: -25, internic: 30, the_underground: -20 },
+            setFlag: { flag: 'choice_quiet_war_warn_internic', value: true },
+          },
+        },
+        {
+          id: 'warn_arunmor',
+          label: 'WARN ARUNMOR',
+          description: 'Tip Δ5 HR. Internic is sued into nothing. NIGHTOWL is blamed on a junior. Δ5\'s side dominant.',
+          nextPhaseIndex: 1,
+          effects: {
+            repDelta: 25,
+            factionDeltas: { arunmor: 30, internic: -25, the_underground: -15 },
+            setFlag: { flag: 'choice_quiet_war_warn_arunmor', value: true },
+          },
+        },
+        {
+          id: 'expose_nightowl',
+          label: 'EXPOSE NIGHTOWL',
+          description: 'Deliver the broker terminal. She disappears within a week. War ends however the recipient finishes it.',
+          nextPhaseIndex: 2,
+          effects: {
+            repDelta: 35,
+            factionDeltas: { the_underground: -45, government: 25, arunmor: 10, internic: 10 },
+            setFlag: { flag: 'choice_quiet_war_expose_nightowl', value: true },
+          },
+        },
+        {
+          id: 'preserve_balance',
+          label: 'PRESERVE BALANCE',
+          description: 'Leak fabricated thread to Park. Counter-leak to Δ5 HR. War sustains. Helios moves. You are complicit in the next cycle.',
+          nextPhaseIndex: 3,
+          effects: {
+            repDelta: 15,
+            factionDeltas: { the_underground: 30, arunmor: -5, internic: -5 },
+            setFlag: { flag: 'choice_quiet_war_preserve_balance', value: true },
+          },
+        },
+      ],
+    },
+    // Phase 1 — WARN_INTERNIC / WARN_ARUNMOR shared payoff
+    {
+      id: 'phase_qw_warn',
+      label: 'Warn',
+      description: 'Deliver the briefing packet through a sanitised channel. The recipient will act within the hour.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_qw_warn', description: 'Deliver the briefing packet to the chosen executive\'s secure channel', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 48000, reputation: 80 },
+    },
+    // Phase 2 — EXPOSE_NIGHTOWL
+    {
+      id: 'phase_qw_expose',
+      label: 'Expose',
+      description: 'Package the LANTERN_BRIDGE broker terminal evidence. Deliver to Park or to Δ5 HR — whoever can act on it first.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_qw_expose', description: 'Package and deliver the broker-terminal evidence', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 65000, reputation: 50 },
+    },
+    // Phase 3 — PRESERVE_BALANCE
+    {
+      id: 'phase_qw_preserve',
+      label: 'Preserve',
+      description: 'Fabricate the false thread for Park. Author a credible counter-leak for Δ5 HR. Both delivered through anonymised channels.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_qw_preserve', description: 'Author and deliver both fabricated leaks', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 28000, reputation: 130 },
+    },
+  ],
+
+  newsEchoes: {
+    1: {  // WARN — either flavour
+      headline: 'Sudden Resolution in Internic / Arunmor IP Dispute',
+      body: 'The protracted intellectual-property contest between Internic Holdings and Arunmor Subsidiary Five has resolved suddenly and one-sidedly. Market analysts describe the conclusion as "informationally asymmetric." Both companies have declined comment.',
+      category: 'corporate',
+      delaySeconds: 90,
+    },
+    2: {  // EXPOSE
+      headline: 'Underground Broker LANTERN_BRIDGE Goes Dark',
+      body: 'A long-running broker handle on the Mesh has stopped responding. The handle was associated with eleven years of selective corporate leak operations. Mesh observers describe the silence as "uncharacteristic and probably terminal."',
+      category: 'tech',
+      delaySeconds: 120,
+    },
+    3: {  // PRESERVE
+      headline: 'Helios Marine Group Announces Restructuring',
+      body: 'Helios Marine, a labour cooperative based in the South China Sea, has announced a corporate restructuring that places its operations under multiple-jurisdiction registration. Industry observers note the move complicates any future hostile acquisition.',
+      category: 'corporate',
+      delaySeconds: 180,
+    },
+  },
+}
+
+export const MULTIPHASE_TEMPLATES: MultiPhaseMissionTemplate[] = [PROJECT_GHOST, BLACK_HALO, DEAD_DROP_RESOLUTION, QUIET_WAR_RESOLUTION]
 
 // Generate a fully-formed Mission from a template, seeded by id
 export function generateMultiPhaseMission(template: MultiPhaseMissionTemplate, instanceId?: string): Mission {

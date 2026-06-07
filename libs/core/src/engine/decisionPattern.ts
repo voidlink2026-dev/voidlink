@@ -100,6 +100,17 @@ export const CHOICE_CATALOGUE: ChoiceDefinition[] = [
   { flag: 'choice_dead_drop_weaponise',       conviction: 'mercenary',  weight: 3, trait: 'magnus_collaborator' },
   { flag: 'choice_dead_drop_report_nightowl', conviction: 'principled', weight: 2, trait: 'underground_loyalist' },
   { flag: 'choice_dead_drop_report_jcb',      conviction: 'mercenary',  weight: 2, trait: 'jcb_informant' },
+
+  // ── Arc 7 — The Quiet War resolution ─────────────────────────────────────
+  // Both WARN_* paths are mercenary — the player has picked a corporate
+  // winner and an entire labour cooperative loses for it. EXPOSE_NIGHTOWL is
+  // mercenary AND betrays the Underground. PRESERVE_BALANCE is principled
+  // but messy — the player has chosen to be complicit in a managed war so
+  // that vulnerable people elsewhere get more time.
+  { flag: 'choice_quiet_war_warn_internic',   conviction: 'mercenary',  weight: 3, trait: 'corporate_kingmaker' },
+  { flag: 'choice_quiet_war_warn_arunmor',    conviction: 'mercenary',  weight: 3, trait: 'corporate_kingmaker' },
+  { flag: 'choice_quiet_war_expose_nightowl', conviction: 'mercenary',  weight: 3, trait: 'underground_betrayer' },
+  { flag: 'choice_quiet_war_preserve_balance',conviction: 'principled', weight: 3, trait: 'balance_keeper' },
 ]
 
 export interface DecisionPattern {

@@ -270,18 +270,12 @@ Visual: full-screen darkness, centred text in cyan with subtle bloom, optional m
 
 ---
 
-### L3 — Story arcs 6, 7, 8 🎯
-**Window:** 2026-07-W1 → 2026-08-W1 (4–5 weeks)
-**Effort:** 4–5 weeks (writing + authoring + test)
-**Status:** Not started
+### L3 — Story arc 8 🎯
+**Window:** 2026-07-W1 → 2026-07-W3 (~2 weeks)
+**Effort:** 2 weeks (writing + authoring + test)
+**Status:** Arc 6 ✅ shipped 2026-06. Arc 7 ✅ shipped 2026-06. Arc 8 outstanding.
 
-**Scope.** Three new hand-authored story arcs pushing total content past 15h. Existing 5 arcs sit at ~8–10h.
-
-**Arc 6 — DEAD DROP (3 missions)**
-A series of seemingly-unrelated contracts that turn out to be one continuous courier op. Player is unknowingly moving stolen data through their gateway. Climax: realising they've been compromised. Choice: clean their own gateway (lose 1 random bounce node permanently) OR weaponise the situation (use the compromise as a backdoor into the courier's employer).
-
-**Arc 7 — THE QUIET WAR (4 missions)**
-Two faction-aligned mid-tier corps (Internic Holdings vs Arunmor Subsidiary 5) are at war. Player is hired by both sides in alternating missions. Hidden third client is leaking info to whichever side the player favours. Resolution affects faction standings AND stock prices for both companies in the post-arc world simulation.
+**Scope.** One hand-authored story arc remaining.
 
 **Arc 8 — LIGHTHOUSE (3 missions + 1 choice mission)**
 A surveillance contract on a private individual goes wrong — the target is feeding Voidlink Dispatch intel about the player's prior contracts. Player must decide: take the target out, expose Dispatch, or disappear with the data. Each option locks part of Arcs 9/10.
