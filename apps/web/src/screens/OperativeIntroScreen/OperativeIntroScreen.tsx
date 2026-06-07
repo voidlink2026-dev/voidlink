@@ -139,7 +139,7 @@ export function OperativeIntroScreen() {
       const t = setTimeout(() => {
         setCharIndex((c) => c + 1)
         if (charIndex % 4 === 0 && currentChapter.body[charIndex] !== ' ') {
-          AudioEngine.playSfx('tick')
+          AudioEngine.playSfx('morse')
         }
       }, 1000 / CHARS_PER_SECOND)
       return () => clearTimeout(t)

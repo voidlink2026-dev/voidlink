@@ -56,9 +56,10 @@ export function PrologueScreen() {
     if (charIndex < currentLine.length) {
       const t = setTimeout(() => {
         setCharIndex((c) => c + 1)
-        // Tick SFX on roughly every 3rd character — light typewriter audio
-        if (charIndex % 3 === 0 && currentLine[charIndex] !== ' ') {
-          AudioEngine.playSfx('tick')
+        // Morse blip on roughly every 4th character — feels like a CW radio
+        // signal coming through, not a typewriter.
+        if (charIndex % 4 === 0 && currentLine[charIndex] !== ' ') {
+          AudioEngine.playSfx('morse')
         }
       }, 1000 / CHARS_PER_SECOND)
       return () => clearTimeout(t)

@@ -385,6 +385,28 @@ function playSfxTick() {
     osc.connect(g); g.connect(getSfxBus()); osc.start(t); osc.stop(t + 0.012)
   } catch { /**/ }
 }
+// M14r — Morse blip for narrative typewriter reveals (prologue + operative
+// intro). Picks dot (~55ms) or dash (~170ms) at random per call so a sequence
+// of these calls *sounds* like real morse cadence over a line of text.
+// Frequency ~650 Hz — the canonical CW tone radio operators use.
+function playSfxMorse() {
+  try {
+    const ac = getCtx(); const t = ac.currentTime
+    const isDash = Math.random() < 0.32
+    const dur = isDash ? 0.17 : 0.055
+    const osc = ac.createOscillator()
+    osc.type = 'sine'
+    osc.frequency.value = 650
+    const g = ac.createGain()
+    // Quick attack, sustain, soft decay — like a keyed CW tone.
+    g.gain.setValueAtTime(0, t)
+    g.gain.linearRampToValueAtTime(0.045, t + 0.005)
+    g.gain.setValueAtTime(0.045, t + dur - 0.01)
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur)
+    osc.connect(g); g.connect(getSfxBus())
+    osc.start(t); osc.stop(t + dur + 0.01)
+  } catch { /**/ }
+}
 function playSfxWindowOpen() {
   try {
     const ac = getCtx(); const t = ac.currentTime
@@ -443,7 +465,7 @@ function setSfxEnabled(on: boolean) {
   if (sfxMaster) sfxMaster.gain.setTargetAtTime(on ? _sfxVol : 0, getCtx().currentTime, 0.02)
 }
 
-export type SfxType = 'scan' | 'crack' | 'wipe' | 'success' | 'fail' | 'breach' | 'click' | 'tick' | 'windowOpen' | 'windowClose' | 'error'
+export type SfxType = 'scan' | 'crack' | 'wipe' | 'success' | 'fail' | 'breach' | 'click' | 'tick' | 'morse' | 'windowOpen' | 'windowClose' | 'error'
 
 export const AudioEngine = {
   init() { getCtx() },
@@ -469,6 +491,7 @@ export const AudioEngine = {
       else if (type === 'breach')      playSfxBreach()
       else if (type === 'click')       playSfxClick()
       else if (type === 'tick')        playSfxTick()
+      else if (type === 'morse')       playSfxMorse()
       else if (type === 'windowOpen')  playSfxWindowOpen()
       else if (type === 'windowClose') playSfxWindowClose()
       else if (type === 'error')       playSfxError()
