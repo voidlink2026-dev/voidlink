@@ -21,6 +21,7 @@ const APPS: AppDef[] = [
   { id: 'missions',    label: 'MISSIONS',   title: 'MISSION BOARD',       component: 'MissionBoard',     width: 560, height: 480 },
   { id: 'news',        label: 'NEWS',       title: 'VOIDLINK NEWSFEED',   component: 'NewsFeed',         width: 500, height: 300 },
   { id: 'inbox',       label: 'INBOX',      title: 'ENCRYPTED INBOX',     component: 'EmailInbox',       width: 720, height: 480 },
+  { id: 'codex',       label: 'CODEX',      title: 'CODEX',               component: 'CodexWindow',      width: 880, height: 580 },
   { id: 'research',    label: 'RESEARCH',   title: 'RESEARCH BENCH',      component: 'ResearchBench',    width: 1100, height: 580 },
   { id: 'shop',        label: 'SHOP',       title: 'UPGRADE SHOP',        component: 'UpgradeShop',      width: 1280, height: 620 },
   { id: 'profile',     label: 'PROFILE',    title: 'OPERATIVE PROFILE',   component: 'ProfileWindow',    width: 480, height: 560 },

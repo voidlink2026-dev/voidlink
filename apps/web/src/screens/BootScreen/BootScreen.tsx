@@ -3,7 +3,7 @@ import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
 import styles from './BootScreen.module.css'
 
 const BOOT_LINES = [
-  'VOIDLINK BIOS v2.1.0 © 2199 Voidlink International',
+  'VOIDLINK BIOS v2.1.0 — Internic-licensed routing — © 2199 Voidlink International, Geneva',
   'Initializing secure kernel...',
   'Loading cryptographic modules........... OK',
   'Establishing anonymous routing layer.... OK',

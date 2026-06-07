@@ -1149,6 +1149,53 @@ The big sweep. Test everything below.
 
 ---
 
+## 47. M14q (Sub-sprints A + B + D) — Lore Exposure Layer (2026-06)
+
+### 47.1 Boot Prologue
+- [ ] Fresh-install boot (clear `localStorage` first) shows boot logs → then prologue screen with typewriter text on neon-globe backdrop
+- [ ] Title reads "VOIDLINK INTERNATIONAL — OPERATIVE BRIEFING"
+- [ ] Lines type at ~38 cps with light tick SFX every ~3 characters
+- [ ] After all 7 lines, "SIGN THE COMPACT" button appears
+- [ ] Clicking it advances to Login screen
+- [ ] SPACE / Enter / Escape during typing → snaps to completed state
+- [ ] Second boot: prologue does NOT show; goes straight to Login
+- [ ] Settings → PROGUE → REPLAY ON NEXT BOOT button shows confirmation; next boot replays
+
+### 47.2 Codex window
+- [ ] CODEX appears in taskbar launcher list
+- [ ] Open CODEX → window opens 880×580 with sidebar + reader pane
+- [ ] Sidebar shows 5 category headers: FACTIONS / PEOPLE / HISTORY / CULTURE / TERMS
+- [ ] Each entry shows title + tagline; locked entries show "⊘ LOCKED ENTRY" + "Unlocks through play."
+- [ ] Voidlink Compact entry is unlocked from signup (always visible)
+- [ ] Click locked entry → nothing happens; click unlocked entry → reader pane shows category / title / tagline / body
+- [ ] **bold** in body renders as cyan bold text
+
+### 47.3 Unlock toasts
+- [ ] Complete first mission → toast slides in from the right: "NEW CODEX ENTRY: Voidlink International" + tagline
+- [ ] Toast auto-dismisses after 8 seconds
+- [ ] Click toast → CODEX window opens (or focuses) and scrolls to the entry
+- [ ] Up to 3 toasts visible at once if multiple unlock simultaneously
+
+### 47.4 Read tracking
+- [ ] After unlock, sidebar entry shows cyan dot to the left of its title
+- [ ] Click entry to read → dot disappears
+- [ ] Reopening the window keeps the read state
+
+### 47.5 Unlock conditions per entry
+- [ ] First mission → Voidlink International
+- [ ] First CIPHER inbox message → CIPHER + The Mesh
+- [ ] First Arunmor mission (story_arc1_02) → Arunmor Corp + Mei Lin
+- [ ] First bank account → Nexus Financial
+- [ ] Rank 5 → JCB + Director Kovac + Reconciliation Accords
+- [ ] Tutorial complete → Mesh slang glossary
+- [ ] Day 7 in-game → VST entry
+
+### 47.6 Environmental flavour
+- [ ] Boot screen line reads "VOIDLINK BIOS v2.1.0 — Internic-licensed routing — © 2199 Voidlink International, Geneva"
+- [ ] Each bank window shows the canonical subheader between header and flavour
+
+---
+
 ## 46. M14p (Pass 2d) — Arc 5 9-ending Fan-out (2026-06)
 
 ### 46.1 Trigger and choice overlay

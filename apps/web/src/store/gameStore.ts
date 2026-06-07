@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -68,7 +68,7 @@ function tryAdvanceMissionPhase(mission: Mission, draft: { terminalLines: Array<
   return true
 }
 
-export type Screen = 'boot' | 'login' | 'desktop'
+export type Screen = 'boot' | 'prologue' | 'login' | 'desktop'
 
 export interface RivalHacker {
   handle: string
@@ -203,6 +203,9 @@ interface GameState {
   exfilChannel: ExfilChannelId  // M14j — hoisted from NetworkMap so loadouts can manage it
   pendingReflection: string | null  // M14p Pass 2c — trigger ID of reflection waiting to render
   pendingEndingChoice: boolean      // M14p Pass 2d — Arc 5 climax pending
+  // M14q Sub-sprint B — Codex
+  codexUnlockQueue: string[]        // queued unlock-notification entry IDs
+  codexFocusId: string | null       // deep-link target for the Codex window
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
   missionResult: 'success' | 'fail' | 'abandoned' | null
@@ -319,6 +322,12 @@ interface GameActions {
   triggerEndingChoice: () => void
   chooseEnding: (id: string) => void
   dismissEnding: () => void
+
+  // M14q Sub-sprint B — Codex
+  evaluateCodexUnlockNotifications: () => void
+  dismissCodexUnlock: (id: string) => void
+  setCodexFocusId: (id: string | null) => void
+  markCodexRead: (id: string) => void
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -342,6 +351,8 @@ export const useGameStore = create<GameState & GameActions>()(
     exfilChannel: 'direct',
     pendingReflection: null,
     pendingEndingChoice: false,
+    codexUnlockQueue: [],
+    codexFocusId: null,
     activeWorldEvents: [],
     nextWorldEventAt: null,
     missionResult: null,
@@ -1153,6 +1164,16 @@ export const useGameStore = create<GameState & GameActions>()(
             category: 'crime',
             isPlayerAction: true,
           })
+
+          // M14q Sub-sprint B — Codex unlock check. New entries that just
+          // became eligible get queued as toast notifications.
+          if (s.player) {
+            const dueCodex = evaluateCodexUnlocks(s.player)
+            for (const entry of dueCodex) {
+              s.player.activeFlags[`codex_unlocked_${entry.id}`] = Date.now()
+              if (!s.codexUnlockQueue.includes(entry.id)) s.codexUnlockQueue.push(entry.id)
+            }
+          }
 
           // M14p Pass 2a — fire any NPC dialogue triggers that have just
           // become true. Each entry's variant is picked by the player's
@@ -2152,6 +2173,34 @@ export const useGameStore = create<GameState & GameActions>()(
 
     dismissEnding: () =>
       set((s) => { s.pendingEndingChoice = false }),
+
+    // ── M14q Sub-sprint B — Codex unlock notifications ─────────────────────
+    evaluateCodexUnlockNotifications: () =>
+      set((s) => {
+        if (!s.player) return
+        const due = evaluateCodexUnlocks(s.player)
+        for (const entry of due) {
+          s.player.activeFlags[`codex_unlocked_${entry.id}`] = Date.now()
+          // Only queue notifications for entries the player encounters after
+          // the first mission — avoid spamming the user with five toasts
+          // immediately after signup.
+          if (s.player.stats.totalMissions >= 1) {
+            if (!s.codexUnlockQueue.includes(entry.id)) s.codexUnlockQueue.push(entry.id)
+          }
+        }
+      }),
+
+    dismissCodexUnlock: (id) =>
+      set((s) => { s.codexUnlockQueue = s.codexUnlockQueue.filter((x) => x !== id) }),
+
+    setCodexFocusId: (id) =>
+      set((s) => { s.codexFocusId = id }),
+
+    markCodexRead: (id) =>
+      set((s) => {
+        if (!s.player) return
+        s.player.activeFlags[`codex_read_${id}`] = Date.now()
+      }),
 
     // ── M14i — research tree ────────────────────────────────────────────────
     unlockResearch: (id) => {

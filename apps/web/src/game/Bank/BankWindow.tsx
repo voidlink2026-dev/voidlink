@@ -74,12 +74,25 @@ export function BankWindow() {
     else { setError(null); AudioEngine.playSfx('success') }
   }
 
+  // M14q Sub-sprint D — environmental flavour: canonical subheader per Nexus subsidiary
+  const BANK_SUBHEADERS: Record<string, string> = {
+    globalbank:  'New York · Nexus Financial subsidiary · est. 2179',
+    pacificbank: 'San Francisco · Nexus Financial subsidiary · est. 2181',
+    caymantrust: 'Cayman Islands · Neutral territory under Reconciliation Article XII',
+    zurichvault: 'Zurich · Discreet numbered banking · Reconciliation-grade compliance',
+  }
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
         {bank.name.toUpperCase()}
         {bank.offshore && <span className={styles.offshoreTag}>OFFSHORE</span>}
       </div>
+      {BANK_SUBHEADERS[bank.id] && (
+        <div style={{ fontSize: 9, letterSpacing: '0.14em', color: '#666', marginTop: -8 }}>
+          {BANK_SUBHEADERS[bank.id]}
+        </div>
+      )}
       <div className={styles.flavour}>{bank.flavour}</div>
 
       <div className={styles.statsRow}>

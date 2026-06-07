@@ -98,6 +98,18 @@ export function SettingsWindow() {
 
         <Toggle label="REDUCE MOTION" on={s.reducedMotion} onChange={(v) => s.setSetting('reducedMotion', v)} />
         <Toggle label="SHOW FPS COUNTER" on={s.showFps} onChange={(v) => s.setSetting('showFps', v)} />
+
+        {/* M14q Sub-sprint A — Replay Prologue */}
+        <div className={styles.scaleRow} style={{ marginTop: 12 }}>
+          <span className={styles.sliderLabel}>PROLOGUE</span>
+          <button
+            className={styles.testBtn}
+            onClick={() => {
+              try { localStorage.removeItem('voidlink_prologue_seen') } catch { /**/ }
+              alert('Prologue will replay on next boot.')
+            }}
+          >REPLAY ON NEXT BOOT</button>
+        </div>
       </section>
 
       {/* ── Shortcuts ─────────────────────────────────────────────────────── */}

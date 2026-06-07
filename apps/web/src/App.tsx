@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useGameStore } from './store/gameStore.ts'
 import { useSettingsStore } from './store/settingsStore.ts'
 import { BootScreen } from './screens/BootScreen/BootScreen.tsx'
+import { PrologueScreen, PROLOGUE_SEEN_KEY } from './screens/PrologueScreen/PrologueScreen.tsx'
 import { LoginScreen } from './screens/LoginScreen/LoginScreen.tsx'
 import { DesktopScreen } from './screens/DesktopScreen/DesktopScreen.tsx'
 import { TraceAmbient } from './components/TraceAmbient/TraceAmbient.tsx'
@@ -36,7 +37,11 @@ export function App() {
         const restored = loadGame(sessionHandle)
         if (restored) return
       }
-      setScreen('login')
+      // M14q Sub-sprint A — first-ever boot shows the Prologue before login.
+      // Settings can clear `voidlink_prologue_seen` from localStorage to replay it.
+      let seen = false
+      try { seen = !!localStorage.getItem(PROLOGUE_SEEN_KEY) } catch { /**/ }
+      setScreen(seen ? 'login' : 'prologue')
     }, 3200)
     return () => clearTimeout(t)
   }, [setScreen])
@@ -44,9 +49,10 @@ export function App() {
   return (
     <>
       <AnimatePresence mode="wait">
-        {screen === 'boot'    && <BootScreen    key="boot" />}
-        {screen === 'login'   && <LoginScreen   key="login" />}
-        {screen === 'desktop' && <DesktopScreen key="desktop" />}
+        {screen === 'boot'     && <BootScreen     key="boot" />}
+        {screen === 'prologue' && <PrologueScreen key="prologue" />}
+        {screen === 'login'    && <LoginScreen    key="login" />}
+        {screen === 'desktop'  && <DesktopScreen  key="desktop" />}
       </AnimatePresence>
       <TraceAmbient />
       {screen === 'desktop' && <ConnectionEffect />}

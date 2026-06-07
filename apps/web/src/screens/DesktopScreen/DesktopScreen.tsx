@@ -18,6 +18,8 @@ import { TargetInfoWindow } from '../../game/TargetInfo/TargetInfoWindow.tsx'
 import { BounceChainWindow } from '../../game/BounceChain/BounceChainWindow.tsx'
 import { EmailInbox } from '../../game/EmailInbox/EmailInbox.tsx'
 import { ResearchBench } from '../../game/Research/ResearchBench.tsx'
+import { CodexWindow } from '../../game/Codex/CodexWindow.tsx'
+import { CodexUnlockToast } from '../../game/Codex/CodexUnlockToast.tsx'
 import { SpecializationOverlay } from '../../game/SpecializationOverlay/SpecializationOverlay.tsx'
 import { SystemConsole } from '../../game/SystemConsole/SystemConsole.tsx'
 import { MissionEventToast } from '../../game/MissionEventToast/MissionEventToast.tsx'
@@ -52,6 +54,7 @@ const WINDOW_COMPONENTS: Record<string, React.ComponentType> = {
   BounceChainWindow,
   EmailInbox,
   ResearchBench,
+  CodexWindow,
 }
 
 export function DesktopScreen() {
@@ -285,6 +288,7 @@ export function DesktopScreen() {
       <MissionChoiceOverlay />
       <ReflectionOverlay />
       <EndingChoiceOverlay />
+      <CodexUnlockToast />
     </main>
   )
 }

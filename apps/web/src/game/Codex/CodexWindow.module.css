@@ -1,0 +1,103 @@
+.root {
+  display: flex;
+  height: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--color-text, #d4d4d4);
+  background: var(--color-bg, #050505);
+}
+
+.sidebar {
+  width: 240px;
+  border-right: 1px solid var(--color-border, #1e1e1e);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.category {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: #00e5ff;
+  padding: 10px 12px 6px;
+  border-top: 1px solid #1e1e1e;
+  background: rgba(0, 229, 255, 0.04);
+}
+.category:first-child { border-top: 0; }
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+  gap: 2px;
+}
+.entry:hover { background: rgba(0, 229, 255, 0.04); }
+.entryActive {
+  background: rgba(0, 229, 255, 0.08);
+  border-left-color: #00e5ff;
+}
+
+.entryTitle { font-size: 10px; color: #d4d4d4; }
+.entryTagline { font-size: 9px; color: #666; line-height: 1.4; }
+.entryLocked .entryTitle { color: #555; }
+.entryLocked .entryTagline { color: #333; font-style: italic; }
+.entryUnread { color: #00e5ff !important; }
+.unreadDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #00e5ff;
+  border-radius: 50%;
+  margin-right: 6px;
+  box-shadow: 0 0 6px #00e5ff;
+  vertical-align: middle;
+}
+
+.reader {
+  flex: 1;
+  padding: 28px 36px 32px;
+  overflow-y: auto;
+}
+
+.readerEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #555;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  padding: 24px;
+  line-height: 1.6;
+}
+
+.readerCategory {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  color: #00e5ff;
+}
+
+.readerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 4px 0 4px;
+  color: #d4d4d4;
+}
+
+.readerTagline {
+  font-size: 11px;
+  color: #999;
+  font-style: italic;
+  margin-bottom: 18px;
+}
+
+.readerBody {
+  font-size: 12px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+  color: #c0c0c0;
+}
+.readerBody strong { color: #00e5ff; font-weight: 700; }

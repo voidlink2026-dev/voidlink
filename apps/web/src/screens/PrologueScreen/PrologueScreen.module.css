@@ -1,0 +1,91 @@
+.root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #02050a;
+  font-family: 'JetBrains Mono', monospace;
+  overflow: hidden;
+}
+
+.globe {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.panel {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  width: 92vw;
+  padding: 48px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.heading {
+  font-size: 11px;
+  letter-spacing: 0.36em;
+  color: var(--color-cyan, #00e5ff);
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.line {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #d4d4d4;
+  white-space: pre-wrap;
+  letter-spacing: 0.005em;
+}
+
+.cursor {
+  display: inline-block;
+  color: var(--color-cyan, #00e5ff);
+  margin-left: 2px;
+  width: 8px;
+}
+
+.skipHint {
+  position: absolute;
+  bottom: 24px;
+  right: 32px;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  color: #555;
+  text-align: right;
+}
+.skipHint kbd {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  padding: 2px 6px;
+  margin: 0 2px;
+  font-family: inherit;
+  font-size: 9px;
+  color: #888;
+}
+
+.continueBtn {
+  align-self: center;
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid var(--color-cyan, #00e5ff);
+  color: var(--color-cyan, #00e5ff);
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  padding: 10px 32px;
+  cursor: pointer;
+  transition: background 0.12s, box-shadow 0.12s;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+}
+.continueBtn:hover {
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.25);
+}
