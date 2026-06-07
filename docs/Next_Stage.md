@@ -102,6 +102,145 @@ This sprint unlocks the entire deep-narrative vision. Everything else in the pos
 
 ---
 
+### M14q — Lore Exposure Layer (slot before S3) 🎯
+**Window:** 2026-07-W3 → 2026-08-W1 (1 week, five sub-sprints)
+**Effort:** ~5 days of focused work
+**Status:** Planned. Rationale: we have ~880 lines of Codex lore that the player currently has no way to encounter. Before Arc 6-8 story content lands, we need the player *already inside the world*. Each layer is small; together they transform first-playthrough immersion.
+
+**Why this slots before L3 (story arcs 6-8):** every choice in Arcs 6-8 lands harder if the player already understands what the factions are, who the named NPCs are, why the Voidlink Compact matters, what the JCB does. Writing more story into a world the player can't see is wasteful.
+
+#### Sub-sprint A — Boot Prologue 📜
+**Effort:** Half a day
+**Scope.** Before the login screen renders, a typewriter-styled prologue animates against the neon-Earth globe backdrop. ~250 words across 6-7 paragraphs. Establishes the year, the Collapse, the Big Four, the Voidlink Compact, and the player's place in it.
+
+- **Gate:** localStorage flag `prologue_seen`. First-ever boot only. Returning players go straight to login.
+- **Settings entry:** "Replay Prologue" toggle so fans can revisit. Resets the flag.
+- **Skippable:** SPACE / click anywhere to skip. Auto-saves the seen flag immediately.
+- **Audio:** soft modem hum + occasional typing click; respects audio settings.
+- **Visual:** typewriter effect at 28 cps with cursor blink; ACES-tone-mapped globe in the background dim to 30% during prologue.
+
+**Acceptance:**
+- [ ] First fresh-install boot shows the prologue
+- [ ] Second boot goes straight to login
+- [ ] Settings "Replay Prologue" works
+- [ ] SKIP works mid-prologue and persists the flag
+
+#### Sub-sprint B — Codex Window + Unlock Catalogue 📖
+**Effort:** 3 days
+**Scope.** A new desktop window (CODEX in the taskbar) that contains the Codex content broken into 18-25 unlockable entries. Entries unlock through play — never forced, always discoverable.
+
+**Entry catalogue (initial):**
+- *Voidlink International* (unlocks on first mission complete)
+- *The Voidlink Compact* (unlocks on signup, link to full text)
+- *The Mesh* (unlocks on first CIPHER inbox message)
+- *CIPHER* (unlocks after 2nd CIPHER message)
+- *NIGHTOWL_22* (unlocks after first NIGHTOWL contract)
+- *Arunmor Corp* + *Mei Lin* (unlocks on first Arunmor mission)
+- *Ares Defence Group* (unlocks on first Ares mission)
+- *Internic Holdings* + *Aino Virtanen* (unlocks on first Internic mission)
+- *Nexus Financial* (unlocks on opening first bank account)
+- *The Joint Cybersecurity Bureau* + *Director Mira Kovac* (unlocks at Rank 5)
+- *The Underground* (unlocks after CIPHER's underground induction message)
+- *Project R-1117 / REVELATION* (partial unlock at Arc 1 Mission 2, deepens through arcs)
+- *The October Event* (unlocks at first anniversary OR on completing Arc 5)
+- *The Nine Days* (unlocks alongside October Event)
+- *The Reconciliation Accords* (unlocks at Rank 5)
+- *The Five Cities* (unlocks at signup — your home city pre-selected)
+- *Voidlink Standard Time* (unlocks on day 7 in-game)
+- *Mesh Slang Glossary* (unlocks on first inbox decryption)
+- *Famous Operatives — Astra / Halberd / The Crown / PROXY_ECHO* (unlock individually via news echoes)
+- *Music Genres* (unlocks on completing tutorial)
+- *Philosophy — Compact vs Stewardship Schools* (unlocks after Arc 3)
+
+Each entry is 200-400 words. Pulled directly from `The_Voidlink_Codex.md` — minimal new writing. Markdown-rendered.
+
+**UI behaviour:**
+- Window opens with sidebar nav (categorised: FACTIONS / PEOPLE / HISTORY / CULTURE / TERMS) + reader pane
+- Unread entries show a cyan dot in the sidebar
+- CODEX taskbar button shows the standard unread badge (matches INBOX)
+- "OPEN CODEX" deep-link from notification toasts scrolls to the entry
+
+**Unlock notification:**
+- Small toast slides in bottom-right (above System Console): *"NEW CODEX ENTRY: <name>"* with a small open-book icon
+- Click → opens Codex to entry
+- 8-second auto-dismiss
+- Dismiss button visible
+- Audio: one soft chime (respects SFX volume)
+- **Never blocks gameplay**
+
+**Acceptance:**
+- [ ] Window opens at 800×580, sidebar + reader, scrollable
+- [ ] Each unlock condition fires correctly via flag checks in disconnect path
+- [ ] Toast appears non-blockingly on unlock
+- [ ] CODEX taskbar button shows dot when entries unread
+- [ ] Sidebar shows partial entries with greyed-out icon for locked ones (teases them)
+
+#### Sub-sprint C — Cipher Essay Drip (Inbox lore) ✉️
+**Effort:** 1 day (writing + wiring)
+**Scope.** 5-8 additional scheduled inbox messages from CIPHER and NIGHTOWL_22 that drip lore over the first 30 hours of play. Each carries one Codex chapter's worth of background, in-character.
+
+**Catalogue:**
+- *Cipher: "The Compact, in plain language"* (after first 3 missions) — explains Rule 4 in his voice
+- *Cipher: "Reykjavík, and other lies"* (after first month VST) — short essay on the operative's retirement myth
+- *NIGHTOWL_22: "The history we don't write down"* (after Rank 3) — alludes to the Old Five
+- *Cipher: "On Astra"* (after first relay-burn) — anecdote about the legendary operative
+- *Cipher: "The argument about REVELATION"* (after first contact with REVELATION's terminal style) — frames the Stewardship-school view
+- *NIGHTOWL_22: "Why we use VST"* (after first anniversary marker) — the global clock as resistance
+
+Each: 250-400 words, encrypted/decryptable, lands in inbox via `evaluateDialogueTriggers()`. Same gate convention as Pass 2a (`dialogue_fired_<id>`).
+
+**Acceptance:**
+- [ ] Each message fires once at the appropriate trigger
+- [ ] Tone variants per pattern bucket (use the M14p infrastructure)
+- [ ] Player can re-read from inbox archive at any time
+
+#### Sub-sprint D — Environmental Flavour 🏛️
+**Effort:** Half a day
+**Scope.** Tiny, high-density additions that establish setting in the spaces players already look at.
+
+- **Boot BIOS line:** Change to *"VOIDLINK BIOS v2.1.0 — Internic-licensed routing — © 2199 Voidlink International, Geneva"*
+- **Bank window subheaders:** One canonical line per bank under the name:
+  - Global Trust Bank — *"New York · Nexus Financial subsidiary · est. 2179"*
+  - Pacific National — *"San Francisco · Nexus Financial subsidiary · est. 2181"*
+  - Cayman Trust — *"Cayman Islands · Neutral territory under Reconciliation Article XII"*
+  - Zurich Vault — *"Zurich · Discreet numbered banking · Reconciliation-grade compliance"*
+- **Faction broker bylines** in mission briefings — one line under the client handle: *"VoidLink Dispatch · Automated contract aggregator"*, *"CIPHER · Senior operative, Underground-aligned"*, *"NIGHTOWL_22 · Independent broker, Lagos"*
+- **Inbox PGP fingerprint footer:** *"PGP fingerprint confirmed — message integrity verified by Internic routing layer"* (subtle, one line at bottom of decrypted view)
+- **Operative Profile** small footer: *"Voidlink Compact signed [DATE] · Compact-clean: [YES/NO]"* — adds gravity to the profile
+
+**Acceptance:**
+- [ ] Each line in place, JetBrains Mono, dim grey
+- [ ] No layout regressions
+- [ ] No new strings break i18n scaffold (mark for translation pre-L8)
+
+#### Sub-sprint E — Splash Cards 🎬
+**Effort:** 2 days
+**Scope.** 5-8 static splash cards that fire between major story beats. Each is a full-screen overlay: one paragraph of text on a styled background (atmospheric, evocative — think Max Payne chapter titles, Disco Elysium scene transitions). 8-10 seconds each, fully skippable. Sets tone.
+
+**Catalogue:**
+- *"FIRST CONTACT"* — fires before Arc 1 Mission 1
+- *"THE LEAD"* — fires before Arc 1 Mission 2 (Arunmor)
+- *"THE ORIGIN NODE"* — fires before Arc 1 Mission 3 (climax)
+- *"AFTERMATH"* — fires after Arc 1 choice
+- *"REVELATION IS LISTENING"* — fires on first REVELATION inbox message
+- *"THE BOARD OF SEVEN"* — fires before first Government-aligned mission
+- *"DIRECTOR KOVAC"* — fires before Arc 5 first mission
+- *"DISCONNECT"* — fires before final ending choice
+
+Visual: full-screen darkness, centred text in cyan with subtle bloom, optional motif graphic (line-art icon — a key, a chain, a globe, etc.). One audio sting per card (existing victory/fail sting variants). Skippable.
+
+**Acceptance:**
+- [ ] Each card fires at its trigger and writes a `splash_fired_<id>` flag
+- [ ] Skippable via SPACE or click
+- [ ] Settings option to disable splash cards globally
+- [ ] No two cards back-to-back without a gameplay beat in between
+
+#### Total effort and ordering
+- Sub-sprints A + B + D ship together as Pass 1 (~3.5 days)
+- Sub-sprint C ships as Pass 2 (~1 day)
+- Sub-sprint E ships as Pass 3 (~2 days)
+- **Total ~6.5 days** — slot before S3 starts
+
 ### L2 — Tutorial rewrite: "Cipher's First Contract" 🎯
 **Window:** 2026-08-W2 → 2026-08-W3 (deliberately LAST among gameplay-touching sprints)
 **Effort:** 2 weeks

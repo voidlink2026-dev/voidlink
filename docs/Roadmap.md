@@ -106,8 +106,9 @@ Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next
 |--------|--------|-------|--------|
 | **S1** | 2026-06-W1 → 2026-06-W3 | **L1 Audio** | 6 looping tracks (boot/desktop/mission/critical/victory/fail) + per-bus volume |
 | **S2** | 2026-06-W3 → 2026-07-W2 | **Backlog mechanics close-out** (M14f.1, M14j, M14k, M14l, M14i — all shipped) | ✅ Done |
-| **S2b** | 2026-07-W2 → 2026-07-W3 | **L11 Choice Architecture & Reflection Mechanic (M14p)** — new sprint added 2026-06 to support the deep narrative vision | NPC dialogue tone reads accumulated flags, news framing adapts to pattern, contract availability gates on track record, end-of-arc reflection scenes |
-| **S3** | 2026-07-W3 → 2026-08-W2 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content. Each arc writes flags that the Choice Architecture (S2b) reads |
+| **S2b** | 2026-07-W2 → 2026-07-W3 | **L11 Choice Architecture & Reflection Mechanic (M14p)** ✅ **SHIPPED 2026-06** | All 4 passes done — pattern reader, news framing, NPC dialogue tone, contract gating, reflection scenes, 9-ending fan-out |
+| **S2c** | 2026-07-W3 → 2026-08-W1 | **M14q Lore Exposure Layer** — slotted before story arcs land so the player is already inside the world | Boot prologue, Codex window with unlockable entries + non-blocking notification toasts, Cipher essay drip in inbox, environmental flavour (BIOS line, bank subheaders, broker bylines), splash cards between major story beats |
+| **S3** | 2026-08-W1 → 2026-08-W3 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content. Each arc writes flags that the Choice Architecture (S2b) reads + unlocks Codex entries (S2c) |
 | **S4** | 2026-07-W4 → 2026-08-W2 | **L4 Steam Cloud + L5 Achievements** | Steamworks SDK integration, 40+10 achievements wired |
 | **S5** | 2026-08-W2 → 2026-08-W3 | **L6 Perf + L10 Steam Deck** | Low-Quality toggle, controller mapping, Deck verified |
 | **S6** | 2026-06-W2 → 2026-08-W4 (parallel) | **L8 Localisation** | ES/DE/FR/RU/zh-CN/JA (tutorial strings translated LAST after L2 lands) |
