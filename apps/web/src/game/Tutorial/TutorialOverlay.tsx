@@ -15,6 +15,11 @@ interface Step {
   title: string
   body: string
   hint?: string
+  /** L2 — diegetic sender. Undefined = no header (the few non-Cipher steps). */
+  from?: string
+  fromFingerprint?: string
+  /** Signature line shown after the body when from is set. */
+  sig?: string
   /** CSS selector for the element to spotlight. Undefined = full-screen block (panel centred). */
   spotlightSelector?: string
   /** Auto-advances when this returns true. */
@@ -24,105 +29,127 @@ interface Step {
   keepOnlyWindows?: string[]
 }
 
+const CIPHER = 'CIPHER'
+const CIPHER_FP = 'C19H 3R20 7B83 D6CC'
+const CIPHER_SIG = '— C.'
+
+// L2 — "Cipher's First Contract." A senior Underground operative writes to the
+// new signup and walks them through their first job, in his voice. The
+// mechanics being taught are unchanged; the framing is now diegetic.
 const STEPS: Step[] = [
   // ── Phase 1: Orientation ──────────────────────────────────────────────────
   {
-    title: 'WELCOME TO VOIDLINK INTERNATIONAL',
-    body: 'Identity confirmed. You are now an active operative. You have 5,000 Cr startup funding, a basic cracker, and a log-deleter tool. This tutorial covers everything — pay attention.',
-    hint: 'Click NEXT to advance through informational steps.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'PRELIM',
+    body: 'I run unofficial introductions for new operatives on the network. Voidlink Dispatch will handle the contracts. I will teach you not to die.\n\nYou have a desktop, 5,000 Cr, a basic cracker, and a log-deleter. That is enough. I started with less.',
+    hint: 'Read each note. Click NEXT when you are ready to move on. Some steps will wait for you to do something — those advance on their own.',
   },
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'YOUR DESKTOP',
-    body: 'This is your operating environment. All activity happens inside windows that you can drag by their title bar, resize from any edge, and minimise or close. Nothing here is cosmetic — every window is a live tool.',
-    hint: 'Ctrl+scroll zooms the entire window layer if things get crowded.',
+    body: 'This screen is the only thing standing between you and the JCB. Every tool you have lives in a window on it. Drag the title bars. Resize from any edge. Minimise the ones you are not using.\n\nNothing here is decorative. If a window is open, it is doing something.',
+    hint: 'Ctrl+scroll zooms the whole layer if things get crowded.',
     spotlightSelector: '[data-tutorial="window-layer"]',
   },
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'THE TASKBAR',
-    body: 'The taskbar is your mission control. The left section launches windows. The centre shows your open windows and lets you focus or minimise them. The ⊞ button cascades all open windows into a tidy layout.',
-    hint: 'NETWORK and HACK TOOLS are greyed out when no mission is active — they only work when you are connected.',
+    body: 'Your taskbar at the bottom. Left side launches windows. Centre tracks the ones you have open. The ⊞ button tidies a messy desktop into a layout you can read at a glance.\n\nNETWORK and HACK TOOLS will be greyed out until you are mid-job. That is by design.',
+    hint: 'The taskbar never lies about what is open and what is not. Trust it.',
     spotlightSelector: '[data-tutorial="taskbar"]',
   },
   {
-    title: 'YOUR OPERATIVE STATUS',
-    body: 'The right side of the taskbar shows your handle, credit balance, and reputation score. Credits fund hardware and software upgrades. Reputation gates higher-tier contracts — the more you earn, the better the jobs available.',
-    hint: 'Credits and REP update here instantly after every mission.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'YOUR STATUS',
+    body: 'Right side of the taskbar shows three things that matter: your handle, your credit balance, and your reputation.\n\nCredits fund the work. Reputation is what the rest of the network thinks of you — Voidlink Dispatch will not route serious contracts to a new handle, and they shouldn\'t.',
+    hint: 'Both update the moment a mission settles. Watch them.',
     spotlightSelector: '[data-tutorial="taskbar-status"]',
   },
   {
-    title: 'SYSTEM CONSOLE',
-    body: 'The System Console (bottom-right) monitors your live processes: active mission trace %, your bounce route status, world events, and proxy count. It updates every tick and is always visible.',
-    hint: 'Click the SYS header to collapse it if you need screen space.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'THE SYSTEM CONSOLE',
+    body: 'The console in the bottom-right is the heartbeat. Trace percentage, bounce route status, active world events, proxy count.\n\nWhen the rest of the screen lies to you — and a screen will lie eventually, that is what they are for — the console keeps telling the truth.',
+    hint: 'Click SYS to collapse it when you need the space.',
     spotlightSelector: '[data-tutorial="system-console"]',
   },
   {
-    title: 'SYSTEM TERMINAL',
-    body: 'The System Terminal logs every action you take — connections, scans, breaches, errors, and mission results. Red entries are warnings or failures. Green entries are successes. Keep an eye on it for intel the UI does not surface.',
-    hint: 'The terminal also warns you when a rival hacker spawns on your network.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'THE TERMINAL',
+    body: 'Every action you take logs to this terminal. Red entries are warnings. Green are successes. Whites are facts.\n\nNew operatives stop reading the terminal after the first few sessions. New operatives, statistically, do not last.',
+    hint: 'The terminal is also where you find out a rival hacker has spawned on your network. Read it.',
     spotlightSelector: '[data-window-id="welcome"]',
   },
   // ── Phase 2: First Mission ────────────────────────────────────────────────
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'THE MISSION BOARD',
-    body: 'Contracts come through the MISSION BOARD. Each card shows: the mission type, difficulty (1–5 dots), target archetype, and credit reward. Higher difficulty = higher payout but harder networks, more nodes, and faster trace accumulation.',
-    hint: 'Story missions (bold, with a distinct header) unlock narrative events and unique pre-built networks.',
+    body: 'Contracts arrive here. Type, difficulty, target archetype, payout. Difficulty is 1 to 5 dots. The harder the job, the more nodes, the faster the trace, the bigger the cheque.\n\nDo not let the cheque be the only thing you read.',
+    hint: 'Story missions look different. They unlock when the world is ready for you to see them.',
     spotlightSelector: '[data-window-id="missions"]',
   },
   {
-    title: 'MISSION TYPES',
-    body: 'There are five contract types:\n• FILE THEFT — exfiltrate a target file\n• ACCOUNT DELETION — erase a target account from a database\n• DATABASE CORRUPTION — corrupt mission-critical records\n• NETWORK SABOTAGE — disable a router or admin console\n• BOUNTY HUNT — breach a rival operative\'s gateway',
-    hint: 'Each type involves different node targets on the network. Read the briefing before accepting.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'WHAT CONTRACTS LOOK LIKE',
+    body: 'Five types you will see most:\n• FILE THEFT — exfiltrate a file. Cleanest entry into the work.\n• ACCOUNT DELETION — erase someone from a database. Read the briefing twice.\n• DATABASE CORRUPTION — corrupt specific records. Subtler than it sounds.\n• NETWORK SABOTAGE — kill a router or admin console.\n• BOUNTY HUNT — breach a rival operative\'s gateway. Think about whether you want to be the kind of operative who takes these before you accept one.',
+    hint: 'Read the brief. Read the client name. Both tell you what you are about to become.',
     spotlightSelector: '[data-window-id="missions"]',
   },
   {
-    title: 'ACCEPT A CONTRACT',
-    body: 'Select a contract with a LOW difficulty rating (1–2 dots) and click ACCEPT. This connects you to the target network and opens the Network Map and Hacking Interface automatically.',
-    hint: 'FILE THEFT at difficulty I or II is the safest first contract.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'TAKE A CONTRACT',
+    body: 'Pick a 1- or 2-dot FILE THEFT and click ACCEPT. The Network Map and Hacking Interface will open for you.\n\nDo not be a hero on the first one. Be a professional.',
+    hint: 'FILE THEFT at difficulty I or II is what every operative on the network started with. Including me.',
     spotlightSelector: '[data-window-id="missions"]',
     condition: (s) => s.activeMissionId !== null,
-    waitingLabel: 'WAITING — ACCEPT A MISSION…',
+    waitingLabel: 'WAITING — ACCEPT A CONTRACT…',
   },
   // ── Phase 3: Network Map ──────────────────────────────────────────────────
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'THE NETWORK MAP',
-    body: 'You are now connected. The Network Map renders the target system\'s topology as a 3D graph. Each node is a server, router, or device. Lines between nodes are live connections. Nodes dim from your entry point outward — reach them in order.',
-    hint: 'Green glow = breached. Amber = Zone B (locked behind a pivot). Red pulsing = locked out.',
+    body: 'You are in. This is the target system. Nodes are servers, routers, devices. Lines are live connections.\n\nThe ones closer to your entry point are the ones you can reach. Work outward. Nobody jumps to the centre on their first hop. Nobody who survives, anyway.',
+    hint: 'Green glow means breached. Amber means Zone B — locked behind a pivot. Red means locked you out.',
     spotlightSelector: '[data-window-id="network-map"]',
     condition: (s) => s.activeNetworkId !== null,
     waitingLabel: 'WAITING — LOADING NETWORK…',
   },
   {
-    title: 'SELECT A NODE',
-    body: 'Click any node in the Network Map to select it. The right-side panel shows: node type (router, database, admin_console…), security tier (I–V), breach status, and — after scanning — running services and discovered CVEs.',
-    hint: 'Always start with Tier I–II nodes closest to the entry point. High-tier nodes need better tools.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'PICK A NODE',
+    body: 'Click any node to select it. The right panel will tell you its type, security tier (I–V), breach status. After you scan it, the services and any CVEs.\n\nStart with a low tier near the edge. Push inward only when you have the tools.',
+    hint: 'Tier I and II for tonight. Save the high-tier ambition for when your hardware can back it up.',
     spotlightSelector: '[data-window-id="network-map"]',
     condition: (s) => s.selectedNodeId !== null,
-    waitingLabel: 'WAITING — CLICK A NODE…',
+    waitingLabel: 'WAITING — SELECT A NODE…',
   },
   // ── Phase 4: Hacking Interface ────────────────────────────────────────────
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'THE HACKING INTERFACE',
-    body: 'The Hacking Interface is your primary tool panel. From here you scan nodes, crack or exploit their security, execute mission actions, wipe your logs, and manage your proxy chain. The panel updates in real time as you select nodes.',
-    hint: 'If the HI window is not visible, click HACK TOOLS in the taskbar.',
+    body: 'This panel is the rest of the work. Scan. Crack or exploit. Run the mission action. Wipe your logs. Manage your proxy chain.\n\nIt updates live as you select nodes. You will spend more time in this window than anywhere else.',
+    hint: 'If it is not visible: HACK TOOLS in the taskbar.',
     spotlightSelector: '[data-window-id="hacking"]',
   },
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'THE TRACE BAR',
-    body: 'The TRACE bar is the most important thing on screen. It fills left-to-right as the target system detects your activity. At 75% it enters ALARM — trace accelerates. At 100% you are CAUGHT. Mission fails. No payment. Trace failure on your record.',
-    hint: 'Use proxies to slow accumulation. Ghost specialisation (unlocked at Rank 5) gives a massive reduction.',
+    body: 'The single most important thing on this screen. Fills as the target system detects you. At 75% it goes into ALARM and accelerates. At 100% you are caught. No pay. The miss goes on your record.\n\nWatch this bar. If you only watch one thing, watch this.',
+    hint: 'Proxies slow it. Ghost specialisation gutts it. Until then, your only tool is your judgment.',
     spotlightSelector: '[data-window-id="hacking"]',
   },
   {
-    title: 'RELAY CHAIN — YOUR ANONYMITY NETWORK',
-    body: 'Bounce chains route your connection through other servers so trace can\'t reach you directly. Open the WORLD MAP from the taskbar — click any green node to add it to your chain. If a hop is traced, only that node is exposed, not you.\n\nMax hops: 3 (basic proxy), 5 (proxy v2), 7 (proxy v3). Upgrade in SHOP to extend your chain.',
-    hint: 'Dirty (logged) hops cannot be added — clean them via the Hack Tools window first.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'THE RELAY CHAIN',
+    body: 'Bounce your connection through other servers so the trace does not arrive at your front door. WORLD MAP in the taskbar. Click any green node to add it. If a hop is traced, only that hop is exposed — not you.\n\nMax hops: 3 with the basic proxy, 5 with v2, 7 with v3. Upgrade in SHOP when you can.',
+    hint: 'A dirty hop — one with a log on it — cannot be added. Clean it first, in Hack Tools.',
     spotlightSelector: '[data-tutorial="btn-world-map"]',
   },
   // ── Phase 5: The Hack ─────────────────────────────────────────────────────
   {
-    title: 'SCAN THE NODE',
-    body: 'With a node selected, click SCAN. Scanning reveals running services (SSH, FTP, RDP, MySQL…) and may uncover a CVE vulnerability. A VULN badge means you can EXPLOIT instead of cracking — 2–3× faster with protocol-specific side effects.',
-    hint: 'Scanning always generates a small trace hit but is almost always worth it.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'SCAN FIRST',
+    body: 'Always. With a node selected, click SCAN. It will reveal the services running on it — SSH, FTP, RDP, MySQL — and sometimes a CVE you can exploit instead of cracking.\n\nA VULN badge means you have an exploit path. Exploit is faster than crack. Use it when you have it.',
+    hint: 'Scanning generates a small trace hit. It is almost always worth it. The alternative is going in blind.',
     spotlightSelector: '[data-window-id="hacking"]',
     condition: (s) => {
       const net = s.activeNetworkId ? s.networks[s.activeNetworkId] : null
@@ -131,9 +158,10 @@ const STEPS: Step[] = [
     waitingLabel: 'WAITING — SCAN A NODE…',
   },
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'CRACK OR EXPLOIT',
-    body: 'Click CRACK to brute-force the node\'s security (slower), or EXPLOIT [PROTOCOL] if you found a CVE (faster, with bonuses). Examples: EXPLOIT [FTP] auto-wipes the log. EXPLOIT [SQL] auto-completes database objectives. Read the terminal for side effects.',
-    hint: 'Cancelling a crack mid-way on a Tier 4–5 node triggers a 30-second lockout and a trace spike.',
+    body: 'CRACK brute-forces the node\'s security. Slow but always available. EXPLOIT uses the CVE you found. Faster, and with protocol-specific side effects — EXPLOIT [FTP] wipes the log for you, EXPLOIT [SQL] completes a database objective on its own.\n\nRead the terminal after the breach. It will tell you what happened.',
+    hint: 'Cancelling a CRACK mid-way on a Tier 4 or 5 node triggers a 30-second lockout and a trace spike. Decide before you start, not during.',
     spotlightSelector: '[data-window-id="hacking"]',
     condition: (s) => {
       const net = s.activeNetworkId ? s.networks[s.activeNetworkId] : null
@@ -142,15 +170,17 @@ const STEPS: Step[] = [
     waitingLabel: 'WAITING — BREACH A NODE…',
   },
   {
-    title: 'DUMP CREDENTIALS',
-    body: 'On admin consoles, endpoints, and mail servers you can DUMP CREDS after breaching. This caches credentials that let you bypass any other node on the same network instantly — no crack needed. Silent for Ghost operatives.',
-    hint: 'Cached credentials expire after ~8 minutes. Use them before they expire.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'DUMP CREDS WHEN YOU CAN',
+    body: 'Admin consoles, endpoints, mail servers — after you breach one, DUMP CREDS caches the credentials. Those creds let you bypass any other node on this network instantly. No crack. No exploit. Walk in.\n\nFor Ghost operatives, this happens silently. For the rest of us, it costs a small trace hit. Worth it.',
+    hint: 'Cached creds expire in about eight minutes. Use them while they are warm.',
     spotlightSelector: '[data-window-id="hacking"]',
   },
   {
-    title: 'TRANSFER THE FILE',
-    body: 'Your first contract is a FILE THEFT. After breaching the file server, the right-side NETWORK MAP panel shows a ★ marked file. Click the TRANSFER button next to it. A progress bar runs while the file copies to your local storage.\n\nThis is your primary objective — the mission completes once the file is on your machine.',
-    hint: 'Other mission types use different buttons in the same place: DELETE ACCOUNT (account deletion), CORRUPT DB (database corruption), SABOTAGE (network sabotage).',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'PULL THE FILE',
+    body: 'Your contract was a FILE THEFT. After breaching the file server, the Network Map panel marks a target file with a star. Click TRANSFER. A progress bar will run.\n\nThe second the file lands on your machine, the objective is yours.',
+    hint: 'Other contract types put their action button in the same place: DELETE ACCOUNT, CORRUPT DB, SABOTAGE. You will find them when you need them.',
     spotlightSelector: '[data-window-id="network-map"]',
     condition: (s) => {
       const mission = s.missions.find((m) => m.id === s.activeMissionId)
@@ -159,9 +189,10 @@ const STEPS: Step[] = [
     waitingLabel: 'WAITING — TRANSFER THE FILE…',
   },
   {
-    title: 'COVER YOUR TRACKS — WIPE LOGS',
-    body: 'Objective done — but every breached node holds a log entry with your fingerprint. Select each breached node and click WIPE LOG to destroy the evidence. The ✓ checklist at the top of the HI tracks which nodes are clean.',
-    hint: 'Ghost operatives wipe logs silently (no trace spike). All others get a small spike per wipe.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'WIPE THE LOGS',
+    body: 'The objective is done. The job is not. Every breached node holds a log entry with your fingerprint on it. Select each one. WIPE LOG.\n\nNew operatives skip this on easy jobs. New operatives explain themselves to a JCB liaison eighteen months later, and not under their own terms.\n\nWipe. Every. Time.',
+    hint: 'Ghost wipes silently. Everyone else takes a small trace hit per wipe. Pay it.',
     spotlightSelector: '[data-window-id="hacking"]',
     condition: (s) => {
       const net = s.activeNetworkId ? s.networks[s.activeNetworkId] : null
@@ -172,52 +203,57 @@ const STEPS: Step[] = [
     waitingLabel: 'WAITING — WIPE ALL LOGS…',
   },
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'SECURE DISCONNECT',
-    body: 'All logs are clear. The SECURE DISCONNECT button is now green. Click it to exit cleanly. Credits are deposited, XP awarded, and trace resets. LEAVE NETWORK is a dirty exit — no payment, mission counted as abandoned, news feed notes the breach.',
-    hint: 'You cannot log out while connected — the taskbar logout button is disabled during active missions.',
+    body: 'Logs clean. SECURE DISCONNECT is green now. Click it. Credits land, XP awards, trace resets.\n\nLEAVE NETWORK is the dirty exit. No payment. The job goes on the news feed as a breach. Use it when there is no other choice, not as a habit.',
+    hint: 'You cannot log out while connected. The system disables it during a job, on purpose.',
     spotlightSelector: '[data-window-id="hacking"]',
     condition: (s) => s.activeMissionId === null && s.missionResult !== 'fail',
     waitingLabel: 'WAITING — SECURE DISCONNECT…',
   },
   // ── Phase 6: Upgrades ─────────────────────────────────────────────────────
   {
-    title: 'UPGRADE YOUR HARDWARE — OPEN SHOP',
-    body: 'Click the SHOP button in the taskbar to open the Upgrade Store. Your credits from that mission are already in your balance. Better hardware means faster operations, more RAM slots for parallel tools, and higher data transfer rates.',
-    hint: 'Architect specialisation (unlocked at Rank 5) gets 15% off every purchase in the shop.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'REINVEST',
+    body: 'SHOP in the taskbar. Open it.\n\nThe credits from that contract are already in your balance. Spend them on yourself. Better hardware means faster work; faster work means less trace; less trace means another contract tomorrow.',
+    hint: 'Architect spec at Rank 5 takes 15% off everything in this shop. Worth aiming for.',
     spotlightSelector: '[data-tutorial="btn-shop"]',
     condition: (s) => s.activeWindows.some((w) => w.id === 'shop' && !w.isMinimized),
-    waitingLabel: 'CLICK SHOP IN THE TASKBAR…',
+    waitingLabel: 'OPEN SHOP…',
   },
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'HARDWARE AND SOFTWARE',
-    body: 'Hardware tab: CPU speed increases parallel tool operations. RAM slots determine how many tools can run simultaneously. HDD and Modem affect file transfer rates.\n\nSoftware tab: Cracker tools v1→v4 slash breach times by up to 80%. Proxy stacks increase your max hop count.',
-    hint: 'Cracker v4 (Hydra Zero) is the best-in-class breach tool. Save for it.',
+    body: 'Hardware: CPU speed for parallel work, RAM slots for how many tools run at once, HDD and Modem for transfer rates.\n\nSoftware: Cracker tools v1 → v4 cut your breach times by up to 80%. Proxy stacks give you more relay hops.\n\nIf you make me recommend one thing — save for Cracker v4. Hydra Zero. There is nothing better.',
+    hint: 'Buy the thing that fixes the slowest part of your last mission. That is the rule.',
     spotlightSelector: '[data-window-id="shop"]',
     keepOnlyWindows: ['shop'],
   },
   // ── Phase 7: Profile and Advanced ────────────────────────────────────────
   {
-    title: 'YOUR OPERATIVE PROFILE — OPEN PROFILE',
-    body: 'Click PROFILE in the taskbar to inspect your full operative record: hardware specs, owned software, lifetime stats, XP progress, faction memberships, and faction standing bars.',
-    hint: 'Specialisations unlock at Rank 5. Choose Ghost, Brute, or Architect based on your playstyle.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'YOUR PROFILE',
+    body: 'PROFILE in the taskbar. This is your full record — hardware, software, lifetime stats, XP, faction memberships, faction standings.\n\nIt is also where you will pick a specialisation at Rank 5. Ghost. Brute. Architect. Pick the one that matches the operative you have actually been, not the one you said you would be.',
+    hint: 'You will have an honest answer to that question by Rank 5. Wait for it.',
     spotlightSelector: '[data-tutorial="btn-profile"]',
     condition: (s) => s.activeWindows.some((w) => w.id === 'profile' && !w.isMinimized),
-    waitingLabel: 'CLICK PROFILE IN THE TASKBAR…',
+    waitingLabel: 'OPEN PROFILE…',
   },
   {
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
     title: 'FACTION STANDINGS',
-    body: 'Five factions track your operations: Voidlink International, Arunmor, Ares Division, The Underground, and The Nameless. Your choice of mission targets affects their opinion of you. High standing unlocks exclusive contracts and intel drops.',
-    hint: 'Ares Division and Arunmor are ideological opposites — working for one antagonises the other. Choose a side.',
+    body: 'Five factions watch your work: Voidlink, Arunmor, Ares Division, the Underground, and the Nameless.\n\nYour targets and your clients change how each of them feels about you. High standing unlocks contracts and intel that nobody else sees.\n\nArunmor and Ares are not on speaking terms. Working for one closes doors at the other. The Underground notices everything.',
+    hint: 'There is no neutral path. You will end up somewhere. The choice is whether you mean to.',
     spotlightSelector: '[data-window-id="profile"]',
     keepOnlyWindows: ['profile'],
   },
   {
-    title: 'YOU ARE READY, OPERATIVE',
-    body: 'That is everything. Find a contract, map the network, breach the target, cover your tracks, and get paid. Reinvest in hardware. Push deeper into Tier IV and V networks. The world is watching.\n\nGood hunting.',
-    hint: 'World events (coloured pills in the taskbar) affect gameplay globally. Watch for GHOST MODE (trace cut) and CORP SWEEP (trace spike) — they can make or break a mission.',
+    from: CIPHER, fromFingerprint: CIPHER_FP, sig: CIPHER_SIG,
+    title: 'YOU ARE READY',
+    body: 'That is the work.\n\nFind a contract. Map the network. Breach what you came for. Cover your tracks. Get paid. Spend it on the thing that fixes your weakest hour. Push deeper.\n\nI will not write you again until I have a reason to. Most operatives never give me one. The ones who do, I remember.\n\nGood hunting.',
+    hint: 'World events (the coloured pills in the taskbar) change everything globally. GHOST MODE cuts trace. CORP SWEEP spikes it. Read them before you accept a job.',
     keepOnlyWindows: [],
   },
-  // ── Phase 8: Closing handled in FACTION STANDINGS step above ──────────────
 ]
 
 const SPOTLIGHT_PAD = 14
@@ -376,6 +412,16 @@ export function TutorialOverlay() {
             TUTORIAL {step + 1}&nbsp;/&nbsp;{STEPS.length}
           </div>
 
+          {current.from && (
+            <div className={styles.from}>
+              <span className={styles.fromLabel}>FROM:</span>
+              <span>{current.from}</span>
+              {current.fromFingerprint && (
+                <span className={styles.fromFingerprint}>{current.fromFingerprint}</span>
+              )}
+            </div>
+          )}
+
           <div className={styles.title}>{current.title}</div>
 
           <p className={styles.body}>
@@ -383,6 +429,10 @@ export function TutorialOverlay() {
               <span key={i}>{line}<br /></span>
             ))}
           </p>
+
+          {current.sig && (
+            <p className={styles.sig}>{current.sig}</p>
+          )}
 
           {current.hint && (
             <p className={styles.hint}>▶ {current.hint}</p>
