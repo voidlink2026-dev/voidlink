@@ -7,9 +7,11 @@ import styles from './PrologueScreen.module.css'
 
 const PROLOGUE_LINES: string[] = [
   'It is January 2199.',
-  'Twenty-five years since the October Event.',
+  'Twenty-five years ago, every central bank ledger on Earth was rewritten in nine hours.',
+  'Nobody has ever claimed responsibility. The historians call it the October Event.',
+  'The financial system collapsed in nine days. Seventy-four million people died.',
+  'The corporations whose wealth was not in cash survived. Four of them — biotech, defence, telecommunications, banking — now command more land, more people, and more violence than every nation-state combined.',
   'The old governments are still there. Most of them do not, in any practical sense, govern anything.',
-  'Four corporations are larger than every country combined. Their security divisions do most of the things that used to be done by ministries.',
   'Underneath all of it — undocumented, untaxed, unrecognised — there is a black-market contractor network called Voidlink International.',
   'They have one contract. Four rules. They call it the Compact.',
   'You are about to sign it.',
