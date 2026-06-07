@@ -1442,6 +1442,22 @@ export const useGameStore = create<GameState & GameActions>()(
             const prev = (s.player.activeFlags[factionFlag] as number | undefined) ?? 0
             s.player.activeFlags[factionFlag] = prev + 1
           }
+          // M14t — Schedule the "WHO YOU WORK FOR" reflection once the axis
+          // has visibly tilted. Fires when the player has done ≥8 axis-tagged
+          // contracts AND the net |collaborator - resistor| ≥ 4.
+          if (!s.player.activeFlags['reflection_who_you_work_for']) {
+            const corp = (s.player.activeFlags.choice_corp_contract_taken as number) ?? 0
+            const gov  = (s.player.activeFlags.choice_gov_contract_taken as number) ?? 0
+            const und  = (s.player.activeFlags.choice_underground_contract_taken as number) ?? 0
+            const ref  = (s.player.activeFlags.choice_corp_contract_refused as number) ?? 0
+            const collaborator = corp + gov
+            const resistor = und + 2 * ref
+            const total = collaborator + und + ref
+            if (total >= 8 && Math.abs(collaborator - resistor) >= 4) {
+              s.player.activeFlags['reflection_who_you_work_for'] = Date.now()
+              s.pendingReflection = 'who_you_work_for'
+            }
+          }
         } else if (!success && s.player) {
           s.player.stats.traceFailures++
         }

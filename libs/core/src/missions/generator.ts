@@ -1,13 +1,30 @@
 import type { Mission, MissionDifficulty, MissionEvent, MissionRequirements, MissionType } from '../types/mission.ts'
 import type { NetworkId } from '../types/network.ts'
 
+// M14t — Expanded client pool to feed the Collaborator Axis. Roughly even
+// split between Underground / corporate / government / independent so the
+// procedural mission flow gives the player a real choice of who to work for.
+// The classifier in engine/clientFaction.ts pattern-matches these handles.
 const CLIENTS = [
-  { handle: 'Shadow_Broker', avatar: 'avatar_shadow' },
-  { handle: 'NightOwl_22', avatar: 'avatar_owl' },
-  { handle: 'Cipher', avatar: 'avatar_cipher' },
-  { handle: 'Zero_Cool', avatar: 'avatar_zero' },
-  { handle: 'ARC_Internal', avatar: 'avatar_arc' },
-  { handle: 'VoidlinkSupport', avatar: 'avatar_voidlink' },
+  // ── Underground / independent operators (resistor side) ──────────────
+  { handle: 'Shadow_Broker',    avatar: 'avatar_shadow' },
+  { handle: 'NightOwl_22',      avatar: 'avatar_owl' },
+  { handle: 'Cipher',           avatar: 'avatar_cipher' },
+  { handle: 'Zero_Cool',        avatar: 'avatar_zero' },
+  { handle: 'Null_Trader',      avatar: 'avatar_null' },
+  { handle: 'The_Broker',       avatar: 'avatar_broker' },
+  { handle: 'Ghost_Karachi',    avatar: 'avatar_ghost' },
+  // ── Big Four corporate recruiters (collaborator side) ────────────────
+  { handle: 'ARC_Internal',     avatar: 'avatar_arc' },
+  { handle: 'ARES_Recruitment', avatar: 'avatar_ares' },
+  { handle: 'Nexus_Compliance', avatar: 'avatar_nexus' },
+  { handle: 'Internic_Ops',     avatar: 'avatar_internic' },
+  { handle: 'Arunmor_HR',       avatar: 'avatar_arunmor' },
+  // ── Government / JCB (collaborator side) ─────────────────────────────
+  { handle: 'JCB_Liaison',      avatar: 'avatar_jcb' },
+  { handle: 'GOV_Procurement',  avatar: 'avatar_gov' },
+  // ── Neutral platform ─────────────────────────────────────────────────
+  { handle: 'VoidlinkSupport',  avatar: 'avatar_voidlink' },
 ]
 
 const BRIEFING_TEMPLATES: Record<MissionType, string[]> = {

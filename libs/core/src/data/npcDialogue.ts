@@ -681,6 +681,76 @@ Not yet your problem. Maybe one day it will be.
       strong_mercenary: null,
     },
   },
+
+  // ── M14t — Cipher cools when the player drifts to corporate work ─────────
+  // Fires once when the player has taken ≥4 corporate/government contracts
+  // and the collaborator score outweighs the resistor score by 2+. Tone is
+  // not angry — Cipher does not write angry. Tone is *colder*. He sends one
+  // short letter, the kind of letter you send when you are letting go.
+  {
+    id: 'cipher_collaborator_drift',
+    sender: 'CIPHER',
+    fingerprint: 'C19H 3R20 7B83 D6CC',
+    encrypted: true,
+    trigger: (p) => {
+      const corp = (p.activeFlags.choice_corp_contract_taken as number) ?? 0
+      const gov  = (p.activeFlags.choice_gov_contract_taken as number) ?? 0
+      const und  = (p.activeFlags.choice_underground_contract_taken as number) ?? 0
+      const ref  = (p.activeFlags.choice_corp_contract_refused as number) ?? 0
+      return (corp + gov) >= 4 && (corp + gov) > (und + 2 * ref) + 2
+    },
+    variants: {
+      strong_principled: null,
+      weak_principled: null,
+      neutral: {
+        subject: 'a note',
+        body: `I notice your client list.\n\nNot a judgment. An observation. The Bond does not care who pays you. People who care about you do.\n\nI am one of those people. I will write less, for a while.\n\n— Cipher.`,
+      },
+      weak_mercenary: {
+        subject: 'a note',
+        body: `Your client list has shifted. Arunmor. Nexus. The JCB, at one remove.\n\nThe work is good. The work has always been good. The question — and you don't owe me an answer — is what the work is *for*.\n\nI will write less, for a while. Take care of yourself.\n\n— Cipher.`,
+      },
+      strong_mercenary: {
+        subject: '(no subject)',
+        body: `Your handle no longer appears on the Mesh in the company I expected to find it in.\n\nGood luck with the work.\n\nCipher.`,
+      },
+    },
+  },
+
+  // ── M14t — NightOwl warms when the player consistently picks Underground ──
+  // Fires once when the player has taken ≥4 Underground contracts or refused
+  // ≥2 corporate ones, and the resistor score leads. NightOwl breaks her
+  // usual transactional tone — she offers something off-book.
+  {
+    id: 'nightowl_resistor_offer',
+    sender: 'NIGHTOWL_22',
+    fingerprint: 'N1G7 0WL2 2D6E 4F11',
+    trigger: (p) => {
+      const corp = (p.activeFlags.choice_corp_contract_taken as number) ?? 0
+      const gov  = (p.activeFlags.choice_gov_contract_taken as number) ?? 0
+      const und  = (p.activeFlags.choice_underground_contract_taken as number) ?? 0
+      const ref  = (p.activeFlags.choice_corp_contract_refused as number) ?? 0
+      const resistor = und + 2 * ref
+      const collaborator = corp + gov
+      return (und >= 4 || ref >= 2) && resistor > collaborator + 2
+    },
+    variants: {
+      strong_principled: {
+        subject: 'something off the board',
+        body: `I have watched what you choose, and what you decline.\n\nI have a contract that has not been listed. It will not be listed. The target is a Nexus subsidiary that is doing something it should not be doing to people who cannot afford a lawyer.\n\nPay is below scale. Risk is above scale. You will not be the first operative I offered it to. You may be the first who takes it.\n\nLet me know.\n\n— NIGHTOWL_22.`,
+      },
+      weak_principled: {
+        subject: 'an off-book',
+        body: `I have a contract I am only sending to operatives I have stopped vetting.\n\nNexus subsidiary. The brief is in the attachment, encrypted with your public. Pay is below the listings, intentionally. I am not paying for your time. I am paying for the kind of operative you are.\n\n— NIGHTOWL_22.`,
+      },
+      neutral: {
+        subject: 're: your client list',
+        body: `You have been picking your work carefully. I notice.\n\nI have something off the board. Sending you the brief separately. No obligation.\n\n— NIGHTOWL_22.`,
+      },
+      weak_mercenary: null,
+      strong_mercenary: null,
+    },
+  },
 ]
 
 /**
