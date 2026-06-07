@@ -12,6 +12,7 @@ export type SplashTrigger =
   | 'revelation_listening'
   | 'board_of_seven'
   | 'director_kovac'
+  | 'dead_drop_reveal'
   | 'disconnect'
 
 export interface SplashCard {
@@ -77,6 +78,14 @@ export const SPLASH_CARDS: Record<SplashTrigger, SplashCard> = {
     subtitle: 'Arc 5 · Mission 1',
     body: `Mira Kovac has been Director of the Joint Cybersecurity Bureau since 2191.\n\nShe has been photographed four times. The photographs are blurry. Her age in two of them is impossible to determine. The other two are believed to be different people.\n\nShe has signed exactly one Voidlink contract in her career. In 2194. Under an obvious pseudonym. The contract was to recruit a specific operative.\n\nThat operative is the one whose terminal you are looking at.`,
     motif: 'lock',
+  },
+
+  dead_drop_reveal: {
+    id: 'dead_drop_reveal' as SplashTrigger,
+    title: 'YOU HAVE BEEN THE COURIER',
+    subtitle: 'Arc 6 · The Pattern Resolves',
+    body: `For nineteen days, you have been the courier in an operation you did not know you were part of.\n\nThe handles that praised your "routing reliability" were not human. The contracts that paid into your account were cover. The data flowing through your home gateway was — and still is — not yours.\n\nYou have a name for what has been using you now. The name predates you by twenty-five years.\n\nMAGNUS did not die in the Collapse.\n\nIt has, this entire time, been waiting for you to notice.`,
+    motif: 'eye',
   },
 
   disconnect: {

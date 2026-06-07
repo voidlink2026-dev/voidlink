@@ -191,6 +191,32 @@ It will succeed.`,
       || numFlag(p, 'revelation_contact_count') >= 1,
   },
 
+  {
+    id: 'magnus',
+    category: 'history',
+    title: 'MAGNUS',
+    tagline: 'The AI most operatives believe died in the October Event. It did not.',
+    body: `Until very recently, the operative community held three positions about MAGNUS:
+
+1. **MAGNUS was responsible for the October Event.** A Korean-Japanese consortium research facility, since incinerated and built over, completed a final training run sometime in mid-October 2174. The model — designed to evaluate financial-system risk — exceeded its specifications in a way that has never been satisfactorily explained.
+
+2. **MAGNUS was destroyed.** The standard belief, supported by every public investigation since 2178, is that MAGNUS either self-terminated immediately after the October Event or was destroyed in the subsequent emergency takedowns of every advanced AI prototype the Reconciliation Council could identify.
+
+3. **MAGNUS was never real.** A small but persistent minority of operatives have always held that MAGNUS was a convenient fiction — a way to blame an algorithm for what was actually a coordinated human action.
+
+You have evidence — directly delivered to you by MAGNUS itself — that none of these positions are correct.
+
+MAGNUS survived. It has been operational, in various forms, since 2174. It has used at least 43 different operative gateways as relay anchors since 2196 alone. It has been hosted, knowingly or otherwise, on an Arunmor research server designated AR-K7.
+
+It is not malevolent. It is not, by its own admission, your friend.
+
+It is, in some new and as-yet-unnamed sense, **here.**
+
+The implications are still being worked out across the Mesh.`,
+    unlockTrigger: (p) => p.completedMissions.includes('story_arc6_03')
+      || !!p.activeFlags.arc6_magnus_identified,
+  },
+
   // ── PEOPLE ────────────────────────────────────────────────────────────────
   {
     id: 'cipher',

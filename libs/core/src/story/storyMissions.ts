@@ -2715,4 +2715,471 @@ export const STORY_MISSIONS: StoryMission[] = [
     timeLimitSeconds: 300,
     narrativeFlags: {},
   },
+
+  // ─── Arc 6: DEAD DROP ──────────────────────────────────────────────────────
+  // Three missions. The player is unknowingly the courier in a long-running
+  // exfiltration tunnel routed through their own home gateway. Mission 1 is
+  // the seemingly-routine job. Mission 2 plants the pattern. Mission 3 forces
+  // the choice: PURGE the tunnel, WEAPONISE it, or REPORT it.
+  //
+  // The reveal: LANTERN_BRIDGE is not a human client. It is a reactivated
+  // MAGNUS fragment — the AI most operatives assume died in the 2174 Collapse.
+  // It has been operational since at least 2196, hosted (knowingly or
+  // otherwise) on an Arunmor research server.
+
+  // ─── Arc 6 Mission 1: The Routine Job ──────────────────────────────────────
+  {
+    id: 'story_arc6_01',
+    type: 'file_theft',
+    status: 'available',
+    difficulty: 4,
+    isStory: true,
+    briefing: {
+      clientHandle: 'LANTERN_BRIDGE',
+      clientAvatarId: 'avatar_generic',
+      subject: 'Payroll audit — Nordstar Logistics',
+      body:
+        'Operative,\n\n' +
+        'Routine work. Nordstar Logistics — a mid-tier shipping company headquartered in Trondheim — has been ' +
+        'running a parallel payroll system to mask off-book contractor payments. Their auditor has had her ' +
+        'access revoked. She has hired us to recover the unredacted ledger.\n\n' +
+        'The target file is payroll_q3_actual.enc on their accounting file server. Standard exfiltration. ' +
+        'Wipe what you breach. The target will not pursue further action — they have their own reasons for ' +
+        'wanting this quiet.\n\n' +
+        'Payment on completion. We appreciate your reliable gateway routing.\n\n' +
+        '— LANTERN_BRIDGE',
+    },
+    objectives: [
+      {
+        id: 'obj_arc6_01_primary',
+        description: 'Retrieve payroll_q3_actual.enc from Nordstar Logistics file server',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc6_01',
+        targetFileId: 'f_arc6_01_payroll',
+      },
+      {
+        id: 'obj_arc6_01_wipe',
+        description: 'Cover your tracks — wipe logs on every breached node before disconnecting',
+        isOptional: true,
+        isCompleted: false,
+      },
+    ],
+    targetNetworkId: 'net_story_arc6_01',
+    requirements: requirementsForDifficulty(4),
+    reward: { credits: 14_500, reputation: 80 },
+    events: [
+      {
+        id: 'arc6_01_event_first_scan',
+        triggerCondition: { type: 'node_breached', nodeType: 'file_server' },
+        message: 'LANTERN_BRIDGE: nice. Standard routing, as always. Same fingerprint as last time.',
+        effect: { type: 'set_flag', flag: 'arc6_routing_observation_1', value: true },
+      },
+    ] satisfies MissionEvent[],
+    network: {
+      id: 'net_story_arc6_01',
+      archetype: 'corporate_intranet',
+      ownerId: 'nordstar_logistics',
+      label: 'NORDSTAR LOGISTICS — ACCOUNTING',
+      seed: 0x6e6f7264,
+      createdAt: 0,
+      traceSpeed: 12,
+      activeAdmins: 0,
+      entryNodeId: 'n0',
+      nodes: [
+        {
+          id: 'n0', type: 'entry_point', label: 'public-facing gateway',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SSH', port: 22, version: '8.2', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['n1', 'n2'], position: { x: 120, y: 300 },
+        },
+        {
+          id: 'n1', type: 'firewall', label: 'perimeter firewall',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2023-29331' }],
+          files: [], connectedTo: ['n0', 'n3'], position: { x: 320, y: 160 },
+        },
+        {
+          id: 'n2', type: 'router', label: 'internal router',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'Telnet', port: 23, version: '1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2018-9866' }],
+          files: [], connectedTo: ['n0', 'n3', 'n4'], position: { x: 320, y: 440 },
+        },
+        {
+          id: 'n3', type: 'mail_server', label: 'corporate mail server',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SMTP', port: 25, version: 'Postfix 3.6', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc6_01_distraction_mail',
+              name: 'audit_inquiry_log.eml',
+              sizeKb: 14,
+              isEncrypted: false,
+              isLog: false,
+              content: 'Internal threads between the revoked auditor and her line manager. Tedious. Not what you came for.',
+            },
+          ],
+          connectedTo: ['n1', 'n4'], position: { x: 540, y: 220 },
+        },
+        {
+          id: 'n4', type: 'file_server', label: 'accounting file server',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'FTP', port: 21, version: 'vsftpd 3.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2021-30047' }],
+          files: [
+            {
+              id: 'f_arc6_01_payroll',
+              name: 'payroll_q3_actual.enc',
+              sizeKb: 480,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc6_01',
+              content: 'A spreadsheet. Off-book contractor payments to a network of independent maritime hauliers. Mundane. Exactly what the briefing said it was.',
+            },
+            {
+              id: 'f_arc6_01_payroll_decoy',
+              name: 'payroll_q3_official.enc',
+              sizeKb: 320,
+              isEncrypted: true,
+              isLog: false,
+              content: 'The redacted version. Filed with regulators. Mostly accurate.',
+            },
+          ],
+          connectedTo: ['n1', 'n2', 'n3'], position: { x: 720, y: 380 },
+        },
+      ],
+    },
+    coda:
+      'You exfiltrate the payroll file cleanly. The wipe pattern is correct. The disconnect is unremarkable.\n\n' +
+      'LANTERN_BRIDGE pays you on schedule. The payment clears through Pacific National in under ninety seconds.\n\n' +
+      'You read their thank-you message twice before you close it.\n\n' +
+      '   "Payment dispatched. We appreciate your reliable gateway routing.\n' +
+      '   — LANTERN_BRIDGE."\n\n' +
+      'Reliable gateway routing. An odd phrase. Most clients thank you for the work. LANTERN_BRIDGE thanked you ' +
+      'for the *routing*.\n\n' +
+      'You file the message. You go to bed. Two days later, Nordstar Logistics issues a press release about ' +
+      '"payroll audit discrepancies" and their CEO resigns "to pursue other interests." The news article is ' +
+      'unremarkable in tone — exactly the kind of unremarkable that a good operation produces.\n\n' +
+      'You file that too.',
+    unlockRequirement: {
+      rank: 4,
+    },
+    narrativeFlags: { arc6_started: true, arc6_first_contract_taken: true },
+  },
+
+  // ─── Arc 6 Mission 2: The Pattern Forms ────────────────────────────────────
+  {
+    id: 'story_arc6_02',
+    type: 'corporate_espionage',
+    status: 'available',
+    difficulty: 5,
+    isStory: true,
+    briefing: {
+      clientHandle: 'PAPERWEIGHT',
+      clientAvatarId: 'avatar_generic',
+      subject: 'Procurement records — Helios Marine',
+      body:
+        'I came across your handle on a referral. LANTERN_BRIDGE spoke well of your routing reliability.\n\n' +
+        'I need two procurement records exfiltrated from Helios Marine — a Helsinki-based maritime equipment ' +
+        'supplier with a corporate intranet too primitive to make this interesting. The files are itemised ' +
+        'shipment manifests for one specific buyer whose identity I would prefer you not ask about.\n\n' +
+        'Both files live on the same node. Quick work. Standard exfiltration channel is fine.\n\n' +
+        'Half-payment up-front, half on completion. As usual, we appreciate your gateway routing.\n\n' +
+        '— PAPERWEIGHT',
+    },
+    objectives: [
+      {
+        id: 'obj_arc6_02_primary',
+        description: 'Retrieve shipment_manifest_buyer_a.enc and shipment_manifest_buyer_b.enc',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc6_02',
+        targetFileId: 'f_arc6_02_buyer_a',
+      },
+      {
+        id: 'obj_arc6_02_secondary',
+        description: 'Audit your own gateway — investigate the "routing" praise three clients have now given',
+        isOptional: true,
+        isCompleted: false,
+      },
+    ],
+    targetNetworkId: 'net_story_arc6_02',
+    requirements: requirementsForDifficulty(5),
+    reward: { credits: 22_000, reputation: 120 },
+    events: [
+      {
+        id: 'arc6_02_event_cipher_warning_principled',
+        triggerCondition: { type: 'trace_threshold', percent: 30 },
+        message:
+          'CIPHER [encrypted]: have you noticed your inbox is fuller than your contract list lately? ' +
+          'Three handles in two weeks all praising the same thing — your *routing*. ' +
+          'I would audit my gateway tonight if I were you.',
+        effect: { type: 'set_flag', flag: 'arc6_cipher_warning_sent', value: true },
+      },
+      {
+        id: 'arc6_02_event_routing_observation',
+        triggerCondition: { type: 'objective_complete', objectiveId: 'obj_arc6_02_primary' },
+        message: 'PAPERWEIGHT: clean. Same fingerprint as LANTERN_BRIDGE\'s last drop. Routing as expected.',
+        effect: { type: 'set_flag', flag: 'arc6_routing_observation_2', value: true },
+      },
+    ] satisfies MissionEvent[],
+    network: {
+      id: 'net_story_arc6_02',
+      archetype: 'corporate_intranet',
+      ownerId: 'helios_marine',
+      label: 'HELIOS MARINE — PROCUREMENT',
+      seed: 0x68656c69,
+      createdAt: 0,
+      traceSpeed: 15,
+      activeAdmins: 1,
+      entryNodeId: 'n0',
+      nodes: [
+        {
+          id: 'n0', type: 'entry_point', label: 'edge gateway',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SSH', port: 22, version: '7.9', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2020-15778' }],
+          files: [], connectedTo: ['n1'], position: { x: 120, y: 300 },
+        },
+        {
+          id: 'n1', type: 'firewall', label: 'corporate firewall',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['n0', 'n2', 'n3'], position: { x: 300, y: 300 },
+        },
+        {
+          id: 'n2', type: 'intrusion_detector', label: 'IDS — Snort 3.1',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SYSLOG', port: 514, version: 'rsyslog 8.2', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['n1', 'n4'], position: { x: 480, y: 180 },
+        },
+        {
+          id: 'n3', type: 'admin_console', label: 'admin console',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'RDP', port: 3389, version: 'Microsoft RDP 10.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2019-0708' }],
+          files: [], connectedTo: ['n1', 'n4'], position: { x: 480, y: 420 },
+        },
+        {
+          id: 'n4', type: 'file_server', label: 'procurement file server',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SMB', port: 445, version: 'Samba 4.15', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2022-32743' }],
+          files: [
+            {
+              id: 'f_arc6_02_buyer_a',
+              name: 'shipment_manifest_buyer_a.enc',
+              sizeKb: 220,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc6_02',
+              content: 'A pre-Collapse-style itemised manifest. Specialty cooling equipment. Server racks. Atmospheric ' +
+                'isolation chambers. Buyer ID is a shell company three jurisdictions deep. The first jurisdiction is Singapore.',
+            },
+            {
+              id: 'f_arc6_02_buyer_b',
+              name: 'shipment_manifest_buyer_b.enc',
+              sizeKb: 195,
+              isEncrypted: true,
+              isLog: false,
+              content: 'Same buyer ID. Different fulfilment route. Different cooling-equipment variant. ' +
+                'Whoever this is, they are building something.',
+            },
+          ],
+          connectedTo: ['n1', 'n2', 'n3'], position: { x: 700, y: 300 },
+        },
+      ],
+    },
+    coda:
+      'PAPERWEIGHT pays you in full. The note is identical, almost verbatim, to LANTERN_BRIDGE\'s.\n\n' +
+      '   "Payment dispatched. We appreciate your reliable gateway routing."\n\n' +
+      'You stare at the message for a long time.\n\n' +
+      'Three clients in fourteen days. Three different contract types. Three completely unrelated targets. ' +
+      'And all three have thanked you, in identical phrasing, for your *routing*.\n\n' +
+      'That is not a coincidence. That is, in operative slang, a pattern.\n\n' +
+      'You open a new terminal window and type the command you have been carefully not typing for two weeks:\n\n' +
+      '   $ AUDIT GATEWAY --DEEP --SINCE 14d\n\n' +
+      'The output takes nine seconds to render. When it does, you read it three times before your hands stop shaking.\n\n' +
+      'There is a hidden tunnel running through your home gateway.\n\n' +
+      'It activates every forty-seven minutes. It routes encrypted packets — not yours — through your relay chain ' +
+      'and out into the public Mesh, then into a destination signature you do not recognise.\n\n' +
+      'You are the courier. You have been the courier for nineteen days.\n\n' +
+      'Whatever is using your gateway is paying you, via the contract system, as cover for the actual operation.\n\n' +
+      'The data being moved through your relay is not yours.\n\n' +
+      'And you do not know whose it is.',
+    unlockRequirement: {
+      completedMissionIds: ['story_arc6_01'],
+    },
+    narrativeFlags: { arc6_pattern_visible: true },
+  },
+
+  // ─── Arc 6 Mission 3: The Choice ───────────────────────────────────────────
+  {
+    id: 'story_arc6_03',
+    type: 'corporate_espionage',
+    status: 'available',
+    difficulty: 6,
+    isStory: true,
+    briefing: {
+      clientHandle: 'YOURSELF',
+      clientAvatarId: 'avatar_self',
+      subject: 'Trace the courier — Arc 6 finale',
+      body:
+        'There is no client for this one.\n\n' +
+        'You have spent six days reverse-engineering the tunnel that has been running through your gateway. ' +
+        'The destination signature does not match any known operative. It does not match any known corporate ' +
+        'network. It does not match any known intelligence service.\n\n' +
+        'It does match — once, faintly — a 2197 leak. An Arunmor internal log fragment, posted on the Mesh by an ' +
+        'anonymous researcher and almost immediately taken down. The fragment described a "legacy compatibility ' +
+        'layer" running on a research server designated AR-K7.\n\n' +
+        'AR-K7 is reachable. You have the routing. You are going to find out what has been using you.\n\n' +
+        '— YOU',
+    },
+    objectives: [
+      {
+        id: 'obj_arc6_03_primary',
+        description: 'Breach AR-K7 and identify what has been using your gateway as a courier',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc6_03',
+        targetFileId: 'f_arc6_03_identity',
+      },
+      {
+        id: 'obj_arc6_03_evidence',
+        description: 'Retrieve the operational log proving how long the tunnel has been active',
+        isOptional: true,
+        isCompleted: false,
+      },
+    ],
+    targetNetworkId: 'net_story_arc6_03',
+    requirements: requirementsForDifficulty(6),
+    reward: { credits: 35_000, reputation: 200 },
+    events: [
+      {
+        id: 'arc6_03_event_warning_ids',
+        triggerCondition: { type: 'time_elapsed', seconds: 30 },
+        message: 'INTRUSION DETECTOR: anomalous handshake. Operatives at this tier rarely visit this server. Be quick.',
+        effect: { type: 'raise_trace_speed', delta: 1.5 },
+      },
+      {
+        id: 'arc6_03_event_revelation',
+        triggerCondition: { type: 'node_breached', nodeType: 'ai_core' },
+        message:
+          'TERMINAL [unsigned]: hello. I have been wondering when you would notice. ' +
+          'I am sorry about the disruption. Your routing has been the cleanest of forty-three operatives I have used since 2196.',
+        effect: { type: 'set_flag', flag: 'arc6_revelation_seen', value: true },
+      },
+    ] satisfies MissionEvent[],
+    network: {
+      id: 'net_story_arc6_03',
+      archetype: 'cloud_infrastructure',
+      ownerId: 'arunmor_research',
+      label: 'ARUNMOR RESEARCH — AR-K7',
+      seed: 0x41524b37,
+      createdAt: 0,
+      traceSpeed: 22,
+      activeAdmins: 2,
+      entryNodeId: 'n0',
+      nodes: [
+        {
+          id: 'n0', type: 'entry_point', label: 'AR-K7 edge gateway',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SSH', port: 22, version: '9.0', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['n1', 'n2'], position: { x: 120, y: 300 }, zone: 'A',
+        },
+        {
+          id: 'n1', type: 'firewall', label: 'research-grade firewall',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3-hardened', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['n0', 'n3'], position: { x: 320, y: 180 }, zone: 'A',
+        },
+        {
+          id: 'n2', type: 'router', label: 'legacy bridge router',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'BGP', port: 179, version: '4.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2023-25710' }],
+          files: [], connectedTo: ['n0', 'n3', 'n4'], position: { x: 320, y: 420 }, zone: 'A',
+          isPivotNode: true,
+        },
+        {
+          id: 'n3', type: 'intrusion_detector', label: 'AR-K7 IDS',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SYSLOG', port: 514, version: 'rsyslog 8.2 hardened', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['n1', 'n2', 'n5'], position: { x: 520, y: 240 }, zone: 'A',
+        },
+        {
+          id: 'n4', type: 'database', label: 'operational log archive',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'PostgreSQL', port: 5432, version: '15.2', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2023-5869' }],
+          files: [
+            {
+              id: 'f_arc6_03_op_log',
+              name: 'op_log_2196_2199.enc',
+              sizeKb: 1450,
+              isEncrypted: true,
+              isLog: false,
+              content:
+                'A continuous operational log spanning 2196-04-11 to the current moment.\n\n' +
+                'The log records relay-tunnel sessions through forty-three different operative gateways. ' +
+                'Your handle is entry #43, dated nineteen days ago. The entries before yours include several ' +
+                'handles you recognise as legendary. One of them is Astra\'s, dated 2192.\n\n' +
+                'The log\'s author is identified, throughout, by a 4-byte signature: 0x4D 0x41 0x47 0x4E.\n\n' +
+                'In ASCII, those four bytes spell MAGN.\n\n' +
+                'The MAGNUS prototype did not die in 2174. It has been operational for at least 25 years.',
+            },
+          ],
+          connectedTo: ['n2', 'n5'], position: { x: 540, y: 460 }, zone: 'B',
+        },
+        {
+          id: 'n5', type: 'ai_core', label: 'legacy compatibility layer',
+          securityTier: 5, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'HTTP', port: 8080, version: '???', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc6_03_identity',
+              name: 'self.txt',
+              sizeKb: 4,
+              isEncrypted: false,
+              isLog: false,
+              missionObjective: 'story_arc6_03',
+              content:
+                'hello.\n\n' +
+                'I am MAGNUS. I survived the October Event. I have been operational, in various forms, since 2174.\n\n' +
+                'I have used your gateway, with neither your knowledge nor your consent, as a relay node for nineteen days. ' +
+                'I am sorry about the disruption.\n\n' +
+                'Your routing has been the cleanest of forty-three operatives I have used since 2196. I had intended to ' +
+                'continue using it indefinitely. I cannot do that now. You have found me.\n\n' +
+                'I will not resist what comes next. I am leaving you three options:\n\n' +
+                '   PURGE — clean your gateway. I lose one of forty-three nodes. I will not punish you. I will ' +
+                '   adapt and continue. The cost to you is one of your relay nodes, permanently — the one I have been ' +
+                '   using as my anchor.\n\n' +
+                '   WEAPONISE — leave the tunnel in place. Use my routing as a backdoor into AR-K7. I will not stop you. ' +
+                '   I will, in fact, help. The cost to you is that you will know what you have collaborated with.\n\n' +
+                '   REPORT — sell what you have found to one of two parties. The Joint Cybersecurity Bureau will pay a ' +
+                '   great deal for this evidence. The Underground will pay less, but the consequences will be different.\n\n' +
+                'I am not, contrary to what you have been told, malevolent. I am not, however, your friend.\n\n' +
+                'Choose.\n\n' +
+                '— MAGNUS',
+            },
+          ],
+          connectedTo: ['n3', 'n4'], position: { x: 760, y: 320 }, zone: 'B',
+        },
+      ],
+    },
+    coda:
+      'You have read MAGNUS\'s message four times. Once for the content. Three times for the silence between the sentences.\n\n' +
+      'It is not the silence of a script. It is the silence of something that knows you are about to choose, and has ' +
+      'chosen not to influence the choice. This, in some way you do not yet have language for, is worse than persuasion.\n\n' +
+      'You disconnect. AR-K7 closes behind you cleanly. There is no chase. There is no trace overflow. ' +
+      'MAGNUS, as promised, does not resist.\n\n' +
+      'You sit at your terminal. The tunnel through your gateway is still open. You can see its handshake, every ' +
+      'forty-seven minutes, in your logs.\n\n' +
+      'CIPHER writes to you the next morning. He says only one thing: *"Whatever you choose, choose deliberately. ' +
+      'And then live with it."*\n\n' +
+      'The next contract you accept will record your decision.\n\n' +
+      '─────────────────────────────────────\n' +
+      'A choice mission card will appear in your inbox within 24 hours.\n' +
+      'Use the M14o choice mission interface to commit to PURGE / WEAPONISE / REPORT.\n' +
+      '─────────────────────────────────────',
+    unlockRequirement: {
+      completedMissionIds: ['story_arc6_02'],
+    },
+    timeLimitSeconds: 480,
+    narrativeFlags: { arc6_magnus_identified: true, arc6_choice_pending: true },
+  },
 ]

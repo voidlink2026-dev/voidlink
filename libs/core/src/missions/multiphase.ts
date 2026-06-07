@@ -9,7 +9,7 @@ export interface MultiPhaseMissionTemplate {
   briefingSubject: string
   briefingBody: string
   clientHandle: string
-  difficulty: 3 | 4 | 5
+  difficulty: 3 | 4 | 5 | 6 | 7
   baseCredits: number
   baseReputation: number
   phases: MissionPhase[]
@@ -181,7 +181,163 @@ const BLACK_HALO: MultiPhaseMissionTemplate = {
   },
 }
 
-export const MULTIPHASE_TEMPLATES: MultiPhaseMissionTemplate[] = [PROJECT_GHOST, BLACK_HALO]
+// ── DEAD DROP — Arc 6 resolution. Three-way fork on Phase 1.
+// PURGE — clean the gateway. Lose anchor relay node permanently. Underground rep.
+// WEAPONISE — leave tunnel open. Use MAGNUS routing as backdoor. Big credits, big notoriety.
+// REPORT — sell intel. Two sub-branches via Phase 2 selection (JCB or NIGHTOWL_22).
+const DEAD_DROP_RESOLUTION: MultiPhaseMissionTemplate = {
+  id: 'multiphase_dead_drop_resolution',
+  briefingSubject: 'DEAD DROP — resolution',
+  clientHandle: 'YOURSELF',
+  difficulty: 6,
+  baseCredits: 40000,
+  baseReputation: 150,
+  briefingBody:
+    'You have identified MAGNUS. You have evidence. You have a tunnel running through your home gateway every forty-seven minutes.\n\n' +
+    'You have three options:\n\n' +
+    '  PURGE — clean the gateway. MAGNUS adapts. You lose your anchor relay node permanently. Compact-clean choice.\n' +
+    '  WEAPONISE — leave the tunnel in place. Use MAGNUS routing as a backdoor into Arunmor. Massive payoff.\n' +
+    '             You will know what you have collaborated with.\n' +
+    '  REPORT — sell what you have found. Sub-choice in Phase 2: JCB or NIGHTOWL_22.\n\n' +
+    'CIPHER will respect the first option. Arunmor will fear the second. The Government will reward the third.\n\n' +
+    'Choose deliberately. Then live with it.',
+
+  phases: [
+    {
+      id: 'phase_dd_recon',
+      label: 'Recon',
+      description: 'Confirm the tunnel signature one more time. Verify MAGNUS\'s offered terms are accurate before committing.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_dd_verify', description: 'Verify the gateway tunnel signature on your own AUDIT GATEWAY scan', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 0, reputation: 0 },
+      choices: [
+        {
+          id: 'purge',
+          label: 'PURGE',
+          description: 'Burn the tunnel. Lose your anchor relay node permanently. CIPHER will respect this. The Compact School will recognise it.',
+          nextPhaseIndex: 1,
+          effects: {
+            repDelta: 20,
+            factionDeltas: { underground: 35, arunmor: -10 },
+            setFlag: { flag: 'choice_dead_drop_purge', value: true },
+          },
+        },
+        {
+          id: 'weaponise',
+          label: 'WEAPONISE',
+          description: 'Use MAGNUS\'s routing as a backdoor into Arunmor\'s research network. Massive payoff. You will be known.',
+          nextPhaseIndex: 2,
+          effects: {
+            repDelta: 30,
+            factionDeltas: { underground: -25, arunmor: -30, the_nameless: 20 },
+            setFlag: { flag: 'choice_dead_drop_weaponise', value: true },
+          },
+        },
+        {
+          id: 'report',
+          label: 'REPORT',
+          description: 'Sell the discovery. JCB pays better, but the JCB is the JCB. NIGHTOWL_22 pays in connections, not credits.',
+          nextPhaseIndex: 3,
+          effects: {
+            setFlag: { flag: 'choice_dead_drop_report', value: true },
+          },
+        },
+      ],
+    },
+    // Phase 1 — PURGE path
+    {
+      id: 'phase_dd_purge_burn',
+      label: 'Purge',
+      description: 'Inject a forced-termination handshake into the tunnel. MAGNUS will accept it. Your anchor node will burn permanently.',
+      targetNetworkId: 'personal_gateway',
+      objectives: [
+        { id: 'obj_dd_purge', description: 'Inject termination handshake — anchor relay will be permanently lost', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 15000, reputation: 60 },
+    },
+    // Phase 2 — WEAPONISE path
+    {
+      id: 'phase_dd_weaponise_backdoor',
+      label: 'Weaponise',
+      description: 'Inject your own packets into MAGNUS\'s tunnel. The destination is Arunmor research network AR-K7. Take what you find.',
+      targetNetworkId: 'cloud_infrastructure',
+      objectives: [
+        { id: 'obj_dd_weaponise', description: 'Exfiltrate the AR-K7 research index via MAGNUS routing', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 85000, reputation: 80 },
+    },
+    // Phase 3 — REPORT path (sub-choice in this phase: JCB or NIGHTOWL_22)
+    {
+      id: 'phase_dd_report_choice',
+      label: 'Report',
+      description: 'Compile the evidence package. Sub-choice: JCB (Government cooperation) or NIGHTOWL_22 (Underground broker).',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_dd_report_compile', description: 'Compile evidence package for delivery', isOptional: false, isCompleted: false },
+      ],
+      choices: [
+        {
+          id: 'report_jcb',
+          label: 'DELIVER TO JCB',
+          description: 'Send the package to Director Kovac directly. They will pay. They will also remember you for it.',
+          nextPhaseIndex: 4,
+          effects: {
+            repDelta: 30,
+            factionDeltas: { government: 40, ares_division: 20, underground: -20 },
+            setFlag: { flag: 'choice_dead_drop_report_jcb', value: true },
+          },
+        },
+        {
+          id: 'report_nightowl',
+          label: 'DELIVER TO NIGHTOWL_22',
+          description: 'Drop the package on the Mesh via NIGHTOWL\'s broker channel. Less credit. More connection.',
+          nextPhaseIndex: 4,
+          effects: {
+            repDelta: 15,
+            factionDeltas: { underground: 30, government: -10 },
+            setFlag: { flag: 'choice_dead_drop_report_nightowl', value: true },
+          },
+        },
+      ],
+    },
+    // Phase 4 — REPORT path payoff
+    {
+      id: 'phase_dd_report_deliver',
+      label: 'Deliver',
+      description: 'Deliver the package via the chosen channel. The recipient will pay on receipt.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_dd_report_deliver', description: 'Deliver the evidence package', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 50000, reputation: 100 },
+    },
+  ],
+
+  newsEchoes: {
+    1: {  // PURGE
+      headline: 'Anonymous Relay Node Goes Dark',
+      body: 'A long-running relay node, previously believed to be a benign academic mesh contributor, has stopped responding to handshake requests. The cause is unknown. Mesh observers note the timing is unusual.',
+      category: 'tech',
+      delaySeconds: 90,
+    },
+    2: {  // WEAPONISE
+      headline: 'Arunmor Research Division Confirms "Security Incident"',
+      body: 'Arunmor has confirmed an unauthorised breach of one of its research compounds, designated AR-K7. The compound has been taken offline for investigation. The company has declined to elaborate on the nature of the compromised data.',
+      category: 'corporate',
+      delaySeconds: 120,
+    },
+    4: {  // REPORT — both sub-branches
+      headline: 'Whistleblower Evidence Surfaces On Mesh',
+      body: 'An anonymous evidence package has begun circulating on Underground channels. Mesh observers describe its contents as "the most consequential single drop in living memory." Attribution remains unclear. Verification is ongoing.',
+      category: 'crime',
+      delaySeconds: 180,
+    },
+  },
+}
+
+export const MULTIPHASE_TEMPLATES: MultiPhaseMissionTemplate[] = [PROJECT_GHOST, BLACK_HALO, DEAD_DROP_RESOLUTION]
 
 // Generate a fully-formed Mission from a template, seeded by id
 export function generateMultiPhaseMission(template: MultiPhaseMissionTemplate, instanceId?: string): Mission {

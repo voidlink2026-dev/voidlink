@@ -82,6 +82,12 @@ export const CHOICE_CATALOGUE: ChoiceDefinition[] = [
   // ── Voidlink Compact violations ──────────────────────────────────────────
   // Hard violations — these are rare, weighted heavily mercenary.
   { flag: 'choice_compact_rule4_violated', conviction: 'mercenary', weight: 3, trait: 'compact_violator' },
+
+  // ── Arc 6 — Dead Drop resolution ─────────────────────────────────────────
+  { flag: 'choice_dead_drop_purge',           conviction: 'principled', weight: 3, trait: 'compact_clean' },
+  { flag: 'choice_dead_drop_weaponise',       conviction: 'mercenary',  weight: 3, trait: 'magnus_collaborator' },
+  { flag: 'choice_dead_drop_report_nightowl', conviction: 'principled', weight: 2, trait: 'underground_loyalist' },
+  { flag: 'choice_dead_drop_report_jcb',      conviction: 'mercenary',  weight: 2, trait: 'jcb_informant' },
 ]
 
 export interface DecisionPattern {

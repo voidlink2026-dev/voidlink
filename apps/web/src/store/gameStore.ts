@@ -478,6 +478,11 @@ export const useGameStore = create<GameState & GameActions>()(
             s.player.activeFlags['splash_fired_director_kovac'] = Date.now()
             s.pendingSplash = 'director_kovac'
           }
+          // Dead Drop reveal — Arc 6 final discovery mission
+          else if (missionId === 'story_arc6_03' && !s.player.activeFlags['splash_fired_dead_drop_reveal']) {
+            s.player.activeFlags['splash_fired_dead_drop_reveal'] = Date.now()
+            s.pendingSplash = 'dead_drop_reveal'
+          }
         }
 
         // M14h.6 — dispatch a contract email to the encrypted inbox so the
