@@ -324,7 +324,9 @@ export function LoginScreen() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <GlyphDrift opacity={0.65} density={1.2} />
+      {/* M14r-fix — dim the globe behind the form so the text isn't fighting
+          the neon. The panel itself now has its own backdrop. */}
+      <GlyphDrift opacity={0.35} density={1.0} />
 
       <div className={styles.panel}>
 
