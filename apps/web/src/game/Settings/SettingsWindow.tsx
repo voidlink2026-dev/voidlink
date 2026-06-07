@@ -108,7 +108,7 @@ export function SettingsWindow() {
             onClick={() => {
               try {
                 localStorage.removeItem('voidlink_prologue_seen')
-                localStorage.removeItem('voidlink_compact_signed')
+                localStorage.removeItem('voidlink_bond_signed')
               } catch { /**/ }
               alert('Short intro will replay on next boot (until you sign up again).')
             }}

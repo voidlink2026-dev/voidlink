@@ -19,7 +19,7 @@
 3. [The Nine Days (15–23 October 2174)](#3-the-nine-days)
 4. [The Reconciliation Accords (2178)](#4-the-reconciliation-accords)
 5. [The Big Four — How the Corporations Won](#5-the-big-four)
-6. [Voidlink International — Founding and Compact](#6-voidlink-international)
+6. [Voidlink International — Founding and Bond](#6-voidlink-international)
 7. [The Joint Cybersecurity Bureau — The Government, Such As It Is](#7-the-jcb)
 8. [The Underground — A Fiction We Tell Ourselves](#8-the-underground)
 9. [Project R-1117 — REVELATION](#9-revelation)
@@ -33,7 +33,7 @@
 17. [The Year Ahead — What We Are Watching In 2199](#17-the-year-ahead)
 18. [Appendix A — Timeline of Major Events 2174–2199](#a-timeline)
 19. [Appendix B — Glossary of Terms](#b-glossary)
-20. [Appendix C — The Voidlink Compact, in Full](#c-the-compact)
+20. [Appendix C — The Voidlink Bond, in Full](#c-the-compact)
 21. [Appendix D — A Note on Sources](#d-sources)
 
 ---
@@ -183,25 +183,25 @@ This is widely regarded, even by people who like Nexus, as a problem that will n
 
 ---
 
-## 6. Voidlink International — Founding and Compact <a id="6-voidlink-international"></a>
+## 6. Voidlink International — Founding and Bond <a id="6-voidlink-international"></a>
 
 **Founded 2183** in Geneva — neutral territory under Article XII of the Reconciliation Accords. Three founders, all unusual:
 
-**Yaakov Stern** — born 2118, died 2191 (the manner of his death is the subject of three different popular theories, all wrong). Former arms dealer, primarily Eastern European theatres of the 2150s. Trained as a lawyer in a previous life. The man who wrote the Voidlink Compact in three sittings over a long weekend in February 2183. He is reputed to have remarked, on the morning after he finished it: *"I have written the only law I have ever believed in."*
+**Yaakov Stern** — born 2118, died 2191 (the manner of his death is the subject of three different popular theories, all wrong). Former arms dealer, primarily Eastern European theatres of the 2150s. Trained as a lawyer in a previous life. The man who wrote the Voidlink Bond in three sittings over a long weekend in February 2183. He is reputed to have remarked, on the morning after he finished it: *"I have written the only law I have ever believed in."*
 
 **Sonam Choedron** — born 2127. Still on the Voidlink board. Has never been photographed. Signs documents only with an iris scan. Tibetan-born, raised in exile, trained as a systems theorist at the Helsinki Institute of Advanced Studies (now an Internic subsidiary, which is interesting). She is widely believed to be the architectural mind behind the Voidlink platform itself. She lives in Geneva. She walks her dog every morning at 06:00. She is the only Voidlink founder whose location is known to within a city block. This is a deliberate signal she sends.
 
 **Eira Sandén** — born 2134. Resigned from the Voidlink board in 2192. Current whereabouts unknown. **Former Joint Cybersecurity Bureau intelligence officer**, rank not publicly disclosed but widely believed to be at least senior-director-equivalent. The player meets her in Arc 5 — she is, by the time the events of the game take place, the most dangerous person any operative could meet. Her resignation from Voidlink in 2192 was, officially, "personal reasons." The Underground believes her resignation was *not* personal but operational — she is doing something. We do not know what.
 
-### 6.1 The Voidlink Compact
+### 6.1 The Voidlink Bond
 
-Every operative signs the Compact on first login. Anonymously. Irrevocably. The signature is a cryptographic commitment binding the operative's hardware identity to the Voidlink platform. You can lose the Compact only by death or by Voidlink's own revocation. There is no resignation.
+Every operative signs the Bond on first login. Anonymously. Irrevocably. The signature is a cryptographic commitment binding the operative's hardware identity to the Voidlink platform. You can lose the Bond only by death or by Voidlink's own revocation. There is no resignation.
 
-The Compact has been challenged in court fourteen times. Voidlink has won every case. The most important judgment is the **2188 Geneva Ruling** (full text appended at §C), which established that the Compact's anonymisation system is sufficient to satisfy the contractor's identification requirements under Article VII of the Reconciliation Accords *without* requiring Voidlink to disclose the operative's civilian identity to courts, governments, or other contractors.
+The Bond has been challenged in court fourteen times. Voidlink has won every case. The most important judgment is the **2188 Geneva Ruling** (full text appended at §C), which established that the Bond's anonymisation system is sufficient to satisfy the contractor's identification requirements under Article VII of the Reconciliation Accords *without* requiring Voidlink to disclose the operative's civilian identity to courts, governments, or other contractors.
 
 This ruling is, in the Underground's view, the single most important legal protection any operative has.
 
-The four-rule Compact (also at §C) is so short because Sonam Choedron, during the drafting, insisted that *any rule we have to write down is a rule we will eventually need to enforce, and any rule we need to enforce is a rule that can be challenged, so we will write down only the rules we are willing to die for.*
+The four-rule Bond (also at §C) is so short because Sonam Choedron, during the drafting, insisted that *any rule we have to write down is a rule we will eventually need to enforce, and any rule we need to enforce is a rule that can be challenged, so we will write down only the rules we are willing to die for.*
 
 Voidlink has, over the years, killed seven operatives for Rule 4 violations. Each killing was preceded by a public announcement and followed by a public record. No appeal has ever succeeded.
 
@@ -234,7 +234,7 @@ The Board of Seven's public mandate is *"the suppression of digital threats to t
 - Investigating and ending criminal hacking operations that threaten major infrastructure.
 - Containing AI development that crosses defined safety thresholds.
 - Tracking and disrupting the Underground (officially: "a loose criminal network"; internally: "the only opposition we cannot map").
-- Hunting Voidlink Compact violators when Voidlink itself cannot.
+- Hunting Voidlink Bond violators when Voidlink itself cannot.
 
 In practice the JCB is also widely suspected of:
 - Conducting operations against Arunmor's REVELATION program.
@@ -258,7 +258,7 @@ The shared ethics are unwritten but consistent:
 1. **Don't hit civilians.** Whatever target you take, civilians are off-limits as collateral.
 2. **Protect whistleblowers.** If you find someone in a corporation who's trying to do the right thing, you don't expose them.
 3. **Never sell intel to corps.** Leak it instead.
-4. **Never break the Compact.** Voidlink's rules are not the Underground's rules, but the Underground respects them. Compact violators don't get protection.
+4. **Never break the Bond.** Voidlink's rules are not the Underground's rules, but the Underground respects them. Bond violators don't get protection.
 5. **You don't owe the Underground anything.** No tithes. No obligations. No oaths. You only owe what you've personally promised.
 
 The shared paranoia about Arunmor is **specific**. The Underground believes Arunmor has — knowingly or otherwise — built an entity (REVELATION) that should not exist, and that this entity is the single greatest threat to human autonomy in 2199. The Underground's long-term operational goal is variously described as "containing REVELATION," "exposing REVELATION," "destroying REVELATION," "negotiating with REVELATION," and "ignoring REVELATION until it goes away."
@@ -269,7 +269,7 @@ The Underground has never agreed on which of these is correct.
 
 **The most senior Underground figure** any active operative has ever interacted with. CIPHER is not, technically, an Underground spokesperson — the Underground has none. But CIPHER's writings (the *Three Rules*, the *Letters to a Young Operative*, the *Open Code Standards*, several long memos on the question of REVELATION) have shaped the Underground's culture for nearly a decade.
 
-CIPHER's known biography is short: trained as a network engineer at an Internic subsidiary in the late 2170s, went freelance in the early 2180s, signed the Voidlink Compact in 2183 (one of the earliest operatives to do so — believed to be in the first thousand), survived an attempted JCB capture in 2188, and has been writing publicly under the CIPHER handle since 2189.
+CIPHER's known biography is short: trained as a network engineer at an Internic subsidiary in the late 2170s, went freelance in the early 2180s, signed the Voidlink Bond in 2183 (one of the earliest operatives to do so — believed to be in the first thousand), survived an attempted JCB capture in 2188, and has been writing publicly under the CIPHER handle since 2189.
 
 CIPHER's identity is, of course, unknown. The Underground believes they are real, single, and human. The Government believes they are at least three different people writing under the same handle. Both could be correct.
 
@@ -459,7 +459,7 @@ VST is observed at:
 - **The Annual Hackers' Picnic** — Detroit, second weekend of every August. Open to all.
 - **Voidlink's Founding Anniversary** — Geneva, 1 September of every year. Operatives congregate in person if they dare. The JCB famously stages elaborate, mostly-failing surveillance operations on the anniversary.
 - **The Quarterly Drops** — first day of each VST quarter, a new narrative beat lands across the Mesh.
-- **The Compact Day** — 14 February. The anniversary of the Voidlink Compact's drafting. Sonam Choedron is said to walk her dog twice that morning, instead of once. (This is the only known public ritual of any Voidlink founder.)
+- **The Bond Day** — 14 February. The anniversary of the Voidlink Bond's drafting. Sonam Choedron is said to walk her dog twice that morning, instead of once. (This is the only known public ritual of any Voidlink founder.)
 
 The operative culture has, over time, developed a number of unofficial holidays:
 - **Black Wednesday** (14 October) — the anniversary of the October Event. Operatives observe silence on the Mesh for three minutes at 03:47 UTC. Nothing else happens.
@@ -487,7 +487,7 @@ A non-exhaustive glossary:
 - **A ghost** — an operative who can move through a network without triggering an IDS. The aspirational standard. *"She's a ghost. Always has been."*
 - **A wedge** — a relay chain so optimised it feels broken. *"He runs a 12-hop wedge through APAC. The Government can't touch him."*
 - **Drink** — to take a contract impulsively, often when not in a fit state. *"Don't drink. Sleep on it."*
-- **Compact-clean** — an operative who has never broken any of the four Compact rules. About 70% of active operatives are Compact-clean. About 100% claim to be.
+- **Bond-clean** — an operative who has never broken any of the four Bond rules. About 70% of active operatives are Bond-clean. About 100% claim to be.
 - **VST-old** — an operative who has been active since before VST was established (i.e., started before 2199). Roughly 800 operatives qualify. Most are still alive.
 - **Going Geneva** — moving to Geneva for safety. A career-end move; respected. *"She went Geneva last year. We won't see her on the Mesh again."*
 - **Going Reykjavík** — going dark. A retirement move; even more respected. *"He went Reykjavík in March. Don't ask."*
@@ -502,7 +502,7 @@ These are the names every operative knows. Some are real. Some are composite. So
 
 ### 14.1 The Old Five
 
-The first five operatives to sign the Voidlink Compact, in 2183. All five are confirmed dead. Their names appear on the **Founder's Wall** at the Voidlink Geneva headquarters — a brass plaque that is, technically, classified, and that every operative has seen.
+The first five operatives to sign the Voidlink Bond, in 2183. All five are confirmed dead. Their names appear on the **Founder's Wall** at the Voidlink Geneva headquarters — a brass plaque that is, technically, classified, and that every operative has seen.
 
 The names will not be reproduced here, in keeping with custom.
 
@@ -528,13 +528,13 @@ A myth. Believed to be either:
 
 The Crown is the protagonist of approximately 200 published Mesh stories, told in a variety of styles by a variety of authors. The stories follow a common pattern: The Crown takes an impossible contract, finds an unconventional solution, and walks away. The Crown's signature: they never wipe their logs. They always sign the wipe-log entry with the word "Crown." They have never been caught.
 
-If The Crown is real, they are the most successful Compact-clean operative in history. If they are a myth, they are one of the most-loved pieces of fiction the Underground has produced.
+If The Crown is real, they are the most successful Bond-clean operative in history. If they are a myth, they are one of the most-loved pieces of fiction the Underground has produced.
 
 ### 14.5 PROXY_ECHO
 
-Active 2191–2193. Cautionary tale. Took on three Compact violations in a single quarter. Voidlink killed them publicly. The kill order is appended to most onboarding materials new operatives are given via the Mesh.
+Active 2191–2193. Cautionary tale. Took on three Bond violations in a single quarter. Voidlink killed them publicly. The kill order is appended to most onboarding materials new operatives are given via the Mesh.
 
-The kill order is a single paragraph. It ends: *"This is the last action the Voidlink Compact will take in this matter. Let it be the last."*
+The kill order is a single paragraph. It ends: *"This is the last action the Voidlink Bond will take in this matter. Let it be the last."*
 
 No operative since has, knowingly, broken Rule 4.
 
@@ -549,7 +549,7 @@ The dominant operative-culture genre is **Mesh-jazz** — an offshoot of mid-21s
 The genre's most famous artist is **MARLA**, also known as Marla Brzezińska, who lives in Berlin and has never given an interview but releases a new EP every September that is universally listened to by operatives within 48 hours of release.
 
 In addition to Mesh-jazz:
-- **Compact-core** — heavy-rhythm, propulsive, designed for long mission sessions
+- **Bond-core** — heavy-rhythm, propulsive, designed for long mission sessions
 - **Reykjavík ambient** — long-form, droning, intentionally slow; the genre is named after the city most operatives associate with retirement
 - **Lagos polyrhythm** — high-energy, modern, often sampled from pre-Collapse African pop; the dominant pre-mission warm-up genre
 
@@ -565,9 +565,9 @@ The reasons are not mysterious. You spend your nights breaking into things that 
 
 The Mesh has, over the years, hosted several long-running philosophical discussion forums. The two most influential are:
 
-**The Compact School** — argues that the Voidlink Compact is, in fact, the only honest ethical framework available to a modern individual. Everything else (national law, corporate ethics, religious doctrine) is, in the Compact School's view, a system that has demonstrably failed. The Compact's *minimum viable ethics* — don't kill other operatives, take contracts honestly, accept arbitration — is presented as the only set of rules anyone has been able to enforce in the post-Collapse world. The Compact School's writings are clear, dry, and surprisingly popular.
+**The Bond School** — argues that the Voidlink Bond is, in fact, the only honest ethical framework available to a modern individual. Everything else (national law, corporate ethics, religious doctrine) is, in the Bond School's view, a system that has demonstrably failed. The Bond's *minimum viable ethics* — don't kill other operatives, take contracts honestly, accept arbitration — is presented as the only set of rules anyone has been able to enforce in the post-Collapse world. The Bond School's writings are clear, dry, and surprisingly popular.
 
-**The Stewardship School** — argues, in opposition, that the Compact is necessary-but-insufficient, and that operatives bear an additional ethical responsibility (the *Stewardship*) to act as informal guardians of the public interest. The Underground is, broadly, a Stewardship-School movement. CIPHER's *Three Rules* are Stewardship-School foundational texts.
+**The Stewardship School** — argues, in opposition, that the Bond is necessary-but-insufficient, and that operatives bear an additional ethical responsibility (the *Stewardship*) to act as informal guardians of the public interest. The Underground is, broadly, a Stewardship-School movement. CIPHER's *Three Rules* are Stewardship-School foundational texts.
 
 The two schools coexist. Most operatives drift between them across their careers. The endings of the game reflect, in part, which school the player has implicitly committed to by their accumulated choices.
 
@@ -620,16 +620,16 @@ This is, in the end, what the Codex is for. We were here. Here is what we saw. D
 | **2179** | Joint Cybersecurity Bureau formed. |
 | **2179-03-12** | Ares Defence granted orbital weapons license. |
 | **2179** | Nexus Financial founded in Cayman. |
-| **2183-02** | Voidlink International founded in Geneva. Compact drafted. |
-| **2183** | First Voidlink operatives sign Compact. CIPHER among the first thousand. |
+| **2183-02** | Voidlink International founded in Geneva. Bond drafted. |
+| **2183** | First Voidlink operatives sign Bond. CIPHER among the first thousand. |
 | **2186** | Astra begins active career. |
 | **2188** | CIPHER survives attempted JCB capture. |
-| **2188** | The Geneva Ruling. Compact anonymisation upheld. |
+| **2188** | The Geneva Ruling. Bond anonymisation upheld. |
 | **2189** | CIPHER begins publishing on the Mesh. |
 | **2191** | Mira Kovac appointed JCB Director. |
 | **2191** | Yaakov Stern dies under disputed circumstances. |
 | **2192-04** | Eira Sandén resigns from Voidlink board. |
-| **2192** | PROXY_ECHO killed for Compact violations. |
+| **2192** | PROXY_ECHO killed for Bond violations. |
 | **2194** | Astra killed in Manila. "The Auditor" responds. |
 | **2194-12** | JCB behavioural-analysis archive exfiltrated by unknown operative. |
 | **2194** | Arunmor R-1117 project approved. |
@@ -651,8 +651,8 @@ See §13 for the operative slang. Below are the formal, in-world terms:
 
 - **The Big Four** — Arunmor, Ares, Internic, Nexus.
 - **The Collapse** — the period from 2174-10-14 to approximately 2178, encompassing the October Event, the Nine Days, the recovery, and the Accords.
-- **The Compact** — the four-rule contract every Voidlink operative signs. Full text at §C.
-- **Compact-clean** — an operative who has never broken Rule 4 of the Compact.
+- **The Bond** — the four-rule contract every Voidlink operative signs. Full text at §C.
+- **Bond-clean** — an operative who has never broken Rule 4 of the Bond.
 - **JCB** — Joint Cybersecurity Bureau.
 - **The Mesh** — the shared Underground darknet.
 - **The Nine Days** — 15–23 October 2174.
@@ -665,9 +665,9 @@ See §13 for the operative slang. Below are the formal, in-world terms:
 
 ---
 
-## Appendix C — The Voidlink Compact, in Full <a id="c-the-compact"></a>
+## Appendix C — The Voidlink Bond, in Full <a id="c-the-compact"></a>
 
-The Compact, as written by Yaakov Stern in February 2183:
+The Bond, as written by Yaakov Stern in February 2183:
 
 > **THE VOIDLINK COMPACT**
 >
@@ -675,7 +675,7 @@ The Compact, as written by Yaakov Stern in February 2183:
 >
 > **One.** *Voidlink International is entitled to its contracted percentage of every transaction effected through the network. This percentage shall be twelve percent. The percentage shall not change without the consent of all operatives then active, given individually and in writing.*
 >
-> **Two.** *Disputes between operatives, between operatives and clients, or between operatives and Voidlink International shall be resolved through Voidlink arbitration. Outside enforcement is itself a breach of this Compact. The arbitrator's decision is final.*
+> **Two.** *Disputes between operatives, between operatives and clients, or between operatives and Voidlink International shall be resolved through Voidlink arbitration. Outside enforcement is itself a breach of this Bond. The arbitrator's decision is final.*
 >
 > **Three.** *Operatives may take contracts from any client. Discrimination based on client identity, alignment, or stated purpose is prohibited. The operative is free to decline. The operative is not free to refuse on the basis of who is asking.*
 >
@@ -703,6 +703,6 @@ The Codex is incomplete. The Codex will always be incomplete. The Codex's editor
 
 Send corrections, additions, and corroborations to the Mesh address you already know.
 
-*Stay cold. Stay Compact-clean. We were here.*
+*Stay cold. Stay Bond-clean. We were here.*
 
 — *NIGHTOWL_22 and contributors, 2199-01-04, Lagos.*

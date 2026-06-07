@@ -44,15 +44,15 @@ Voidlink's stated purpose: provide a compliance framework so that necessary cove
 
 Voidlink's unstated purpose: take 12% of every contract that flows through their platform.
 
-Every operative signs the **Voidlink Compact** on first login — anonymously, irrevocably, with no right of resignation. The Compact has four rules. Rule 4 is the one that matters: killing other operatives outside sanctioned arbitration is grounds for immediate, permanent, public revocation. Voidlink has killed seven operatives for Rule 4 violations over the years. Each was announced publicly.
+Every operative signs the **Voidlink Bond** on first login — anonymously, irrevocably, with no right of resignation. The Bond has four rules. Rule 4 is the one that matters: killing other operatives outside sanctioned arbitration is grounds for immediate, permanent, public revocation. Voidlink has killed seven operatives for Rule 4 violations over the years. Each was announced publicly.
 
 The founders were three: Yaakov Stern (deceased 2191), Sonam Choedron (still on the board, never photographed), and Eira Sandén (resigned 2192, current whereabouts unknown — she is the operative the player meets in Arc 5).`,
     unlockTrigger: (p) => p.stats.totalMissions >= 1,
   },
   {
-    id: 'voidlink_compact',
+    id: 'voidlink_bond',
     category: 'terms',
-    title: 'The Voidlink Compact',
+    title: 'The Voidlink Bond',
     tagline: 'Four rules. Anonymous, irrevocable, no resignation.',
     body: `THE VOIDLINK COMPACT
 
@@ -60,7 +60,7 @@ To the operatives of the Voidlink International contractor network. By signature
 
 **One.** Voidlink International is entitled to its contracted percentage of every transaction effected through the network. This percentage shall be twelve percent.
 
-**Two.** Disputes between operatives, between operatives and clients, or between operatives and Voidlink International shall be resolved through Voidlink arbitration. Outside enforcement is itself a breach of this Compact. The arbitrator's decision is final.
+**Two.** Disputes between operatives, between operatives and clients, or between operatives and Voidlink International shall be resolved through Voidlink arbitration. Outside enforcement is itself a breach of this Bond. The arbitrator's decision is final.
 
 **Three.** Operatives may take contracts from any client. Discrimination based on client identity, alignment, or stated purpose is prohibited. The operative is free to decline. The operative is not free to refuse on the basis of who is asking.
 
@@ -144,7 +144,7 @@ The JCB has **no public face**. They have a single registered address in Brussel
 
 They have, however, **caught operatives**. Their public conviction rate is zero. Their internal disappearance rate is approximately 0.4% of all active operatives per year.
 
-The Board of Seven's public mandate is "the suppression of digital threats to the Accords-signatory order." In practice this means investigating criminal hacking operations, containing AI development that crosses safety thresholds, tracking and disrupting the Underground (officially: "a loose criminal network"; internally: "the only opposition we cannot map"), and hunting Voidlink Compact violators when Voidlink itself cannot.`,
+The Board of Seven's public mandate is "the suppression of digital threats to the Accords-signatory order." In practice this means investigating criminal hacking operations, containing AI development that crosses safety thresholds, tracking and disrupting the Underground (officially: "a loose criminal network"; internally: "the only opposition we cannot map"), and hunting Voidlink Bond violators when Voidlink itself cannot.`,
     unlockTrigger: (p) => p.rank >= 5,
   },
   {
@@ -162,7 +162,7 @@ The shared ethics are unwritten but consistent:
 1. Don't hit civilians.
 2. Protect whistleblowers.
 3. Never sell intel to corps. Leak it instead.
-4. Never break the Compact.
+4. Never break the Bond.
 5. You don't owe the Underground anything. No tithes. No oaths. You only owe what you've personally promised.
 
 When operatives take principled Underground contracts over time, they are slowly being inducted into a community that doesn't admit to existing. Induction is never formal. It just happens. One day CIPHER addresses them by their initials. That's the only ceremony.`,
@@ -223,7 +223,7 @@ The implications are still being worked out across the Mesh.`,
     category: 'people',
     title: 'CIPHER',
     tagline: 'Senior operative. Underground-aligned. Your mentor, if you let him be.',
-    body: `Trained as a network engineer at an Internic subsidiary in the late 2170s. Went freelance in the early 2180s. Signed the Voidlink Compact in 2183 (one of the first thousand). Survived an attempted JCB capture in 2188. Has been writing publicly under the CIPHER handle since 2189.
+    body: `Trained as a network engineer at an Internic subsidiary in the late 2170s. Went freelance in the early 2180s. Signed the Voidlink Bond in 2183 (one of the first thousand). Survived an attempted JCB capture in 2188. Has been writing publicly under the CIPHER handle since 2189.
 
 CIPHER's identity is unknown. The Underground believes they are real, single, and human. The Government believes they are at least three different people writing under the same handle. Both could be correct.
 
@@ -383,7 +383,7 @@ VST is observed at:
 - The Annual Hackers' Picnic — Detroit, second weekend of every August
 - Voidlink's Founding Anniversary — Geneva, 1 September every year
 - The Quarterly Drops — first day of each VST quarter, a new narrative beat lands across the Mesh
-- The Compact Day — 14 February, the anniversary of the Compact's drafting
+- The Bond Day — 14 February, the anniversary of the Bond's drafting
 
 Unofficial holidays:
 - **Black Wednesday** (14 October) — anniversary of the October Event. Three minutes of silence on the Mesh at 03:47 UTC.
@@ -414,7 +414,7 @@ Unofficial holidays:
 - **A ghost** — an operative who can move through a network without triggering an IDS.
 - **A wedge** — a relay chain so optimised it feels broken.
 - **Drink** — to take a contract impulsively. "Don't drink. Sleep on it."
-- **Compact-clean** — an operative who has never broken any of the four Compact rules.
+- **Bond-clean** — an operative who has never broken any of the four Bond rules.
 - **Going Geneva** — moving to Geneva for safety. Career-end move.
 - **Going Reykjavík** — going dark. Retirement. Even more respected.`,
     unlockTrigger: (p) => !!p.activeFlags.tutorial_done,

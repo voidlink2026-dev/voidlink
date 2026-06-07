@@ -28,7 +28,7 @@ export const SPLASH_CARDS: Record<SplashTrigger, SplashCard> = {
     id: 'first_contact',
     title: 'FIRST CONTACT',
     subtitle: 'Arc 1 · Mission 1',
-    body: `It is January 2199.\n\nYou signed the Voidlink Compact yesterday. Your handle is registered. Your hardware identity is hashed and stored.\n\nA contract is waiting for you in your inbox.\n\nIt is from a client whose handle you do not recognise.\n\nIt will only be the first.`,
+    body: `It is January 2199.\n\nYou signed the Voidlink Bond yesterday. Your handle is registered. Your hardware identity is hashed and stored.\n\nA contract is waiting for you in your inbox.\n\nIt is from a client whose handle you do not recognise.\n\nIt will only be the first.`,
     motif: 'cursor',
   },
 

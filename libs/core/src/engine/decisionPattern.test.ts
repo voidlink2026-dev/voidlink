@@ -133,7 +133,7 @@ describe('getDecisionPattern', () => {
       choice_whistleblower_protected: 3,   // whistleblower_ally
       choice_data_leaked: 2,               // truth_seeker
       choice_black_halo_turn: true,        // underground_ally
-      choice_compact_rule4_violated: true, // compact_violator
+      choice_bond_rule4_violated: true, // bond_violator
     }))
     expect(p.dominantTraits.length).toBeLessThanOrEqual(4)
   })

@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useGameStore } from './store/gameStore.ts'
 import { useSettingsStore } from './store/settingsStore.ts'
 import { BootScreen } from './screens/BootScreen/BootScreen.tsx'
-import { PrologueScreen, COMPACT_SIGNED_KEY } from './screens/PrologueScreen/PrologueScreen.tsx'
+import { PrologueScreen, BOND_SIGNED_KEY } from './screens/PrologueScreen/PrologueScreen.tsx'
 import { OperativeIntroScreen } from './screens/OperativeIntroScreen/OperativeIntroScreen.tsx'
 import { LoginScreen } from './screens/LoginScreen/LoginScreen.tsx'
 import { DesktopScreen } from './screens/DesktopScreen/DesktopScreen.tsx'
@@ -41,13 +41,19 @@ export function App() {
       // M14r — Prologue plays on every visit UNTIL the player completes signup.
       // The only gate is "compact signed" — set when an operative is actually
       // bound. Seeing the old prologue does NOT count as having signed up.
-      let compactSigned = false
+      let bondSigned = false
       try {
-        compactSigned = !!localStorage.getItem(COMPACT_SIGNED_KEY)
+        bondSigned = !!localStorage.getItem(BOND_SIGNED_KEY)
+        // Migrate testers who signed the old "Compact" key before the rename.
+        if (!bondSigned && localStorage.getItem('voidlink_compact_signed')) {
+          localStorage.setItem(BOND_SIGNED_KEY, '1')
+          localStorage.removeItem('voidlink_compact_signed')
+          bondSigned = true
+        }
         // Clear the legacy one-shot key so existing testers get the new flow.
         localStorage.removeItem('voidlink_prologue_seen')
       } catch { /**/ }
-      setScreen(compactSigned ? 'login' : 'prologue')
+      setScreen(bondSigned ? 'login' : 'prologue')
     }, 3200)
     return () => clearTimeout(t)
   }, [setScreen])

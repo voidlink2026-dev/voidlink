@@ -105,11 +105,11 @@ This sprint unlocks the entire deep-narrative vision. Everything else in the pos
 ### M14q — Lore Exposure Layer ✅ SHIPPED 2026-06
 **Status:** All five sub-sprints shipped. Boot prologue, Codex window with 18 unlockable entries + non-blocking unlock toasts, environmental flavour (BIOS line + bank subheaders), 6 Cipher/NightOwl essays drip into inbox, 8 splash cards on key story beats with SETTINGS toggle to disable. 13 unit tests added across the M14q sprint (120 → 133). The Codex's ~880 lines of lore are now discoverable in-game across multiple surfaces. **Cipher's First Contract** tutorial rewrite (L2) is the next gameplay-touching sprint and is now the last unshipped pre-launch sprint that affects what the player learns.
 
-**Why this slots before L3 (story arcs 6-8):** every choice in Arcs 6-8 lands harder if the player already understands what the factions are, who the named NPCs are, why the Voidlink Compact matters, what the JCB does. Writing more story into a world the player can't see is wasteful.
+**Why this slots before L3 (story arcs 6-8):** every choice in Arcs 6-8 lands harder if the player already understands what the factions are, who the named NPCs are, why the Voidlink Bond matters, what the JCB does. Writing more story into a world the player can't see is wasteful.
 
 #### Sub-sprint A — Boot Prologue 📜
 **Effort:** Half a day
-**Scope.** Before the login screen renders, a typewriter-styled prologue animates against the neon-Earth globe backdrop. ~250 words across 6-7 paragraphs. Establishes the year, the Collapse, the Big Four, the Voidlink Compact, and the player's place in it.
+**Scope.** Before the login screen renders, a typewriter-styled prologue animates against the neon-Earth globe backdrop. ~250 words across 6-7 paragraphs. Establishes the year, the Collapse, the Big Four, the Voidlink Bond, and the player's place in it.
 
 - **Gate:** localStorage flag `prologue_seen`. First-ever boot only. Returning players go straight to login.
 - **Settings entry:** "Replay Prologue" toggle so fans can revisit. Resets the flag.
@@ -129,7 +129,7 @@ This sprint unlocks the entire deep-narrative vision. Everything else in the pos
 
 **Entry catalogue (initial):**
 - *Voidlink International* (unlocks on first mission complete)
-- *The Voidlink Compact* (unlocks on signup, link to full text)
+- *The Voidlink Bond* (unlocks on signup, link to full text)
 - *The Mesh* (unlocks on first CIPHER inbox message)
 - *CIPHER* (unlocks after 2nd CIPHER message)
 - *NIGHTOWL_22* (unlocks after first NIGHTOWL contract)
@@ -148,7 +148,7 @@ This sprint unlocks the entire deep-narrative vision. Everything else in the pos
 - *Mesh Slang Glossary* (unlocks on first inbox decryption)
 - *Famous Operatives — Astra / Halberd / The Crown / PROXY_ECHO* (unlock individually via news echoes)
 - *Music Genres* (unlocks on completing tutorial)
-- *Philosophy — Compact vs Stewardship Schools* (unlocks after Arc 3)
+- *Philosophy — Bond vs Stewardship Schools* (unlocks after Arc 3)
 
 Each entry is 200-400 words. Pulled directly from `The_Voidlink_Codex.md` — minimal new writing. Markdown-rendered.
 
@@ -178,7 +178,7 @@ Each entry is 200-400 words. Pulled directly from `The_Voidlink_Codex.md` — mi
 **Scope.** 5-8 additional scheduled inbox messages from CIPHER and NIGHTOWL_22 that drip lore over the first 30 hours of play. Each carries one Codex chapter's worth of background, in-character.
 
 **Catalogue:**
-- *Cipher: "The Compact, in plain language"* (after first 3 missions) — explains Rule 4 in his voice
+- *Cipher: "The Bond, in plain language"* (after first 3 missions) — explains Rule 4 in his voice
 - *Cipher: "Reykjavík, and other lies"* (after first month VST) — short essay on the operative's retirement myth
 - *NIGHTOWL_22: "The history we don't write down"* (after Rank 3) — alludes to the Old Five
 - *Cipher: "On Astra"* (after first relay-burn) — anecdote about the legendary operative
@@ -204,7 +204,7 @@ Each: 250-400 words, encrypted/decryptable, lands in inbox via `evaluateDialogue
   - Zurich Vault — *"Zurich · Discreet numbered banking · Reconciliation-grade compliance"*
 - **Faction broker bylines** in mission briefings — one line under the client handle: *"VoidLink Dispatch · Automated contract aggregator"*, *"CIPHER · Senior operative, Underground-aligned"*, *"NIGHTOWL_22 · Independent broker, Lagos"*
 - **Inbox PGP fingerprint footer:** *"PGP fingerprint confirmed — message integrity verified by Internic routing layer"* (subtle, one line at bottom of decrypted view)
-- **Operative Profile** small footer: *"Voidlink Compact signed [DATE] · Compact-clean: [YES/NO]"* — adds gravity to the profile
+- **Operative Profile** small footer: *"Voidlink Bond signed [DATE] · Bond-clean: [YES/NO]"* — adds gravity to the profile
 
 **Acceptance:**
 - [ ] Each line in place, JetBrains Mono, dim grey

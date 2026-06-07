@@ -1152,15 +1152,15 @@ The big sweep. Test everything below.
 ## 48. M14q (Sub-sprints C + E) — Cipher Essays + Splash Cards (2026-06)
 
 ### 48.1 Cipher essay drip (Sub-sprint C)
-- [ ] Complete 3 successful missions with a principled pattern → CIPHER's "on the Compact, in plain language" essay arrives
-- [ ] Same conditions with mercenary pattern → essay arrives with shorter "on the Compact" tone variant
+- [ ] Complete 3 successful missions with a principled pattern → CIPHER's "on the Bond, in plain language" essay arrives
+- [ ] Same conditions with mercenary pattern → essay arrives with shorter "on the Bond" tone variant
 - [ ] Reach Rank 3 → NIGHTOWL_22's "the history we don't write down" arrives
 - [ ] Burn a relay node → CIPHER's "on burning relays" essay arrives (in-game `relay_burn_count` flag check)
-- [ ] First REVELATION contact → CIPHER's "the argument" essay arrives (the Stewardship-vs-Compact school debate)
+- [ ] First REVELATION contact → CIPHER's "the argument" essay arrives (the Stewardship-vs-Bond school debate)
 - [ ] 30+ days since signup → NIGHTOWL_22's "why we use VST" essay arrives
 - [ ] Notoriety ≥ 5 → CIPHER's "Reykjavík and other lies" essay arrives
 - [ ] Each essay fires exactly once (verify by completing the trigger condition again — no re-fire)
-- [ ] Strong-mercenary players DO NOT receive `cipher_essay_compact`, `cipher_essay_astra`, `cipher_essay_revelation`, `nightowl_essay_history` (variant returns null)
+- [ ] Strong-mercenary players DO NOT receive `cipher_essay_bond`, `cipher_essay_astra`, `cipher_essay_revelation`, `nightowl_essay_history` (variant returns null)
 
 ### 48.2 Splash cards (Sub-sprint E)
 - [ ] Accept first mission ever → "FIRST CONTACT" splash fires full-screen with motif glyph, subtitle "Arc 1 · Mission 1", body paragraph
@@ -1184,7 +1184,7 @@ The big sweep. Test everything below.
 - [ ] Fresh-install boot (clear `localStorage` first) shows boot logs → then prologue screen with typewriter text on neon-globe backdrop
 - [ ] Title reads "VOIDLINK INTERNATIONAL — OPERATIVE BRIEFING"
 - [ ] Lines type at ~38 cps with light tick SFX every ~3 characters
-- [ ] After all 7 lines, "SIGN THE COMPACT" button appears
+- [ ] After all 7 lines, "SIGN THE BOND" button appears
 - [ ] Clicking it advances to Login screen
 - [ ] SPACE / Enter / Escape during typing → snaps to completed state
 - [ ] Second boot: prologue does NOT show; goes straight to Login
@@ -1195,7 +1195,7 @@ The big sweep. Test everything below.
 - [ ] Open CODEX → window opens 880×580 with sidebar + reader pane
 - [ ] Sidebar shows 5 category headers: FACTIONS / PEOPLE / HISTORY / CULTURE / TERMS
 - [ ] Each entry shows title + tagline; locked entries show "⊘ LOCKED ENTRY" + "Unlocks through play."
-- [ ] Voidlink Compact entry is unlocked from signup (always visible)
+- [ ] Voidlink Bond entry is unlocked from signup (always visible)
 - [ ] Click locked entry → nothing happens; click unlocked entry → reader pane shows category / title / tagline / body
 - [ ] **bold** in body renders as cyan bold text
 

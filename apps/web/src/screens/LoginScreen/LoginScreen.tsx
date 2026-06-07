@@ -52,9 +52,9 @@ export function LoginScreen() {
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
 
-  // M14r — diegetic Compact signing
-  const [compactOpen, setCompactOpen] = useState(false)
-  const [compactAgreed, setCompactAgreed] = useState(false)
+  // M14r — diegetic Bond signing
+  const [bondOpen, setCompactOpen] = useState(false)
+  const [bondAgreed, setCompactAgreed] = useState(false)
 
   // Per-card connect password
   const [connectingHandle, setConnectingHandle] = useState<string | null>(null)
@@ -232,9 +232,9 @@ export function LoginScreen() {
     setActiveSession(newPlayer.handle)
     setPlayer(newPlayer)
     setPendingSignup(null)
-    // M14r — mark Compact as signed so the Prologue stops replaying
-    try { localStorage.setItem('voidlink_compact_signed', String(Date.now())) } catch { /**/ }
-    logTerminal('VOIDLINK INTERNATIONAL — Compact bound. Hardware identity hash recorded.', 'system')
+    // M14r — mark Bond as signed so the Prologue stops replaying
+    try { localStorage.setItem('voidlink_bond_signed', String(Date.now())) } catch { /**/ }
+    logTerminal('VOIDLINK INTERNATIONAL — Bond bound. Hardware identity hash recorded.', 'system')
     logTerminal(`Handle: ${newPlayer.handle} · You are now operative #${(Math.floor(Math.random() * 4000) + 47000).toString()}.`, 'success')
     logTerminal('Onboarding balance: 5,000 Cr. Check inbox for intake confirmation. Open MISSIONS to begin.', 'system')
     // M14r — first-time signup goes through the Operative Intro before the desktop.
@@ -465,7 +465,7 @@ export function LoginScreen() {
             </motion.div>
           )}
 
-          {/* --- New operative signup (the Compact signing) --- */}
+          {/* --- New operative signup (the Bond signing) --- */}
           {mode === 'signup' && (
             <motion.div
               key="signup"
@@ -476,7 +476,7 @@ export function LoginScreen() {
             >
               <p className={styles.intakeBlurb}>
                 <strong>CONTRACTOR INTAKE.</strong> Voidlink International binds new operatives via cryptographic
-                signature against the four-rule <em>Compact</em>. Once signed, the binding is irrevocable.
+                signature against the four-rule <em>Bond</em>. Once signed, the binding is irrevocable.
                 Choose your handle carefully. You will be known by it for the rest of your career.
               </p>
 
@@ -568,44 +568,44 @@ export function LoginScreen() {
                   </div>
                 </div>
 
-                {/* The Compact viewer — collapsible. Encourages reading, doesn't force it. */}
-                <div className={styles.compactBox}>
+                {/* The Bond viewer — collapsible. Encourages reading, doesn't force it. */}
+                <div className={styles.bondBox}>
                   <button
                     type="button"
-                    className={styles.compactToggle}
+                    className={styles.bondToggle}
                     onClick={() => setCompactOpen((v) => !v)}
-                    aria-expanded={compactOpen}
+                    aria-expanded={bondOpen}
                   >
-                    <span className={styles.compactToggleLabel}>
-                      {compactOpen ? '▾' : '▸'} THE VOIDLINK COMPACT — read the four rules you are about to sign
+                    <span className={styles.bondToggleLabel}>
+                      {bondOpen ? '▾' : '▸'} THE VOIDLINK COMPACT — read the four rules you are about to sign
                     </span>
                   </button>
-                  {compactOpen && (
-                    <div className={styles.compactBody}>
-                      <p className={styles.compactPara}>
+                  {bondOpen && (
+                    <div className={styles.bondBody}>
+                      <p className={styles.bondPara}>
                         To the operatives of the Voidlink International contractor network. By signature you agree to the following,
                         irrevocably, anonymously, and without right of resignation:
                       </p>
-                      <p className={styles.compactPara}>
+                      <p className={styles.bondPara}>
                         <strong>One.</strong> Voidlink International is entitled to its contracted percentage of every transaction
                         effected through the network. This percentage shall be <strong>twelve percent</strong>.
                       </p>
-                      <p className={styles.compactPara}>
+                      <p className={styles.bondPara}>
                         <strong>Two.</strong> Disputes between operatives, between operatives and clients, or between operatives
                         and Voidlink International shall be resolved through <strong>Voidlink arbitration</strong>.
-                        Outside enforcement is itself a breach of this Compact. The arbitrator's decision is final.
+                        Outside enforcement is itself a breach of this Bond. The arbitrator's decision is final.
                       </p>
-                      <p className={styles.compactPara}>
+                      <p className={styles.bondPara}>
                         <strong>Three.</strong> Operatives may take contracts from any client. <strong>Discrimination based on client
                         identity, alignment, or stated purpose is prohibited.</strong> The operative is free to decline.
                         The operative is not free to refuse on the basis of who is asking.
                       </p>
-                      <p className={styles.compactPara}>
+                      <p className={styles.bondPara}>
                         <strong>Four.</strong> Killing other operatives outside the sanctioned arbitration process is grounds for the
                         <strong> immediate, permanent, and public revocation</strong> of operative status. The revocation may include
                         physical sanctions. <strong>No appeal will be heard. No statute of limitations applies.</strong>
                       </p>
-                      <p className={styles.compactSig}>
+                      <p className={styles.bondSig}>
                         Signed by hardware identity hash. Recorded irrevocably. We are not changing this document.<br />
                         — Yaakov Stern, February 2183
                       </p>
@@ -613,15 +613,15 @@ export function LoginScreen() {
                   )}
                 </div>
 
-                {/* Compact agreement */}
-                <label className={styles.compactCheckbox}>
+                {/* Bond agreement */}
+                <label className={styles.bondCheckbox}>
                   <input
                     type="checkbox"
-                    checked={compactAgreed}
+                    checked={bondAgreed}
                     onChange={(e) => { setCompactAgreed(e.target.checked); setError('') }}
                   />
                   <span>
-                    I bind my hardware identity hash to the Voidlink Compact, irrevocably and without right of resignation.
+                    I bind my hardware identity hash to the Voidlink Bond, irrevocably and without right of resignation.
                   </span>
                 </label>
 
@@ -634,9 +634,9 @@ export function LoginScreen() {
                   variant="primary"
                   size="lg"
                   className={styles.submitBtn}
-                  disabled={loading || !compactAgreed}
+                  disabled={loading || !bondAgreed}
                 >
-                  {loading ? 'BINDING IDENTITY…' : 'SIGN THE COMPACT'}
+                  {loading ? 'BINDING IDENTITY…' : 'SIGN THE BOND'}
                 </Button>
               </form>
             </motion.div>
@@ -816,7 +816,7 @@ export function LoginScreen() {
         </AnimatePresence>
 
         <p className={styles.disclaimer}>
-          Voidlink International — Article XII neutral territory. All operatives bound by the Compact.
+          Voidlink International — Article XII neutral territory. All operatives bound by the Bond.
           Disputes resolved through Voidlink arbitration only.
         </p>
       </div>

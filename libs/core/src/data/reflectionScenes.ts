@@ -49,7 +49,7 @@ export const REFLECTION_SCENES: Record<ReflectionTrigger, ReflectionScene> = {
   end_of_arc_1: {
     trigger: 'end_of_arc_1',
     title: 'REFLECTION — FIRST PASS',
-    opening: `It's been {DAYS} days since you signed the Compact.\n\n{MISSIONS} contracts.`,
+    opening: `It's been {DAYS} days since you signed the Bond.\n\n{MISSIONS} contracts.`,
     closing: `Disconnect.`,
     factPool: {
       strong_principled: [
@@ -76,7 +76,7 @@ export const REFLECTION_SCENES: Record<ReflectionTrigger, ReflectionScene> = {
       ],
       weak_mercenary: [
         `Eleven of those contracts paid better because you didn't ask what the data was for.`,
-        `You took {BOUNTIES_TAKEN} contracts on fellow operatives. They were all Compact-legal.`,
+        `You took {BOUNTIES_TAKEN} contracts on fellow operatives. They were all Bond-legal.`,
         `Three operatives you'd worked with are dead. You think one of them by your hand.`,
         `Your credit balance is comfortable. You bank at Pacific National. You know what that means.`,
         `CIPHER opens his messages without greetings now. He didn't always.`,
@@ -175,7 +175,7 @@ export const REFLECTION_SCENES: Record<ReflectionTrigger, ReflectionScene> = {
   anniversary: {
     trigger: 'anniversary',
     title: 'REFLECTION — ONE YEAR',
-    opening: `One year since you signed the Compact.\n\nIt does not feel like a year. It does not feel like any specific length of time.`,
+    opening: `One year since you signed the Bond.\n\nIt does not feel like a year. It does not feel like any specific length of time.`,
     closing: `Voidlink Standard Time clicks over. Tomorrow is the same as today, slightly different.`,
     factPool: {
       strong_principled: [

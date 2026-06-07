@@ -55,8 +55,8 @@ export const CHOICE_CATALOGUE: ChoiceDefinition[] = [
   { flag: 'choice_whistleblower_exposed',   conviction: 'mercenary',  weight: 2 },
 
   // ── Operative-vs-operative ───────────────────────────────────────────────
-  // Taking a bounty on a fellow operative — Compact-grey behaviour.
-  { flag: 'choice_op_bounty_accepted', conviction: 'mercenary',  weight: 2, trait: 'compact_grey' },
+  // Taking a bounty on a fellow operative — Bond-grey behaviour.
+  { flag: 'choice_op_bounty_accepted', conviction: 'mercenary',  weight: 2, trait: 'bond_grey' },
   { flag: 'choice_op_warned_instead',  conviction: 'principled', weight: 1 },
 
   // ── Data disposition (sell vs leak) ──────────────────────────────────────
@@ -79,12 +79,12 @@ export const CHOICE_CATALOGUE: ChoiceDefinition[] = [
   { flag: 'choice_contract_refused_civilians', conviction: 'principled', weight: 1 },
   { flag: 'choice_contract_refused_underground', conviction: 'mercenary', weight: 1 },
 
-  // ── Voidlink Compact violations ──────────────────────────────────────────
+  // ── Voidlink Bond violations ──────────────────────────────────────────
   // Hard violations — these are rare, weighted heavily mercenary.
-  { flag: 'choice_compact_rule4_violated', conviction: 'mercenary', weight: 3, trait: 'compact_violator' },
+  { flag: 'choice_bond_rule4_violated', conviction: 'mercenary', weight: 3, trait: 'bond_violator' },
 
   // ── Arc 6 — Dead Drop resolution ─────────────────────────────────────────
-  { flag: 'choice_dead_drop_purge',           conviction: 'principled', weight: 3, trait: 'compact_clean' },
+  { flag: 'choice_dead_drop_purge',           conviction: 'principled', weight: 3, trait: 'bond_clean' },
   { flag: 'choice_dead_drop_weaponise',       conviction: 'mercenary',  weight: 3, trait: 'magnus_collaborator' },
   { flag: 'choice_dead_drop_report_nightowl', conviction: 'principled', weight: 2, trait: 'underground_loyalist' },
   { flag: 'choice_dead_drop_report_jcb',      conviction: 'mercenary',  weight: 2, trait: 'jcb_informant' },

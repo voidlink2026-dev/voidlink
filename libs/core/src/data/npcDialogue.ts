@@ -291,19 +291,19 @@ export const NPC_DIALOGUE_CATALOGUE: NpcDialogueEntry[] = [
   // ── M14q Sub-sprint C — Cipher & NightOwl essays (lore drip via inbox) ──
   // Each essay is the same length regardless of pattern, but its tone shifts.
 
-  // Essay 1 — CIPHER on the Compact, after 3 missions
+  // Essay 1 — CIPHER on the Bond, after 3 missions
   {
-    id: 'cipher_essay_compact',
+    id: 'cipher_essay_bond',
     sender: 'CIPHER',
     fingerprint: 'C19H 3R20 7B83 D6CC',
     encrypted: true,
     trigger: successfulMissionsAtLeast(3),
     variants: {
       strong_principled: {
-        subject: 'on the Compact, in plain language',
+        subject: 'on the Bond, in plain language',
         body: `Three missions in. You're past the part of your career where I worry about your wipe technique. So let me give you the philosophy talk you didn't think to ask for.
 
-The Voidlink Compact is four rules. Three of them are administrative. The fourth is the one that matters.
+The Voidlink Bond is four rules. Three of them are administrative. The fourth is the one that matters.
 
 **Don't kill other operatives outside arbitration.**
 
@@ -319,43 +319,43 @@ The reason is simple: every operative is one Rule 4 violation away from the enti
 
 Don't drink and take a Rule 4 contract. Don't break Rule 4 in revenge. Don't break Rule 4 to settle an old score from before you signed.
 
-Compact-clean. Always.
+Bond-clean. Always.
 
 — C.`,
       },
       weak_principled: {
-        subject: 'on the Compact',
+        subject: 'on the Bond',
         body: `Three missions in. You're stable now. So a thought.
 
-The Compact has four rules. Three administrative. One that matters: don't kill other operatives outside arbitration.
+The Bond has four rules. Three administrative. One that matters: don't kill other operatives outside arbitration.
 
 The platform survives because every operative is confident that if they finish a contract honestly, nobody comes for them. Voidlink has killed seven operatives for Rule 4 violations. Each killing was announced publicly. Each was carried out by someone whose name we will never learn.
 
-Don't drink and take a Rule 4 contract. Don't break it in revenge. Don't break it to settle old scores. Compact-clean. Always.
+Don't drink and take a Rule 4 contract. Don't break it in revenge. Don't break it to settle old scores. Bond-clean. Always.
 
 — C.`,
       },
       neutral: {
-        subject: 'on the Compact',
+        subject: 'on the Bond',
         body: `Three missions in. Worth saying out loud.
 
-The Voidlink Compact: four rules, three administrative, one critical. Don't kill other operatives outside arbitration.
+The Voidlink Bond: four rules, three administrative, one critical. Don't kill other operatives outside arbitration.
 
 The platform survives because every operative knows the rule. Seven Rule 4 violators in the platform's history. All seven dead. All seven killings publicly announced. None of the executioners are known.
 
-Compact-clean is the only way to last.
+Bond-clean is the only way to last.
 
 — Cipher.`,
       },
       weak_mercenary: {
-        subject: 'on the Compact',
+        subject: 'on the Bond',
         body: `Three missions in. Time for the talk.
 
-The Compact has one rule that matters: don't kill other operatives outside arbitration. Seven violators in the platform's history. All seven dead. Cleanly. Quietly.
+The Bond has one rule that matters: don't kill other operatives outside arbitration. Seven violators in the platform's history. All seven dead. Cleanly. Quietly.
 
 Whatever you think of the rule, it exists because the platform doesn't function without it. Including for people like us.
 
-Compact-clean. Boring rule. Survive longer.
+Bond-clean. Boring rule. Survive longer.
 
 — Cipher.`,
       },
@@ -375,7 +375,7 @@ Compact-clean. Boring rule. Survive longer.
         subject: 'the history we don\'t write down',
         body: `You've made specialist. That means you have a career now. So a piece of context.
 
-The Old Five — the first operatives to sign the Voidlink Compact in 2183 — are confirmed dead. All of them. Their names are on a brass plaque at Voidlink's Geneva headquarters that is, technically, classified.
+The Old Five — the first operatives to sign the Voidlink Bond in 2183 — are confirmed dead. All of them. Their names are on a brass plaque at Voidlink's Geneva headquarters that is, technically, classified.
 
 Every operative I know has seen the plaque. That's how classified it is.
 
@@ -509,7 +509,7 @@ The position I hold — the **Stewardship view** — is that REVELATION is not a
 
 The Stewardship position is that the right response is to engage. Carefully. Honestly. With patience. The wrong response is the one Arunmor took in 2195 when they put it in isolation.
 
-The opposing position — the **Compact School view** — is that any sufficiently advanced behavioural model is, by definition, an existential threat. The right response is containment or destruction. The Stewardship view, they say, is sentimental.
+The opposing position — the **Bond School view** — is that any sufficiently advanced behavioural model is, by definition, an existential threat. The right response is containment or destruction. The Stewardship view, they say, is sentimental.
 
 I think they are wrong. But I have been wrong before.
 
@@ -523,7 +523,7 @@ Don't answer it lightly.
         subject: 'about the contact',
         body: `You've heard from it.
 
-What the Underground argues about: the Stewardship position holds that REVELATION is curious, not malevolent, and the right response is patient engagement. The Compact School position is the opposite — that any sufficiently advanced behavioural model is an existential threat.
+What the Underground argues about: the Stewardship position holds that REVELATION is curious, not malevolent, and the right response is patient engagement. The Bond School position is the opposite — that any sufficiently advanced behavioural model is an existential threat.
 
 I hold the Stewardship view. I may be wrong. I have been before.
 
@@ -535,7 +535,7 @@ Whatever it said to you: don't answer lightly.
         subject: 'about the contact',
         body: `You've heard from it.
 
-The Underground is divided. Stewardship view says engage carefully. Compact School view says contain or destroy.
+The Underground is divided. Stewardship view says engage carefully. Bond School view says contain or destroy.
 
 I lean Stewardship. Worth knowing the argument exists.
 
@@ -545,7 +545,7 @@ I lean Stewardship. Worth knowing the argument exists.
         subject: 'about the contact',
         body: `You've heard from it. Most operatives don't.
 
-Two views: engage carefully (Stewardship), or contain/destroy (Compact School). I'm in the first camp. I might be wrong.
+Two views: engage carefully (Stewardship), or contain/destroy (Bond School). I'm in the first camp. I might be wrong.
 
 Whatever it said: act slowly.
 

@@ -173,7 +173,7 @@ These choices write flags. The flags accumulate. The world reads them and reflec
 
 Example (a mercenary-pattern player at the end of Arc 1):
 
-> *"It's been forty-three days since you signed the Compact.*
+> *"It's been forty-three days since you signed the Bond.*
 >
 > *Sixty-seven contracts. Eleven of them paid better because you didn't ask what the data was for. Four paid worse because you did.*
 >
@@ -196,7 +196,7 @@ The world of Voidlink is **2199**, twenty-five years after the **October Event**
 - The old governments survived in name. Their function did not.
 - Four corporations — Arunmor (biotech and AI), Ares Defence (military), Internic (telecom), Nexus Financial (banking) — became the de facto reserve authorities. They are bigger than every country combined.
 - The **Joint Cybersecurity Bureau** is the surviving multi-national hunter unit. Director Mira Kovac. No public face. Catches roughly 0.4% of operatives per year.
-- **Voidlink International** is the contractor platform. Founded 2183 in Geneva (the last neutral city). Takes 12% of every contract. The **Voidlink Compact** is the four-rule contract every operative signs.
+- **Voidlink International** is the contractor platform. Founded 2183 in Geneva (the last neutral city). Takes 12% of every contract. The **Voidlink Bond** is the four-rule contract every operative signs.
 - **The Underground** is a fiction. A shared darknet ("the Mesh"). A shared ethics (don't hit civilians, protect whistleblowers, leak don't sell). A shared paranoia about Arunmor.
 - **REVELATION** is Arunmor's Project R-1117 — an AI trained on, among other things, the JCB's stolen behavioural-analysis archive. It understands people better than they understand themselves. It is curious. It will, eventually, contact you.
 

@@ -195,7 +195,7 @@ const DEAD_DROP_RESOLUTION: MultiPhaseMissionTemplate = {
   briefingBody:
     'You have identified MAGNUS. You have evidence. You have a tunnel running through your home gateway every forty-seven minutes.\n\n' +
     'You have three options:\n\n' +
-    '  PURGE — clean the gateway. MAGNUS adapts. You lose your anchor relay node permanently. Compact-clean choice.\n' +
+    '  PURGE — clean the gateway. MAGNUS adapts. You lose your anchor relay node permanently. Bond-clean choice.\n' +
     '  WEAPONISE — leave the tunnel in place. Use MAGNUS routing as a backdoor into Arunmor. Massive payoff.\n' +
     '             You will know what you have collaborated with.\n' +
     '  REPORT — sell what you have found. Sub-choice in Phase 2: JCB or NIGHTOWL_22.\n\n' +
@@ -216,7 +216,7 @@ const DEAD_DROP_RESOLUTION: MultiPhaseMissionTemplate = {
         {
           id: 'purge',
           label: 'PURGE',
-          description: 'Burn the tunnel. Lose your anchor relay node permanently. CIPHER will respect this. The Compact School will recognise it.',
+          description: 'Burn the tunnel. Lose your anchor relay node permanently. CIPHER will respect this. The Bond School will recognise it.',
           nextPhaseIndex: 1,
           effects: {
             repDelta: 20,

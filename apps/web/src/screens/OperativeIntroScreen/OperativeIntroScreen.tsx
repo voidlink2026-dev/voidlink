@@ -32,7 +32,7 @@ function buildChapters(handle: string): Chapter[] {
       body:
         `${handle}.\n\n` +
         `Voidlink International confirms receipt of your hardware identity hash.\n\n` +
-        `You are now an active operative on the network. The Compact you have signed is the only contract you will ever sign with us. It does not require renewal.`,
+        `You are now an active operative on the network. The Bond you have signed is the only contract you will ever sign with us. It does not require renewal.`,
     },
     {
       motif: '◉',
@@ -57,7 +57,10 @@ function buildChapters(handle: string): Chapter[] {
       body:
         `Voidlink International is a contractor platform. Clients post contracts. Operatives — you, now — accept them. Voidlink takes twelve percent. Disputes go through Voidlink arbitration.\n\n` +
         `You will take contracts to steal files, delete accounts, corrupt databases, sabotage networks, plant evidence, perform corporate espionage. Every job leaves a trace. Every Cr you earn leaves a trail. The skill of the work is in the *not being found*.\n\n` +
-        `You are not the only operative on the network. Approximately ninety thousand of us are active at any given moment. You will not meet most of them. You will hear about a few.`,
+        `You are not the only operative on the network. Approximately ninety thousand of us are active at any given moment. You will not meet most of them. You will hear about a few.\n\n` +
+        `A word, before you decide what kind of operative you become.\n\n` +
+        `The corporations will offer you contracts. The governments — what's left of them — will too. Pay is excellent. The work is clean on paper.\n\n` +
+        `Some operatives take that work. Some refuse it on principle. The network does not judge either choice. History, eventually, does.`,
     },
     {
       motif: '⚿',

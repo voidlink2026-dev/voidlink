@@ -38,8 +38,8 @@ describe('CODEX catalogue', () => {
 })
 
 describe('unlock triggers', () => {
-  it('voidlink_compact unlocks at signup', () => {
-    expect(getCodexEntry('voidlink_compact')!.unlockTrigger(mockPlayer())).toBe(true)
+  it('voidlink_bond unlocks at signup', () => {
+    expect(getCodexEntry('voidlink_bond')!.unlockTrigger(mockPlayer())).toBe(true)
   })
 
   it('voidlink_international unlocks after first mission', () => {
@@ -84,7 +84,7 @@ describe('unlock triggers', () => {
 describe('getUnlockedCodexEntries', () => {
   it('returns at least the signup entry for a fresh player', () => {
     const out = getUnlockedCodexEntries(mockPlayer())
-    expect(out.map((e) => e.id)).toContain('voidlink_compact')
+    expect(out.map((e) => e.id)).toContain('voidlink_bond')
   })
 
   it('grows as the player progresses', () => {

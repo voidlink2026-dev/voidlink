@@ -16,7 +16,7 @@ const PROLOGUE_LINES: string[] = [
   'They take contracts no one else can afford to take. They steal data. They erase identities. They sabotage. They disappear without trace.',
   'They call themselves operatives. They are the last truly independent people alive.',
   'There is a network that connects them. It is called Voidlink International.',
-  'It has one contract. Four rules. They call it the Compact.',
+  'It has one contract. Four rules. They call it the Bond.',
   'You are about to sign it.',
   'Welcome to the only career in 2199 that nobody owns.',
 ]
@@ -25,11 +25,11 @@ const CHARS_PER_SECOND = 38  // typewriter speed
 const PAUSE_BETWEEN_LINES_MS = 600
 const FINAL_PAUSE_MS = 1200
 
-// M14r — the prologue gate is "have they signed the Compact" (i.e. have they
+// M14r — the prologue gate is "have they signed the Bond" (i.e. have they
 // ever completed signup), NOT "have they seen the prologue once". This means
 // the intro replays every visit until the player commits — which is correct,
 // because the world setup is part of the *decision* to sign up.
-export const COMPACT_SIGNED_KEY = 'voidlink_compact_signed'
+export const BOND_SIGNED_KEY = 'voidlink_bond_signed'
 
 export function PrologueScreen() {
   const setScreen = useGameStore((s) => s.setScreen)
@@ -128,7 +128,7 @@ export function PrologueScreen() {
             className={styles.continueBtn}
             onClick={(e) => { e.stopPropagation(); finish() }}
           >
-            SIGN THE COMPACT
+            SIGN THE BOND
           </motion.button>
         )}
       </div>

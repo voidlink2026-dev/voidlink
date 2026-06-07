@@ -594,14 +594,14 @@ Voidlink's stated purpose: provide a compliance framework so that necessary cove
 
 Voidlink's unstated purpose: take 12% of every contract that flows through their platform.
 
-**The Voidlink Compact** is what every operative signs (anonymously, irrevocably) on first login — including the player, who signs it during the M14h.4 confirmation flow:
+**The Voidlink Bond** is what every operative signs (anonymously, irrevocably) on first login — including the player, who signs it during the M14h.4 confirmation flow:
 
 1. Voidlink International takes its cut.
 2. Disputes go through Voidlink arbitration. Outside enforcement is contract violation.
 3. Operatives may take contracts from any client. Discrimination based on client alignment is prohibited.
 4. Killing other operatives outside sanctioned contracts is grounds for permanent revocation.
 
-**Rule 4** is what keeps the platform alive. Without it, operatives would just kill each other for contracts. With it, every operative knows: do the job, get paid, no one comes for you. Voidlink Compact violators are the rarest news article in the feed — and the most chilling.
+**Rule 4** is what keeps the platform alive. Without it, operatives would just kill each other for contracts. With it, every operative knows: do the job, get paid, no one comes for you. Voidlink Bond violators are the rarest news article in the feed — and the most chilling.
 
 ### 14a.4 The Joint Cybersecurity Bureau ("The Government")
 
@@ -615,7 +615,7 @@ The JCB is the only entity that consistently and successfully hunts operatives. 
 
 Not an organisation. A fiction operatives tell each other.
 
-There's no leader, no founding document. There are people who claim to speak for it (**CIPHER** does, **NIGHTOWL_22** sometimes does, others rarely surface). What there *is*: a shared darknet, a shared ethics ("don't hit civilians, protect whistleblowers, never sell intel to corps, never break the Compact"), and a shared paranoia about Arunmor.
+There's no leader, no founding document. There are people who claim to speak for it (**CIPHER** does, **NIGHTOWL_22** sometimes does, others rarely surface). What there *is*: a shared darknet, a shared ethics ("don't hit civilians, protect whistleblowers, never sell intel to corps, never break the Bond"), and a shared paranoia about Arunmor.
 
 When players take principled Underground contracts over time, they are slowly being inducted into a community that doesn't admit to existing. Induction is never formal. It just happens. One day CIPHER addresses them by their initials. That's the only ceremony.
 
@@ -684,7 +684,7 @@ Your terminal opens. The text is your own internal monologue, in second person. 
 
 Example draft for an end-of-Arc-1 reflection on a mercenary-pattern player:
 
-> *"It's been forty-three days since you signed the Compact.*
+> *"It's been forty-three days since you signed the Bond.*
 >
 > *Sixty-seven contracts. Eleven of them paid better because you didn't ask what the data was for. Four paid worse because you did.*
 >
@@ -824,7 +824,7 @@ Status symbols. Money cannot buy them. These reward the game's deepest engagemen
 | 1000 missions with perfect-stomp wipes | Exclusive **GHOST CIPHER** message-decode animation |
 | Discovered all hidden ARG nodes | **CARTOGRAPHER** wallpaper — updates each season with new clues |
 | Played during Arc 1 launch week (2026-09) | Permanent **FOUNDING OPERATIVE** badge — never available again |
-| Voidlink Compact survivor (365 in-game days, zero trace failure) | Unique **SHADOW** boot animation |
+| Voidlink Bond survivor (365 in-game days, zero trace failure) | Unique **SHADOW** boot animation |
 | Reformer's Path ending | **REFORMER** title flair and a custom epilogue letter from CIPHER |
 | Tripped 100 canary files | Self-deprecating **HONEYPOT VETERAN** title flair (and a story event the next time it happens) |
 
