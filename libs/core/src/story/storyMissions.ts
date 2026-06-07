@@ -3792,4 +3792,512 @@ export const STORY_MISSIONS: StoryMission[] = [
     timeLimitSeconds: 540,
     narrativeFlags: { arc7_window_confirmed: true, arc7_resolution_pending: true },
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Arc 8 — LIGHTHOUSE
+  // ───────────────────────────────────────────────────────────────────────────
+  // A surveillance contract on a private individual — Asher Vance, a former
+  // Voidlink Dispatch analyst — reveals that Voidlink itself has been
+  // profiling operatives and selling those profiles to corporate intel
+  // buyers. The "lighthouse" is Vance's term for the beacon Dispatch shines
+  // on each operative so corporate buyers can see them clearly. The player
+  // discovers their own handle has a lighthouse rating high enough that
+  // they've been priced as a corporate asset for 18 months. Resolution
+  // forces them to decide what to do about the platform they signed the
+  // Bond with. Each option locks part of the (forthcoming) Arcs 9 and 10.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ─── Arc 8 Mission 1: Eyes Only ───────────────────────────────────────────
+  {
+    id: 'story_arc8_01',
+    type: 'file_theft',
+    status: 'available',
+    difficulty: 4,
+    isStory: true,
+    briefing: {
+      clientHandle: 'GOV_Procurement',
+      clientAvatarId: 'avatar_gov',
+      subject: 'Surveillance retention — A. Vance',
+      body:
+        'Operative,\n\n' +
+        'Standard observation contract. Subject is Asher Vance, age 41, formerly employed by Voidlink International in their ' +
+        'Dispatch routing analytics team (left amicably 2197). Currently a private consultant operating out of a residential ' +
+        'studio in Reykjavík. We require six months of his outbound communication metadata and a copy of any working files ' +
+        'on his personal cloud archive.\n\n' +
+        'No engagement. No exposure. Vance is unaware of the contract and the client wishes to keep it that way. The subject ' +
+        'is not believed to pose any operational risk. This is routine retention.\n\n' +
+        'Pay: 16,000 Cr on completion. Confidentiality retained at our standard rate.\n\n' +
+        '— Government Procurement Office | Liaison Desk',
+    },
+    objectives: [
+      {
+        id: 'obj_arc8_01_primary',
+        description: 'Exfiltrate Vance\'s working-files archive from his personal cloud',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc8_01',
+        targetFileId: 'f_arc8_01_archive',
+      },
+      {
+        id: 'obj_arc8_01_optional',
+        description: 'Pull the six-month outbound metadata log (BONUS: +3,500 Cr)',
+        isOptional: true,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc8_01',
+        targetFileId: 'f_arc8_01_metadata',
+      },
+    ],
+    targetNetworkId: 'net_story_arc8_01',
+    requirements: requirementsForDifficulty(4),
+    reward: {
+      credits: 16_000,
+      reputation: 70,
+      factionStandingDeltas: { government: 10 },
+    },
+    network: {
+      id: 'net_story_arc8_01',
+      archetype: 'corporate_intranet',
+      ownerId: 'asher_vance',
+      label: 'A. VANCE — PERSONAL CLOUD',
+      seed: 0x42a91031,
+      createdAt: 0,
+      traceSpeed: 12,
+      activeAdmins: 0,
+      entryNodeId: 'v0',
+      nodes: [
+        {
+          id: 'v0', type: 'entry_point', label: 'residential cloud gateway',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'HTTPS', port: 443, version: 'caddy 2.7', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['v1', 'v2'], position: { x: 110, y: 300 },
+        },
+        {
+          id: 'v1', type: 'firewall', label: 'consumer firewall',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v2c', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2018-0473' }],
+          files: [], connectedTo: ['v0', 'v3'], position: { x: 300, y: 160 },
+        },
+        {
+          id: 'v2', type: 'router', label: 'residential router',
+          securityTier: 2, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'Telnet', port: 23, version: '1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2018-9866' }],
+          files: [], connectedTo: ['v0', 'v3', 'v4'], position: { x: 300, y: 440 },
+        },
+        {
+          id: 'v3', type: 'mail_server', label: 'personal mailbox',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'IMAP', port: 143, version: 'Dovecot 2.3', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc8_01_metadata',
+              name: 'outbound_metadata_6mo.csv',
+              sizeKb: 96,
+              isEncrypted: false,
+              isLog: false,
+              content:
+                'Six months of outbound metadata. Vance writes to about a dozen handles regularly. None of them are public ' +
+                'names. Two of them you recognise. One is a journalist at *The Reykjavík Independent*. The other is your handle.\n\n' +
+                'You have never received a message from Asher Vance. You check. You have not.',
+            },
+          ],
+          connectedTo: ['v1', 'v4'], position: { x: 490, y: 200 },
+        },
+        {
+          id: 'v4', type: 'file_server', label: 'working files archive',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SFTP', port: 22, version: 'OpenSSH 9.0', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc8_01_archive',
+              name: 'working_files.tar.enc',
+              sizeKb: 4_200,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc8_01',
+              content:
+                'The archive decrypts on your own machine. Forty-one folders. Most are labelled by date. One folder near the ' +
+                'top is labelled "OPERATIVES". It contains 2,400 profiles. They are precise, current, and they include three ' +
+                'of your last four contracts. Two of those contracts were *unpublished* — they came directly from Voidlink ' +
+                'Dispatch\'s internal routing logs. There is no clean way Vance could have them. Except one.',
+            },
+          ],
+          connectedTo: ['v2', 'v3'], position: { x: 680, y: 300 },
+        },
+      ],
+    },
+    events: [
+      {
+        id: 'arc8_01_evt_metadata',
+        triggerCondition: { type: 'node_breached', nodeType: 'mail_server' },
+        message: 'You appear in Vance\'s correspondence list. You have never written to him. The list is one-directional.',
+        effect: { type: 'set_flag', flag: 'arc8_seen_in_correspondence', value: true },
+      },
+      {
+        id: 'arc8_01_evt_archive',
+        triggerCondition: { type: 'node_breached', nodeType: 'file_server' },
+        message: 'The archive holds a folder called OPERATIVES. Your handle is in it. Two of the contracts named were never published.',
+        effect: { type: 'set_flag', flag: 'arc8_lighthouse_seen', value: true },
+      },
+    ] satisfies MissionEvent[],
+    coda:
+      'You complete the contract. The wipe is clean. The Government Procurement Office pays you on schedule. The payment ' +
+      'message thanks you for "the usual professionalism."\n\n' +
+      'You do not delete the working-files archive. You read it twice.\n\n' +
+      'The OPERATIVES folder is alphabetised by handle. Three of yours and 2,397 others. Each profile has the same structure: ' +
+      'handle, fingerprint, gateway routing summary, contract history with confidence ratings, current location estimate, and ' +
+      'a single number at the top labelled *L-RATING*. Yours reads 7.2. The highest rating in the folder is 9.4 — an operative ' +
+      'you do not recognise, with the note "uncooperative; pricing unstable." The lowest is 1.1, with the note "low signal; ' +
+      'consider drop."\n\n' +
+      'You search the archive for CIPHER. There is no entry. There is, however, a file at the root of the archive labelled ' +
+      'README.txt. It contains one line:\n\n' +
+      '*"If you are reading this, the contract that delivered it to you was placed by me. We need to talk. — A.V."*\n\n' +
+      'You sit with the file open for a long time before you reply.',
+    unlockRequirement: {
+      rank: 5,
+    },
+    narrativeFlags: { arc8_started: true, arc8_lighthouse_seen: true },
+  },
+
+  // ─── Arc 8 Mission 2: The Lighthouse ──────────────────────────────────────
+  {
+    id: 'story_arc8_02',
+    type: 'file_theft',
+    status: 'available',
+    difficulty: 4,
+    isStory: true,
+    briefing: {
+      clientHandle: 'Asher_Vance',
+      clientAvatarId: 'avatar_self',
+      subject: 'The lighthouse.',
+      body:
+        'I worked for Voidlink Dispatch from 2191 to 2197. I helped build the system you read about. We called it the lighthouse — ' +
+        'because it is a beam pointed at you, so that buyers can see you clearly. Every active operative on Voidlink International ' +
+        'has been profiled, rated, and priced as a corporate intel asset for at least eighteen months. The buyers are who you would ' +
+        'expect. The contracts they place — through Dispatch — are *steered*. Not always. Often.\n\n' +
+        'I left in 2197 after I refused to write a profile on someone whose work I respected. I have spent the last two years ' +
+        'reconstructing the dataset from memory and from public traces. The bundle you have is mine. I had no clean way to give ' +
+        'it to you. I bought a Government contract through a shell and routed it. You are reading this because you are reliable.\n\n' +
+        'I need you to retrieve one more thing: my old workstation key from a Dispatch satellite office in Reykjavík. It is the ' +
+        'only artefact that proves the dataset is not fabrication. Without it, what I have is conspiracy theory. With it, what I ' +
+        'have is evidence.\n\n' +
+        'The office is sparsely staffed. The key is air-gapped in a tier-4 admin console. Get it. Disconnect. Read the rest ' +
+        'when you are home.\n\n' +
+        '— Asher',
+    },
+    objectives: [
+      {
+        id: 'obj_arc8_02_primary',
+        description: 'Retrieve Vance\'s old workstation key from the Dispatch satellite admin console',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc8_02',
+        targetFileId: 'f_arc8_02_key',
+      },
+      {
+        id: 'obj_arc8_02_optional',
+        description: 'Pull the Dispatch internal pricing schedule (BONUS: reveals what your handle is sold for)',
+        isOptional: true,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc8_02',
+        targetFileId: 'f_arc8_02_pricing',
+      },
+    ],
+    targetNetworkId: 'net_story_arc8_02',
+    requirements: requirementsForDifficulty(4),
+    reward: {
+      credits: 18_500,
+      reputation: 85,
+      factionStandingDeltas: { voidlink_international: -25 },
+    },
+    network: {
+      id: 'net_story_arc8_02',
+      archetype: 'corporate_intranet',
+      ownerId: 'voidlink_dispatch',
+      label: 'VOIDLINK DISPATCH — REYKJAVÍK SATELLITE',
+      seed: 0xd15b2010,
+      createdAt: 0,
+      traceSpeed: 17,
+      activeAdmins: 1,
+      entryNodeId: 's0',
+      nodes: [
+        {
+          id: 's0', type: 'entry_point', label: 'satellite vpn',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'WireGuard', port: 51820, version: '1.0', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['s1', 's2'], position: { x: 110, y: 300 },
+        },
+        {
+          id: 's1', type: 'firewall', label: 'satellite firewall',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['s0', 's3'], position: { x: 290, y: 160 },
+        },
+        {
+          id: 's2', type: 'proxy', label: 'dispatch routing proxy',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'HTTPS', port: 443, version: 'envoy 1.27', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['s0', 's4'], position: { x: 290, y: 440 },
+        },
+        {
+          id: 's3', type: 'database', label: 'analyst pricing index',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'PostgreSQL', port: 5432, version: '15.0', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc8_02_pricing',
+              name: 'pricing_schedule_active.json',
+              sizeKb: 312,
+              isEncrypted: false,
+              isLog: false,
+              content:
+                'The active operative pricing schedule. Sorted by lighthouse rating, descending.\n\n' +
+                'Yours appears on page 8. Your L-rating is 7.2. Your current corporate-intel sale price is 84,000 Cr per quarter ' +
+                'and you have been sold to Arunmor (twice), Ares Division (once), and DataPharos Group (six times). DataPharos ' +
+                'is a Singapore-based reseller. They are who actually buys most of the inventory.\n\n' +
+                'Your contracts have, on six occasions in the last eighteen months, been "steered." This means Dispatch placed a ' +
+                'contract in front of you specifically because the buyer wanted to observe your behaviour in that scenario. You ' +
+                'will not be able to identify which six. The schedule does not name them, only the buyer requests.',
+            },
+          ],
+          connectedTo: ['s1', 's4', 's5'], position: { x: 490, y: 220 },
+        },
+        {
+          id: 's4', type: 'admin_console', label: 'satellite admin console',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SSH', port: 22, version: '9.0', hasKnownVulnerability: false }],
+          files: [
+            {
+              id: 'f_arc8_02_key',
+              name: 'vance_workstation_key.gpg',
+              sizeKb: 4,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc8_02',
+              content:
+                'A GPG private key fragment. Asher Vance\'s. Tagged "REVOKED 2197-04-19 — DO NOT USE FOR ACTIVE WORK." ' +
+                'The revocation was bureaucratic; the key itself was never destroyed. With it, every signed artefact in his bundle ' +
+                'can be verified against Dispatch\'s own internal infrastructure. It turns "ex-employee makes accusations" into ' +
+                '"ex-employee\'s cryptographic signature appears on every active record in the data."',
+            },
+          ],
+          connectedTo: ['s2', 's3', 's5'], position: { x: 490, y: 460 },
+        },
+        {
+          id: 's5', type: 'file_server', label: 'dispatch operational archive',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SMB', port: 445, version: '3.1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2020-0796' }],
+          files: [], connectedTo: ['s3', 's4'], position: { x: 690, y: 300 },
+        },
+      ],
+    },
+    events: [
+      {
+        id: 'arc8_02_evt_pricing',
+        triggerCondition: { type: 'objective_complete', objectiveId: 'obj_arc8_02_optional' },
+        message: 'Your handle has been sold 9 times in 18 months — twice to Arunmor, once to Ares, six to DataPharos. Six contracts steered.',
+        effect: { type: 'set_flag', flag: 'arc8_pricing_seen', value: true },
+      },
+      {
+        id: 'arc8_02_evt_key',
+        triggerCondition: { type: 'node_breached', nodeType: 'admin_console' },
+        message: 'Vance\'s revoked-but-undestroyed key. With this, the bundle stops being theory.',
+        effect: { type: 'set_flag', flag: 'arc8_key_acquired', value: true },
+      },
+    ] satisfies MissionEvent[],
+    coda:
+      'You disconnect with the key on your storage. Asher\'s confirmation message arrives within two minutes.\n\n' +
+      '*"Now I have a case. Whether anyone is willing to read it is the next problem."*\n\n' +
+      'You read the rest of his bundle that night. The README at the root names three things that you did not expect.\n\n' +
+      'One: Cipher is not in the lighthouse index. He has been protected, by someone, since before the index existed. The bundle ' +
+      'cannot tell you by whom.\n\n' +
+      'Two: NIGHTOWL_22 is in the index. Her L-rating is 9.1. She has been sold 47 times. The buyer in every transaction is the ' +
+      'same handle: *MAGNUS_RELAY*. You know that name now.\n\n' +
+      'Three: the entire DataPharos broker network has been a Voidlink Dispatch front company since 2192. The company you have ' +
+      'been worried about is the company you have been signed up with. It is the same company. It has always been the same company.\n\n' +
+      'Asher writes one more line, an hour later: *"You can take the next contract whenever you are ready. The next contract ' +
+      'will record what you do about this."*',
+    unlockRequirement: {
+      completedMissionIds: ['story_arc8_01'],
+    },
+    narrativeFlags: { arc8_vance_meeting: true, arc8_dispatch_compromised: true },
+  },
+
+  // ─── Arc 8 Mission 3: The Watchers ────────────────────────────────────────
+  {
+    id: 'story_arc8_03',
+    type: 'file_theft',
+    status: 'available',
+    difficulty: 5,
+    isStory: true,
+    briefing: {
+      clientHandle: 'YOURSELF',
+      clientAvatarId: 'avatar_self',
+      subject: 'Whoever has been watching, you watch them now',
+      body:
+        'You know what DataPharos is now. Before you choose what to do about it, you need the buyer list. Not the resold one. The ' +
+        'one DataPharos uses internally. The one that names every party that has paid to read your file.\n\n' +
+        'DataPharos\' Singapore facility is real, even though the company itself is a Voidlink Dispatch shell. The buyer index is on ' +
+        'an air-gapped client database two pivots deep. The network knows what it is. It will not be quiet.\n\n' +
+        'Get the buyer list. Get out. Read it at home.\n\n' +
+        '— You',
+    },
+    objectives: [
+      {
+        id: 'obj_arc8_03_primary',
+        description: 'Exfiltrate the DataPharos master buyer index',
+        isOptional: false,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc8_03',
+        targetFileId: 'f_arc8_03_buyers',
+      },
+      {
+        id: 'obj_arc8_03_optional',
+        description: 'Pull the internal MAGNUS_RELAY transaction history (BONUS: ties the buyer to its lineage)',
+        isOptional: true,
+        isCompleted: false,
+        targetNetworkId: 'net_story_arc8_03',
+        targetFileId: 'f_arc8_03_magnus',
+      },
+    ],
+    targetNetworkId: 'net_story_arc8_03',
+    requirements: requirementsForDifficulty(5),
+    reward: {
+      credits: 26_000,
+      reputation: 110,
+    },
+    network: {
+      id: 'net_story_arc8_03',
+      archetype: 'corporate_intranet',
+      ownerId: 'datapharos_group',
+      label: 'DATAPHAROS GROUP — SINGAPORE FACILITY',
+      seed: 0xda7af09a,
+      createdAt: 0,
+      traceSpeed: 22,
+      activeAdmins: 2,
+      entryNodeId: 'p0',
+      nodes: [
+        {
+          id: 'p0', type: 'entry_point', label: 'public datapharos portal',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'HTTPS', port: 443, version: 'nginx 1.24', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['p1', 'p2'], position: { x: 110, y: 300 },
+        },
+        {
+          id: 'p1', type: 'firewall', label: 'tier-1 firewall',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['p0', 'p3'], position: { x: 280, y: 160 },
+        },
+        {
+          id: 'p2', type: 'proxy', label: 'broker-side proxy',
+          securityTier: 3, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'HTTPS', port: 443, version: 'haproxy 2.6', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['p0', 'p4'], position: { x: 280, y: 440 },
+        },
+        {
+          id: 'p3', type: 'firewall', label: 'tier-2 air-gap firewall',
+          securityTier: 5, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SNMP', port: 161, version: 'v3', hasKnownVulnerability: false }],
+          files: [], connectedTo: ['p1', 'p5'], position: { x: 460, y: 200 },
+        },
+        {
+          id: 'p4', type: 'admin_console', label: 'broker operations console',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'RDP', port: 3389, version: '10.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2019-0708' }],
+          files: [
+            {
+              id: 'f_arc8_03_magnus',
+              name: 'magnus_relay_transactions.json',
+              sizeKb: 64,
+              isEncrypted: false,
+              isLog: false,
+              content:
+                'MAGNUS_RELAY\'s transaction history with DataPharos. 312 purchases across 14 years. Every purchase has the same ' +
+                'invoice line: "OPERATIVE_PROFILE — ACTIVE." The handle MAGNUS_RELAY has been buying operative profiles since 2185. ' +
+                'That is nine years before the lighthouse index existed. Which means the rating system was retrofitted around a ' +
+                'buyer that already existed and was already collecting. The buyer was the customer first. The whole pricing scheme ' +
+                'was built for them.',
+            },
+          ],
+          connectedTo: ['p2', 'p5', 'p6'], position: { x: 460, y: 440 },
+        },
+        {
+          id: 'p5', type: 'database', label: 'master buyer index',
+          securityTier: 5, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'MySQL', port: 3306, version: '8.0', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2023-21863' }],
+          files: [
+            {
+              id: 'f_arc8_03_buyers',
+              name: 'master_buyer_index.csv',
+              sizeKb: 1_120,
+              isEncrypted: true,
+              isLog: false,
+              missionObjective: 'story_arc8_03',
+              content:
+                'The complete buyer list. 84 named entities. Sorted by lifetime spend.\n\n' +
+                'Top five: ARUNMOR (lifetime spend 41.8M Cr); ARES_DIVISION (28.4M); MAGNUS_RELAY (24.1M); JCB Liaison Office ' +
+                '(19.7M); INTERNIC_HOLDINGS (14.2M).\n\n' +
+                'CIPHER does not appear in the buyer list. CIPHER does not appear in the *sold* list either — confirming what ' +
+                'Vance\'s bundle implied. Someone has been keeping him off it. The list does not say who, but it does say *when* — ' +
+                'his protection note is dated 2189-11-04. Three years before the lighthouse index was created. Whoever protected ' +
+                'him knew the index was coming.',
+            },
+          ],
+          connectedTo: ['p3', 'p4', 'p6'], position: { x: 640, y: 200 },
+        },
+        {
+          id: 'p6', type: 'file_server', label: 'archived buyer correspondence',
+          securityTier: 4, isBreached: false, isScanned: false, isActive: true, isLogWiped: false,
+          services: [{ protocol: 'SMB', port: 445, version: '3.1.1', hasKnownVulnerability: true, vulnerabilityId: 'CVE-2020-0796' }],
+          files: [], connectedTo: ['p4', 'p5'], position: { x: 640, y: 440 },
+        },
+      ],
+    },
+    events: [
+      {
+        id: 'arc8_03_evt_admins_active',
+        triggerCondition: { type: 'trace_threshold', percent: 25 },
+        message: 'DataPharos\' admin team has begun coordinated authentication-token cycling. They know something is wrong.',
+        effect: { type: 'raise_trace_speed', delta: 4 },
+      },
+      {
+        id: 'arc8_03_evt_magnus',
+        triggerCondition: { type: 'objective_complete', objectiveId: 'obj_arc8_03_optional' },
+        message: 'MAGNUS_RELAY has been buying operative profiles since 2185 — nine years before the lighthouse existed. The pricing scheme was built for it.',
+        effect: { type: 'set_flag', flag: 'arc8_magnus_predates_index', value: true },
+      },
+      {
+        id: 'arc8_03_evt_buyers',
+        triggerCondition: { type: 'node_breached', nodeType: 'database' },
+        message: 'The buyer list. 84 entities. CIPHER\'s protection note is dated 2189 — three years before the index was even created.',
+        effect: { type: 'set_flag', flag: 'arc8_buyer_list_acquired', value: true },
+      },
+    ] satisfies MissionEvent[],
+    coda:
+      'You extract cleanly. The wipe pattern is precise. DataPharos\' administrators are still hunting their own logs when you ' +
+      'disconnect.\n\n' +
+      'You read the buyer list. You read the MAGNUS_RELAY transaction history. You read Cipher\'s protection note timestamp.\n\n' +
+      'You sit at your terminal for a long time.\n\n' +
+      'You know the shape of it now. Voidlink Dispatch built the lighthouse around MAGNUS — an entity nine years older than the ' +
+      'pricing scheme — and then *retrofitted* the entire active operative population as inventory to keep MAGNUS supplied. ' +
+      'Every operative on the network has, in a sense you do not yet have the language to fully express, been raised for sale. ' +
+      'You included. Most of them not knowing.\n\n' +
+      'Cipher knew. Or someone close to him did. The protection note is dated November 2189. It says nothing else.\n\n' +
+      'Asher writes to you the next morning. *"Whatever you do with this, do it deliberately. The next contract will lock in your ' +
+      'choice."*\n\n' +
+      'A new message follows it, an hour later, from CIPHER. The fingerprint is correct. The body reads:\n\n' +
+      '*"I know what you are reading. I have known for a long time. I owe you a conversation, when you are ready to have it. ' +
+      'Whatever you choose, choose deliberately. I will not be the person who tells you it was right."*\n\n' +
+      'You file the message.\n\n' +
+      'The choice mission card arrives by morning.\n\n' +
+      '─────────────────────────────────────\n' +
+      'A choice mission card will appear in your inbox within 24 hours.\n' +
+      'Use the M14o choice mission interface to commit to TAKE_VANCE_OUT / EXPOSE_DISPATCH / DISAPPEAR / WARN_CIPHER.\n' +
+      '─────────────────────────────────────',
+    unlockRequirement: {
+      completedMissionIds: ['story_arc8_02'],
+    },
+    timeLimitSeconds: 600,
+    narrativeFlags: { arc8_buyer_list_acquired: true, arc8_resolution_pending: true },
+  },
 ]

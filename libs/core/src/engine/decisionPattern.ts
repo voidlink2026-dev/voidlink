@@ -111,6 +111,18 @@ export const CHOICE_CATALOGUE: ChoiceDefinition[] = [
   { flag: 'choice_quiet_war_warn_arunmor',    conviction: 'mercenary',  weight: 3, trait: 'corporate_kingmaker' },
   { flag: 'choice_quiet_war_expose_nightowl', conviction: 'mercenary',  weight: 3, trait: 'underground_betrayer' },
   { flag: 'choice_quiet_war_preserve_balance',conviction: 'principled', weight: 3, trait: 'balance_keeper' },
+
+  // ── Arc 8 — Lighthouse resolution ────────────────────────────────────────
+  // The Voidlink-Dispatch reveal forces a decision about the platform the
+  // player signed the Bond with. TAKE_VANCE_OUT is the harshest mercenary
+  // choice in the catalogue — you silenced the whistleblower for pay.
+  // EXPOSE_DISPATCH is the heaviest principled lever; it actually ends the
+  // platform. DISAPPEAR is mercenary-leaning solitude. WARN_CIPHER is the
+  // Bond-clean path: trust the elder and stay in.
+  { flag: 'choice_lighthouse_take_vance_out',   conviction: 'mercenary',  weight: 4, trait: 'whistleblower_killer' },
+  { flag: 'choice_lighthouse_expose_dispatch',  conviction: 'principled', weight: 4, trait: 'voidlink_breaker' },
+  { flag: 'choice_lighthouse_disappear',        conviction: 'mercenary',  weight: 2, trait: 'gone_solo' },
+  { flag: 'choice_lighthouse_warn_cipher',      conviction: 'principled', weight: 3, trait: 'cipher_loyalist' },
 ]
 
 export interface DecisionPattern {

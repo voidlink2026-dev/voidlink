@@ -270,27 +270,8 @@ Visual: full-screen darkness, centred text in cyan with subtle bloom, optional m
 
 ---
 
-### L3 — Story arc 8 🎯
-**Window:** 2026-07-W1 → 2026-07-W3 (~2 weeks)
-**Effort:** 2 weeks (writing + authoring + test)
-**Status:** Arc 6 ✅ shipped 2026-06. Arc 7 ✅ shipped 2026-06. Arc 8 outstanding.
-
-**Scope.** One hand-authored story arc remaining.
-
-**Arc 8 — LIGHTHOUSE (3 missions + 1 choice mission)**
-A surveillance contract on a private individual goes wrong — the target is feeding Voidlink Dispatch intel about the player's prior contracts. Player must decide: take the target out, expose Dispatch, or disappear with the data. Each option locks part of Arcs 9/10.
-
-**Tech.**
-- All three arcs live in `libs/core/src/story/storyMissions.ts`
-- Each new arc adds 2–4 new flags to `player.activeFlags` for branching
-- All three reuse existing mission-event + multi-phase + choice infrastructure (no new engine work)
-- Test: full sequential playthrough Arc 1 → Arc 8 without state corruption
-
-**Acceptance criteria.**
-- ~6–7h of new playtime added (measured on completionist run)
-- Branches verified: every choice path reaches a valid conclusion
-- Faction standing math balances (Arc 7 affecting both sides)
-- News feed posts for each arc beat
+### L3 — Story arcs 6, 7, 8 ✅ SHIPPED 2026-06
+All three arcs landed in 2026-06. See Complete_Tasks.md for per-arc detail.
 
 ---
 

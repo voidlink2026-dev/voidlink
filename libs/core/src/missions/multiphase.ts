@@ -473,7 +473,166 @@ const QUIET_WAR_RESOLUTION: MultiPhaseMissionTemplate = {
   },
 }
 
-export const MULTIPHASE_TEMPLATES: MultiPhaseMissionTemplate[] = [PROJECT_GHOST, BLACK_HALO, DEAD_DROP_RESOLUTION, QUIET_WAR_RESOLUTION]
+// ═══════════════════════════════════════════════════════════════════════════
+// Arc 8 — LIGHTHOUSE — Resolution
+// Four-way choice. The player has discovered Voidlink Dispatch has been
+// profiling and selling operatives — including themselves — for at least
+// eighteen months, and that the entire lighthouse pricing scheme was
+// retrofitted around an older customer named MAGNUS_RELAY. They can:
+//   - TAKE_VANCE_OUT: silence the whistleblower. Dispatch is preserved.
+//   - EXPOSE_DISPATCH: publish everything. Voidlink fractures.
+//   - DISAPPEAR: cache the evidence, go solo, build your own routing.
+//   - WARN_CIPHER: tell only him. The system continues. Bond-clean.
+// Each path is gated to lock part of Arcs 9 and 10 (forthcoming content).
+// ═══════════════════════════════════════════════════════════════════════════
+const LIGHTHOUSE_RESOLUTION: MultiPhaseMissionTemplate = {
+  id: 'multiphase_lighthouse_resolution',
+  briefingSubject: 'LIGHTHOUSE — resolution',
+  clientHandle: 'YOURSELF',
+  difficulty: 6,
+  baseCredits: 42000,
+  baseReputation: 160,
+  briefingBody:
+    'You have the buyer list, the MAGNUS_RELAY transaction history, and Asher Vance\'s decryption key. You have Cipher\'s ' +
+    'message acknowledging he knew. You have your own L-rating, 7.2, sitting in your records.\n\n' +
+    '  TAKE_VANCE_OUT — silence the whistleblower. Dispatch is preserved. The lighthouse continues. You are paid by parties unnamed.\n' +
+    '  EXPOSE_DISPATCH — publish Vance\'s bundle, verified. Voidlink Dispatch fractures. The system you signed the Bond with ends.\n' +
+    '  DISAPPEAR — cache the evidence. Build your own routing. You become a competitor to the platform you depended on.\n' +
+    '  WARN_CIPHER — tell him quietly. He will know what to do. The system continues. You stay in. Bond-clean.\n\n' +
+    'Each option locks part of what comes after. Choose deliberately. There will not be a second pass.',
+
+  phases: [
+    {
+      id: 'phase_lh_choice',
+      label: 'Decide',
+      description: 'Commit. The phase you enter will be determined by your selection.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_lh_decide', description: 'Commit to a resolution path', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 0, reputation: 0 },
+      choices: [
+        {
+          id: 'take_vance_out',
+          label: 'TAKE THE TARGET OUT',
+          description: 'Burn Vance. He goes silent permanently. Dispatch never learns its leak. Parties unnamed will pay generously for the cleanup.',
+          nextPhaseIndex: 1,
+          effects: {
+            repDelta: 25,
+            factionDeltas: { voidlink_international: 25, the_underground: -40 },
+            setFlag: { flag: 'choice_lighthouse_take_vance_out', value: true },
+          },
+        },
+        {
+          id: 'expose_dispatch',
+          label: 'EXPOSE DISPATCH',
+          description: 'Publish the verified bundle. Voidlink fractures. Half the active operative population goes independent. The lighthouse ends.',
+          nextPhaseIndex: 2,
+          effects: {
+            repDelta: 45,
+            factionDeltas: { voidlink_international: -80, the_underground: 50, arunmor: -20, ares_division: -20 },
+            setFlag: { flag: 'choice_lighthouse_expose_dispatch', value: true },
+          },
+        },
+        {
+          id: 'disappear',
+          label: 'DISAPPEAR WITH THE DATA',
+          description: 'Cache the evidence on your own infrastructure. Build private routing. You become a competitor to the platform. You also become harder to find.',
+          nextPhaseIndex: 3,
+          effects: {
+            repDelta: 30,
+            factionDeltas: { voidlink_international: -40, the_nameless: 30 },
+            setFlag: { flag: 'choice_lighthouse_disappear', value: true },
+          },
+        },
+        {
+          id: 'warn_cipher',
+          label: 'WARN CIPHER',
+          description: 'Tell him quietly. Let him handle it. The system continues. You stay in. The choice you have made is to trust him.',
+          nextPhaseIndex: 4,
+          effects: {
+            repDelta: 20,
+            factionDeltas: { the_underground: 35 },
+            setFlag: { flag: 'choice_lighthouse_warn_cipher', value: true },
+          },
+        },
+      ],
+    },
+    // Phase 1 — TAKE_VANCE_OUT
+    {
+      id: 'phase_lh_take_out',
+      label: 'Take Out',
+      description: 'Burn Vance\'s personal cloud, his backup mesh node, and his correspondence. Inject a cover-story leak that frames his disappearance as voluntary relocation. The cleanup must be total.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_lh_take_out', description: 'Eliminate Vance\'s digital footprint and inject the cover-story leak', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 95000, reputation: 80 },
+    },
+    // Phase 2 — EXPOSE_DISPATCH
+    {
+      id: 'phase_lh_expose',
+      label: 'Expose',
+      description: 'Package the verified bundle. Distribute simultaneously to twelve Mesh broker channels, two journalist contacts of Vance\'s, and the JCB oversight desk. Once it lands, it cannot be retracted.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_lh_expose', description: 'Simultaneously distribute the verified bundle to all twelve recipients', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 18000, reputation: 220 },
+    },
+    // Phase 3 — DISAPPEAR
+    {
+      id: 'phase_lh_disappear',
+      label: 'Disappear',
+      description: 'Migrate your gateway off Voidlink routing. Build a private mesh. Cache the evidence on hardware only you control. From this point forward, Dispatch can no longer see you.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_lh_disappear', description: 'Migrate gateway, build private mesh, secure the cache offline', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 35000, reputation: 110 },
+    },
+    // Phase 4 — WARN_CIPHER
+    {
+      id: 'phase_lh_warn',
+      label: 'Warn',
+      description: 'Deliver the bundle and the buyer list to Cipher through your most secure channel. Wait. The Underground will decide.',
+      targetNetworkId: 'corporate_intranet',
+      objectives: [
+        { id: 'obj_lh_warn', description: 'Deliver the bundle to Cipher via secure channel', isOptional: false, isCompleted: false },
+      ],
+      phaseReward: { credits: 22000, reputation: 140 },
+    },
+  ],
+
+  newsEchoes: {
+    1: {  // TAKE_VANCE_OUT
+      headline: 'Reykjavík Consultant Reported Missing',
+      body: 'Asher Vance, 41, a private consultant based in Reykjavík, has been reported missing by his landlord. Police describe his disappearance as "consistent with voluntary relocation" but have not ruled out other possibilities. Vance was formerly an analyst at Voidlink International.',
+      category: 'crime',
+      delaySeconds: 120,
+    },
+    2: {  // EXPOSE_DISPATCH
+      headline: 'Voidlink International Engulfed By "Lighthouse" Disclosure',
+      body: 'An evidence bundle alleging that Voidlink International\'s Dispatch division has been profiling and selling operative profiles to corporate intelligence buyers has been released on Mesh broker channels and is being independently verified by three established journalist outlets. Voidlink has declined to comment. Initial market response is severe.',
+      category: 'tech',
+      delaySeconds: 90,
+    },
+    3: {  // DISAPPEAR
+      headline: 'Anomalous Routing Migration Observed',
+      body: 'Mesh observers note that a significant routing migration has taken place over the last 48 hours involving an unnamed independent operator. The operator has transitioned off Voidlink routing entirely and onto a privately-administered alternative. Voidlink Dispatch declined to comment on individual handle activity.',
+      category: 'tech',
+      delaySeconds: 180,
+    },
+    4: {  // WARN_CIPHER
+      headline: '(No public news echo — the Underground does not announce when it is moving.)',
+      body: 'Mesh observers note an uptick in encrypted handshake traffic on Underground channels over the last 36 hours. No public statement has been issued. Routine.',
+      category: 'tech',
+      delaySeconds: 240,
+    },
+  },
+}
+
+export const MULTIPHASE_TEMPLATES: MultiPhaseMissionTemplate[] = [PROJECT_GHOST, BLACK_HALO, DEAD_DROP_RESOLUTION, QUIET_WAR_RESOLUTION, LIGHTHOUSE_RESOLUTION]
 
 // Generate a fully-formed Mission from a template, seeded by id
 export function generateMultiPhaseMission(template: MultiPhaseMissionTemplate, instanceId?: string): Mission {
