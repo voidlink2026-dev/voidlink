@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../../store/gameStore.ts'
-import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
+import { GlyphDrift } from '../../components/GlyphDrift/GlyphDriftLazy.tsx'
 import { AudioEngine } from '../../game/Audio/audioEngine.ts'
 import styles from './PrologueScreen.module.css'
 

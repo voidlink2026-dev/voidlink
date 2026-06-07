@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
-import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
+import { GlyphDrift } from '../../components/GlyphDrift/GlyphDriftLazy.tsx'
 import { AudioEngine } from '../../game/Audio/audioEngine.ts'
 import type { PlayerProfile } from '@voidlink/core'
 import {

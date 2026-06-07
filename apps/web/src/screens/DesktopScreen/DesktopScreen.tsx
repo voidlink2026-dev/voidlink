@@ -29,7 +29,7 @@ import { MissionChoiceOverlay } from '../../game/MissionChoice/MissionChoiceOver
 import { ReflectionOverlay } from '../../game/Reflection/ReflectionOverlay.tsx'
 import { EndingChoiceOverlay } from '../../game/Ending/EndingChoiceOverlay.tsx'
 import { generateContract, STORY_MISSIONS, MULTIPHASE_TEMPLATES, generateMultiPhaseMission } from '@voidlink/core'
-import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
+import { GlyphDrift } from '../../components/GlyphDrift/GlyphDriftLazy.tsx'
 import { TraceSweep } from '../../components/TraceSweep/TraceSweep.tsx'
 import styles from './DesktopScreen.module.css'
 

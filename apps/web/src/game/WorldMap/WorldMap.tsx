@@ -7,6 +7,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { getMaxRelayHops, relayHopBonus, researchRelayHopBonus } from '@voidlink/core'
 import { useGameStore } from '../../store/gameStore.ts'
+import { useSettingsStore } from '../../store/settingsStore.ts'
 import styles from './WorldMap.module.css'
 
 // ── Coordinates ───────────────────────────────────────────────────────────────
@@ -273,17 +274,21 @@ export function WorldMap() {
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.0
 
-    // Bloom post-processing — the "magic" that makes the neon look modern
-    const composer = new EffectComposer(renderer)
-    composer.setSize(el.clientWidth, el.clientHeight)
-    composer.addPass(new RenderPass(scene, camera))
-    const bloom = new UnrealBloomPass(
-      new THREE.Vector2(el.clientWidth, el.clientHeight),
-      0.30,  // strength — kept gentle so target dots don't blow into halos that obscure labels
-      0.35,  // radius
-      0.32,  // threshold — only genuinely bright pixels bloom
-    )
-    composer.addPass(bloom)
+    // L6 — Bloom post-processing skipped in low-quality mode.
+    const lowQuality = useSettingsStore.getState().lowQuality
+    let composer: EffectComposer | null = null
+    if (!lowQuality) {
+      composer = new EffectComposer(renderer)
+      composer.setSize(el.clientWidth, el.clientHeight)
+      composer.addPass(new RenderPass(scene, camera))
+      const bloom = new UnrealBloomPass(
+        new THREE.Vector2(el.clientWidth, el.clientHeight),
+        0.30,  // strength — kept gentle so target dots don't blow into halos that obscure labels
+        0.35,  // radius
+        0.32,  // threshold — only genuinely bright pixels bloom
+      )
+      composer.addPass(bloom)
+    }
 
     // Globe base
     scene.add(new THREE.Mesh(
@@ -343,8 +348,9 @@ export function WorldMap() {
       camera.aspect = el.clientWidth / el.clientHeight
       camera.updateProjectionMatrix()
       renderer.setSize(el.clientWidth, el.clientHeight)
-      composer.setSize(el.clientWidth, el.clientHeight)
-      bloom.setSize(el.clientWidth, el.clientHeight)
+      if (composer) {
+        composer.setSize(el.clientWidth, el.clientHeight)
+      }
     })
     ro.observe(el)
 
@@ -361,7 +367,8 @@ export function WorldMap() {
       const t = (dist - 140) / (500 - 140)   // 0 close → 1 far
       controls.rotateSpeed = 0.25 + 0.75 * Math.max(0, Math.min(1, t))
       controls.update()
-      composer.render()
+      if (composer) composer.render()
+      else renderer.render(scene, camera)
     }
     rafRef.current = requestAnimationFrame(animate)
 

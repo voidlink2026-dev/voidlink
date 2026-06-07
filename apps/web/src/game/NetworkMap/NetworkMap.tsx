@@ -5,6 +5,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { useGameStore } from '../../store/gameStore.ts'
+import { useSettingsStore } from '../../store/settingsStore.ts'
 import type { NetworkNode, FileEntry, MissionType, PlayerProfile } from '@voidlink/core'
 import { researchCanarySpike } from '@voidlink/core'
 import styles from './NetworkMap.module.css'
@@ -188,17 +189,21 @@ function NetworkCanvas({
       ;(grid.material as THREE.Material).opacity = 0.35
       scene.add(grid)
     }
-    // Bloom composer — small scene + clickable nodes → softer settings
-    const composer = new EffectComposer(renderer)
-    composer.setSize(mount.clientWidth || 600, mount.clientHeight || 400)
-    composer.addPass(new RenderPass(scene, camera))
-    const bloom = new UnrealBloomPass(
-      new THREE.Vector2(mount.clientWidth || 600, mount.clientHeight || 400),
-      0.55,   // strength — matches WorldMap so dots don't smear
-      0.4,    // radius
-      0.22,   // threshold — only bright emissives bloom
-    )
-    composer.addPass(bloom)
+    // L6 — Bloom composer skipped in low-quality mode.
+    const lowQuality = useSettingsStore.getState().lowQuality
+    let composer: EffectComposer | null = null
+    if (!lowQuality) {
+      composer = new EffectComposer(renderer)
+      composer.setSize(mount.clientWidth || 600, mount.clientHeight || 400)
+      composer.addPass(new RenderPass(scene, camera))
+      const bloom = new UnrealBloomPass(
+        new THREE.Vector2(mount.clientWidth || 600, mount.clientHeight || 400),
+        0.55,   // strength — matches WorldMap so dots don't smear
+        0.4,    // radius
+        0.22,   // threshold — only bright emissives bloom
+      )
+      composer.addPass(bloom)
+    }
 
     // ── Controls ───────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -331,8 +336,9 @@ function NetworkCanvas({
       const w = mount.clientWidth
       const h = mount.clientHeight
       renderer.setSize(w, h)
-      composer.setSize(w, h)
-      bloom.setSize(w, h)
+      if (composer) {
+        composer.setSize(w, h)
+      }
       camera.aspect = w / h
       camera.updateProjectionMatrix()
     })
@@ -392,7 +398,8 @@ function NetworkCanvas({
       // Skipping per-frame edge colour update for perf — edges stay dim
 
       controls.update()
-      composer.render()
+      if (composer) composer.render()
+      else renderer.render(scene, camera)
     }
     animate()
 

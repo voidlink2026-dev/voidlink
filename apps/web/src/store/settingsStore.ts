@@ -11,6 +11,12 @@ export interface Settings {
   showFps: boolean
   uiScale: number           // 0.8–1.5 — applied as CSS zoom on root
   disableSplashCards: boolean  // M14q Sub-sprint E
+  // L6 — Low quality toggle. When true:
+  //   - GlyphDrift uses fewer characters and skips the UnrealBloomPass
+  //   - NetworkMap and WorldMap skip bloom passes
+  //   - CSS backdrop-filter blurs are dropped via [data-quality=low] selector
+  // Recommended for Steam Deck and integrated-GPU laptops.
+  lowQuality: boolean
 }
 
 interface SettingsActions {
@@ -27,6 +33,7 @@ const defaults: Settings = {
   showFps: false,
   uiScale: 1.0,
   disableSplashCards: false,
+  lowQuality: false,
 }
 
 export const useSettingsStore = create<Settings & SettingsActions>()(

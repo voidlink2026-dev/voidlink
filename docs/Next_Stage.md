@@ -370,7 +370,10 @@ Tier mix: 8 trivial, 18 bronze, 8 silver, 5 gold, 1 platinum = 40 base. Add 10 h
 
 ---
 
-### L6 — Perf pass + Low-Quality toggle 🎯
+### L6 — Perf pass + Low-Quality toggle ✅ SHIPPED 2026-06
+Code-splitting + lazy GlyphDrift dropped first-paint bundle from 425 KB → 187 KB gzipped. Low Quality toggle skips bloom passes and CSS blurs. See Complete_Tasks.md.
+
+### ~~L6 — Perf pass + Low-Quality toggle~~ 🎯
 **Window:** 2026-08-W1 → 2026-08-W2 (3 days)
 **Effort:** 3 days
 **Status:** Not started

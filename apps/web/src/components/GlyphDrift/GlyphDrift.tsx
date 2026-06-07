@@ -4,6 +4,7 @@ import { feature } from 'topojson-client'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
+import { useSettingsStore } from '../../store/settingsStore.ts'
 
 // Voidlink original — "Neon Data Globe".
 // Real continent outlines from world-atlas TopoJSON, drawn as glowing cyan lines
@@ -46,12 +47,17 @@ export function GlyphDrift({
   style,
 }: NeonGlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null)
+  // L6 — Read low-quality at mount. Effect deps deliberately exclude this so
+  // a runtime toggle does not blow up the WebGL context; users restart for
+  // the change to take effect (matches the settings UI affordance).
+  const lowQuality = useSettingsStore.getState().lowQuality
+  const effectiveDensity = lowQuality ? density * 0.4 : density
 
   useEffect(() => {
     const el = mountRef.current
     if (!el) return
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+    const dpr = Math.min(window.devicePixelRatio || 1, lowQuality ? 1.0 : 1.5)
 
     // ── Scene ─────────────────────────────────────────────────────────────
     const scene  = new THREE.Scene()
@@ -70,16 +76,21 @@ export function GlyphDrift({
     })
 
     // ── Post-processing — UnrealBloomPass is the magic ─────────────────────
-    const composer = new EffectComposer(renderer)
-    composer.setSize(el.clientWidth, el.clientHeight)
-    composer.addPass(new RenderPass(scene, camera))
-    const bloom = new UnrealBloomPass(
-      new THREE.Vector2(el.clientWidth, el.clientHeight),
-      1.0,   // strength — tuned so continents glow without halos turning into rings
-      0.5,   // radius
-      0.10,  // threshold — only genuinely bright pixels bloom
-    )
-    composer.addPass(bloom)
+    // L6 — Skipped entirely in low-quality mode. Falls back to direct
+    // renderer.render() in the loop below.
+    let composer: EffectComposer | null = null
+    if (!lowQuality) {
+      composer = new EffectComposer(renderer)
+      composer.setSize(el.clientWidth, el.clientHeight)
+      composer.addPass(new RenderPass(scene, camera))
+      const bloom = new UnrealBloomPass(
+        new THREE.Vector2(el.clientWidth, el.clientHeight),
+        1.0,   // strength — tuned so continents glow without halos turning into rings
+        0.5,   // radius
+        0.10,  // threshold — only genuinely bright pixels bloom
+      )
+      composer.addPass(bloom)
+    }
 
     const group = new THREE.Group()
     scene.add(group)
@@ -173,7 +184,7 @@ export function GlyphDrift({
       }
       return points
     }
-    const HUB_COUNT = Math.floor(40 * density)
+    const HUB_COUNT = Math.floor(40 * effectiveDensity)
     const hubPositions = fibonacciSphere(HUB_COUNT * 4).filter((_, i) => i % 4 === 0)
 
     // Hub mesh — small bright sphere
@@ -290,7 +301,7 @@ export function GlyphDrift({
         life: 4, age: 0,
       })
     }
-    const TARGET_PULSES = Math.floor(12 * density)
+    const TARGET_PULSES = Math.floor(12 * effectiveDensity)
     for (let i = 0; i < TARGET_PULSES; i++) {
       spawnPulse()
       if (pulses.length > 0) {
@@ -342,7 +353,8 @@ export function GlyphDrift({
 
       while (pulses.length < TARGET_PULSES) spawnPulse()
 
-      composer.render()
+      if (composer) composer.render()
+      else renderer.render(scene, camera)
     }
     raf = requestAnimationFrame(frame)
 
@@ -352,7 +364,7 @@ export function GlyphDrift({
       camera.aspect = w / h
       camera.updateProjectionMatrix()
       renderer.setSize(w, h)
-      composer.setSize(w, h)
+      if (composer) composer.setSize(w, h)
     }
     const ro = new ResizeObserver(resize)
     ro.observe(el)
@@ -368,7 +380,7 @@ export function GlyphDrift({
           else m.material.dispose()
         }
       })
-      composer.dispose()
+      if (composer) composer.dispose()
       renderer.dispose()
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
     }

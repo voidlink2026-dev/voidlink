@@ -14,13 +14,20 @@ import { startAutoSave, getActiveSession, loadGame } from './store/persistence.t
 export function App() {
   const screen    = useGameStore((s) => s.screen)
   const setScreen = useGameStore((s) => s.setScreen)
-  const theme     = useSettingsStore((s) => s.theme)
-  const uiScale   = useSettingsStore((s) => s.uiScale)
+  const theme      = useSettingsStore((s) => s.theme)
+  const uiScale    = useSettingsStore((s) => s.uiScale)
+  const lowQuality = useSettingsStore((s) => s.lowQuality)
 
   // Apply theme to document root
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
+
+  // L6 — Apply quality preset to document root. CSS rules under
+  // [data-quality=low] strip backdrop-filter blurs (cheap GPU win).
+  useEffect(() => {
+    document.documentElement.setAttribute('data-quality', lowQuality ? 'low' : 'high')
+  }, [lowQuality])
 
   // Apply UI scale via zoom
   useEffect(() => {

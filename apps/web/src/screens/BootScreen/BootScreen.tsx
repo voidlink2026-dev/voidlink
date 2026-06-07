@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { GlyphDrift } from '../../components/GlyphDrift/GlyphDrift.tsx'
+import { GlyphDrift } from '../../components/GlyphDrift/GlyphDriftLazy.tsx'
 import styles from './BootScreen.module.css'
 
 const BOOT_LINES = [

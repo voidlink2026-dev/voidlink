@@ -254,3 +254,14 @@ button, input, select, textarea {
 [data-theme="light"] ::selection {
   background: rgba(0, 112, 168, 0.18);
 }
+
+/* L6 — Low quality preset. Strips backdrop-filter blurs (expensive on
+   integrated GPUs and Steam Deck) and clamps box-shadow radii. Bloom passes
+   in Three.js scenes are handled in JS where they live. */
+[data-quality="low"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+[data-quality="low"] {
+  --bloom-disabled: 1;
+}

@@ -99,6 +99,7 @@ export function SettingsWindow() {
         <Toggle label="REDUCE MOTION" on={s.reducedMotion} onChange={(v) => s.setSetting('reducedMotion', v)} />
         <Toggle label="SHOW FPS COUNTER" on={s.showFps} onChange={(v) => s.setSetting('showFps', v)} />
         <Toggle label="DISABLE SPLASH CARDS" on={s.disableSplashCards} onChange={(v) => s.setSetting('disableSplashCards', v)} />
+        <Toggle label="LOW QUALITY (perf · reload to apply)" on={s.lowQuality} onChange={(v) => s.setSetting('lowQuality', v)} />
 
         {/* M14q Sub-sprint A — Replay Prologue */}
         <div className={styles.scaleRow} style={{ marginTop: 12 }}>
