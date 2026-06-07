@@ -10,7 +10,7 @@ const PROLOGUE_LINES: string[] = [
   'Twenty-five years ago, every central bank ledger on Earth was rewritten in nine hours.',
   'Nobody has ever claimed responsibility. The historians call it the October Event.',
   'The financial system collapsed in nine days. Seventy-four million people died.',
-  'Four corporations whose wealth was not in cash survived. They now own more land, more people, and more violence than every nation-state combined.',
+  'Four corporations whose wealth was not in cash survived. They now own more land, more people, and are responsible for more violence than every nation-state combined.',
   'The old governments are still there. Most of them do not, in any practical sense, govern anything.',
   'In the gaps between the new powers, in the unmapped places, there are people who do their work in the dark.',
   'They take contracts no one else can afford to take. They steal data. They erase identities. They sabotage. They disappear without trace.',
