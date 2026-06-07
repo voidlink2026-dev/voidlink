@@ -6,7 +6,7 @@ import type { DecisionPattern } from '../engine/decisionPattern.ts'
 function mockPlayer(over: Partial<PlayerProfile> = {}): PlayerProfile {
   return {
     id: 'p1', username: 'test', handle: 'TEST', email: 'a@b.c',
-    avatarId: 'x', createdAt: 0, lastSeenAt: 0, credits: 0,
+    avatarId: 'x', createdAt: Date.now(), lastSeenAt: 0, credits: 0,
     reputation: 0, rank: 1, specialization: null, factionStandings: [],
     hardware: { cpuSpeed: 1, ramSlots: 2, hddCapacity: 10, modemSpeed: 10, gatewayBandwidth: 10 },
     software: { passwordCrackers: [], proxies: [], firewallBypassers: [], logDeleters: [], portScanners: [], misc: [] },

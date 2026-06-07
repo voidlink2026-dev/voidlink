@@ -10,6 +10,7 @@ export interface Settings {
   reducedMotion: boolean
   showFps: boolean
   uiScale: number           // 0.8–1.5 — applied as CSS zoom on root
+  disableSplashCards: boolean  // M14q Sub-sprint E
 }
 
 interface SettingsActions {
@@ -25,6 +26,7 @@ const defaults: Settings = {
   reducedMotion: false,
   showFps: false,
   uiScale: 1.0,
+  disableSplashCards: false,
 }
 
 export const useSettingsStore = create<Settings & SettingsActions>()(

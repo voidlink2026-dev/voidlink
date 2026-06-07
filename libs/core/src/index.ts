@@ -18,6 +18,7 @@ export * from './data/npcDialogue.ts'
 export * from './data/reflectionScenes.ts'
 export * from './data/endings.ts'
 export * from './data/codex.ts'
+export * from './data/splashCards.ts'
 
 // Network
 export * from './network/generator.ts'

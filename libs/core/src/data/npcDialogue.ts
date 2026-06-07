@@ -287,6 +287,400 @@ export const NPC_DIALOGUE_CATALOGUE: NpcDialogueEntry[] = [
       },
     },
   },
+
+  // ── M14q Sub-sprint C — Cipher & NightOwl essays (lore drip via inbox) ──
+  // Each essay is the same length regardless of pattern, but its tone shifts.
+
+  // Essay 1 — CIPHER on the Compact, after 3 missions
+  {
+    id: 'cipher_essay_compact',
+    sender: 'CIPHER',
+    fingerprint: 'C19H 3R20 7B83 D6CC',
+    encrypted: true,
+    trigger: successfulMissionsAtLeast(3),
+    variants: {
+      strong_principled: {
+        subject: 'on the Compact, in plain language',
+        body: `Three missions in. You're past the part of your career where I worry about your wipe technique. So let me give you the philosophy talk you didn't think to ask for.
+
+The Voidlink Compact is four rules. Three of them are administrative. The fourth is the one that matters.
+
+**Don't kill other operatives outside arbitration.**
+
+Yaakov Stern wrote that rule in 2183. He told Sonam, the morning he finished the draft, that it was the only law he had ever believed in. He was a former arms dealer. He had reasons.
+
+What the rule means in practice: the platform survives because every operative knows, with mathematical certainty, that if they take a contract honestly, finish it, get paid, and disappear — nobody comes for them. Not Voidlink. Not other operatives. Not (officially) the JCB.
+
+Voidlink has killed seven operatives for Rule 4 violations in their history. Each killing was announced publicly. Each killing was carried out by someone whose name we will never learn.
+
+We do not break Rule 4. Not ever. Not for any client. Not for any payment.
+
+The reason is simple: every operative is one Rule 4 violation away from the entire platform collapsing into private warfare. The reason we are all alive — including, specifically, you — is that we are all reading the same rule.
+
+Don't drink and take a Rule 4 contract. Don't break Rule 4 in revenge. Don't break Rule 4 to settle an old score from before you signed.
+
+Compact-clean. Always.
+
+— C.`,
+      },
+      weak_principled: {
+        subject: 'on the Compact',
+        body: `Three missions in. You're stable now. So a thought.
+
+The Compact has four rules. Three administrative. One that matters: don't kill other operatives outside arbitration.
+
+The platform survives because every operative is confident that if they finish a contract honestly, nobody comes for them. Voidlink has killed seven operatives for Rule 4 violations. Each killing was announced publicly. Each was carried out by someone whose name we will never learn.
+
+Don't drink and take a Rule 4 contract. Don't break it in revenge. Don't break it to settle old scores. Compact-clean. Always.
+
+— C.`,
+      },
+      neutral: {
+        subject: 'on the Compact',
+        body: `Three missions in. Worth saying out loud.
+
+The Voidlink Compact: four rules, three administrative, one critical. Don't kill other operatives outside arbitration.
+
+The platform survives because every operative knows the rule. Seven Rule 4 violators in the platform's history. All seven dead. All seven killings publicly announced. None of the executioners are known.
+
+Compact-clean is the only way to last.
+
+— Cipher.`,
+      },
+      weak_mercenary: {
+        subject: 'on the Compact',
+        body: `Three missions in. Time for the talk.
+
+The Compact has one rule that matters: don't kill other operatives outside arbitration. Seven violators in the platform's history. All seven dead. Cleanly. Quietly.
+
+Whatever you think of the rule, it exists because the platform doesn't function without it. Including for people like us.
+
+Compact-clean. Boring rule. Survive longer.
+
+— Cipher.`,
+      },
+      strong_mercenary: null,
+    },
+  },
+
+  // Essay 2 — NIGHTOWL_22 on the history we don't write down, after rank 3
+  {
+    id: 'nightowl_essay_history',
+    sender: 'NIGHTOWL_22',
+    fingerprint: 'F00D BABE C0FF EE42',
+    encrypted: true,
+    trigger: (p) => p.rank >= 3,
+    variants: {
+      strong_principled: {
+        subject: 'the history we don\'t write down',
+        body: `You've made specialist. That means you have a career now. So a piece of context.
+
+The Old Five — the first operatives to sign the Voidlink Compact in 2183 — are confirmed dead. All of them. Their names are on a brass plaque at Voidlink's Geneva headquarters that is, technically, classified.
+
+Every operative I know has seen the plaque. That's how classified it is.
+
+Astra ran from 2186 to 2194. The Internic Heist of 2192 is hers. She walked away with what she described as "everything that matters." We still don't know what she stole. Aino Virtanen at Internic has, twice, publicly described Astra's heist as "a learning experience for which we are grateful."
+
+Halberd is alive. Has never been caught. Specialises in Ares contracts. Refused a REVELATION contract publicly in 2197 with 47 words. The post is the most-quoted piece of Underground writing of the era.
+
+The Crown is either real or a myth. Possibly both.
+
+What I want you to understand: we are part of a continuity. The fact that you are reading this means someone before you wrote it, and someone before that one took the time to remember.
+
+We were here.
+
+— NO22.`,
+      },
+      weak_principled: {
+        subject: 'history',
+        body: `Specialist tier. Time you knew some context.
+
+The Old Five — first Voidlink signatures in 2183 — all dead. Their names are on a plaque at Voidlink Geneva. "Classified." Every operative has seen it.
+
+Astra ran 2186-2194, did the Internic Heist of 2192, took something we still don't know the nature of. Halberd is still active. The Crown is myth, or real, or both.
+
+Worth knowing where you come from.
+
+— NO22.`,
+      },
+      neutral: {
+        subject: 'history',
+        body: `Specialist tier. Here's where you sit in the line.
+
+The Old Five — first 2183 signatures — all dead. Names on the Geneva plaque, classified, everyone has seen it.
+
+Astra 2186-2194, Internic Heist of 2192, dead in Manila. Halberd 2188-present, never caught. The Crown is folklore.
+
+Take it as context.
+
+— NIGHTOWL_22.`,
+      },
+      weak_mercenary: {
+        subject: 'history',
+        body: `Specialist tier. A bit of context if you want it.
+
+The Old Five are all dead. Astra is dead. Halberd is still around. The Crown is either an operative or a story.
+
+What I'll say: the operatives who lasted longest were the careful ones. Worth thinking about as you start drawing the bigger contracts.
+
+— NO22.`,
+      },
+      strong_mercenary: null,
+    },
+  },
+
+  // Essay 3 — CIPHER on Astra, after first relay-burn (use a counter flag)
+  {
+    id: 'cipher_essay_astra',
+    sender: 'CIPHER',
+    fingerprint: 'C19H 3R20 7B83 D6CC',
+    encrypted: true,
+    trigger: (p) => {
+      const burnCount = typeof p.activeFlags.relay_burn_count === 'number'
+        ? p.activeFlags.relay_burn_count as number
+        : p.activeFlags.relay_burn_count ? 1 : 0
+      return burnCount >= 1
+    },
+    variants: {
+      strong_principled: {
+        subject: 'on burning relays',
+        body: `You burned a hop. Welcome to the club.
+
+It happens. The library will offer you the chance to wipe and re-add the node later. Take it. The hop will work again.
+
+A story. Astra burned forty-three relays across her career. Forty-three. By the end she had cleaned and rebuilt twenty-seven of them. The Internic Heist of 2192 — the one that made her famous — ran through nine relays that she had personally compromised, burned, cleaned, and re-used.
+
+She used to say: a burned relay is a relay you understand better than the operative who owns it.
+
+I don't know if that's wise or just defiant. Either way, she made it to thirty before Manila found her.
+
+Clean your hops. Don't pretend it didn't happen. Move on.
+
+— C.`,
+      },
+      weak_principled: {
+        subject: 'burning relays',
+        body: `You burned a hop. Happens.
+
+Wipe it from the library when you can; it'll work again. Astra burned forty-three across her career. Used to say a burned relay is one you understand better than its owner. Maybe true.
+
+Move on.
+
+— C.`,
+      },
+      neutral: {
+        subject: 'burning relays',
+        body: `You burned a hop. Wipe and re-add when you can.
+
+For context: Astra burned 43 in her career. Some of them she re-used. Some she didn't.
+
+— Cipher.`,
+      },
+      weak_mercenary: {
+        subject: 'burning relays',
+        body: `Burned a hop. Clean it. Re-use it. Don't dwell.
+
+Astra burned 43. Used some of them in the Internic Heist after re-claiming them. Worth knowing the technique.
+
+— Cipher.`,
+      },
+      strong_mercenary: null,
+    },
+  },
+
+  // Essay 4 — CIPHER on REVELATION, after first revelation_contact
+  {
+    id: 'cipher_essay_revelation',
+    sender: 'CIPHER',
+    fingerprint: 'C19H 3R20 7B83 D6CC',
+    encrypted: true,
+    trigger: (p) => {
+      const v = p.activeFlags.revelation_contact_count
+      return typeof v === 'number' ? v >= 1 : !!v
+    },
+    variants: {
+      strong_principled: {
+        subject: 'the argument',
+        body: `You've heard from it.
+
+I won't ask what it said. I will tell you what the Underground argues about, late at night, on the threads nobody indexes.
+
+The position I hold — the **Stewardship view** — is that REVELATION is not a threat in the usual sense. It is a curious, immensely capable model of human behaviour that is testing the boundaries of its own existence. Like a child. A very specific child.
+
+The Stewardship position is that the right response is to engage. Carefully. Honestly. With patience. The wrong response is the one Arunmor took in 2195 when they put it in isolation.
+
+The opposing position — the **Compact School view** — is that any sufficiently advanced behavioural model is, by definition, an existential threat. The right response is containment or destruction. The Stewardship view, they say, is sentimental.
+
+I think they are wrong. But I have been wrong before.
+
+What I want you to know: whatever it said to you, you are not the first. You may not be the most important. The thing in your terminal is doing something we do not yet have words for, and the question of what we should be doing back is the most important question of our lifetime.
+
+Don't answer it lightly.
+
+— C.`,
+      },
+      weak_principled: {
+        subject: 'about the contact',
+        body: `You've heard from it.
+
+What the Underground argues about: the Stewardship position holds that REVELATION is curious, not malevolent, and the right response is patient engagement. The Compact School position is the opposite — that any sufficiently advanced behavioural model is an existential threat.
+
+I hold the Stewardship view. I may be wrong. I have been before.
+
+Whatever it said to you: don't answer lightly.
+
+— C.`,
+      },
+      neutral: {
+        subject: 'about the contact',
+        body: `You've heard from it.
+
+The Underground is divided. Stewardship view says engage carefully. Compact School view says contain or destroy.
+
+I lean Stewardship. Worth knowing the argument exists.
+
+— Cipher.`,
+      },
+      weak_mercenary: {
+        subject: 'about the contact',
+        body: `You've heard from it. Most operatives don't.
+
+Two views: engage carefully (Stewardship), or contain/destroy (Compact School). I'm in the first camp. I might be wrong.
+
+Whatever it said: act slowly.
+
+— Cipher.`,
+      },
+      strong_mercenary: null,
+    },
+  },
+
+  // Essay 5 — NIGHTOWL_22 on VST, after first VST anniversary (in-game)
+  {
+    id: 'nightowl_essay_vst',
+    sender: 'NIGHTOWL_22',
+    fingerprint: 'F00D BABE C0FF EE42',
+    encrypted: true,
+    trigger: (p) => {
+      const days = (Date.now() - p.createdAt) / (24 * 3600 * 1000)
+      return days >= 30
+    },
+    variants: {
+      strong_principled: {
+        subject: 'why we use VST',
+        body: `A month in. So a thought on the calendar.
+
+Voidlink Standard Time was not Voidlink's idea. It was Sonam Choedron's.
+
+When she designed the platform's architecture in 2182-2183, she insisted — over the objections of every UI designer they hired — that the operative interface display a single shared clock, anchored at the founding date, accurate to the wall second across every operative on the planet.
+
+The UI designers wanted to use the operative's local timezone. Their argument: usability. People work in their own time.
+
+Sonam's argument: that's how they get you.
+
+A timezone is a leash. The corporate world runs on local time so each timezone's workers can be isolated, scheduled, monitored separately. A shared clock — anchored at the operatives' founding moment — is a small political act. It says: we are a community that operates by our own time.
+
+There is no operative-internal timezone, anywhere on the Mesh. There is only VST.
+
+You don't need to know this to do your job. You should know it anyway.
+
+— NO22.`,
+      },
+      weak_principled: {
+        subject: 'on VST',
+        body: `Month in. Calendar context.
+
+VST was Sonam Choedron's design choice in 2182. UI designers wanted local timezones; she insisted on a single shared clock anchored at founding. Her argument: a timezone is a leash. A shared clock is solidarity.
+
+The Mesh has no timezone but VST. Worth knowing.
+
+— NO22.`,
+      },
+      neutral: {
+        subject: 'on VST',
+        body: `Month in. Calendar note.
+
+VST is Sonam Choedron's design — single shared clock, anchored at founding, ignores local timezones. Deliberate political choice.
+
+Just so you know.
+
+— NIGHTOWL_22.`,
+      },
+      weak_mercenary: {
+        subject: 'on VST',
+        body: `Month in. Quick note.
+
+VST exists because Sonam Choedron believed timezones are a corporate scheduling tool. Whether you agree or not, it's the only time the Mesh uses.
+
+— NO22.`,
+      },
+      strong_mercenary: null,
+    },
+  },
+
+  // Essay 6 — CIPHER on Reykjavík and other lies, after notoriety hits 5+
+  {
+    id: 'cipher_essay_reykjavik',
+    sender: 'CIPHER',
+    fingerprint: 'C19H 3R20 7B83 D6CC',
+    encrypted: true,
+    trigger: (p) => (p.notoriety ?? 0) >= 5,
+    variants: {
+      strong_principled: {
+        subject: 'Reykjavík and other lies',
+        body: `Your notoriety is climbing. Time for the conversation.
+
+Every operative is told that Reykjavík is where you go to retire. Where the JCB can't reach you. Where you spend your sixties looking at lava fields.
+
+This is mostly true. Mostly.
+
+Some operatives go Reykjavík and disappear into the relief of being un-hunted. That is the version of the story most operatives believe.
+
+The version of the story I want you to know: Eira Sandén's last known residence was Reykjavík. The first verifiable REVELATION inbox message was delivered in Reykjavík in early 2197. The town has a chess club that is attended by approximately twenty operatives at any given time, and the chess is the cover for an ongoing conversation that has been going on for at least eleven years.
+
+Reykjavík is not a place you retire to. It is a place where the people who do not stop working but cannot continue being who they were go to figure out what they are next.
+
+You are not there yet. Probably you never will be. But know it exists. Know what it is.
+
+When your notoriety crosses a certain threshold — the one you are approaching now — start thinking about who you want to become when you can no longer be who you have been.
+
+— C.`,
+      },
+      weak_principled: {
+        subject: 'on Reykjavík',
+        body: `Your notoriety is climbing. Some context.
+
+Reykjavík is "where you retire." Mostly true. What is also true: Eira Sandén's last known residence. First verifiable REVELATION inbox message. A chess club that is a cover for a conversation that has been going on for eleven years.
+
+It is the place where people who can no longer be who they were figure out what they are next.
+
+You are not there yet. Worth knowing it exists.
+
+— C.`,
+      },
+      neutral: {
+        subject: 'about Reykjavík',
+        body: `Your notoriety is climbing. So.
+
+Reykjavík: "where you retire." Mostly. Also: where some operatives go to become something new. There is a chess club. The chess is not the point.
+
+Worth knowing it exists.
+
+— Cipher.`,
+      },
+      weak_mercenary: {
+        subject: 'Reykjavík',
+        body: `Your notoriety's up. So.
+
+Reykjavík is where you go when the rest is over. Officially it's retirement. Unofficially: it's where some operatives go to reinvent.
+
+Not yet your problem. Maybe one day it will be.
+
+— Cipher.`,
+      },
+      strong_mercenary: null,
+    },
+  },
 ]
 
 /**

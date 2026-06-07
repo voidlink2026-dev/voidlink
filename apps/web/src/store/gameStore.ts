@@ -206,6 +206,7 @@ interface GameState {
   // M14q Sub-sprint B — Codex
   codexUnlockQueue: string[]        // queued unlock-notification entry IDs
   codexFocusId: string | null       // deep-link target for the Codex window
+  pendingSplash: string | null      // M14q Sub-sprint E — splash card ID
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
   missionResult: 'success' | 'fail' | 'abandoned' | null
@@ -328,6 +329,10 @@ interface GameActions {
   dismissCodexUnlock: (id: string) => void
   setCodexFocusId: (id: string | null) => void
   markCodexRead: (id: string) => void
+
+  // M14q Sub-sprint E — splash cards
+  triggerSplash: (id: string) => void
+  dismissSplash: () => void
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -353,6 +358,7 @@ export const useGameStore = create<GameState & GameActions>()(
     pendingEndingChoice: false,
     codexUnlockQueue: [],
     codexFocusId: null,
+    pendingSplash: null,
     activeWorldEvents: [],
     nextWorldEventAt: null,
     missionResult: null,
@@ -449,6 +455,30 @@ export const useGameStore = create<GameState & GameActions>()(
         mission.status = 'active'
         mission.assignedTo = s.player?.id
         mission.startedAt = Date.now()
+
+        // M14q Sub-sprint E — splash cards on key story beats
+        if (s.player) {
+          // First Contact — only on very first mission accept
+          if (s.player.stats.totalMissions === 0 && !s.player.activeFlags['splash_fired_first_contact']) {
+            s.player.activeFlags['splash_fired_first_contact'] = Date.now()
+            s.pendingSplash = 'first_contact'
+          }
+          // The Lead — Arc 1 Mission 2
+          else if (missionId === 'story_arc1_02' && !s.player.activeFlags['splash_fired_the_lead']) {
+            s.player.activeFlags['splash_fired_the_lead'] = Date.now()
+            s.pendingSplash = 'the_lead'
+          }
+          // The Origin Node — Arc 1 Mission 3
+          else if (missionId === 'story_arc1_03' && !s.player.activeFlags['splash_fired_the_origin_node']) {
+            s.player.activeFlags['splash_fired_the_origin_node'] = Date.now()
+            s.pendingSplash = 'the_origin_node'
+          }
+          // Director Kovac — first Arc 5 mission
+          else if (missionId === 'story_arc5_01' && !s.player.activeFlags['splash_fired_director_kovac']) {
+            s.player.activeFlags['splash_fired_director_kovac'] = Date.now()
+            s.pendingSplash = 'director_kovac'
+          }
+        }
 
         // M14h.6 — dispatch a contract email to the encrypted inbox so the
         // briefing has a permanent home outside the Mission Board.
@@ -1854,6 +1884,14 @@ export const useGameStore = create<GameState & GameActions>()(
           s.player.activeFlags['reflection_end_of_arc_1'] = Date.now()
           s.pendingReflection = 'end_of_arc_1'
         }
+        // M14q Sub-sprint E — Aftermath splash card after Arc 1 choice
+        if (!s.player.activeFlags['splash_fired_aftermath']) {
+          s.player.activeFlags['splash_fired_aftermath'] = Date.now()
+          // Queue the splash; the Reflection overlay will fire first, then
+          // the Aftermath splash card will appear after dismissal.
+          // We defer by setting pendingSplash, which renders on next tick.
+          s.pendingSplash = 'aftermath'
+        }
 
         function shiftFaction(factionId: string, delta: number, rankFn: (n: number) => string) {
           if (!s.player) return
@@ -2201,6 +2239,18 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!s.player) return
         s.player.activeFlags[`codex_read_${id}`] = Date.now()
       }),
+
+    // ── M14q Sub-sprint E — splash cards ───────────────────────────────────
+    triggerSplash: (id) =>
+      set((s) => {
+        if (!s.player) return
+        if (s.player.activeFlags[`splash_fired_${id}`]) return
+        s.player.activeFlags[`splash_fired_${id}`] = Date.now()
+        s.pendingSplash = id
+      }),
+
+    dismissSplash: () =>
+      set((s) => { s.pendingSplash = null }),
 
     // ── M14i — research tree ────────────────────────────────────────────────
     unlockResearch: (id) => {

@@ -102,10 +102,8 @@ This sprint unlocks the entire deep-narrative vision. Everything else in the pos
 
 ---
 
-### M14q — Lore Exposure Layer (slot before S3) 🎯
-**Window:** 2026-07-W3 → 2026-08-W1 (1 week, five sub-sprints)
-**Effort:** ~5 days of focused work
-**Status:** Planned. Rationale: we have ~880 lines of Codex lore that the player currently has no way to encounter. Before Arc 6-8 story content lands, we need the player *already inside the world*. Each layer is small; together they transform first-playthrough immersion.
+### M14q — Lore Exposure Layer ✅ SHIPPED 2026-06
+**Status:** All five sub-sprints shipped. Boot prologue, Codex window with 18 unlockable entries + non-blocking unlock toasts, environmental flavour (BIOS line + bank subheaders), 6 Cipher/NightOwl essays drip into inbox, 8 splash cards on key story beats with SETTINGS toggle to disable. 13 unit tests added across the M14q sprint (120 → 133). The Codex's ~880 lines of lore are now discoverable in-game across multiple surfaces. **Cipher's First Contract** tutorial rewrite (L2) is the next gameplay-touching sprint and is now the last unshipped pre-launch sprint that affects what the player learns.
 
 **Why this slots before L3 (story arcs 6-8):** every choice in Arcs 6-8 lands harder if the player already understands what the factions are, who the named NPCs are, why the Voidlink Compact matters, what the JCB does. Writing more story into a world the player can't see is wasteful.
 

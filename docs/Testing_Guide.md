@@ -1149,6 +1149,35 @@ The big sweep. Test everything below.
 
 ---
 
+## 48. M14q (Sub-sprints C + E) — Cipher Essays + Splash Cards (2026-06)
+
+### 48.1 Cipher essay drip (Sub-sprint C)
+- [ ] Complete 3 successful missions with a principled pattern → CIPHER's "on the Compact, in plain language" essay arrives
+- [ ] Same conditions with mercenary pattern → essay arrives with shorter "on the Compact" tone variant
+- [ ] Reach Rank 3 → NIGHTOWL_22's "the history we don't write down" arrives
+- [ ] Burn a relay node → CIPHER's "on burning relays" essay arrives (in-game `relay_burn_count` flag check)
+- [ ] First REVELATION contact → CIPHER's "the argument" essay arrives (the Stewardship-vs-Compact school debate)
+- [ ] 30+ days since signup → NIGHTOWL_22's "why we use VST" essay arrives
+- [ ] Notoriety ≥ 5 → CIPHER's "Reykjavík and other lies" essay arrives
+- [ ] Each essay fires exactly once (verify by completing the trigger condition again — no re-fire)
+- [ ] Strong-mercenary players DO NOT receive `cipher_essay_compact`, `cipher_essay_astra`, `cipher_essay_revelation`, `nightowl_essay_history` (variant returns null)
+
+### 48.2 Splash cards (Sub-sprint E)
+- [ ] Accept first mission ever → "FIRST CONTACT" splash fires full-screen with motif glyph, subtitle "Arc 1 · Mission 1", body paragraph
+- [ ] SPACE / click / Escape skips immediately
+- [ ] After 12s the splash auto-dismisses
+- [ ] Accept `story_arc1_02` → "THE LEAD" splash fires
+- [ ] Accept `story_arc1_03` → "THE ORIGIN NODE" splash
+- [ ] Complete Arc 1 choice → "AFTERMATH" splash (after reflection scene dismisses)
+- [ ] Accept `story_arc5_01` → "DIRECTOR KOVAC" splash
+- [ ] Each splash fires once (re-running same condition does not re-fire)
+- [ ] Settings → DISABLE SPLASH CARDS toggle, then trigger any splash → splash is suppressed silently
+
+### 48.3 Static motif variant
+- [ ] The Aftermath card uses the 'static' motif — visible scanline overlay across the screen
+
+---
+
 ## 47. M14q (Sub-sprints A + B + D) — Lore Exposure Layer (2026-06)
 
 ### 47.1 Boot Prologue
