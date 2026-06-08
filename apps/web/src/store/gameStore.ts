@@ -1472,6 +1472,26 @@ export const useGameStore = create<GameState & GameActions>()(
             const prev = (s.player.activeFlags[factionFlag] as number | undefined) ?? 0
             s.player.activeFlags[factionFlag] = prev + 1
           }
+
+          // L6-audit fix — propagate the mission's narrativeFlags to the
+          // player. Hand-authored story missions declare flags like
+          // `arc6_choice_pending: true` in their narrativeFlags blob; until
+          // now those never reached player.activeFlags, which meant the
+          // multi-phase resolution missions gated on those flags never
+          // unlocked. Resolution missions were appearing on the Mission
+          // Board from boot. With this propagation the prerequisiteFlag
+          // gating added to MultiPhaseMissionTemplate finally takes effect.
+          if (mission.narrativeFlags) {
+            for (const [k, v] of Object.entries(mission.narrativeFlags)) {
+              // Skip runtime-internal flags (news_echo_pending_*,
+              // bounty_target_node_id, sabotage_deadline) — they're
+              // mission metadata, not narrative state.
+              if (k.startsWith('news_echo_pending_')) continue
+              if (k === 'bounty_target_node_id') continue
+              if (k === 'sabotage_deadline') continue
+              s.player.activeFlags[k] = v
+            }
+          }
           // M14t — The WHO YOU WORK FOR reflection is *scheduled* here but
           // actually fires inside `disconnect` (below) so the player sees the
           // mission-result UI first. The flag below is the eligibility test;

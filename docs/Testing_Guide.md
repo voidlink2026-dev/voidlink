@@ -1962,3 +1962,71 @@ When you spot a fix, the relevant doc sections are:
 If you find something broken, note its Phase + step number — it makes the fix-cycle quick.
 
 **Have fun. Take notes.**
+
+---
+
+## Phase 20 — M14p Choice Architecture (2026-06)
+
+- [ ] Make 3 missions where you spare civilians, then check `getDecisionPattern` via dev-console — `principledScore` should rise; news framing of a corp story you breached should adopt a sympathetic angle
+- [ ] Take 3 mercenary choices in succession — Cipher's next inbox letter should drop to the curt variant; news framing of the same kind of corp story should now read pro-corporate
+- [ ] Verify the 9-ending offer at Arc 5 climax depends on `arc1_key_choice` + accumulated pattern — three different test saves should see different offered endings
+
+## Phase 21 — M14q Lore Exposure (2026-06)
+
+- [ ] **Boot prologue** — appears every visit until signup completes; sets `voidlink_bond_signed` only on signup
+- [ ] **Codex window** — opens via taskbar; locked entries show "— LOCKED —" placeholder; unlocking an entry fires a toast (top-right); clicking the toast opens the Codex on that entry
+- [ ] **Cipher essay drip** — `cipher_essay_bond`, `cipher_essay_three_rules`, `cipher_essay_collaborator_drift` (M14t) arrive at the right rank / mission-count milestones
+- [ ] **Environmental flavour** — bank windows show subheaders; broker bylines on procedural missions; BIOS line on boot screen
+- [ ] **Splash cards** — fire on key story beats (FIRST CONTACT, AFTERMATH, DEAD DROP REVEAL); disable-toggle in Settings respected
+
+## Phase 22 — M14r Diegetic Onboarding (2026-06)
+
+- [ ] **Boot prologue replays** on every fresh-tab visit until you complete signup (clears `voidlink_compact_signed` legacy key on first run, then gates on `voidlink_bond_signed`)
+- [ ] **Signup form reads as operative intake**: header "CONTRACTOR INTAKE — GENEVA", field labels "REGISTRY NAME" / "RELAY ADDRESS"
+- [ ] **The Bond viewer** collapsible on signup; mandatory checkbox; submit button "SIGN THE BOND" disabled until ticked
+- [ ] **Operative Intro** plays once after first signup — 8 chapters, typewriter at 42 cps with **morse blips** (not typewriter ticks); skippable per chapter but cannot exit to desktop until final chapter on first run
+- [ ] **Tutorial is mandatory on first signup** — SKIP TUTORIAL only appears if `voidlink_tutorial_completed_once` is set
+- [ ] **Settings replay buttons** — "Replay Short Intro" and "Replay Operative Intro" both work and clear the appropriate localStorage keys
+
+## Phase 23 — M14s/t Collaborator Axis (2026-06)
+
+- [ ] **Procedural mission board** shows clients from all factions (Cipher, NightOwl_22, ARES_Recruitment, Nexus_Compliance, Internic_Ops, Arunmor_HR, JCB_Liaison, GOV_Procurement, Null_Trader, The_Broker, Ghost_Karachi, etc.)
+- [ ] Complete ≥ 4 corporate/government contracts → `cipher_collaborator_drift` letter arrives, tone cold ("I will write less, for a while")
+- [ ] Complete ≥ 4 Underground contracts or refuse ≥ 2 corp → `nightowl_resistor_offer` arrives with an off-book Nexus subsidiary contract
+- [ ] At ≥ 8 axis-tagged contracts with |collab − resistor| ≥ 4 → **WHO YOU WORK FOR** reflection fires on next disconnect; bucket-aware fact pool ranges from "you refused them on principle" to "Arunmor sends you contracts now"
+- [ ] Heavy collaborator (≥ 6 corp/gov, net +2 over resistor) at Arc 5 climax → COLLABORATOR ending offered; principled-variant endings stripped from the offer list
+
+## Phase 24 — L3 Story Arcs 6, 7, 8 (2026-06)
+
+- [ ] **Arc 6 DEAD DROP** triggers from Mission Board after rank 4. Three missions in sequence. M3 coda reveals MAGNUS tunnel through gateway. **Resolution mission** appears on Mission Board *only after* M3 sets `arc6_choice_pending` (L6-audit fix). Four-way fork: PURGE / WEAPONISE / REPORT_JCB / REPORT_NIGHTOWL
+- [ ] **Arc 7 THE QUIET WAR** unlocks after rank 4. Four missions: Internic-side, Arunmor-side, NIGHTOWL reveal, recon. **Resolution** gated on `arc7_resolution_pending`. Four-way: WARN_INTERNIC / WARN_ARUNMOR / EXPOSE_NIGHTOWL / PRESERVE_BALANCE
+- [ ] **Arc 8 LIGHTHOUSE** unlocks after rank 5. Three missions: surveillance, Vance bundle key, DataPharos buyer list. **Resolution** gated on `arc8_resolution_pending`. Four-way: TAKE_VANCE_OUT / EXPOSE_DISPATCH / DISAPPEAR / WARN_CIPHER
+
+## Phase 25 — L2 Tutorial Rewrite (2026-06)
+
+- [ ] Every tutorial panel renders a "FROM: CIPHER &lt;fingerprint&gt;" header (matches NPC dialogue convention)
+- [ ] Each body reads as in-fiction advice, not software-manual instruction; `— C.` sig under each
+- [ ] Spotlight + auto-advance machinery unchanged from pre-rewrite; conditional steps gate correctly
+
+## Phase 26 — L5 Achievements (2026-06)
+
+- [ ] **Achievement panel** in Profile → ACHIEVEMENTS tab. Grid grouped by tier (platinum / gold / story / silver / bronze / trivial). Locked entries dimmed at 0.55 opacity. Hidden criteria show "— LOCKED —"
+- [ ] **Toast** fires on disconnect for any newly-eligible achievement; gold-bordered drawer at right edge; auto-dismiss 7s; clicking dismisses
+- [ ] Catalogue contains exactly 50 entries (verified by `achievements.test.ts`)
+- [ ] Pattern-tied achievements fire when expected: complete Arc 1 upload → `arc1_upload` unlocks; reach collaborator ending → `collaborator_ending` unlocks (platinum)
+
+## Phase 27 — L6 Perf + Low Quality (2026-06)
+
+- [ ] **Settings → LOW QUALITY** toggle persists across reloads
+- [ ] With Low Quality OFF: GlyphDrift / NetworkMap / WorldMap render with bloom passes, DPR 1.5, full hub/pulse counts
+- [ ] With Low Quality ON (page reload): bloom passes skipped, DPR clamped to 1.0, GlyphDrift hubs and pulses reduced ~60%, all `backdrop-filter` blurs disabled via `[data-quality="low"]` CSS rule
+- [ ] First-paint bundle (browser DevTools → Network) stays ≤ 250 KB gzipped; Three.js loads as a separate chunk after first interaction with a globe-bearing screen
+- [ ] Three.js never loads on Boot screen alone (GlyphDriftLazy defers it)
+
+## Phase 28 — L9 Legal docs (2026-06)
+
+- [ ] [EULA.md](../EULA.md), [PRIVACY.md](../PRIVACY.md), [CREDITS.md](../CREDITS.md) all present at repo root
+- [ ] CREDITS.md AI-assistance disclosure reads in the developer's voice — "I built a lot of this game without AI..." (not the prior generic third-person framing)
+- [ ] Full_Plan §22 alignment with CREDITS.md — both versions of the disclosure say the same thing in their respective voices
+- [ ] Both EULA and PRIVACY are reachable from the Settings window in-game (TODO: not yet wired — flag for L7 trailer / store-page sprint)
+

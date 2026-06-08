@@ -301,6 +301,9 @@ All three arcs landed in 2026-06. See Complete_Tasks.md for per-arc detail.
 ### L5 — Achievements ✅ SHIPPED 2026-06
 50 entries across six tiers wired in. See Complete_Tasks.md for the full detail. Steamworks SDK call is the only outstanding piece and rides with L4 Cloud Saves.
 
+<!-- L5 historical spec retained below for context. Not actionable. -->
+<details><summary>Original L5 plan (shipped, kept for reference)</summary>
+
 ### ~~L5 — Achievements (30–50)~~ 🎯
 **Window:** 2026-07-W3 → 2026-08-W1 (1 week, parallel with L4)
 **Effort:** 1 week
@@ -367,11 +370,14 @@ Tier mix: 8 trivial, 18 bronze, 8 silver, 5 gold, 1 platinum = 40 base. Add 10 h
 - Steam dashboard reflects unlocks
 - Offline unlock queues + flushes on next online boot
 - No false-positive unlocks (re-running a story arc doesn't re-fire)
+</details>
 
 ---
 
 ### L6 — Perf pass + Low-Quality toggle ✅ SHIPPED 2026-06
 Code-splitting + lazy GlyphDrift dropped first-paint bundle from 425 KB → 187 KB gzipped. Low Quality toggle skips bloom passes and CSS blurs. See Complete_Tasks.md.
+
+<details><summary>Original L6 plan (shipped, kept for reference)</summary>
 
 ### ~~L6 — Perf pass + Low-Quality toggle~~ 🎯
 **Window:** 2026-08-W1 → 2026-08-W2 (3 days)
@@ -399,6 +405,7 @@ Code-splitting + lazy GlyphDrift dropped first-paint bundle from 425 KB → 187 
 - Mission-active 60fps maintained
 - Visual difference is noticeable but not jarring (still feels like Voidlink)
 - Auto-detect is right ≥ 80% of the time on test hardware
+</details>
 
 ---
 
@@ -469,6 +476,8 @@ Music: track from L1 mission-active set, brief tease only.
 ### L9 — EULA + Privacy Notice + CREDITS.md ✅ SHIPPED 2026-06
 Repo-root [EULA.md](../EULA.md), [PRIVACY.md](../PRIVACY.md), [CREDITS.md](../CREDITS.md). AI-assistance disclosure rewritten to match the developer's actual timeline. See Complete_Tasks.md.
 
+<details><summary>Original L9 plan (shipped, kept for reference)</summary>
+
 ### ~~L9 — EULA + Privacy Notice + CREDITS.md~~ 🎯
 **Window:** 2026-08-W3 (1 day)
 **Effort:** 1 day
@@ -484,6 +493,7 @@ Repo-root [EULA.md](../EULA.md), [PRIVACY.md](../PRIVACY.md), [CREDITS.md](../CR
 - EULA + privacy reviewed for over-reach (no IP claims on user-generated content beyond license to host)
 - CREDITS.md visible in game (Settings → CREDITS)
 - AI disclosure paragraph appears as a clearly-labelled section, not hidden
+</details>
 
 ---
 

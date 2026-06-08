@@ -94,7 +94,7 @@ All foundational gameplay shipped. 60/60 tests passing as of M14h.8. See [Comple
 
 ---
 
-## Phase 2 — Pre-Launch Polish (Jun–Aug 2026) 🚧
+## Phase 2 — Pre-Launch Polish (Jun–Aug 2026) 🚧 (largely shipped — see sprint table below)
 
 Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next_Stage.md#1-pre-launch-sprints-l1l10) for full per-sprint detail.
 
@@ -102,18 +102,21 @@ Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next
 
 **Rule:** L2 (tutorial rewrite) is the **last** gameplay-touching sprint. Any new mechanic, mission type, or UI surface ships *before* the tutorial is rewritten, so the tutorial only ever teaches the actually-final game.
 
-| Sprint | Window | Block | Output |
+| Sprint | Window | Block | Status |
 |--------|--------|-------|--------|
-| **S1** | 2026-06-W1 → 2026-06-W3 | **L1 Audio** | 6 looping tracks (boot/desktop/mission/critical/victory/fail) + per-bus volume |
-| **S2** | 2026-06-W3 → 2026-07-W2 | **Backlog mechanics close-out** (M14f.1, M14j, M14k, M14l, M14i — all shipped) | ✅ Done |
-| **S2b** | 2026-07-W2 → 2026-07-W3 | **L11 Choice Architecture & Reflection Mechanic (M14p)** ✅ **SHIPPED 2026-06** | All 4 passes done — pattern reader, news framing, NPC dialogue tone, contract gating, reflection scenes, 9-ending fan-out |
-| **S2c** | 2026-07-W3 → 2026-08-W1 | **M14q Lore Exposure Layer** — slotted before story arcs land so the player is already inside the world | Boot prologue, Codex window with unlockable entries + non-blocking notification toasts, Cipher essay drip in inbox, environmental flavour (BIOS line, bank subheaders, broker bylines), splash cards between major story beats |
-| **S3** | 2026-08-W1 → 2026-08-W3 | **L3 Story arcs 6–8** | DEAD DROP, THE QUIET WAR, LIGHTHOUSE — ~6h new content. Each arc writes flags that the Choice Architecture (S2b) reads + unlocks Codex entries (S2c) |
-| **S4** | 2026-07-W4 → 2026-08-W2 | **L4 Cloud Saves (Railway-Postgres) + Steamworks Cloud + L5 Achievements** | Railway Phase B: small Node/Hono API + Postgres + magic-link auth; sync the existing per-handle save JSON to the cloud; Steamworks SDK as a parallel save target; 40+10 achievements wired |
-| **S5** | 2026-08-W2 → 2026-08-W3 | **L6 Perf + L10 Steam Deck** | Low-Quality toggle, controller mapping, Deck verified |
-| **S6** | 2026-06-W2 → 2026-08-W4 (parallel) | **L8 Localisation** | ES/DE/FR/RU/zh-CN/JA (tutorial strings translated LAST after L2 lands) |
-| **S7** | 2026-08-W3 → 2026-08-W4 | **L2 Tutorial rewrite** (LAST gameplay-touching sprint) | Cipher's First Contract teaches the actually-final game |
-| **S8** | 2026-08-W4 → 2026-09-W1 | **L7 Trailer + L9 EULA + CREDITS + Press kit** | Store-page-ready package (trailer can feature the new tutorial) |
+| **S1**  | 2026-06-W1 → 2026-06-W3 | **L1 Audio** — 6 looping tracks + per-bus volume | 🎯 Needs composer |
+| **S2**  | 2026-06-W3 → 2026-07-W2 | **Backlog mechanics close-out** (M14f.1, M14j–l, M14i) | ✅ Shipped 2026-06 |
+| **S2b** | 2026-07-W2 → 2026-07-W3 | **L11 Choice Architecture & Reflection Mechanic (M14p)** — all 4 passes | ✅ Shipped 2026-06 |
+| **S2c** | 2026-07-W3 → 2026-08-W1 | **M14q Lore Exposure Layer** — prologue, Codex, essays, environmental flavour, splash cards | ✅ Shipped 2026-06 |
+| **S3**  | 2026-08-W1 → 2026-08-W3 | **L3 Story arcs 6–8** — DEAD DROP, THE QUIET WAR, LIGHTHOUSE | ✅ Shipped 2026-06 |
+| **S3b** | added mid-sprint 2026-06 | **M14r/s/t** — diegetic onboarding rebuild, Collaborator Axis, NPC tone shifts | ✅ Shipped 2026-06 |
+| **S4**  | 2026-07-W4 → 2026-08-W2 | **L4 Cloud Saves (Railway-Postgres) + L5 Achievements** | ✅ L5 shipped 2026-06 · L4 outstanding |
+| **S5**  | 2026-08-W2 → 2026-08-W3 | **L6 Perf + L10 Steam Deck** — bundle code-split, Low-Quality toggle | ✅ L6 shipped 2026-06 · L10 needs hardware |
+| **S6**  | 2026-06-W2 → 2026-08-W4 (parallel) | **L8 Localisation** — ES / DE / FR / RU / zh-CN / JA | 🎯 Scaffolded; needs translators |
+| **S7**  | 2026-08-W3 → 2026-08-W4 | **L2 Tutorial rewrite** — Cipher's First Contract | ✅ Shipped 2026-06 |
+| **S8**  | 2026-08-W4 → 2026-09-W1 | **L7 Trailer / press kit + L9 EULA + CREDITS** | ✅ L9 shipped 2026-06 · L7 outstanding |
+
+**As of 2026-06-08: 9 of 12 sub-sprints shipped — ~14 weeks ahead of plan on the narrative/polish track.** Remaining work is mostly external dependencies: composer (L1), translators (L8), trailer & store-page production (L7), Steam Deck hardware (L10). Plus L4 Cloud Saves which is codeable and specced in DEPLOYMENT.md Phase B.
 
 **Sprint S2b added** in response to the deep-narrative pivot of 2026-06 — the Choice Architecture & Reflection Mechanic (M14p) is now a pre-launch deliverable because the lore, ongoing-world model, and ending fan-out all depend on it.
 

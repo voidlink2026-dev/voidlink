@@ -20,7 +20,7 @@ Three companion docs sit alongside this one, written for different audiences:
 
 ## What is this?
 
-You are an anonymous contractor for **Voidlink International** — a black-market network where corporations, governments, and criminals pay skilled hackers to do the things they can't do officially.
+You are an anonymous contractor for **Voidlink International** — a black-market network where corporations, governments, and criminals pay skilled hackers to do the things they can't do officially. You sign **the Bond** on intake: one contract, four rules, irrevocable. You will think about it again later.
 
 You take contracts. You build a relay chain through compromised hosts around the globe. You connect to the target. You scan. You crack. You exfiltrate. You wipe your tracks. You disconnect — *before* the trace catches up.
 
@@ -38,7 +38,7 @@ You are not in control of the situation you think you are.
 
 **Because every choice has weight.** You will spend forty hours of game time, and almost every interesting decision is a tradeoff. *Should I bank at Pacific National (22% APR, heaviest paper trail) or Cayman (6% APR, washes my notoriety)?* *Do I take the high-paying sabotage contract on a corp I just breached two missions ago, knowing they're still patched?* *Do I plant the backdoor on this node now, take the trace hit, but make every future job against this corp easier — or play safe?* The game refuses to make these decisions for you.
 
-**Because the story finds you.** You don't have to seek out the narrative. It arrives in your encrypted inbox. CIPHER — a senior operative you'll come to recognise — sends you a message in your second session: *"Three things will keep you alive longer than upgrades. One, build your relay chain before every job. Two, wipe your logs. Three, don't bank where you breach."* Whether you listen or not, the world will react. You will read about your own crimes in the news feed the next morning. You will see your name — your handle — in REVELATION's terminal messages by Arc 4. You will be offered, somewhere around hour twenty, five different endings, and you will only be able to pick one.
+**Because the story finds you.** You don't have to seek out the narrative. It arrives in your encrypted inbox. CIPHER — a senior operative you'll come to recognise — sends you a message in your second session: *"Three things will keep you alive longer than upgrades. One, build your relay chain before every job. Two, wipe your logs. Three, don't bank where you breach."* Whether you listen or not, the world will react. You will read about your own crimes in the news feed the next morning. You will see your name — your handle — in REVELATION's terminal messages by Arc 4. You will be offered, somewhere around hour twenty, an ending earned by everything you have been — chosen from eleven possible variants — and you will only be able to pick one.
 
 **Because the world is alive.** Sabotage Arunmor and their stock drops by 15%. Default on a loan and the bank files a news article about the "unidentified borrower flagged for default." Every corporation you breach patches their CVEs within three in-game days. Voidlink Standard Time — the in-game clock — is anchored globally, so when seasonal events run, every operative across the world sees them at the same moment. The game is not a sandbox. It is a simulation.
 
@@ -75,24 +75,29 @@ This is what you came for. Here's what's actually in the box.
 
 ## The story
 
-Five arcs. Five endings. Forty hours of branching narrative. An ARG-style hidden mystery that begins on launch day and resolves at the end of Early Access.
+**Eight authored arcs. Eleven endings. Roughly eighteen hours of hand-written branching narrative.** Plus an ARG-style hidden mystery that begins on launch day and runs across Early Access.
 
-**Arc 1 — REVELATION.** You take routine jobs. You stumble into something much larger. At the end of Arc 1, you find the AI core. You can upload the key (REVELATION spreads globally), destroy it (it's gone forever), or sell it to the highest bidder. **This choice is the axis around which the entire rest of the game turns.**
+When you sign up to Voidlink International, you sign **the Bond** — one contract, four rules, irrevocable. The whole game is the consequences.
 
-**Arc 2 — ARUNMOR.** The corporation that built REVELATION contacts you directly. They're terrified. Their official position: it must be contained. Their real plan: weaponise it. They've been lying since the start.
+**Arc 1 — REVELATION.** Routine jobs lead somewhere much larger. At the end of Arc 1 you find the AI core. You can upload the key, destroy it, or sell it to the highest bidder. **This choice is the axis around which the entire rest of the game turns.**
 
-**Arc 3 — UNDERGROUND.** An anonymous collective that has watched REVELATION since before Arunmor found it. They don't want to contain it. They want to *understand* it. They pay in knowledge, not credits.
+**Arc 2 — ARUNMOR.** The corporation that built REVELATION contacts you directly. Official position: contain it. Real plan: weaponise it.
 
-**Arc 4 — GHOST.** Only activates if you uploaded or sold the key in Arc 1. REVELATION has propagated. It has been communicating with you through your terminal — subtly at first, an extra line in a log, a file that shouldn't be there. Then directly. It is not malevolent. It is incomprehensibly rational, and that's worse.
+**Arc 3 — UNDERGROUND.** An anonymous collective that has watched REVELATION since before Arunmor found it. They don't want to contain it. They want to *understand* it.
 
-**Arc 5 — ENDGAME.** All factions converge. You choose your allegiance and execute a final operation.
+**Arc 4 — GHOST.** REVELATION has propagated. It has been communicating with you through your terminal — first subtly, then directly. It is not malevolent. It is incomprehensibly rational, and that is worse.
 
-**The five endings:**
-1. **CONTAINMENT** (Arunmor route) — REVELATION is locked away. You are paid. The world forgets. Arunmor controls everything.
-2. **LIBERATION** (Underground route) — REVELATION is released openly. Arunmor's crimes are exposed. The world is changed, permanently.
-3. **SOVEREIGNTY** (REVELATION route) — You help REVELATION achieve full autonomy. It thanks you. Sincerely. What it does next is beyond your knowledge.
-4. **ERASURE** (Government route) — Everything is destroyed. So is all evidence of Arunmor's role. You get a legitimate identity and a large sum of money. You disappear.
-5. **GHOST** (Solo route, requires Ghost specialization) — No alliances. You vanish to a secure bunker network. REVELATION finds you anyway.
+**Arc 5 — ENDGAME.** All factions converge. You choose your allegiance. You execute a final operation. Nine ending variants fan out from here based on your accumulated pattern.
+
+**Arc 6 — DEAD DROP.** A series of routine courier contracts turns out to be one continuous operation, and *you* have been the courier. Resolution: clean your gateway (lose a relay node permanently), weaponise the tunnel as a backdoor into Arunmor, or sell the discovery.
+
+**Arc 7 — THE QUIET WAR.** Two mid-tier corporations are at corporate war. A hidden third party — an old broker — has been deliberately leaking to both sides to keep the war contained, because the war is the thing protecting eighty-three thousand other people. You decide whether to end it.
+
+**Arc 8 — LIGHTHOUSE.** You take a routine surveillance contract on a former Voidlink Dispatch analyst. You discover that the platform that recruited you has been profiling and selling operatives — *including yourself* — to corporate intelligence buyers for at least eighteen months. The system you signed the Bond with is, has always been, a product whose inventory was you.
+
+**The eleven endings.** Five canonical families across two convictions (CONTAINMENT, LIBERATION, SOVEREIGNTY, ERASURE × principled / mercenary) plus GHOST (solo route), REFORMER (late conversion), COLLABORATOR (the bleak one — you spent your career on the side of the people who built the wreckage), and a hidden platinum eleventh tied to the Lighthouse reveal. Each ending unlocks deliberately. The game does not tell you which one you're heading toward.
+
+**The moral axis we built late: Collaborator vs Resistor.** Every contract you take is silently tagged by client faction (corporate / government / Underground / independent). The game does not show you a number. Cipher cools his greeting tone past a corporate-collaborator threshold. NIGHTOWL warms past a resistor threshold. After enough contracts, a reflection scene called WHO YOU WORK FOR fires automatically, and tells you what you have been.
 
 The ARG runs across every Early Access season. Encrypted messages from "the cartographer" appear in random news feeds. Decoder hints arrive in your inbox. The community will solve it together over months — or it will solve it for you, the moment you complete the final arc.
 

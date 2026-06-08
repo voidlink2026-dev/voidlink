@@ -14,6 +14,11 @@ export interface MultiPhaseMissionTemplate {
   baseReputation: number
   phases: MissionPhase[]
   newsEchoes?: Record<number, MissionNewsEcho>
+  /** L6-audit fix — gating flag that must be truthy on the player before this
+   *  template is offered. For story-arc resolution missions, this is the
+   *  `*_resolution_pending` flag set by the final recon mission's coda. Old
+   *  templates without this stay always-available. */
+  prerequisiteFlag?: string
 }
 
 // ── PROJECT GHOST — 3 phases, corporate_intranet → cloud_infrastructure → personal_gateway
@@ -187,6 +192,7 @@ const BLACK_HALO: MultiPhaseMissionTemplate = {
 // REPORT — sell intel. Two sub-branches via Phase 2 selection (JCB or NIGHTOWL_22).
 const DEAD_DROP_RESOLUTION: MultiPhaseMissionTemplate = {
   id: 'multiphase_dead_drop_resolution',
+  prerequisiteFlag: 'arc6_choice_pending',
   briefingSubject: 'DEAD DROP — resolution',
   clientHandle: 'YOURSELF',
   difficulty: 6,
@@ -345,6 +351,7 @@ const DEAD_DROP_RESOLUTION: MultiPhaseMissionTemplate = {
 // ═══════════════════════════════════════════════════════════════════════════
 const QUIET_WAR_RESOLUTION: MultiPhaseMissionTemplate = {
   id: 'multiphase_quiet_war_resolution',
+  prerequisiteFlag: 'arc7_resolution_pending',
   briefingSubject: 'QUIET WAR — resolution',
   clientHandle: 'YOURSELF',
   difficulty: 6,
@@ -487,6 +494,7 @@ const QUIET_WAR_RESOLUTION: MultiPhaseMissionTemplate = {
 // ═══════════════════════════════════════════════════════════════════════════
 const LIGHTHOUSE_RESOLUTION: MultiPhaseMissionTemplate = {
   id: 'multiphase_lighthouse_resolution',
+  prerequisiteFlag: 'arc8_resolution_pending',
   briefingSubject: 'LIGHTHOUSE — resolution',
   clientHandle: 'YOURSELF',
   difficulty: 6,

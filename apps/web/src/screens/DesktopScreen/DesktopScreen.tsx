@@ -205,8 +205,14 @@ export function DesktopScreen() {
         generateContract('database_corruption', 5, 'government_classified', 0xf00dface),
         generateContract('network_sabotage', 4, 'corporate_intranet', 0xabad1dea),
         generateContract('bounty_hunt', 1, 'personal_gateway', 0x1337c0de),
-        // M14m: hand-crafted multi-phase missions — one of each template
-        ...MULTIPHASE_TEMPLATES.map((t) => generateMultiPhaseMission(t)),
+        // M14m: hand-crafted multi-phase missions — one of each template.
+        // L6-audit fix — gate templates that declare a prerequisiteFlag so
+        // arc-finale resolution missions don't appear on the Mission Board
+        // until the player has actually completed the recon arc that earns
+        // them.
+        ...MULTIPHASE_TEMPLATES
+          .filter((t) => !t.prerequisiteFlag || !!flags[t.prerequisiteFlag])
+          .map((t) => generateMultiPhaseMission(t)),
       ]
       loadMissions(missions)
     }
