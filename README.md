@@ -75,6 +75,9 @@ Creative / marketing docs at repo root (separate from planning):
 | [Voidlink_Synopsis.md](Voidlink_Synopsis.md) | Comprehensive game guide. "What is this, what will I do, what will I remember." |
 | [The_Voidlink_Codex.md](The_Voidlink_Codex.md) | The world bible. Tolkien-depth lore. The history of 2199 in full. |
 | [DEPLOYMENT.md](DEPLOYMENT.md) | Railway deployment + Phase A/B/C infrastructure plan. |
+| [CREDITS.md](CREDITS.md) | Solo-dev credits, dependency acknowledgements, AI-assistance disclosure. |
+| [EULA.md](EULA.md) | End-user licence agreement. |
+| [PRIVACY.md](PRIVACY.md) | Privacy notice (GDPR / UK GDPR compliant). |
 
 ---
 

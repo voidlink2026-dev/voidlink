@@ -40,6 +40,9 @@ These live at the **repo root**, not in `docs/`. They are creative/marketing, no
 - `README.md` — repository entry point. Updated on doc structure changes.
 - `CLAUDE.md` — agent instructions (this file).
 - `DEPLOYMENT.md` — Railway deployment, Phase A/B/C infrastructure plan. Updated when infrastructure changes.
+- `CREDITS.md` — solo-dev credits, dependency acknowledgements, and the canonical AI-assistance disclosure. Updated only when credits or disclosure change.
+- `EULA.md` — end-user licence agreement. Update when licence terms change.
+- `PRIVACY.md` — privacy notice (GDPR / UK GDPR). Update when data-processing practices change (notably: when cloud saves / multiplayer launch).
 
 Adding new creative docs at repo root is allowed if they serve a clearly different purpose. Adding more planning docs is **not** — extend one of the five instead.
 

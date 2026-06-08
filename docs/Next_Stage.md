@@ -466,7 +466,10 @@ Music: track from L1 mission-active set, brief tease only.
 
 ---
 
-### L9 — EULA + Privacy Notice + CREDITS.md 🎯
+### L9 — EULA + Privacy Notice + CREDITS.md ✅ SHIPPED 2026-06
+Repo-root [EULA.md](../EULA.md), [PRIVACY.md](../PRIVACY.md), [CREDITS.md](../CREDITS.md). AI-assistance disclosure rewritten to match the developer's actual timeline. See Complete_Tasks.md.
+
+### ~~L9 — EULA + Privacy Notice + CREDITS.md~~ 🎯
 **Window:** 2026-08-W3 (1 day)
 **Effort:** 1 day
 **Status:** Not started

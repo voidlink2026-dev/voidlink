@@ -1109,14 +1109,16 @@ Solo-dev story. "Built in ~3 months as a love letter to Uplink. Here's the desig
 
 ## 22. AI-Assistance Disclosure
 
-**Position: "AI-assisted, fully human-directed."** Every design decision, balance call, code review, art direction, and narrative arc is the developer's. AI is used as a coding assistant. Nothing AI-generated runs in the shipped binary.
+**Position: "Built largely without AI, then AI-assisted to finish."** The foundations of Voidlink — core hacking loop, trace mechanics, network-map renderer, mission and bounce-chain systems, banking layer, world simulation, the first run of story arcs, the visual identity — were designed and written by the developer, by hand, over months of work. Once the bones of the game were in place, AI coding assistants were introduced for the kind of work that disproportionately slows a solo developer: catalogue boilerplate, repetitive UI scaffolding, refactors against an existing design, test cases against existing logic, on-voice prose against character briefs already established. Every line was reviewed, edited, and signed off by the developer before it shipped. Every design decision is the developer's. Nothing AI-generated runs in the shipped binary.
 
 Maps to Steam's "pre-generated content" disclosure category — the friendlier one.
 
 ### 22.1 Steam Store Disclosure
 Draft language:
 
-> *"This game was developed with AI coding assistance. All design decisions, balance, narrative, and creative direction are by the developer. No AI runs in the game itself; no AI-generated assets ship in the final binary."*
+> *"Voidlink was built largely without AI, then AI coding assistants were used to help me finish it off. All design decisions, narrative, balance, and creative direction are mine. No AI runs in the shipped game; no AI-generated assets ship in the final binary."*
+
+The canonical long-form version is in [CREDITS.md](../CREDITS.md) at the repo root and ships inside the game in the credits screen at launch.
 
 ### 22.2 Cleanup Actions
 
@@ -1124,7 +1126,7 @@ Draft language:
 |---|--------|--------|
 | D1 | Drop `Co-Authored-By: Claude` line from new commits | ✅ Active (enforced in CLAUDE.md) |
 | D2 | Sanitise EXIF on any bundled images | Pre-launch |
-| D3 | Add `CREDITS.md` with disclosure language | Pre-launch L9 |
+| D3 | Add `CREDITS.md` with disclosure language | ✅ Shipped 2026-06 (L9) |
 | D4 | Tone pass on README, store-page copy, public docs (less em-dash, less "world-class" cadence) | Pre-launch L7 |
 | D5 | Critical-file comment tightening | Pre-launch |
 | D6 | Bundle solo-dev story + photo in press kit | Pre-launch L7 |
