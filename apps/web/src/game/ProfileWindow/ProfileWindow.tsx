@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
-import { levelFromXp, xpProgressPercent, xpForNextLevel, levelTitle, GATEWAYS, getActiveGateway, ACHIEVEMENTS } from '@voidlink/core'
+import { levelFromXp, xpProgressPercent, xpForNextLevel, levelTitle, GATEWAYS, getActiveGateway, ACHIEVEMENTS, getOperativeSignature } from '@voidlink/core'
 import type { AchievementDefinition, PlayerProfile } from '@voidlink/core'
 import { Button } from '@voidlink/ui'
 import { AudioEngine } from '../Audio/audioEngine.ts'
@@ -81,6 +81,9 @@ export function ProfileWindow() {
           <div className={styles.handle}>{player.handle}</div>
           <div className={styles.username}>{player.username}</div>
           <div className={styles.rank}>{rankLabel}</div>
+          <div className={styles.signature} title="The game's quiet read of who you have become. Visible only here.">
+            {getOperativeSignature(player)}
+          </div>
           {player.specialization && (
             <div className={styles.spec}>{t('profile.spec', { spec: player.specialization.toUpperCase() })}</div>
           )}
