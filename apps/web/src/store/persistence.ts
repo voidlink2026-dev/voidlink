@@ -1,4 +1,5 @@
 import { useGameStore } from './gameStore.ts'
+import { signSave, verifySave, SAVE_INTEGRITY_FIELD } from '@voidlink/core'
 
 const SAVE_VERSION = 5  // v5: exfilChannel persistence (M14j loadouts)
 const LEGACY_KEY = 'uplink_ng_save'  // original pre-rename key — kept for one-time migration
@@ -133,7 +134,10 @@ export function saveGame(): boolean {
       windowLastPositions: s.windowLastPositions,
       windowZCounter: s.windowZCounter,
     }
-    localStorage.setItem(saveKey(s.player.handle), JSON.stringify(data))
+    // L5.1 — sign the body before writing. The signature lets a future load
+    // detect JSON-edit tampering and gate Steam-side achievement unlocks.
+    const signed = { ...data, [SAVE_INTEGRITY_FIELD]: signSave(data) }
+    localStorage.setItem(saveKey(s.player.handle), JSON.stringify(signed))
     updateIndex(s.player)
     return true
   } catch {
@@ -146,8 +150,43 @@ export function loadGame(handle: string): boolean {
   try {
     const raw = localStorage.getItem(saveKey(handle))
     if (!raw) return false
-    const data: SaveData = JSON.parse(raw)
-    if (!data.player) return false
+    const parsed = JSON.parse(raw) as SaveData & Record<string, unknown>
+    if (!parsed.player) return false
+    // L5.1 — verify integrity. Tampered saves still load (we don't punish
+    // offline single-player play) but get a flag that prevents Steam-side
+    // achievement unlocks downstream.
+    const integrityOk = !!parsed[SAVE_INTEGRITY_FIELD] && verifySave(parsed)
+    const { [SAVE_INTEGRITY_FIELD]: _sig, ...rest } = parsed
+    void _sig
+    const data: SaveData = rest as SaveData
+    if (!integrityOk && data.player) {
+      data.player.activeFlags = {
+        ...data.player.activeFlags,
+        save_tampered_at: Date.now(),
+      }
+      // One-shot in-fiction warning. Only inject if not already in the inbox.
+      const inbox = data.inbox ?? []
+      const alreadyWarned = inbox.some((m) => m.id === 'sys_save_integrity_warning')
+      if (!alreadyWarned) {
+        data.inbox = [
+          {
+            id: 'sys_save_integrity_warning',
+            receivedAt: Date.now(),
+            isRead: false,
+            encrypted: false,
+            category: 'system',
+            from: 'sys.ops',
+            subject: 'Local profile integrity — Steam unlocks paused',
+            body:
+              'Your local profile signature does not match. This usually means the save was edited outside the game.\n\n' +
+              'Single-player gameplay is unaffected — you can keep playing this character normally. However, Steam achievements unlocked from this point on this character have been suspended to protect the integrity of the achievement system for other operatives.\n\n' +
+              'If this was unintentional (a browser extension, an out-of-date save migration, an unusual sync), start a new character to restore Steam unlocks. The fix is not undoable on this character.\n\n' +
+              '— sys.ops',
+          },
+          ...inbox,
+        ]
+      }
+    }
     const now = Date.now()
     // v3 layout: restore the player's saved window layout, but strip windows
     // that require an active mission (they'd render empty/broken on cold boot)

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, evaluateAchievements, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, evaluateAchievements, getAchievement, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -206,7 +206,8 @@ interface GameState {
   // M14q Sub-sprint B — Codex
   codexUnlockQueue: string[]        // queued unlock-notification entry IDs
   codexFocusId: string | null       // deep-link target for the Codex window
-  achievementUnlockQueue: string[]  // L5 — queued achievement notifications
+  achievementUnlockQueue: string[]  // L5 — queued in-game achievement toasts
+  steamUnlockQueue: string[]        // L5.1 — gated queue for Steamworks SDK (drains on L4)
   pendingSplash: string | null      // M14q Sub-sprint E — splash card ID
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
@@ -361,6 +362,7 @@ export const useGameStore = create<GameState & GameActions>()(
     codexUnlockQueue: [],
     codexFocusId: null,
     achievementUnlockQueue: [],
+    steamUnlockQueue: [],
     pendingSplash: null,
     activeWorldEvents: [],
     nextWorldEventAt: null,
@@ -1214,11 +1216,28 @@ export const useGameStore = create<GameState & GameActions>()(
           }
 
           // L5 — Achievement evaluation. Pure check function over player state.
+          // L5.1 — Steam unlock gate. If the loaded save failed integrity
+          // verification (`save_tampered_at` flag is set), local achievement
+          // flags still get written so the player can see their progress in
+          // the Profile tab, but the Steam-side queue is *not* fed. The
+          // gate is "recompute the catalogue check against the current
+          // player state": if a flag was forged in JSON but the underlying
+          // state doesn't justify it, the Steam unlock does not fire.
           if (s.player) {
+            const tampered = !!s.player.activeFlags.save_tampered_at
             const dueAchievements = evaluateAchievements(s.player)
             for (const id of dueAchievements) {
               s.player.activeFlags[`achievement_${id}`] = Date.now()
               if (!s.achievementUnlockQueue.includes(id)) s.achievementUnlockQueue.push(id)
+              // Steam queue: only if not tampered AND the catalogue check
+              // is *currently* true (defends against future re-loads where
+              // someone tries to game us by hand-setting the flag).
+              if (!tampered) {
+                const def = getAchievement(id)
+                if (def && def.check(s.player)) {
+                  if (!s.steamUnlockQueue.includes(id)) s.steamUnlockQueue.push(id)
+                }
+              }
             }
           }
 
