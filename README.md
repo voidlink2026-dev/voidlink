@@ -78,6 +78,7 @@ Creative / marketing docs at repo root (separate from planning):
 | [CREDITS.md](CREDITS.md) | Solo-dev credits, dependency acknowledgements, AI-assistance disclosure. |
 | [EULA.md](EULA.md) | End-user licence agreement. |
 | [PRIVACY.md](PRIVACY.md) | Privacy notice (GDPR / UK GDPR compliant). |
+| [IDEAS.md](IDEAS.md) | Brainstorm — pre-launch polish, post-launch directions, monetisation. Not a planning commitment. |
 
 ---
 
