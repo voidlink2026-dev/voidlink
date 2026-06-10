@@ -2030,3 +2030,494 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] Full_Plan §22 alignment with CREDITS.md — both versions of the disclosure say the same thing in their respective voices
 - [ ] Both EULA and PRIVACY are reachable from the Settings window in-game (TODO: not yet wired — flag for L7 trailer / store-page sprint)
 
+## Phase 29 — L5.1 Save Integrity (2026-06)
+
+- [ ] New character → play 1 mission → quit → reload → no warning, save loads silently
+- [ ] Open devtools → localStorage → find `voidlink_save_<handle>` → edit `player.credits` to a huge number → save → reload page → log back in
+  - [ ] Inbox has a new message from **sys.ops** subject "Local profile integrity — Steam unlocks paused"
+  - [ ] Message body explains the situation, does NOT block play
+  - [ ] `activeFlags.save_tampered_at` is set on the player profile
+- [ ] Complete a mission that should grant a new achievement
+  - [ ] `achievementUnlockQueue` fires the in-game toast (player progress still visible)
+  - [ ] `steamUnlockQueue` is NOT fed for this character (gate triggered by tamper flag)
+- [ ] Forge an `activeFlags.achievement_collaborator_ending = Date.now()` directly in JSON
+  - [ ] On reload, the achievement does NOT enter `steamUnlockQueue` because the catalogue `check()` against current state still returns false
+- [ ] Test the integrity check across multiple browser refreshes — single warning, no spam
+- [ ] Start a clean character → all unlocks queue to Steam normally
+
+## Phase 30 — Crash recovery (ErrorBoundary)
+
+- [ ] Throw a synthetic error from a window component (dev only — temp `throw new Error('test')` in a useEffect)
+- [ ] Whole-screen "KERNEL FAULT" panel appears with red header
+- [ ] Crash report shows timestamp, URL, UA, error name + message, stack, component stack
+- [ ] [COPY CRASH REPORT] button copies to clipboard (test in Chrome + Firefox)
+- [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
+- [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
+
+---
+
+# Appendix A — Full Single-Player Test Plan
+
+**Purpose.** This is the *exhaustive* end-to-end testing rundown for a solo human tester (you). Every feature shippable to a single-player Steam Early Access build is enumerated below. Work top to bottom on a fresh save; tick each box. Total run time: 4–6 hours for a thorough pass; ~2 hours for a smoke test of just the bolded ★ items.
+
+## A.1 — Pre-flight (★)
+
+- [ ] ★ Repo is clean (`git status` shows no uncommitted changes)
+- [ ] ★ `pnpm test` — all tests pass (currently 161)
+- [ ] ★ `pnpm --filter @voidlink/web exec tsc --noEmit` — no errors
+- [ ] ★ `pnpm --filter @voidlink/web build` — succeeds; main bundle ≤ 250 KB gzipped
+- [ ] Clear browser localStorage entirely before starting (`localStorage.clear()` in devtools)
+- [ ] Open the deployed build in a fresh window (or run `pnpm dev`)
+
+## A.2 — First-run onboarding (★)
+
+The diegetic onboarding rebuild (M14r) is load-bearing for first impressions. Every step here matters.
+
+### A.2.1 Boot screen
+- [ ] ★ Black screen with the BIOS-style boot line "[INIT] Voidlink terminal..." or similar
+- [ ] ★ GlyphDrift / Neon Globe lazy-loads in behind boot (delay is OK, blank fallback is OK)
+- [ ] ★ Auto-advances to Prologue after ~3.2 seconds
+
+### A.2.2 Prologue
+- [ ] ★ 13 lines of typewriter text, starting with "It is January 2199."
+- [ ] ★ Morse SFX blips fire on every ~4th non-space character (sounds like a CW radio signal)
+- [ ] ★ October Event lore is self-contained — a new player can understand it without external context
+- [ ] ★ Final line: "Welcome to the only career in 2199 that nobody owns."
+- [ ] ★ SPACE / ENTER / click skips the typewriter to the end
+- [ ] ★ Button at the end reads `SIGN THE BOND` (NOT `SIGN THE COMPACT`)
+- [ ] On second visit to the site without signing up, the prologue **replays** in full
+
+### A.2.3 Signup screen (Login)
+- [ ] ★ Header reads `CONTRACTOR INTAKE — GENEVA`
+- [ ] ★ Cyan-tinted dark glass panel sits cleanly over the dimmed globe — text is legible
+- [ ] ★ Field labels: `REGISTRY NAME` (not USERNAME), `RELAY ADDRESS` (not EMAIL)
+- [ ] ★ Collapsible THE VOIDLINK BOND viewer expands when clicked
+- [ ] ★ Bond text includes the four rules and a Yaakov Stern signature
+- [ ] ★ Mandatory checkbox: "I bind my hardware identity hash to the Voidlink Bond..."
+- [ ] ★ `SIGN THE BOND` submit button is disabled until checkbox ticked
+- [ ] ★ On successful signup, `voidlink_bond_signed` is set in localStorage
+- [ ] ★ Routes to `intro` screen (the 8-chapter cinematic), NOT directly to desktop
+
+### A.2.4 Operative Intro (8-chapter cinematic)
+- [ ] ★ Eight chapters render in sequence: YOU ARE BOUND / WHERE YOU ARE / WHAT YEAR IT IS / WHAT YOU DO / WHO YOU WILL HEAR FROM / WHAT YOU SHOULD KNOW / WHAT YOU SHOULD DO / BEGIN
+- [ ] ★ Typewriter at 42 cps
+- [ ] ★ Morse blips on every ~4th non-space character
+- [ ] ★ Per-chapter motif glyph + progress bar
+- [ ] ★ SPACE / ENTER skips type-or-advance
+- [ ] ★ Chapter 1 personalises with the player's handle
+- [ ] ★ "WHAT YOU DO" chapter contains the moral inversion line: *"The network does not judge either choice. History, eventually, does."*
+- [ ] ★ Final chapter exits to desktop
+
+### A.2.5 First desktop + mandatory tutorial
+- [ ] ★ Desktop renders with welcome terminal, mission board, taskbar, system console
+- [ ] ★ TutorialOverlay shows step 1 with `FROM: CIPHER` header + fingerprint hash + `— C.` signature
+- [ ] ★ SKIP TUTORIAL button is HIDDEN (no `voidlink_tutorial_completed_once` flag yet)
+- [ ] All 24 tutorial steps fire in order; each step's spotlight ring correctly highlights its target
+- [ ] Conditional steps (Accept a mission, Scan a node, Breach, Wipe logs, Secure Disconnect, Open Shop, Open Profile) auto-advance on action
+- [ ] Final step "YOU ARE READY" sets `voidlink_tutorial_completed_once`
+- [ ] On second character (after logging out and creating a new one), SKIP TUTORIAL button appears
+
+## A.3 — Desktop environment (★)
+
+- [ ] ★ Taskbar: left section (launchers), centre (open windows), right (handle / credits / reputation)
+- [ ] ★ All windows: drag by title bar, resize from any edge, minimise, close, focus on click
+- [ ] ★ Ctrl+scroll zooms the entire window layer
+- [ ] ★ Windows respect saved positions across sessions (M14h.8 layout persistence)
+- [ ] ★ System Console (bottom-right) shows live trace % / proxy count / world events
+- [ ] ★ System Terminal logs red / green / white entries in real time
+- [ ] ★ GlyphDrift renders behind everything on desktop with dimmed opacity (0.55 idle, 0.15 during active trace)
+- [ ] ★ Taskbar `NETWORK` and `HACK TOOLS` are greyed out when no mission is active
+
+## A.4 — Mission Board + first procedural mission (★)
+
+- [ ] ★ Open Mission Board from taskbar
+- [ ] ★ Difficulty dots render 1–5 correctly
+- [ ] ★ Client handles include the L3 expansion: `ARES_Recruitment`, `Nexus_Compliance`, `Internic_Ops`, `Arunmor_HR`, `JCB_Liaison`, `GOV_Procurement`, `Null_Trader`, `The_Broker`, `Ghost_Karachi` alongside `Cipher` / `NIGHTOWL_22` / `Shadow_Broker` / `Zero_Cool`
+- [ ] ★ Accept a Difficulty I file_theft from `Cipher`
+- [ ] ★ Network Map + Hacking Interface auto-open
+- [ ] ★ The client handle's classifier bucket (corporate / government / underground / independent / neutral) is internally consistent — corporate clients won't show up as Underground in the Profile faction effects
+
+## A.5 — Network Map (3D graph)
+
+- [ ] ★ Network renders as a 3D node graph in the NetworkMap window
+- [ ] ★ Lazy-loaded — Three.js is fetched as a separate JS chunk if not already cached
+- [ ] ★ Nodes are colour-coded by state: dim grey (locked), neutral (active), green glow (breached), amber (Zone B), red pulsing (locked out by failed crack)
+- [ ] ★ Click a node → right panel shows type, security tier, breach status, services after scan
+- [ ] ★ Hardware orbit controls work — drag to rotate, scroll to zoom
+- [ ] ★ Disconnect closes the network and re-renders empty / shop state
+
+## A.6 — Hacking Interface (★)
+
+- [ ] ★ Trace bar visible, fills L → R as you act
+- [ ] ★ Trace bar pulses / changes colour at 75% (ALARM threshold)
+- [ ] ★ Audible trace beep speeds up as level rises (audioEngine `setTraceLevel`)
+- [ ] ★ SCAN reveals services + may surface a CVE → VULN badge
+- [ ] ★ CRACK on a Tier I node completes; node turns green; trace ticks up
+- [ ] ★ EXPLOIT on a VULN'd node is faster; protocol-specific side effects fire (FTP auto-wipes log, SQL auto-completes DB objective, etc.)
+- [ ] ★ TRANSFER button appears on file_theft missions next to the ★-marked target file
+- [ ] ★ DELETE ACCOUNT / CORRUPT DB / SABOTAGE on the matching mission types
+- [ ] ★ WIPE LOG works per-node; tick checklist updates
+- [ ] M15 — ESCALATE elevates a breached node to root; trace spike; `stat_escalations` increments (visible in save via devtools)
+- [ ] M15 — PLANT BACKDOOR works on a root'd node; future missions to the same corp pre-breach the backdoor'd node type; `stat_backdoors_planted` increments
+- [ ] DUMP CREDS caches credentials; uses-once on subsequent nodes within ~8 minutes
+- [ ] ★ SECURE DISCONNECT closes mission cleanly; credits + rep awarded; trace resets
+- [ ] LEAVE NETWORK exits dirty: no payment, mission abandoned, news feed posts the breach
+
+## A.7 — Trace System (★)
+
+- [ ] ★ Trace climbs from actions: scan +small, crack +tier-scaled, exploit +tier-scaled
+- [ ] ★ At 75% ALARM the trace speed accelerates
+- [ ] ★ At 100% you are TRACED — mission fails, traceFailures stat increments
+- [ ] ★ Disconnecting at >90% trace bumps `stat_high_trace_escapes` (achievement: ESCAPE ARTIST)
+- [ ] ★ If trace reaches 100% but the player still escapes via the `escapeTrace` flow, `stat_survived_full_trace` is set (achievement: SURVIVOR)
+- [ ] World event `GHOST MODE` (when active) reduces trace accumulation visibly
+- [ ] World event `CORP SWEEP` (when active) raises base trace rate
+
+## A.8 — Bounce / Relay Chain
+
+- [ ] ★ World Map opens from taskbar
+- [ ] ★ Globe renders with continent outlines (TopoJSON), neon cyan, with bloom
+- [ ] ★ Clean (green) nodes can be added to a chain
+- [ ] ★ Chain order is outermost-first; visualised correctly on the globe + side panel
+- [ ] ★ Max-hop limit enforced (3 / 5 / 7 by proxy tier)
+- [ ] ★ Dirty (logged) hops display as logged; cannot be re-added until cleaned
+- [ ] ★ Hop log-cleaning works via Hack Tools window (target the relay node, wipe its log)
+- [ ] Building a 10-hop chain via upgrades unlocks the PARANOID achievement
+- [ ] Settings: option to show / hide the chain panel by default
+
+## A.9 — Banking (★)
+
+- [ ] ★ Bank window opens from World Map (click a bank globe) or taskbar
+- [ ] ★ Three public banks (Global Trust, Pacific National, …) with visible APR
+- [ ] ★ Two offshore banks (Cayman, Zurich) with negative notoriety modifier
+- [ ] ★ Deposit / withdraw works; balance updates immediately
+- [ ] ★ Notoriety rises in public banks proportional to balance; falls in offshore
+- [ ] At notoriety 10 the NOTORIETY_MAX achievement fires
+- [ ] At notoriety -5 the NOTORIETY_CLEAN ("GHOST FUNDS") achievement fires
+- [ ] ★ Loans: take a loan, default → `loan_defaulted` flag set, PACIFIC NATIONAL REMEMBERS achievement
+- [ ] Interest accrues over time via the game-loop bank-interest tick
+
+## A.10 — Stock Market (M14b/c/d)
+
+- [ ] ★ Stock window or panel renders 5 stocks with live prices
+- [ ] ★ Sabotage missions for Stock A produce a price drop in stock A
+- [ ] ★ World event MARKET CRASH halves prices for one tick
+- [ ] Player can buy / sell; `stockHoldings` persists in save
+- [ ] No sell price ever exceeds current market price (no infinite money exploit)
+
+## A.11 — Shop / Upgrades
+
+- [ ] ★ Shop window opens from taskbar
+- [ ] ★ Hardware tab: CPU / RAM / HDD / Modem / GPU / Cooling tiers, prices, owned state
+- [ ] ★ Software tab: crackers, proxies, log-deleters, port scanners, firewall bypassers, sniffers, memory scrapers, anti-forensics, misc — categorised correctly
+- [ ] ★ Architect specialisation discount (15%) applied when player has it
+- [ ] ★ World event SHOP_DISCOUNT stacks with Architect cap at 50%
+- [ ] ★ First purchase fires REINVEST trivial achievement
+- [ ] ★ Cracker v4 (Hydra Zero) is in the catalogue and purchasable at the right rank
+
+## A.12 — Profile Window (★)
+
+- [ ] ★ Tabs: OVERVIEW / FACTIONS / STANDINGS / ACHIEVEMENTS
+- [ ] ★ Overview shows hardware specs, owned software, lifetime stats, XP bar, level title
+- [ ] ★ Factions tab shows joined faction (if any) + faction insignia
+- [ ] ★ Standings tab shows all 5 factions with bars: Voidlink, Arunmor, Ares, Underground, the Nameless (and the additional MAGNUS-relay / Helios where they exist)
+- [ ] ★ Achievements tab shows all 50 entries grouped by tier (platinum / gold / story / silver / bronze / trivial)
+- [ ] ★ Locked story + platinum entries render as "— LOCKED —" / "Achievement criteria hidden until earned"
+- [ ] ★ Unlocked entries show tier-coloured borders + title + description
+- [ ] ★ Completion counter at top: `N / 50` and percentage
+
+## A.13 — Settings (★)
+
+- [ ] ★ Settings window opens from taskbar
+- [ ] ★ Music on/off + master volume slider
+- [ ] ★ SFX on/off + master volume slider
+- [ ] ★ Theme toggle (dark/light) — even if light is non-canonical, it should not crash
+- [ ] ★ Reduced motion toggle — animations slow / disabled when on
+- [ ] ★ UI scale (0.8 – 1.5) applied as CSS zoom on root
+- [ ] ★ "Disable splash cards" toggle suppresses M14q splash cards on subsequent triggers
+- [ ] ★ "Low Quality" toggle (L6) — when on, GlyphDrift / NetworkMap / WorldMap skip the UnrealBloomPass and reduce density; CSS backdrop-filter blurs drop via `data-quality=low`
+- [ ] ★ "Replay Short Intro" — clears `voidlink_compact_signed` / equivalent so next visit re-plays the prologue
+- [ ] ★ "Replay Operative Intro" — clears `voidlink_operative_intro_seen` so next login replays the 8-chapter intro
+- [ ] Settings persist across sessions via the persistent zustand middleware
+
+## A.14 — Email Inbox (★)
+
+- [ ] ★ Email Inbox opens from taskbar
+- [ ] ★ Categories: contact (CIPHER / NIGHTOWL), system (sys.ops / Dispatch), mission (briefings)
+- [ ] ★ Encrypted messages render with the encryption header + fingerprint hash
+- [ ] ★ Unread badge count is accurate
+- [ ] ★ Welcome message after signup contains the four-rule Bond verbatim
+- [ ] ★ At 2 successful missions, CIPHER `cipher_first_advice` letter arrives — tone matches the player's bucket
+- [ ] ★ At 5 successful missions, CIPHER `cipher_three_rules` letter arrives
+- [ ] ★ At 8 successful missions, CIPHER `cipher_underground_induction` letter arrives if Underground rep is high
+- [ ] ★ M14t — corporate drift dialogue: take ≥4 corp/gov contracts → `cipher_collaborator_drift` letter arrives ("I will write less, for a while")
+- [ ] ★ M14t — resistor warmth dialogue: take ≥4 underground OR refuse ≥2 corp → `nightowl_resistor_offer` letter arrives ("something off the board")
+- [ ] After Arc 8 M3 (buyer list acquired) — `cipher_arc8_lighthouse_callback` letter arrives with the load-bearing reveal that the 2189 protection note is Cipher's
+- [ ] At 200 messages, DATA HOARDER achievement fires (silver)
+- [ ] sys.ops letter arrives if save integrity check fails (L5.1)
+
+## A.15 — Codex Window
+
+- [ ] ★ Codex window opens from taskbar
+- [ ] ★ Locked entries show silhouette + tagline only; full body locked
+- [ ] ★ Unread entries highlighted with cyan dot + glow
+- [ ] ★ Categories left sidebar: World, Operatives, Corporations, Technology, History, etc.
+- [ ] ★ First entry unlocks on signup (`voidlink_bond` codex entry — same id as the rename target)
+- [ ] ★ Story milestone unlocks fire correctly (e.g., MAGNUS entry on Arc 6 M3 complete)
+- [ ] ★ Codex unlock toast bottom-right slides in; auto-dismisses; click jumps to entry
+- [ ] FIRST CODEX ENTRY achievement fires on first unlock
+
+## A.16 — News Feed
+
+- [ ] ★ News Feed window opens from taskbar
+- [ ] ★ Pre-seeded headlines from `loadInitialNews` render on first login
+- [ ] ★ Mission completions post a follow-up news headline framed by `frameNewsArticle` based on pattern
+- [ ] ★ Multi-phase mission `newsEchoes` post the right delayed headline per chosen branch
+- [ ] ★ Dirty disconnects post a "Residual Breach Logs Found at …" story
+- [ ] Categories: tech / corporate / crime / politics — filter buttons work
+
+## A.17 — Story Arcs 1–8 (★ per-arc smoke)
+
+Run a separate fresh character per arc OR play through all 8 sequentially on one character.
+
+### Arc 1 (legacy 3-mission)
+- [ ] ★ `story_arc01`/`02`/`03` unlock in order
+- [ ] ★ At Arc 1 climax, the choice prompt offers UPLOAD / DESTROY / SELL
+- [ ] ★ Each option sets `arc1_key_choice` to the corresponding string + fires the matching hidden story achievement
+- [ ] ★ end_of_arc_1 reflection scene fires after the choice
+- [ ] ★ Splash card "AFTERMATH" fires
+
+### Arcs 2–5 (existing)
+- [ ] Arc 2 (5 missions), Arc 3 (4), Arc 4 (3), Arc 5 (5 incl. 3a/3b/3c branches) all unlock + complete cleanly
+- [ ] Arc 5 climax offers 1–3 of the 11 endings via `getAvailableEndings(player)` based on Arc 1 choice + pattern + specialization + faction standings
+- [ ] If heavy corporate path (≥6 corp/gov, +2 over resistor): COLLABORATOR ending offered, principled-variant endings stripped
+- [ ] EndingChoiceOverlay renders the offered endings; chosen ending's epilogue text displays in full
+
+### Arc 6 — DEAD DROP (★)
+- [ ] ★ M1 "The Routine Job" (D4, LANTERN_BRIDGE) — payroll exfil from Nordstar Logistics
+- [ ] ★ M2 "The Pattern Forms" (D5) — Helios Marine procurement records, CIPHER warning at 30% trace
+- [ ] ★ M3 "The Choice" (D6) — AR-K7 cloud_infrastructure, MAGNUS reveal, dead_drop_reveal splash card
+- [ ] ★ Resolution multiphase mission appears in inbox after M3
+- [ ] ★ Three resolution paths all reach a valid epilogue:
+  - PURGE → choice_dead_drop_purge → underground +35
+  - WEAPONISE → choice_dead_drop_weaponise → the_nameless +20
+  - REPORT (JCB or NightOwl sub-choice) → respective flags + standings
+- [ ] ★ post_arc_6 reflection scene fires on disconnect after resolution
+- [ ] ★ News echo posts (different per branch)
+- [ ] ★ MAGNUS codex entry unlocks on M3 completion
+
+### Arc 7 — THE QUIET WAR (★)
+- [ ] ★ M1 "Edge of the Knife" (D4, Internic_Ops) — Δ5 trial records database_corruption
+- [ ] ★ M2 "Mirror Image" (D4, Arunmor_HR) — neural_interface_phase2.enc retrieval from Internic
+- [ ] ★ M3 "The Bridge" (D5, NIGHTOWL_22) — evidence cache from LANTERN_BRIDGE academic mesh
+- [ ] ★ M4 "Last Light" (D5, YOURSELF) — recon on Daniel Park personal endpoint
+- [ ] ★ Resolution multiphase 4-way fork all reach valid epilogues:
+  - WARN_INTERNIC → choice_quiet_war_warn_internic
+  - WARN_ARUNMOR → choice_quiet_war_warn_arunmor
+  - EXPOSE_NIGHTOWL → choice_quiet_war_expose_nightowl, underground -45
+  - PRESERVE_BALANCE → choice_quiet_war_preserve_balance, underground +30
+- [ ] ★ post_arc_7 reflection scene fires
+- [ ] ★ News echoes per branch
+
+### Arc 8 — LIGHTHOUSE (★)
+- [ ] ★ M1 "Eyes Only" (D4, GOV_Procurement) — Asher Vance personal cloud
+- [ ] ★ Player handle is in Vance's OPERATIVES folder; L-rating 7.2
+- [ ] ★ M2 "The Lighthouse" (D4, Asher_Vance) — workstation key from Dispatch satellite
+- [ ] ★ M3 "The Watchers" (D5, YOURSELF) — DataPharos Singapore; buyer list reveal
+- [ ] ★ MAGNUS_RELAY transaction history reveal (purchases since 2185 — 9 years before the lighthouse existed)
+- [ ] ★ CIPHER's coda message about owing a conversation appears
+- [ ] ★ Resolution multiphase 4-way fork:
+  - TAKE_VANCE_OUT → choice_lighthouse_take_vance_out, voidlink +25
+  - EXPOSE_DISPATCH → choice_lighthouse_expose_dispatch, voidlink -80, underground +50
+  - DISAPPEAR → choice_lighthouse_disappear, the_nameless +30
+  - WARN_CIPHER → choice_lighthouse_warn_cipher, underground +35
+- [ ] ★ post_arc_8 reflection scene fires
+- [ ] ★ cipher_arc8_lighthouse_callback letter arrives in inbox
+
+## A.18 — Reflection Scenes
+
+- [ ] end_of_arc_1 — fires once after Arc 1 climax choice
+- [ ] end_of_arc_3 — fires once after Arc 3 completion
+- [ ] pre_arc_5 — fires once before Arc 5 climax
+- [ ] anniversary — fires at 1 in-game year after signup
+- [ ] season_transition — fires at quarterly transitions
+- [ ] who_you_work_for — fires when ≥8 axis-tagged contracts AND |collaborator − resistor| ≥ 4
+- [ ] post_arc_6 / post_arc_7 / post_arc_8 — fire on disconnect after each respective arc's resolution choice
+- [ ] Each scene's fact-pool surfaces 4–5 facts matching the player's bucket
+- [ ] Tokens resolve correctly: `{HANDLE}` / `{DAYS}` / `{CORP_TAKEN}` / `{CORP_REFUSED}` / `{UNDERGROUND_TAKEN}` / `{CIVILIANS_SPARED}` / `{BOUNTIES_TAKEN}` / `{LEAKS}` / `{SOLD}` / `{WHISTLEBLOWERS}` / `{MISSIONS}`
+
+## A.19 — Audio (★)
+
+- [ ] ★ Boot screen — silent until first user interaction (browser autoplay policy)
+- [ ] ★ After first click — morse blips audible during prologue / operative intro typewriter
+- [ ] ★ Desktop — ambient drone via `startAmbient`; idle music loops via `startIdleMusic`
+- [ ] ★ Mission start — idle music fades out
+- [ ] ★ Active mission — trace beep speeds up as level rises (audible difference between 30% and 75%)
+- [ ] ★ Disconnect — idle music fades back in
+- [ ] Mission success → playSfx('success')
+- [ ] Mission fail → playSfx('fail')
+- [ ] Window open/close → matching SFX
+- [ ] Button clicks → playSfx('click') via global pointerdown listener
+- [ ] Rival hacker spawn → three error beeps in quick succession
+- [ ] ⚠ L1 — 6 looping tracks (boot/desktop/mission/critical/victory/fail) — NOT YET WIRED, currently a single idle loop. Flag in test report.
+
+## A.20 — Performance (L6) (★)
+
+- [ ] ★ Initial paint loads main bundle only (~190 KB gzipped)
+- [ ] ★ React + Three + framer-motion + i18n load as separate chunks
+- [ ] ★ Boot screen does NOT load Three.js (GlyphDriftLazy defers it)
+- [ ] ★ First open of NetworkMap fetches NetworkMap chunk + Three.js
+- [ ] ★ First open of WorldMap fetches WorldMap chunk + topojson countries-110m
+- [ ] ★ Low-Quality toggle in Settings:
+  - GlyphDrift renders without UnrealBloomPass + reduced density
+  - NetworkMap renders without bloom
+  - WorldMap renders without bloom
+  - CSS backdrop-filter blurs disappear (test by inspecting any panel's computed style)
+- [ ] On a low-end machine (or Steam Deck approximation), low-quality mode maintains ~30 fps minimum
+
+## A.21 — Persistence (Save/Load) (★)
+
+- [ ] ★ Auto-save fires every 5s while on desktop with an active player
+- [ ] ★ Quit mid-mission → on reload, mission state survives (mission still active in missions array; HACK TOOLS / NETWORK MAP windows are stripped to avoid empty render)
+- [ ] ★ Multiple operatives on the same machine — each has their own save key
+- [ ] ★ Operative index (`voidlink_accounts`) lists every save with handle / rank / credits / last-played
+- [ ] ★ Password hash is SHA-256 — verify works on login
+- [ ] ★ Delete-save flow removes the save key + index entry; doesn't affect other operatives
+- [ ] ★ Legacy `uplink_ng_save` key auto-migrates on first load if present
+- [ ] ★ Save version v5 — older saves either still load or migrate cleanly
+- [ ] ★ L5.1 — `_integrity` signature included on every saveGame write
+- [ ] ★ L5.1 — verifySave fails on a JSON-edited save and triggers the sys.ops warning
+
+## A.22 — Accessibility (★)
+
+- [ ] ★ All windows are keyboard-focusable (Tab cycles through controls)
+- [ ] ★ Screen reader: `aria-label` / `aria-live` on tutorial, overlays, achievement toasts
+- [ ] ★ Reduced-motion toggle suppresses framer-motion animations
+- [ ] ★ Text contrast: all body text ≥ #909090 on dark background (M14r contrast audit)
+- [ ] Color-blind: trace bar uses red and amber separately from the green=breached / amber=Zone B colour system. Acceptable with `colorblind=on` for protanopia/deuteranopia (TBD: dedicated colour-blind palette is post-EA work)
+- [ ] axe-core (dev mode) reports no critical violations on the desktop
+
+## A.23 — Edge cases (★)
+
+- [ ] ★ Refresh mid-mission → save restores correctly, mission state intact, no double-tick on game loop
+- [ ] ★ Browser back button during a mission — handled or harmless (the SPA has no back-button navigation)
+- [ ] ★ Open in two tabs simultaneously — last-write wins (localStorage), no corruption
+- [ ] ★ Tab loses focus → game loop pauses (visibilitychange listener)
+- [ ] ★ Tab regains focus → game loop resumes without time-jumping the trace
+- [ ] Network offline → game continues normally (single-player has zero network dependencies)
+- [ ] localStorage quota exceeded → graceful failure (no silent corruption)
+- [ ] ★ ErrorBoundary catches a synthetic crash without taking the desktop down
+
+## A.24 — Achievement triggers (★)
+
+Each achievement should be reachable. Smoke-test a subset:
+
+- [ ] ★ Trivial — ONBOARDED, FIRST CONTRACT, FIRST BREACH, CLEAN EXIT, REINVEST all fire within first 2 missions
+- [ ] ★ Bronze — TUTORIAL_DONE, FIRST CODEX, FIRST ESSAY, FIRST REFLECTION fire on natural play
+- [ ] ★ Silver — MILLIONAIRE fires at 1M Cr cash; PARANOID at 10-hop chain; CENTURION at 100 missions; ESCAPE ARTIST at 10 high-trace disconnects
+- [ ] ★ Gold — bond_collaborator_path at 12+ corp/gov & +6 over resistor; bond_resistor_path at 10+ resistor score & +4 over corp; ESCALATION EXPERT at 50 escalations
+- [ ] ★ Story (hidden) — all 11 arc-resolution achievements fire on their respective choices
+- [ ] ★ Platinum — THE FULL PICTURE on Arcs 1+5+6+7+8 in one save; COLLABORATOR ENDING on the Arc 5 climax choice
+- [ ] ★ Achievement unlock toast slides in bottom-right; auto-dismisses; tier-coloured chip is correct
+- [ ] ★ Profile → Achievements tab shows the unlock immediately
+
+## A.25 — Final report
+
+After completing the above, fill in:
+- Total missions completed: ___
+- Arcs completed: ___ / 8
+- Achievements unlocked: ___ / 50
+- Total play time: ___
+- Showstopping bugs: ___
+- UX papercuts: ___
+- Things that felt great: ___
+- Things that felt like they need another pass: ___
+
+---
+
+# Appendix B — Faction / Future Multiplayer Test Plan
+
+## B.1 — Factions (single-player, fully testable now)
+
+Factions in Voidlink are a **single-player mechanic**: standings track how each of 5–6 named entities feels about you, gate certain contracts and endings, and surface in Profile → Standings. All faction testing is solo.
+
+### Standings to verify
+- [ ] **Voidlink International** — starts at +50 (signed Bond); rises with on-Bond work, falls with rule-4 violations. At +1000: VOIDLINK LIFER achievement
+- [ ] **Arunmor** — rises with Arunmor-aligned contracts; falls with Arunmor-target sabotage. At +500: ARUNMOR LOYALIST
+- [ ] **Ares Division** — antagonistic axis with Arunmor — working heavily for one antagonises the other. Verify the antagonism is visible in standings deltas
+- [ ] **The Underground** — rises with Cipher / NIGHTOWL / Null_Trader / Shadow_Broker contracts; falls with Arc 7 EXPOSE_NIGHTOWL (−45) and Arc 8 TAKE_VANCE_OUT (−40)
+- [ ] **The Nameless** — rises with Arc 6 WEAPONISE (+20) and Arc 8 DISAPPEAR (+30); falls otherwise
+- [ ] **Government / JCB** — rises with JCB_Liaison / GOV_Procurement contracts; falls with Underground-loyalty actions
+
+### Cross-faction gating
+- [ ] After heavy Arunmor loyalty (+500), no Underground contracts from Cipher / Null_Trader for a session (gated by `requirePatternBucket`)
+- [ ] After heavy Underground loyalty (+500), corporate contracts from Arunmor_HR / Internic_Ops are still *visible* on the Mission Board but the briefing tone shifts (frame text reads "we are aware of your alignment; the rate reflects it")
+- [ ] After hitting both Arunmor +400 AND Government +400, GOVERNMENT_DOUBLE_AGENT achievement fires (gold)
+
+### Faction-induction events
+- [ ] At Underground +100 with bond_clean trait dominant: one-time induction letter from Cipher ("Your work has been noticed. The people you've helped are talking about you on the Mesh.")
+- [ ] At Arunmor +200 with mercenary pattern: induction letter offering a retainer (TODO: not yet authored — flag for content sprint)
+
+### Faction-driven ending fan-out
+- [ ] Arc 5 climax — `getAvailableEndings(player)` reads faction standings:
+  - Arunmor ≥ 40 + Arc 1 destroy → CONTAINMENT family offered
+  - Government ≥ 40 or Ares ≥ 40 + Arc 1 sell → ERASURE family offered
+  - REVELATION contact ≥ 3 + Arc 1 upload → SOVEREIGNTY family offered
+  - Underground heavy → LIBERATION family offered
+  - Ghost spec player → GHOST alternative always offered
+
+## B.2 — Multiplayer (Phase C — NOT IN SHIPPED 1.0)
+
+Multiplayer is the LAST roadmap item, deliberately. Per `CLAUDE.md`: *"multiplayer is the LAST system. Do not touch it unless explicitly requested."*
+
+### What does NOT exist in the shipped game
+- No real-time multiplayer
+- No PvP
+- No leaderboards
+- No shared world state
+- No friends list
+- No matchmaking
+- No co-op missions
+- No live operative-to-operative messaging
+
+### What testing WILL look like when MP ships (Phase C, post-2028)
+
+When Phase C lands, the multiplayer test plan will need to cover:
+
+1. **Account flow.** Magic-link email login (same mechanism as L4 cloud saves, just escalated). Test: sign up; receive magic link; click link; account hydrates. Test on multiple email providers (gmail/outlook/protonmail).
+
+2. **Server-authoritative state.** Client cannot edit its own credits / faction standings / achievements and have them stick. The server is the truth. **All of L5.1's local-side integrity work survives into multiplayer as the first line of defence; the server-side validators are the second.**
+
+3. **Latency / desync.** What happens if the player disconnects mid-multiplayer-mission? Spec: their state freezes server-side for 60s, then auto-disconnect, with no penalty to the other player.
+
+4. **Trust model for operative-to-operative messaging.** End-to-end encryption (PGP-style fingerprint pair, mirroring the existing in-fiction Cipher fingerprint UX). Server cannot read message bodies.
+
+5. **Anti-griefing.** Bounty contracts on other players require mutual consent (you cannot put a bounty on someone who has not opted into PvP). Players can flag harassment; flagged accounts can be suspended.
+
+6. **Rate-limiting.** Standard server-side: max N contracts per minute, max N bounce-chain rebuilds per minute. Prevents bot-style automation.
+
+7. **Spectator mode.** Watch another consenting operative complete a contract in real time. Read-only, no influence. Useful for the streamer-economy that *Uplink* itself helped create.
+
+8. **Cross-platform saves.** Web client ↔ Steam client ↔ (future) iOS / Android port all read the same server-side save vault.
+
+9. **Region.** Default EU-West (Railway already there); add US-East for North American latency; add APAC if metrics warrant.
+
+10. **Privacy.** Multiplayer launch *requires* a Privacy Notice update — see [PRIVACY.md](../PRIVACY.md) §4. Players must re-accept the EULA on first multiplayer connection.
+
+### Phase C launch test plan (forward-looking)
+
+When MP is built, the test phases will be:
+- **MP-P1: Account create + magic link delivery** across SMTP providers
+- **MP-P2: Local-client → server save sync** for 100 consecutive autosaves without divergence
+- **MP-P3: Server-side save validation** rejects every cheating vector L5.1 was designed to deter
+- **MP-P4: Operative-to-operative encrypted messaging** — sender encrypts with recipient pubkey; server only sees ciphertext; recipient decrypts; tamper detection on signature mismatch
+- **MP-P5: Real-time PvP bounty contract** — 30-minute session, both players consent, trace and disconnect work the same as single-player, server records outcome
+- **MP-P6: Spectator** — non-participant watches a session via consent token; cannot interact; sees the same trace bar as the operative
+- **MP-P7: Disconnect resilience** — mid-mission disconnect under various network conditions; reconnect resumes within 30s window
+- **MP-P8: Rate-limiting** — 100 rapid contract-accepts trigger soft-throttle then 5-minute cool-down
+- **MP-P9: Harassment flow** — submit a flag; verify admin tooling picks it up
+- **MP-P10: GDPR data export** — request all data the server holds about a player; verify the export includes saves, message metadata (not bodies), achievements, and that delete-account fully erases within seven days
+
+This appendix will move out of "forward-looking" into "active QA" when Phase C development begins.
+
+
