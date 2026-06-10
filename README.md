@@ -80,6 +80,7 @@ Creative / marketing docs at repo root (separate from planning):
 | [PRIVACY.md](PRIVACY.md) | Privacy notice (GDPR / UK GDPR compliant). |
 | [IDEAS.md](IDEAS.md) | Brainstorm — pre-launch polish, post-launch directions, monetisation. Not a planning commitment. |
 | [PRODUCTION.md](PRODUCTION.md) | Production handbook — music (FL Studio + mastering), voice casting (Voquent briefs), trailer workflow (DaVinci Resolve + Derek Lieu formula). UK-focused supplier directory. |
+| [casting/](casting/) | Voice-acting workstream — [NDA.md](casting/NDA.md) + per-character [recording scripts](casting/scripts/). |
 
 ---
 
