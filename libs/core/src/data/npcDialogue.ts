@@ -751,6 +751,63 @@ Not yet your problem. Maybe one day it will be.
       strong_mercenary: null,
     },
   },
+
+  // ── Arc 8 callback — CIPHER acknowledges the lighthouse ──────────────────
+  // Arc 8 M3's coda has Cipher saying "I owe you a conversation, when you
+  // are ready to have it." This letter follows once the buyer-list flag is
+  // set, regardless of which resolution path the player chooses. Pattern
+  // bucket selects the tone; mercenary players get a colder version, but
+  // the letter still arrives — Cipher meant what he said about owing one.
+  {
+    id: 'cipher_arc8_lighthouse_callback',
+    sender: 'CIPHER',
+    fingerprint: 'C19H 3R20 7B83 D6CC',
+    encrypted: true,
+    trigger: (p) => !!p.activeFlags.arc8_buyer_list_acquired,
+    variants: {
+      strong_principled: {
+        subject: 'the conversation I owed you',
+        body:
+          `I told you, after the buyer list, that I owed you a conversation. I am paying that debt now, in writing, because writing is what I am good at and conversations are not.\n\n` +
+          `I knew about the lighthouse. I have known for nine years. The November 2189 protection note in the buyer index is, in a sense it is too late to apologise for, mine. I asked an old friend at Dispatch to keep my handle out of the inventory. I did not do the same for anyone else. I will not pretend I have a clean reason for that.\n\n` +
+          `What you have done with what you found is, in my opinion, the thing I should have done myself eight years ago. That you did it without being asked is, I think, the part that matters.\n\n` +
+          `I will not write you again unless you want me to. I am here if you want me to.\n\n` +
+          `— C.`,
+      },
+      weak_principled: {
+        subject: 'about the lighthouse',
+        body:
+          `I told you I owed you a conversation. Here it is, in the only medium I have ever been good at.\n\n` +
+          `I knew. I have known for nine years. I asked Dispatch, quietly, to keep my handle off the index. I did not extend that to anyone else. I cannot defend it.\n\n` +
+          `Whatever you chose with what you found, you chose it from a fuller picture than most operatives on the Mesh ever get. That is the part I want you to know.\n\n` +
+          `— C.`,
+      },
+      neutral: {
+        subject: 're: lighthouse',
+        body:
+          `I owe you a conversation. This is it.\n\n` +
+          `I knew. The protection note in the buyer list dated 2189 is mine. I did not flag the system to the rest of the network. I will not justify that to you.\n\n` +
+          `You have the bundle now. Whatever you did with it is the conversation we were going to have anyway.\n\n` +
+          `— Cipher.`,
+      },
+      weak_mercenary: {
+        subject: 're: lighthouse',
+        body:
+          `I told you I owed you a conversation, so. Here.\n\n` +
+          `I knew. I have known for a long time. I protected myself and not the network. You read the buyer list with the same eyes I read it with the day it landed in front of me. I do not blame you for whatever you chose to do with the information.\n\n` +
+          `I am not asking for forgiveness. I am acknowledging the debt.\n\n` +
+          `— Cipher.`,
+      },
+      strong_mercenary: {
+        subject: 'lighthouse',
+        body:
+          `I knew. The 2189 protection note is mine.\n\n` +
+          `You did what made sense for the operative you became. I am not the person to judge that.\n\n` +
+          `Take care of yourself.\n\n` +
+          `Cipher.`,
+      },
+    },
+  },
 ]
 
 /**

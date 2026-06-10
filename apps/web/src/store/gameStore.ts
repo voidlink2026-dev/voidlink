@@ -1322,6 +1322,32 @@ export const useGameStore = create<GameState & GameActions>()(
             }
           }
 
+          // L3 — post-arc reflection beats. Each arc's resolution writes a
+          // choice flag; once that flag is set and the reflection hasn't
+          // fired, schedule it on the next disconnect.
+          if (s.player && !s.pendingReflection) {
+            const f = s.player.activeFlags
+            const arc6Resolved =
+              f.choice_dead_drop_purge || f.choice_dead_drop_weaponise ||
+              f.choice_dead_drop_report_jcb || f.choice_dead_drop_report_nightowl
+            const arc7Resolved =
+              f.choice_quiet_war_warn_internic || f.choice_quiet_war_warn_arunmor ||
+              f.choice_quiet_war_expose_nightowl || f.choice_quiet_war_preserve_balance
+            const arc8Resolved =
+              f.choice_lighthouse_take_vance_out || f.choice_lighthouse_expose_dispatch ||
+              f.choice_lighthouse_disappear || f.choice_lighthouse_warn_cipher
+            if (arc6Resolved && !f.reflection_post_arc_6) {
+              f.reflection_post_arc_6 = Date.now()
+              s.pendingReflection = 'post_arc_6'
+            } else if (arc7Resolved && !f.reflection_post_arc_7) {
+              f.reflection_post_arc_7 = Date.now()
+              s.pendingReflection = 'post_arc_7'
+            } else if (arc8Resolved && !f.reflection_post_arc_8) {
+              f.reflection_post_arc_8 = Date.now()
+              s.pendingReflection = 'post_arc_8'
+            }
+          }
+
           // M14m: post any queued multi-phase news echoes
           if (mission.newsEchoes && mission.phases) {
             const phasesDone = mission.currentPhaseIndex ?? 0

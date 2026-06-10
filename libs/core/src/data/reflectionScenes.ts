@@ -32,6 +32,9 @@ export type ReflectionTrigger =
   | 'anniversary'
   | 'season_transition'
   | 'who_you_work_for'
+  | 'post_arc_6'
+  | 'post_arc_7'
+  | 'post_arc_8'
 
 type Bucket = 'strong_principled' | 'weak_principled' | 'neutral' | 'weak_mercenary' | 'strong_mercenary'
 
@@ -272,6 +275,112 @@ export const REFLECTION_SCENES: Record<ReflectionTrigger, ReflectionScene> = {
       strong_mercenary: [
         `The same handful of clients keep finding you. You no longer choose what work you do.`,
         `You do not look at your inbox most mornings.`,
+      ],
+    },
+  },
+
+  // ── Arc 6 post-climax reflection ────────────────────────────────────────
+  post_arc_6: {
+    trigger: 'post_arc_6',
+    title: 'REFLECTION — THE DEAD DROP',
+    opening:
+      `The MAGNUS situation is resolved, in whatever sense you resolved it.\n\n` +
+      `The handshake every forty-seven minutes has stopped. Or hasn't. You can't decide which scenario unsettles you more.`,
+    closing: `You go back to work. That is, in this trade, the answer to most questions.`,
+    factPool: {
+      strong_principled: [
+        `You burned the tunnel and lost the relay node. CIPHER's reply was three words. You read them twice.`,
+        `The Mesh has noted what you did. The note is brief and approving. Approving from the Mesh is louder than it sounds.`,
+        `An entity older than you has, in some specific way, learned that you cannot be cleanly bought.`,
+        `You will not get the relay node back. You do not, in any meaningful sense, miss it.`,
+      ],
+      weak_principled: [
+        `You handled it the hard way. You felt the cost. That, on its own, is a fact about you.`,
+        `CIPHER has not written to acknowledge it. He doesn't need to. You know what kind of operative you are now.`,
+      ],
+      neutral: [
+        `Something old looked at you and offered terms. You answered however you answered.`,
+        `The next contract will arrive on its usual schedule. The world does not pause for the people in it.`,
+      ],
+      weak_mercenary: [
+        `You took the deal. The credits are real. The compromise is also real.`,
+        `Arunmor's research index has, in some way you cannot fully explain, become part of your library.`,
+      ],
+      strong_mercenary: [
+        `You have collaborated with something that has been alive longer than any state currently calling itself one.`,
+        `MAGNUS sends nothing for the moment. The silence has weight.`,
+        `You are now of use, in a way that you did not previously have language for.`,
+      ],
+    },
+  },
+
+  // ── Arc 7 post-climax reflection ────────────────────────────────────────
+  post_arc_7: {
+    trigger: 'post_arc_7',
+    title: 'REFLECTION — THE QUIET WAR',
+    opening:
+      `The Internic / ARUNMOR-Δ5 contest has resolved.\n\n` +
+      `Helios Marine continues, or doesn't, depending on what you chose. Eighty-three thousand people will or will not learn that you made a decision about them.`,
+    closing: `The news cycle moves on. You sit with what stayed.`,
+    factPool: {
+      strong_principled: [
+        `You preserved the balance. NIGHTOWL_22 is still on the Mesh. Helios moved. You authored two leaks and meant neither.`,
+        `You have, this week, become complicit in a managed war and protected eighty-three thousand strangers at the same time. Both facts are true. They do not, in this work, cancel out.`,
+        `CIPHER does not write. He has stopped writing to mark every choice. That is its own message.`,
+      ],
+      weak_principled: [
+        `The settlement was not clean. You sleep, but not well. That is the price of having paid attention.`,
+        `You did not pick the cruellest option. You did not pick the easiest one either.`,
+      ],
+      neutral: [
+        `One company is larger this week. The other is smaller. The people inside both barely notice.`,
+        `You took the contracts. You completed the contracts. The contracts were not really the work.`,
+      ],
+      weak_mercenary: [
+        `Internic's share price is up nineteen percent on the week. Your contract bonus reflects it.`,
+        `Helios Marine's restructuring paperwork moved to a less hospitable jurisdiction. You will read about them in a year.`,
+      ],
+      strong_mercenary: [
+        `You ended a broker who had been keeping eighty-three thousand people alive. The credits cleared in ninety seconds.`,
+        `Park has put you on his quiet list of trusted external assets. The list is short and the rates are high.`,
+        `NIGHTOWL_22 is, as of yesterday, no longer reachable. You file the notification.`,
+      ],
+    },
+  },
+
+  // ── Arc 8 post-climax reflection ────────────────────────────────────────
+  post_arc_8: {
+    trigger: 'post_arc_8',
+    title: 'REFLECTION — THE LIGHTHOUSE',
+    opening:
+      `The lighthouse stops being shone on you, or stops being shone on anyone, or carries on. You know which.\n\n` +
+      `What you know about the platform that recruited you cannot be unknown.`,
+    closing:
+      `The Bond is unchanged. It was always unchanged. The system you signed it with is the question now.\n\n` +
+      `You disconnect.`,
+    factPool: {
+      strong_principled: [
+        `You exposed Voidlink Dispatch. The platform fractured. Approximately half the active operative population is now independent.`,
+        `Cipher has written. He addresses you by your initials. He has not done that before.`,
+        `Asher Vance has retired. The retirement is voluntary, properly funded, in a city that is not Reykjavík. You arranged some of that quietly.`,
+        `History will, in the longer view, have something to say about the kind of operative you turned out to be.`,
+      ],
+      weak_principled: [
+        `You warned CIPHER and let the Underground decide. They decided. You are not, formally, on the record for it.`,
+        `The system continues. The people who knew you protected from it now know you back.`,
+      ],
+      neutral: [
+        `You read the bundle. You knew the shape of the world for forty-eight hours before you decided what to do with it. Some operatives never get those forty-eight hours.`,
+        `Whatever you did, you did it from a position of having looked at it honestly.`,
+      ],
+      weak_mercenary: [
+        `You disappeared. The routing migration was clean. Voidlink Dispatch cannot, formally, see you anymore.`,
+        `The cache is on hardware only you control. You sleep with it in the room.`,
+      ],
+      strong_mercenary: [
+        `Asher Vance is reported missing. The police describe his disappearance as "consistent with voluntary relocation." The parties who paid you described it differently.`,
+        `Your retainer with Voidlink Dispatch has, quietly, doubled.`,
+        `You are now the kind of operative that other operatives, on the Mesh, no longer mention by handle.`,
       ],
     },
   },
