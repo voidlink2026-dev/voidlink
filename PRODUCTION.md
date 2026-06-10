@@ -119,9 +119,13 @@ Self-mastering with Maximus + Limiter will get you 80% of the way. The last 20% 
 
 ## B. Voice acting — UK casting
 
-The current game is text-and-typewriter. Voice acting is a *deliberate aesthetic choice*, not a default expectation. Recommended scope: **Tier B (light voicing)** — voice 4 named characters for the highest-impact moments only. Silence remains the default.
+Voidlink's narrative work — the choice architecture, the reflection scenes, the 8 hand-authored arcs, the post-arc reflections, the Cipher Arc 8 callback — is real and substantial. The text-and-typewriter style is a *style*, not a limitation; it earns extra weight when broken in the right places.
 
-### B.1 The cast — 4 actors recommended
+**Recommended scope: voice every named recurring character.** That's 6 core actors + 1-2 processed system voices. Roughly 25-35 minutes of total recorded audio across the whole game. This is the *project-deserves* recommendation, not the *budget-compromise* one.
+
+If budget genuinely caps the scope, Tier B (4 actors) is a defensible fallback — but the question isn't *"can we get away with fewer"*, it's *"which characters do we want to be real."* Listed in the budget table below for completeness; recommendation is the full cast.
+
+### B.1 The cast — 6 actors recommended (plus system voices)
 
 | Role | M/F | Age | Accent | Reference | Estimated cost |
 |---|---|---|---|---|---|
@@ -129,15 +133,17 @@ The current game is text-and-typewriter. Voice acting is a *deliberate aesthetic
 | **NIGHTOWL_22** | F | 50s+ | Nigerian or UK-Nigerian diaspora — character is canonically Lagos-based. Authentic accent only; NOT a performed "Hollywood African". Canon: *"her voice is older than her handle"*. | Sophie Okonedo audiobook reads; Wunmi Mosaku; the cadence of Chimamanda Ngozi Adichie's interviews | £400-700 |
 | **YAAKOV STERN** (Bond reading + optional trailer VO) | M | 60s+ | Ashkenazi / Eastern European Jewish heritage — name is Yiddish-German. Russian / Polish / Czech / Hungarian-tinged English all fit. Israeli-English also fits. British actors with this heritage absolutely qualify. NOT cartoonish. | Christoph Waltz reading aloud; Mads Mikkelsen serious-mode; the late Erland Josephson; F. Murray Abraham | £400-700 |
 | **ASHER VANCE** (consider recasting as female "ASTRID VANCE") | M or F | 40s | Open. Reykjavík-set but formerly at Voidlink Dispatch which could be anywhere. Cast by tonal fit. Fits include British (any region including RP), Icelandic-English, mainland Scandinavian-English, American (any region), Black American — any authentic accent that matches the *texture* described. | Mark Gatiss quiet moments; Ólafur Darri Ólafsson; David Tennant tired-not-camp; Wagner Moura quiet-mode | £300-500 |
-| **DIRECTOR KOVAC** (Tier 3 — adds substantially in the JCB endings) | F | 50s | Open. The character is a senior law-enforcement director. Fits include British (RP works particularly well for institutional authority here), American (East Coast educated), or any equivalent. Authoritative without being cold. | Olivia Williams; Sigourney Weaver in interviews; Cynthia Erivo serious-mode | £300-500 |
-| **MAGNUS / REVELATION** | — | — | Voice of one of the above + FL Studio processing (vocoder + pitch shift + reverb tail) | Tilda Swinton narrative; HAL 9000; SOMA's WAU | £0 (use existing cast) |
+| **DIRECTOR KOVAC** | F | 50s | Open. Senior law-enforcement director (Joint Cybersecurity Bureau). Fits include British (RP works particularly well for institutional authority), American (East Coast educated), or any equivalent. Authoritative without being cold. | Olivia Williams; Sigourney Weaver in interviews; Cynthia Erivo serious-mode; Indira Varma | £300-500 |
+| **MEI LIN** | F | 40s-50s | Open. Arunmor's lead research scientist, appears across the CONTAINMENT and LIBERATION ending families. Brilliant, exhausted, has had to defend her own work in rooms that didn't deserve to question it. Fits include Mandarin-English, Cantonese-English, British-Chinese, Singaporean-English, American-Chinese, or any other accent matching the actor's heritage. | Michelle Yeoh quiet-mode; Awkwafina serious-mode; Sandra Oh introspective; Gemma Chan reading aloud | £300-500 |
+| **VOIDLINK DISPATCH / sys.ops** | any | any | The corporate-platform voice. The player hears this every time Voidlink Dispatch routes them a contract or fires a system message. Should sound *almost human* — corporate-AI that hasn't been processed quite enough to feel safe. Real voice + processing (vocoder pass + slight pitch-shift + subtle reverb). | British Airways announcement voice but slightly *off*; the WAU in SOMA; the BBC News at Ten in-promo voice with subtle filtering | £200-400 |
+| **MAGNUS / REVELATION** | — | — | Voice of CIPHER's actor + FL Studio processing (vocoder + pitch shift down 4 semitones + long reverb tail). Distinct from Dispatch's processing — MAGNUS is *not corporate*. Older, deliberate, patient. | Tilda Swinton narrative-mode; HAL 9000; SOMA's WAU | £0 (use existing cast) |
 
-**Gender balance:** the default pick lands 3M / 2F if you include Kovac (Cipher M, NightOwl F, Stern M, Vance M, Kovac F). Without Kovac it's 3M / 1F. Honest improvements available:
-- Recast Vance → Astrid (gender is incidental to the character's function) → 2M / 3F with Kovac, 2M / 2F without.
-- Stern could be recast as female ("Yael Stern") — the canon doesn't define the signatory's gender beyond the name.
-- Cipher is also genuinely open if we want — there's nothing in the canon that requires the senior Underground operative to be male; the existing letters use no gendered self-reference.
+**Gender balance:** the full 6-actor recommendation lands 3M / 3F (Cipher M, NightOwl F, Stern M, Vance M, Kovac F, Mei Lin F). Plus Voidlink Dispatch / sys.ops as any-gender. Honest variants available:
+- Recast Vance → Astrid (gender is incidental to the character's function) → 2M / 4F.
+- Stern could be recast as female ("Yael Stern") — the canon doesn't define the signatory's gender beyond the name → 1M / 5F if combined with the Vance recast.
+- Cipher is also genuinely open — there's nothing in the canon that requires the senior Underground operative to be male; the existing letters use no gendered self-reference.
 
-The cast doesn't need to default to British, white, or male. We cast for tonal fit and let authentic accent / ethnicity / gender follow whom we hire. Some roles may well end up with British actors — that's fine; the point is we are not *assuming* it. The character writing is deliberately open on those axes so any of the five roles can flex.
+The cast doesn't need to default to British, white, or male. We cast for tonal fit and let authentic accent / ethnicity / gender follow whom we hire. Some roles will end up with British actors — that's fine; the point is we don't *assume* it. The character writing is deliberately open on those axes so any of the named roles can flex.
 
 ### B.2 Marketplaces, ranked
 
@@ -159,18 +165,34 @@ The cast doesn't need to default to British, white, or male. We cast for tonal f
 8. **Fiverr Pro voiceovers (Pro tier only)** — £50-200 for short content. Many UK Pro-verified voices.
 9. **Direct outreach** — listen to indie game credits, find an actor whose work you love, cold-email. Many established voice actors will do a £200-400 indie role for love of the work.
 
-### B.3 What gets voiced (Tier B scope)
+### B.3 What gets voiced (full cast scope)
 
 | Moment | Voice | Duration |
 |---|---|---|
-| Bond reading at signup | Yaakov Stern | ~90s (~180 words) — *the most important voiced moment in the game.* |
-| CIPHER's Arc 1 aftermath letter | Cipher | ~45s (~90 words) |
-| CIPHER's Arc 8 lighthouse callback | Cipher | ~45s (~100 words) |
-| NIGHTOWL's Arc 7 "Lunch" call | NightOwl | ~60s (~120 words) |
-| Asher's Arc 8 lighthouse intro | Asher / Astrid | ~50s (~100 words) |
-| MAGNUS introduction line (Arc 6) | Cipher's actor + FL Studio FX | ~10s (~20 words) |
-| Trailer VO (optional, 1 line) | Stern doubling | ~5-8s |
-| **Total recorded audio** | | **~5-6 minutes** |
+| Bond reading at signup (the four rules) | Yaakov Stern | ~90s — *the most important voiced moment in the game.* |
+| Welcome message + first sys.ops greetings | Voidlink Dispatch (processed) | ~45s |
+| Operative Intro chapter narration (optional — could be Stern doubling) | Stern | ~3-4 minutes if used |
+| CIPHER first advice letter | Cipher | ~30s |
+| CIPHER three rules letter | Cipher | ~45s |
+| CIPHER Arc 1 aftermath letter (per Arc 1 choice — 3 variants) | Cipher | 3 × ~45s |
+| CIPHER underground induction | Cipher | ~30s |
+| CIPHER collaborator drift letter (per pattern bucket — 3 variants) | Cipher | 3 × ~30s |
+| CIPHER Arc 8 lighthouse callback (per bucket — 5 variants) | Cipher | 5 × ~45s |
+| NIGHTOWL first contract pitch | NightOwl | ~45s |
+| NIGHTOWL Arc 7 "Lunch" call | NightOwl | ~60s |
+| NIGHTOWL resistor offer (3 variants) | NightOwl | 3 × ~30s |
+| Asher / Astrid Arc 8 lighthouse intro | Vance | ~60s |
+| Asher / Astrid Arc 8 buyer-list confirmation | Vance | ~30s |
+| MAGNUS introduction (Arc 6 M3) | Cipher's actor + FX | ~15s |
+| MAGNUS resolution dialogue (per Arc 6 choice — 3 variants) | Cipher's actor + FX | 3 × ~20s |
+| KOVAC ERASURE ending dialogue | Kovac | ~60s |
+| KOVAC CONTAINMENT ending dialogue | Kovac | ~45s |
+| MEI LIN CONTAINMENT ending dialogue | Mei Lin | ~45s |
+| MEI LIN LIBERATION ending dialogue | Mei Lin | ~60s |
+| Dispatch contract-routed announcements (procedural × ~6 unique recordings) | Dispatch (processed) | 6 × ~10s |
+| Dispatch maintenance / system announcements (~4 unique) | Dispatch (processed) | 4 × ~15s |
+| Trailer VO line | Stern doubling | ~5-8s |
+| **Total recorded audio** | | **~25-35 minutes** |
 
 ### B.4 Casting brief — copy-paste templates
 
@@ -239,7 +261,7 @@ Generic header for all four:
 >
 > **Estimated session:** 45-60 minutes covering ~2 minutes of audio.
 
-**Brief — DIRECTOR KOVAC** *(Tier 3 add)*
+**Brief — DIRECTOR KOVAC**
 
 > Director of the Joint Cybersecurity Bureau (the JCB) — the international law-enforcement authority operatives are afraid of. Appears in the player's life only at major endings (the ERASURE and CONTAINMENT families). When she does appear she is the *establishment voice*: senior, polite, professionally curious about what you have become. Not a villain. Not a friend. The institution speaking through one person.
 >
@@ -253,6 +275,36 @@ Generic header for all four:
 >
 > **Estimated session:** 45 minutes covering ~90 seconds of ending dialogue.
 
+**Brief — MEI LIN**
+
+> Arunmor Corporation's lead research scientist. Built REVELATION. Defends it. Appears across the CONTAINMENT (your character locks down her work and audits her) and LIBERATION (your character exposes her work to the world) ending families. Brilliant, exhausted, has spent fifteen years answering questions from people who didn't deserve to ask them. Not the antagonist; not the ally. The architect.
+>
+> **Accent:** Open. The character's name is Chinese; she could be from anywhere in the Sinosphere or its diaspora. Fits include Mandarin-English, Cantonese-English, British-Chinese, Singaporean-English, American-Chinese, Taiwanese-English, or any other accent authentic to the actor.
+>
+> **Age range:** 40s-50s, female.
+>
+> **Reference (texture, not accent):** Michelle Yeoh in her quiet moments; Awkwafina serious-mode; Sandra Oh introspective; Gemma Chan reading aloud.
+>
+> **Audition lines:** *"You think you found me. You did not find me. I have been here for fifteen years. The locks on the doors to this work were drawn by people who, on the whole, were less qualified than I am to draw them. And here you are, at one of the doors. I am not surprised. I am, in some small way, glad."*
+>
+> **Estimated session:** 45-60 minutes covering ~2 minutes of ending dialogue across the two ending families.
+
+**Brief — VOIDLINK DISPATCH / sys.ops** *(processed)*
+
+> The voice of the platform itself. The player hears this every time a contract is routed to them ("Voidlink Dispatch — Contract authorised. Briefing in your inbox.") and every time a system event fires ("sys.ops — Scheduled maintenance window…"). Should sound *almost* human — corporate AI that hasn't been processed enough to feel safe. The uncanniness is the point. The player should never be sure whether there's a person behind it.
+>
+> Distinct from MAGNUS: Dispatch is *the corporation*; MAGNUS is *something older*. Different processing chains, different tonal targets.
+>
+> **Accent:** Open. Authentic to the actor. We process in post — the final voice will sound deliberately filtered. The original take should be clean and neutral-toned.
+>
+> **Age range:** any, any gender.
+>
+> **Reference (texture, not accent):** the BBC News at Ten in-promo voice with subtle filtering; British Airways announcement voice *slightly* off; SOMA's WAU; the platform voice in *The Stanley Parable* but corporate-bureaucratic instead of mischievous.
+>
+> **Audition lines:** *"Voidlink Dispatch. Contract authorised. Briefing in your inbox. Voidlink takes twelve percent. Disputes go through Voidlink arbitration. Welcome back, operative."*
+>
+> **Estimated session:** 30-45 minutes covering ~2 minutes of scattered system audio. We will record with no FX; processing happens in post.
+
 ### B.5 Recording / direction logistics
 
 - Hire via Voquent's casting service — they will deliver auditions; you pick.
@@ -263,13 +315,17 @@ Generic header for all four:
 
 ### B.6 Budget summary — voice
 
-| Tier | Cast | Roles voiced | Total |
+| Tier | Cast | Roles voiced | Realistic spend |
 |---|---|---|---|
-| **A — trailer only** | 1 voice | 1 trailer line | £200-500 |
-| **★ B — light** *(recommended)* | 4 voices, ~6 mins audio | CIPHER + NIGHTOWL + STERN + VANCE (MAGNUS done via processing one of the four) | £1,500-2,500 |
-| C — standard | 5 voices, ~8 mins audio | Tier B + DIRECTOR KOVAC | £1,800-3,000 |
-| D — extended | 5-6 voices, ~15 mins audio | Tier C + voiced versions of more NPC letters across the game | £3,000-5,500 |
-| E — full | every NPC letter voiced | every Cipher letter, every NightOwl letter, every Asher line | £8,000-15,000+ |
+| A — trailer only | 1 voice | 1 trailer line | £200-500 |
+| B — light *(budget-compromise version)* | 4 voices, ~6 mins | CIPHER + NIGHTOWL + STERN + VANCE (MAGNUS via processing) | £1,500-2,500 |
+| **★ C — full recurring cast** *(recommended)* | 6 voices + 1 system voice, ~25-35 mins | CIPHER + NIGHTOWL + STERN + VANCE + KOVAC + MEI LIN + DISPATCH (MAGNUS via processing Cipher's actor) | £3,500-6,000 |
+| D — extended | Tier C + voiced codas for the major arc moments | ~40-50 mins, no new actors | £4,500-7,500 |
+| E — full | every NPC letter / coda / sys message in the game | ~60-90 mins | £10,000-20,000+ |
+
+**Recommendation: Tier C.** This is the cast that lets every recurring named character feel *real* without spilling into voicing things that don't need it (procedural mission briefings, repeated UI confirmations). It's the right scope for the project the rest of the game already is.
+
+If the £3,500-6,000 range genuinely doesn't fit, drop to Tier B and the game will still be playable — but every major character who isn't in Tier B (Kovac, Mei Lin, Dispatch) silently becomes a *text moment* in their otherwise-voiced game, which reads as a deliberate omission to a player who's heard the other characters speak. Better to either do Tier C properly or hold Tier B until you can do Tier C.
 
 ---
 
@@ -367,16 +423,21 @@ For capsule art — commission. £400-1,500 from an illustrator on ArtStation or
 
 ## D. Combined production budget summary
 
-| Track | Realistic minimum | Realistic comfortable |
-|---|---|---|
-| Music (FL Studio + mastering) | £240 | £400 |
-| Voice (4 actors via Voquent) | £1,500 | £2,500 |
-| Trailer (DIY + commissioned key art) | £500 | £2,000 |
-| Capsule + screenshots + GIFs | £400 (key art commission, rest DIY) | £1,500 |
-| Mastering + post | — | £200 |
-| **TOTAL** | **£2,640** | **£6,600** |
+Reflects the **recommended** tier across each track (Tier C for voice; commissioned trailer; commissioned key art). This is the project-deserves figure, not the bare-minimum figure.
 
-That sits inside the indie-respectable production-quality bracket for solo dev. Lands you in the same room as games doing 50k+ wishlists, with everything hand-attributable and the AI-disclosure line intact.
+| Track | Realistic | Comfortable | Notes |
+|---|---|---|---|
+| Music (FL Studio self-produce + outsourced mastering) | £240 | £400 | You're capable of producing in-house; mastering is the outsourced piece |
+| Voice — full recurring cast (Tier C: 6 voices + 1 system) | £3,500 | £6,000 | Via Voquent. Recommended scope. |
+| Trailer (commissioned edit) | £2,000 | £5,000 | Derek Lieu at the top end; UK freelance at the bottom |
+| Steam capsule + key art | £400 | £1,500 | ArtStation commission |
+| Screenshots + GIFs (DIY from OBS captures) | £0 | £200 | If outsourced for polish |
+| Audio mastering (6 tracks) | £240 | £400 | Already counted above; listed for clarity |
+| **TOTAL** | **£6,140** | **£13,100** |
+
+A tighter figure is achievable with Tier B voice (-£2k), DIY trailer (-£2k), DIY screenshots (already £0). **The lower-bound figure if every cut is made is ~£2,600** — but that involves silently downgrading the narrative quality of a narrative game to save money, which is exactly the trap solo devs fall into. Land in the **£6-13k range** and ship something the audience can hear.
+
+Comparison: a fully professional studio production of a similar-scope narrative indie costs £80-200k. £6-13k for everything-hand-attributable, no-AI-in-binary, real voice cast, real composer-mastered audio, real key art commission is *competitive on quality* with games that cost an order of magnitude more.
 
 ---
 
@@ -394,13 +455,17 @@ Mark with `[x]` when locked in.
 - [ ] All 6 tracks complete
 
 ### Voice (L7-adjacent)
-- [ ] Tier B (4 voices, ~6 mins) confirmed as scope
+- [ ] Tier confirmed: B (£1.5-2.5k) / **C recommended (£3.5-6k)** / D (£4.5-7.5k) / E (£10k+)
 - [ ] Asher → Astrid recasting decision: keep / recast
-- [ ] Voquent project posted
-- [ ] Auditions reviewed for: CIPHER / NIGHTOWL / STERN / VANCE
+- [ ] Stern recasting decision: keep / recast as Yael Stern
+- [ ] Cipher recasting decision: keep / recast as female
+- [ ] Voquent project posted (one project per role, or single project listing all)
+- [ ] Auditions reviewed for: CIPHER / NIGHTOWL / STERN / VANCE / KOVAC / MEI LIN / DISPATCH
 - [ ] Cast confirmed (name + rate per role)
 - [ ] Recording sessions scheduled
 - [ ] Audio delivered + integrated
+- [ ] MAGNUS processing chain finalised in FL Studio (vocoder + pitch shift + reverb tail)
+- [ ] Dispatch processing chain finalised (lighter filtering — corporate-AI uncanniness)
 
 ### Trailer (L7)
 - [ ] DIY vs commission decision: ____________________
