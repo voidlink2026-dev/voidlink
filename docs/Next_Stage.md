@@ -60,184 +60,7 @@ These are launch-blockers. Order is the recommended sequence; some run in parall
 
 ---
 
-### L11 / M14p — Choice Architecture & Reflection Mechanic ✅ SHIPPED 2026-06
-**Status:** All four passes complete. Pattern reader + News Framing + NPC Dialogue Tone + Contract Availability Gating + Reflection Scenes + 9-Ending Fan-out architecture all in. 120 unit tests passing (60 → 120 across the sprint). Detailed Arc 5 mission authoring for each of the 9 ending paths is a content task that lands as part of L3 story-arc writing.
-
-**Why this is now a launch-blocker.** The lore expansion, the 9-ending fan-out, the ongoing-world model, and the Codex-level immersion all depend on the world *reflecting* the player's accumulated choices. Without this system, the lore is just text — beautiful but inert. With it, the player's identity becomes the central mechanic.
-
-**Scope.**
-
-1. **Choice catalogue.** Audit every existing choice surface (Arc 1 key choice, M14o choice missions, mission-objective accepts/refusals, exfil sell-vs-leak, civilian-spare decisions, fellow-operative bounties) and ensure each writes a flag with consistent naming: `choice_<topic>_<value>` (e.g. `choice_arc1_key_upload`, `choice_civilian_spared_3`, `choice_op_bounty_accepted_2`).
-2. **Pattern reader.** Single core helper `getDecisionPattern(player): { principledScore, mercenaryScore, recentTrend, dominantTraits[] }`. **Never shown to the player.** Read-only, derived from flags.
-3. **Four reflection channels (wired):**
-   - **NPC dialogue tone** — CIPHER, NIGHTOWL_22, Dispatch, faction brokers each have 3-5 variant lines per scripted exchange. Pattern reader picks the right one.
-   - **News framing** — same news article body, different adjectives based on pattern. Headlines pick from 3 variants. Body uses 4-6 token substitutions.
-   - **Contract availability** — high-tier mercenary contracts gate on `mercenaryScore`. High-status principled contracts gate on `principledScore`. Mid-tier work is alignment-agnostic.
-   - **Faction induction events** — when pattern crosses a quiet threshold (e.g. `principledScore > 30 && underground_standing > 100`), trigger a one-time induction message in inbox. CIPHER's tone changes permanently.
-4. **Reflection scenes.** New mission type `ReflectionScene` with no network, no trace, no objective — just a styled terminal overlay. Five base scenes:
-   - End of Arc 1 (covers signup → Arc 1 climax)
-   - End of Arc 3
-   - End of Arc 5 (pre-ending)
-   - Annual anniversary
-   - Quarterly season transition
-   Each scene has 6-8 variant text blocks; pattern reader selects 4-5 to surface.
-5. **Ending fan-out.** Update Arc 5 climax to query `getDecisionPattern` + faction standings + spec. Offer the 1-3 endings that match. Reformer's Path triggers if `recentTrend != dominantTraits[0]`.
-
-**Tech.**
-- `libs/core/src/engine/decisionPattern.ts` — new module with `getDecisionPattern()` + helpers
-- `apps/web/src/game/Reflection/ReflectionOverlay.tsx` — new full-screen overlay component
-- `libs/core/src/data/dialogueVariants.ts` — keyed text variants for NPC tone
-- `libs/core/src/data/newsFraming.ts` — keyed adjective/token substitutions for news
-- Update mission `acceptMission` action to gate-check contract availability against pattern
-
-**Acceptance criteria.**
-- Playing through Arc 1 with a principled pattern → CIPHER's Arc 1 close message reads "Welcome to the deck. You've shown me what kind of operative you are."
-- Same playthrough with a mercenary pattern → CIPHER's message reads "Welcome to the deck. We'll see what kind of operative you become."
-- News article for the same successful sabotage mission produces "ruthless professional precision" for mercenary pattern, "anonymous vigilante action" for principled pattern, "another vicious Underground strike" for high-Underground-standing principled
-- End-of-Arc-1 reflection scene fires, surfacing 4-5 facts that match what the player actually did
-- Arc 5 climax offers 1-3 endings (not all 9) based on coherent decision pattern
-- No UI ever displays a score to the player
-
-This sprint unlocks the entire deep-narrative vision. Everything else in the post-1.0 Ongoing World model (ending-driven seasonal content, faction territory shifts, ARG personalisation) reads from `getDecisionPattern()`.
-
 ---
-
-### M14q — Lore Exposure Layer ✅ SHIPPED 2026-06
-**Status:** All five sub-sprints shipped. Boot prologue, Codex window with 18 unlockable entries + non-blocking unlock toasts, environmental flavour (BIOS line + bank subheaders), 6 Cipher/NightOwl essays drip into inbox, 8 splash cards on key story beats with SETTINGS toggle to disable. 13 unit tests added across the M14q sprint (120 → 133). The Codex's ~880 lines of lore are now discoverable in-game across multiple surfaces. **Cipher's First Contract** tutorial rewrite (L2) is the next gameplay-touching sprint and is now the last unshipped pre-launch sprint that affects what the player learns.
-
-**Why this slots before L3 (story arcs 6-8):** every choice in Arcs 6-8 lands harder if the player already understands what the factions are, who the named NPCs are, why the Voidlink Bond matters, what the JCB does. Writing more story into a world the player can't see is wasteful.
-
-#### Sub-sprint A — Boot Prologue 📜
-**Effort:** Half a day
-**Scope.** Before the login screen renders, a typewriter-styled prologue animates against the neon-Earth globe backdrop. ~250 words across 6-7 paragraphs. Establishes the year, the Collapse, the Big Four, the Voidlink Bond, and the player's place in it.
-
-- **Gate:** localStorage flag `prologue_seen`. First-ever boot only. Returning players go straight to login.
-- **Settings entry:** "Replay Prologue" toggle so fans can revisit. Resets the flag.
-- **Skippable:** SPACE / click anywhere to skip. Auto-saves the seen flag immediately.
-- **Audio:** soft modem hum + occasional typing click; respects audio settings.
-- **Visual:** typewriter effect at 28 cps with cursor blink; ACES-tone-mapped globe in the background dim to 30% during prologue.
-
-**Acceptance:**
-- [ ] First fresh-install boot shows the prologue
-- [ ] Second boot goes straight to login
-- [ ] Settings "Replay Prologue" works
-- [ ] SKIP works mid-prologue and persists the flag
-
-#### Sub-sprint B — Codex Window + Unlock Catalogue 📖
-**Effort:** 3 days
-**Scope.** A new desktop window (CODEX in the taskbar) that contains the Codex content broken into 18-25 unlockable entries. Entries unlock through play — never forced, always discoverable.
-
-**Entry catalogue (initial):**
-- *Voidlink International* (unlocks on first mission complete)
-- *The Voidlink Bond* (unlocks on signup, link to full text)
-- *The Mesh* (unlocks on first CIPHER inbox message)
-- *CIPHER* (unlocks after 2nd CIPHER message)
-- *NIGHTOWL_22* (unlocks after first NIGHTOWL contract)
-- *Arunmor Corp* + *Mei Lin* (unlocks on first Arunmor mission)
-- *Ares Defence Group* (unlocks on first Ares mission)
-- *Internic Holdings* + *Aino Virtanen* (unlocks on first Internic mission)
-- *Nexus Financial* (unlocks on opening first bank account)
-- *The Joint Cybersecurity Bureau* + *Director Mira Kovac* (unlocks at Rank 5)
-- *The Underground* (unlocks after CIPHER's underground induction message)
-- *Project R-1117 / REVELATION* (partial unlock at Arc 1 Mission 2, deepens through arcs)
-- *The October Event* (unlocks at first anniversary OR on completing Arc 5)
-- *The Nine Days* (unlocks alongside October Event)
-- *The Reconciliation Accords* (unlocks at Rank 5)
-- *The Five Cities* (unlocks at signup — your home city pre-selected)
-- *Voidlink Standard Time* (unlocks on day 7 in-game)
-- *Mesh Slang Glossary* (unlocks on first inbox decryption)
-- *Famous Operatives — Astra / Halberd / The Crown / PROXY_ECHO* (unlock individually via news echoes)
-- *Music Genres* (unlocks on completing tutorial)
-- *Philosophy — Bond vs Stewardship Schools* (unlocks after Arc 3)
-
-Each entry is 200-400 words. Pulled directly from `The_Voidlink_Codex.md` — minimal new writing. Markdown-rendered.
-
-**UI behaviour:**
-- Window opens with sidebar nav (categorised: FACTIONS / PEOPLE / HISTORY / CULTURE / TERMS) + reader pane
-- Unread entries show a cyan dot in the sidebar
-- CODEX taskbar button shows the standard unread badge (matches INBOX)
-- "OPEN CODEX" deep-link from notification toasts scrolls to the entry
-
-**Unlock notification:**
-- Small toast slides in bottom-right (above System Console): *"NEW CODEX ENTRY: <name>"* with a small open-book icon
-- Click → opens Codex to entry
-- 8-second auto-dismiss
-- Dismiss button visible
-- Audio: one soft chime (respects SFX volume)
-- **Never blocks gameplay**
-
-**Acceptance:**
-- [ ] Window opens at 800×580, sidebar + reader, scrollable
-- [ ] Each unlock condition fires correctly via flag checks in disconnect path
-- [ ] Toast appears non-blockingly on unlock
-- [ ] CODEX taskbar button shows dot when entries unread
-- [ ] Sidebar shows partial entries with greyed-out icon for locked ones (teases them)
-
-#### Sub-sprint C — Cipher Essay Drip (Inbox lore) ✉️
-**Effort:** 1 day (writing + wiring)
-**Scope.** 5-8 additional scheduled inbox messages from CIPHER and NIGHTOWL_22 that drip lore over the first 30 hours of play. Each carries one Codex chapter's worth of background, in-character.
-
-**Catalogue:**
-- *Cipher: "The Bond, in plain language"* (after first 3 missions) — explains Rule 4 in his voice
-- *Cipher: "Reykjavík, and other lies"* (after first month VST) — short essay on the operative's retirement myth
-- *NIGHTOWL_22: "The history we don't write down"* (after Rank 3) — alludes to the Old Five
-- *Cipher: "On Astra"* (after first relay-burn) — anecdote about the legendary operative
-- *Cipher: "The argument about REVELATION"* (after first contact with REVELATION's terminal style) — frames the Stewardship-school view
-- *NIGHTOWL_22: "Why we use VST"* (after first anniversary marker) — the global clock as resistance
-
-Each: 250-400 words, encrypted/decryptable, lands in inbox via `evaluateDialogueTriggers()`. Same gate convention as Pass 2a (`dialogue_fired_<id>`).
-
-**Acceptance:**
-- [ ] Each message fires once at the appropriate trigger
-- [ ] Tone variants per pattern bucket (use the M14p infrastructure)
-- [ ] Player can re-read from inbox archive at any time
-
-#### Sub-sprint D — Environmental Flavour 🏛️
-**Effort:** Half a day
-**Scope.** Tiny, high-density additions that establish setting in the spaces players already look at.
-
-- **Boot BIOS line:** Change to *"VOIDLINK BIOS v2.1.0 — Internic-licensed routing — © 2199 Voidlink International, Geneva"*
-- **Bank window subheaders:** One canonical line per bank under the name:
-  - Global Trust Bank — *"New York · Nexus Financial subsidiary · est. 2179"*
-  - Pacific National — *"San Francisco · Nexus Financial subsidiary · est. 2181"*
-  - Cayman Trust — *"Cayman Islands · Neutral territory under Reconciliation Article XII"*
-  - Zurich Vault — *"Zurich · Discreet numbered banking · Reconciliation-grade compliance"*
-- **Faction broker bylines** in mission briefings — one line under the client handle: *"VoidLink Dispatch · Automated contract aggregator"*, *"CIPHER · Senior operative, Underground-aligned"*, *"NIGHTOWL_22 · Independent broker, Lagos"*
-- **Inbox PGP fingerprint footer:** *"PGP fingerprint confirmed — message integrity verified by Internic routing layer"* (subtle, one line at bottom of decrypted view)
-- **Operative Profile** small footer: *"Voidlink Bond signed [DATE] · Bond-clean: [YES/NO]"* — adds gravity to the profile
-
-**Acceptance:**
-- [ ] Each line in place, JetBrains Mono, dim grey
-- [ ] No layout regressions
-- [ ] No new strings break i18n scaffold (mark for translation pre-L8)
-
-#### Sub-sprint E — Splash Cards 🎬
-**Effort:** 2 days
-**Scope.** 5-8 static splash cards that fire between major story beats. Each is a full-screen overlay: one paragraph of text on a styled background (atmospheric, evocative — think Max Payne chapter titles, Disco Elysium scene transitions). 8-10 seconds each, fully skippable. Sets tone.
-
-**Catalogue:**
-- *"FIRST CONTACT"* — fires before Arc 1 Mission 1
-- *"THE LEAD"* — fires before Arc 1 Mission 2 (Arunmor)
-- *"THE ORIGIN NODE"* — fires before Arc 1 Mission 3 (climax)
-- *"AFTERMATH"* — fires after Arc 1 choice
-- *"REVELATION IS LISTENING"* — fires on first REVELATION inbox message
-- *"THE BOARD OF SEVEN"* — fires before first Government-aligned mission
-- *"DIRECTOR KOVAC"* — fires before Arc 5 first mission
-- *"DISCONNECT"* — fires before final ending choice
-
-Visual: full-screen darkness, centred text in cyan with subtle bloom, optional motif graphic (line-art icon — a key, a chain, a globe, etc.). One audio sting per card (existing victory/fail sting variants). Skippable.
-
-**Acceptance:**
-- [ ] Each card fires at its trigger and writes a `splash_fired_<id>` flag
-- [ ] Skippable via SPACE or click
-- [ ] Settings option to disable splash cards globally
-- [ ] No two cards back-to-back without a gameplay beat in between
-
-#### Total effort and ordering
-- Sub-sprints A + B + D ship together as Pass 1 (~3.5 days)
-- Sub-sprint C ships as Pass 2 (~1 day)
-- Sub-sprint E ships as Pass 3 (~2 days)
-- **Total ~6.5 days** — slot before S3 starts
 
 ### L2 — Tutorial rewrite: "Cipher's First Contract" 🎯
 **Window:** 2026-08-W2 → 2026-08-W3 (deliberately LAST among gameplay-touching sprints)
@@ -270,9 +93,6 @@ Visual: full-screen darkness, centred text in cyan with subtle bloom, optional m
 
 ---
 
-### L3 — Story arcs 6, 7, 8 ✅ SHIPPED 2026-06
-All three arcs landed in 2026-06. See Complete_Tasks.md for per-arc detail.
-
 ---
 
 ### L4 — Steam Cloud saves 🎯
@@ -298,114 +118,28 @@ All three arcs landed in 2026-06. See Complete_Tasks.md for per-arc detail.
 
 ---
 
-### L5 — Achievements ✅ SHIPPED 2026-06
-50 entries across six tiers wired in. See Complete_Tasks.md for the full detail. Steamworks SDK call is the only outstanding piece and rides with L4 Cloud Saves.
+### L5.1 — Save Integrity & Steam Achievement Trust 🚧
+**Window:** added 2026-06 in response to the pre-launch audit. ~3 days.
+**Status:** In progress — added after the user flagged that single-player saves are trivially editable and that achievements unlocked by JSON-editing would devalue Steam achievements for honest players.
 
-<!-- L5 historical spec retained below for context. Not actionable. -->
-<details><summary>Original L5 plan (shipped, kept for reference)</summary>
+**Scope.** Voidlink's commitment to fairness (no pay-to-win, ever) extends to *earned* outcomes.
 
-### ~~L5 — Achievements (30–50)~~ 🎯
-**Window:** 2026-07-W3 → 2026-08-W1 (1 week, parallel with L4)
-**Effort:** 1 week
-**Status:** Not started
-
-**Scope.** Wire achievements into Steamworks. Most map to existing `player.activeFlags` and `player.stats`.
-
-**Catalogue (first 40):**
-
-| ID | Trigger | Difficulty |
-|----|---------|------------|
-| `first_mission` | Complete first mission | Trivial |
-| `first_breach` | First node breached | Trivial |
-| `first_crack` | First successful crack | Trivial |
-| `clean_run` | Mission complete with no IDS triggered | Bronze |
-| `100_missions` | 100 missions completed | Silver |
-| `1000_missions` | 1000 missions | Gold |
-| `arc1_upload` | Arc 1 ending: upload | Story |
-| `arc1_destroy` | Arc 1 ending: destroy | Story |
-| `arc1_sell` | Arc 1 ending: sell | Story |
-| `arc5_containment` | Ending 1 | Story |
-| `arc5_liberation` | Ending 2 | Story |
-| `arc5_sovereignty` | Ending 3 | Story |
-| `arc5_erasure` | Ending 4 | Story |
-| `arc5_ghost` | Ending 5 (requires Ghost spec) | Story |
-| `all_five_endings` | Complete all 5 endings on one account | Gold |
-| `loan_default` | Default on a loan (ironic) | Bronze |
-| `million_cr` | Hold 1M Cr cash | Silver |
-| `notoriety_max` | Reach notoriety 10 | Silver |
-| `notoriety_min` | Reach notoriety -5 | Silver |
-| `paranoid` | Build a 10-hop relay chain | Silver |
-| `escape_artist` | 10 SECURE DISCONNECT at >90% trace | Silver |
-| `ghost_spec` | Choose Ghost | Bronze |
-| `architect_spec` | Choose Architect | Bronze |
-| `brute_spec` | Choose Brute | Bronze |
-| `social_spec` | Choose Social | Bronze |
-| `cipher_friend` | 20 missions with CIPHER as client | Silver |
-| `nightowl_friend` | 20 missions with NIGHTOWL_22 as client | Silver |
-| `arunmor_loyalist` | +500 Arunmor standing | Gold |
-| `underground_loyalist` | +500 Underground standing | Gold |
-| `voidlink_lifer` | +1000 Voidlink International standing | Gold |
-| `government_double_agent` | Reach Government allied while keeping any other faction allied | Gold |
-| `backdoor_master` | Plant 20 persistent backdoors | Silver |
-| `escalation_expert` | ESCALATE on 50 nodes | Silver |
-| `bountied` | Get traced and survive in same mission | Silver |
-| `time_lord` | Play across 30 in-game days (VST) | Bronze |
-| `wallet_warrior` | Earn 10M Cr lifetime | Gold |
-| `data_hoarder` | 200 messages in inbox | Bronze |
-| `clean_inbox` | Mark all as read (50+ unread) | Bronze |
-| `seasoned` | Complete an EA-season event during its window | Bronze |
-| `darknet_completionist` | Complete all 5 EA-seasonal narrative drops | Platinum |
-
-Tier mix: 8 trivial, 18 bronze, 8 silver, 5 gold, 1 platinum = 40 base. Add 10 hidden achievements (specific node sequences, easter eggs) for 50.
+1. **HMAC-signed local saves.** Append a hex `_integrity` field containing `HMAC-SHA256(saveBody, BUILD_SECRET)`. On load, recompute. Tampered saves load with a one-time warning *"This save appears modified. Steam achievements have been disabled for this character."* — keep playing, no public unlock-side-effects.
+2. **Recompute-on-unlock for Steam.** When `evaluateAchievements()` returns a new id, the future Steamworks SDK call is gated behind a *second* check that recomputes `ACHIEVEMENTS.find(a => a.id === id).check(player)` against current player state. Forged flags don't fire on Steam.
+3. **Cloud-save validation (lands with L4).** Server-side sanity checks on uploaded saves: credit balance vs `stats.creditsEarned`; achievement flags whose `check()` fails get stripped; faction standings within range; `notoriety` within `[-5, +10]`. Failed saves open read-only.
+4. **No DRM theatre.** No always-online, no kernel-level anti-cheat, no Denuvo. Protecting earned outcomes, not gating gameplay.
 
 **Tech.**
-- `achievement.ts` in `libs/core` with `Achievement` type + catalogue
-- `unlockAchievement(id)` action in `gameStore` — idempotent
-- Hook into existing flag/stat updates: every time a relevant flag changes, run the catalogue
-- Steamworks unlock call via `steamworks.js`; cache locally for offline plays
-- In-game achievement panel: Operative Profile → ACHIEVEMENTS tab with grid + unlock dates
+- `libs/core/src/engine/saveIntegrity.ts` — pure `signSave` / `verifySave`. Web Crypto for HMAC.
+- `BUILD_SECRET` injected at build time via `vite.config.ts` env.
+- `apps/web/src/store/persistence.ts` — sign on write, verify on load. On verify-fail set `activeFlags.save_tampered_at`.
+- `apps/web/src/store/gameStore.ts` — achievement-unlock loop respects `save_tampered_at`; flag is written locally but not queued for Steam.
 
 **Acceptance criteria.**
-- All 40 base + 10 hidden trigger reliably
-- Steam dashboard reflects unlocks
-- Offline unlock queues + flushes on next online boot
-- No false-positive unlocks (re-running a story arc doesn't re-fire)
-</details>
-
----
-
-### L6 — Perf pass + Low-Quality toggle ✅ SHIPPED 2026-06
-Code-splitting + lazy GlyphDrift dropped first-paint bundle from 425 KB → 187 KB gzipped. Low Quality toggle skips bloom passes and CSS blurs. See Complete_Tasks.md.
-
-<details><summary>Original L6 plan (shipped, kept for reference)</summary>
-
-### ~~L6 — Perf pass + Low-Quality toggle~~ 🎯
-**Window:** 2026-08-W1 → 2026-08-W2 (3 days)
-**Effort:** 3 days
-**Status:** Not started
-
-**Scope.** Make Voidlink playable on integrated graphics. Current bottleneck: bloom + 600-point starfield + scan-grid on NetworkMap, similar on WorldMap and GlyphDrift.
-
-**Toggle effect when ON ("Low Quality"):**
-- Bloom passes disabled (composer.render → renderer.render directly)
-- Starfield count halved (600 → 300 on NetworkMap; 1200 → 600 on WorldMap)
-- Bounce arc segment count: 60 → 30
-- Continent line opacity boosted to compensate for lost bloom glow
-- DataRain throttled to 12fps (was 18fps)
-- Game loop tick from 20Hz → 12Hz
-
-**Tech.**
-- `settingsStore` gets `quality: 'auto' | 'high' | 'low'`
-- `auto` detection: on first boot, run a 300ms benchmark frame; if < 30fps avg, default to `low`
-- Settings UI toggle (manual override)
-- Each Three.js component reads `quality` from store and adjusts on mount
-
-**Acceptance criteria.**
-- Integrated-GPU laptop (Intel UHD 620 class) hits 60fps on the desktop screen in Low Quality
-- Mission-active 60fps maintained
-- Visual difference is noticeable but not jarring (still feels like Voidlink)
-- Auto-detect is right ≥ 80% of the time on test hardware
-</details>
+- Clean save loads silently; tampered save loads with warning + flag
+- Forging `achievement_collaborator_ending` in JSON does NOT enter the Steam unlock queue
+- Tests: sign+verify round-trip; verify-fail on mutated body; gate-recompute matches catalogue
+- Warning is single, dismissable, non-blocking
 
 ---
 
@@ -470,30 +204,6 @@ Music: track from L1 mission-active set, brief tease only.
 - Tutorial works end-to-end in each language
 - Story missions readable in each language
 - Special characters render correctly (zh-CN, ja need different font stack — likely `Noto Sans CJK`)
-
----
-
-### L9 — EULA + Privacy Notice + CREDITS.md ✅ SHIPPED 2026-06
-Repo-root [EULA.md](../EULA.md), [PRIVACY.md](../PRIVACY.md), [CREDITS.md](../CREDITS.md). AI-assistance disclosure rewritten to match the developer's actual timeline. See Complete_Tasks.md.
-
-<details><summary>Original L9 plan (shipped, kept for reference)</summary>
-
-### ~~L9 — EULA + Privacy Notice + CREDITS.md~~ 🎯
-**Window:** 2026-08-W3 (1 day)
-**Effort:** 1 day
-**Status:** Not started
-
-**Scope.**
-- `EULA.md` — standard indie-game EULA from a template (e.g., MIT Game Dev template). Covers refunds, IP, mod liability, multiplayer code-of-conduct hook.
-- `PRIVACY.md` — what data is collected (local saves; Steam Cloud opt-in; Workshop mod metadata when published). Cookie statement (none used).
-- `CREDITS.md` — solo dev name, contributors, third-party library credits, music composer, AI-assistance disclosure paragraph (D3 from [§22](./Full_Plan.md#22-ai-assistance-disclosure)).
-- All three published in the Steam page footer + bundled with the build.
-
-**Acceptance criteria.**
-- EULA + privacy reviewed for over-reach (no IP claims on user-generated content beyond license to host)
-- CREDITS.md visible in game (Settings → CREDITS)
-- AI disclosure paragraph appears as a clearly-labelled section, not hidden
-</details>
 
 ---
 

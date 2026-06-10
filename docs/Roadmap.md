@@ -23,7 +23,7 @@ For per-milestone implementation detail see [Next_Stage.md](./Next_Stage.md). Fo
  May─┬─Jun─┬─Jul─┬─Aug─┬─Sep─┬─Oct─┬─Nov─┬─Dec─┬─Jan─┬─Feb─┬─Mar─┬─Apr─┬─May─┬─Jun─┬─Jul─┬─Aug─┬─Sep─┬─Oct─┬─Nov─ Mar ...
  │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │
  │ Pre-Alpha (M01–M14h.8, M15)             │ Pre-Launch  │ Early Access ───────────────────── 1.0 ─── DLC #1 ── DLC #2
- ✅ ───────────────────────── ◀ TODAY (2026-06-04)                                                │
+ ✅ ─────────────────────────────────── ◀ TODAY (2026-06-08)                                       │
                                           ▲                                                       ▲
                                           2026-09 EA launch (£11.99)                          2027-06 1.0 (£14.99)
 ```
@@ -94,7 +94,7 @@ All foundational gameplay shipped. 60/60 tests passing as of M14h.8. See [Comple
 
 ---
 
-## Phase 2 — Pre-Launch Polish (Jun–Aug 2026) 🚧 (largely shipped — see sprint table below)
+## Phase 2 — Pre-Launch Polish (Jun–Aug 2026) 🚧 — 6 of 8 sprints shipped (largely shipped — see sprint table below)
 
 Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next_Stage.md#1-pre-launch-sprints-l1l10) for full per-sprint detail.
 
@@ -111,6 +111,7 @@ Goal: **Steam Early Access ready by 2026-09-15.** See [Next_Stage.md §1](./Next
 | **S3**  | 2026-08-W1 → 2026-08-W3 | **L3 Story arcs 6–8** — DEAD DROP, THE QUIET WAR, LIGHTHOUSE | ✅ Shipped 2026-06 |
 | **S3b** | added mid-sprint 2026-06 | **M14r/s/t** — diegetic onboarding rebuild, Collaborator Axis, NPC tone shifts | ✅ Shipped 2026-06 |
 | **S4**  | 2026-07-W4 → 2026-08-W2 | **L4 Cloud Saves (Railway-Postgres) + L5 Achievements** | ✅ L5 shipped 2026-06 · L4 outstanding |
+| **S4.1** | added 2026-06 | **L5.1 Save Integrity & Steam Achievement Trust** — HMAC-signed local saves, recompute-on-unlock for Steamworks, cloud-validation when L4 lands | 🎯 In progress |
 | **S5**  | 2026-08-W2 → 2026-08-W3 | **L6 Perf + L10 Steam Deck** — bundle code-split, Low-Quality toggle | ✅ L6 shipped 2026-06 · L10 needs hardware |
 | **S6**  | 2026-06-W2 → 2026-08-W4 (parallel) | **L8 Localisation** — ES / DE / FR / RU / zh-CN / JA | 🎯 Scaffolded; needs translators |
 | **S7**  | 2026-08-W3 → 2026-08-W4 | **L2 Tutorial rewrite** — Cipher's First Contract | ✅ Shipped 2026-06 |
