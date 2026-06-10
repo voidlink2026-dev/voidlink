@@ -23,7 +23,7 @@ For per-milestone implementation detail see [Next_Stage.md](./Next_Stage.md). Fo
  May─┬─Jun─┬─Jul─┬─Aug─┬─Sep─┬─Oct─┬─Nov─┬─Dec─┬─Jan─┬─Feb─┬─Mar─┬─Apr─┬─May─┬─Jun─┬─Jul─┬─Aug─┬─Sep─┬─Oct─┬─Nov─ Mar ...
  │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │    │
  │ Pre-Alpha (M01–M14h.8, M15)             │ Pre-Launch  │ Early Access ───────────────────── 1.0 ─── DLC #1 ── DLC #2
- ✅ ─────────────────────────────────── ◀ TODAY (2026-06-08)                                       │
+ ✅ ─────────────────────────────────── ◀ TODAY (2026-06-10)                                       │
                                           ▲                                                       ▲
                                           2026-09 EA launch (£11.99)                          2027-06 1.0 (£14.99)
 ```

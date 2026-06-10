@@ -227,7 +227,7 @@ Mark each with a quick decision when you read this:
 - [ ] Founders Edition: yes / no / different shape?
 - [ ] Steam Next Fest demo: which fest window — June or October?
 - [ ] First-100 free streamer key giveaway: yes / no?
-- [ ] Operative Signature feature: now or post-EA?
+- [x] Operative Signature feature: **DECIDED — shipped 2026-06-10** (P1). 33-entry catalogue, rendered in Profile.
 - [ ] CRT mode: yes / no / "yes, but post-EA"?
 - [ ] Hardcore + Sandbox + Speedrun difficulty modes: ship before EA or as seasonal drop?
 - [ ] Composer budget cap: £1k / £2k / £3k?

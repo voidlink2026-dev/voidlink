@@ -2054,6 +2054,24 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 31 — P1 Operative Signature (2026-06)
+
+- [ ] Fresh character → Profile → identity row shows under the rank/spec lines: *"You are: an operative."*
+- [ ] Italic cyan text with hairline border-top separator above it; max-width 420px so it wraps cleanly on narrow profile windows
+- [ ] Hover tooltip reads: *"The game's quiet read of who you have become. Visible only here."*
+- [ ] Complete 10+ procedural missions with no axis tilt → signature reads *"You are: still finding out."*
+- [ ] Set `arc1_key_choice = 'upload'` in devtools (or play Arc 1 and choose upload) → signature reads *"You are: the one who released what you found."*
+- [ ] Set `choice_dead_drop_purge = true` → signature reads *"You are: someone MAGNUS no longer has."*
+- [ ] Set `choice_lighthouse_warn_cipher = true` AND `choice_dead_drop_purge = true` → dual-trait combo wins, signature reads *"You are: the kind of operative Cipher writes to."* (verifies priority ordering)
+- [ ] Set `choice_quiet_war_preserve_balance = true` → signature reads *"You are: the one who chose to be complicit in a managed war so eighty-three thousand strangers got more time."*
+- [ ] Set `choice_lighthouse_take_vance_out = true` → signature reads *"You are: the cleaner. The lighthouse continues without you."*
+- [ ] Set 12+ `choice_corp_contract_taken` → bond_collaborator_path triggers → signature reads *"You are: stabilising the wreckage."*
+- [ ] Set 10+ `choice_data_sold` → strong_mercenary fallback triggers → signature reads *"You are: someone whose handle no longer appears on the Mesh in the company it used to."*
+- [ ] Set `choice_bond_rule4_violated = true` → signature reads *"You are: the one who broke Rule Four. No appeal will be heard."*
+- [ ] Signature does NOT appear on any leaderboard, achievement payload, Steam unlock toast, or anywhere outside the Profile window
+- [ ] Save the game, reload → signature persists (it's computed live from `activeFlags`, doesn't need its own save field)
+- [ ] Faulty predicate in `OPERATIVE_SIGNATURE_CATALOGUE` doesn't crash Profile (defensive `try/catch` per entry)
+
 ---
 
 # Appendix A — Full Single-Player Test Plan
@@ -2218,6 +2236,7 @@ The diegetic onboarding rebuild (M14r) is load-bearing for first impressions. Ev
 ## A.12 — Profile Window (★)
 
 - [ ] ★ Tabs: OVERVIEW / FACTIONS / STANDINGS / ACHIEVEMENTS
+- [ ] ★ Identity row shows handle, username, rank, spec (if chosen), faction tag (if joined), AND **operative signature** (P1) — italic cyan line reading *"You are: ..."* tailored to accumulated choices
 - [ ] ★ Overview shows hardware specs, owned software, lifetime stats, XP bar, level title
 - [ ] ★ Factions tab shows joined faction (if any) + faction insignia
 - [ ] ★ Standings tab shows all 5 factions with bars: Voidlink, Arunmor, Ares, Underground, the Nameless (and the additional MAGNUS-relay / Helios where they exist)
