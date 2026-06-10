@@ -125,18 +125,19 @@ The current game is text-and-typewriter. Voice acting is a *deliberate aesthetic
 
 | Role | M/F | Age | Accent | Reference | Estimated cost |
 |---|---|---|---|---|---|
-| **CIPHER** | M | 40s-50s | Open — cast by tonal fit; accent should be authentic to the actor's ethnicity (NOT a performed "neutral" accent). Strong fits: Black British, British-Pakistani, Yoruba/Nigerian, Eastern European immigrant, US-Black, Indian-English. AVOID: RP, generic-American newscaster. | Mark Strong in Tinker Tailor (texture, not accent); Idris Elba's calmer Wire moments; Riz Ahmed reading aloud; Adewale Akinnuoye-Agbaje | £400-700 |
-| **NIGHTOWL_22** | F | 50s+ | Nigerian or UK-Nigerian diaspora — character is canonically Lagos-based. Authentic accent only; NOT performative or "Hollywood African". Canon: *"her voice is older than her handle"* | Sophie Okonedo audiobook reads; Wunmi Mosaku; the cadence of Chimamanda Ngozi Adichie's interviews | £400-700 |
-| **YAAKOV STERN** (Bond reading + optional trailer VO) | M | 60s+ | Ashkenazi / Eastern European Jewish heritage — name is Yiddish-German. Russian / Polish / Czech / Hungarian-tinged English all fit. Could also be an Israeli-English speaker. NOT cartoonish. | Christoph Waltz reading aloud; Mads Mikkelsen serious-mode; the late Erland Josephson; F. Murray Abraham | £400-700 |
-| **ASHER VANCE** (consider recasting as female "ASTRID VANCE") | M or F | 40s | Open — character is set in Reykjavík but was formerly at Voidlink Dispatch which could be anywhere. Cast by tonal fit. Strong fits: Icelandic-English, mainland Scandinavian-English, American (Pacific Northwest neutral), British (mild Northern or middle-class non-RP), Black American. | Mark Gatiss quiet moments (texture); Ólafur Darri Ólafsson; David Tennant tired-not-camp; Wagner Moura quiet-mode | £300-500 |
+| **CIPHER** | M | 40s-50s | Open — we cast by tonal fit and accept the actor's authentic accent. Fits include British (any region, RP or otherwise), Black British, British-Pakistani, Yoruba/Nigerian, US-Black, Eastern European immigrant, Indian-English, and others. We are not specifying ethnicity; we are saying we will not *default* to one. The only thing we won't accept is a *performed* accent that isn't the actor's own. | Mark Strong in Tinker Tailor; Idris Elba's calmer Wire moments; Riz Ahmed reading aloud; Adewale Akinnuoye-Agbaje | £400-700 |
+| **NIGHTOWL_22** | F | 50s+ | Nigerian or UK-Nigerian diaspora — character is canonically Lagos-based. Authentic accent only; NOT a performed "Hollywood African". Canon: *"her voice is older than her handle"*. | Sophie Okonedo audiobook reads; Wunmi Mosaku; the cadence of Chimamanda Ngozi Adichie's interviews | £400-700 |
+| **YAAKOV STERN** (Bond reading + optional trailer VO) | M | 60s+ | Ashkenazi / Eastern European Jewish heritage — name is Yiddish-German. Russian / Polish / Czech / Hungarian-tinged English all fit. Israeli-English also fits. British actors with this heritage absolutely qualify. NOT cartoonish. | Christoph Waltz reading aloud; Mads Mikkelsen serious-mode; the late Erland Josephson; F. Murray Abraham | £400-700 |
+| **ASHER VANCE** (consider recasting as female "ASTRID VANCE") | M or F | 40s | Open. Reykjavík-set but formerly at Voidlink Dispatch which could be anywhere. Cast by tonal fit. Fits include British (any region including RP), Icelandic-English, mainland Scandinavian-English, American (any region), Black American — any authentic accent that matches the *texture* described. | Mark Gatiss quiet moments; Ólafur Darri Ólafsson; David Tennant tired-not-camp; Wagner Moura quiet-mode | £300-500 |
+| **DIRECTOR KOVAC** (Tier 3 — adds substantially in the JCB endings) | F | 50s | Open. The character is a senior law-enforcement director. Fits include British (RP works particularly well for institutional authority here), American (East Coast educated), or any equivalent. Authoritative without being cold. | Olivia Williams; Sigourney Weaver in interviews; Cynthia Erivo serious-mode | £300-500 |
 | **MAGNUS / REVELATION** | — | — | Voice of one of the above + FL Studio processing (vocoder + pitch shift + reverb tail) | Tilda Swinton narrative; HAL 9000; SOMA's WAU | £0 (use existing cast) |
 
-**Gender balance:** the default pick lands 3M / 1F (Cipher M, NightOwl F, Stern M, Vance M). Honest improvements:
-- Recast Vance → Astrid (gender is incidental to the character's function) → 2M / 2F.
+**Gender balance:** the default pick lands 3M / 2F if you include Kovac (Cipher M, NightOwl F, Stern M, Vance M, Kovac F). Without Kovac it's 3M / 1F. Honest improvements available:
+- Recast Vance → Astrid (gender is incidental to the character's function) → 2M / 3F with Kovac, 2M / 2F without.
 - Stern could be recast as female ("Yael Stern") — the canon doesn't define the signatory's gender beyond the name.
 - Cipher is also genuinely open if we want — there's nothing in the canon that requires the senior Underground operative to be male; the existing letters use no gendered self-reference.
 
-The cast doesn't need to default to British, white, or male. We cast for tonal fit and let authentic accent/ethnicity/gender follow whom we hire. The character writing is deliberately open on those axes so any of the four roles can flex.
+The cast doesn't need to default to British, white, or male. We cast for tonal fit and let authentic accent / ethnicity / gender follow whom we hire. Some roles may well end up with British actors — that's fine; the point is we are not *assuming* it. The character writing is deliberately open on those axes so any of the five roles can flex.
 
 ### B.2 Marketplaces, ranked
 
@@ -186,11 +187,11 @@ Generic header for all four:
 
 > Senior Underground operative in a near-future cyberpunk setting. The character writes letters to a new operative (the player), in measured, weary prose. He is NOT macho or hard-boiled. He is intelligent, slightly tired, dryly observant. Reads in the manner of a senior tradesperson explaining their craft to an apprentice he half-expects not to make it.
 >
-> **Accent:** Open. We are casting by tonal fit, not accent — the actor's authentic accent will define the character. Strong fits include Black British, British-Pakistani, Yoruba/Nigerian, Eastern European immigrant, US-Black, Indian-English, mixed-heritage British non-RP. We are **not** looking for performed "neutral" voices or RP / generic-American newscaster delivery.
+> **Accent:** Open. We will cast for tonal fit and accept the actor's authentic accent — whatever it is. Fits include British (any region — RP, Northern, Scottish, Estuary, Welsh, Black British, British-Pakistani, etc.), American, Yoruba/Nigerian, Eastern European immigrant, Indian-English, and others. We are not specifying ethnicity; we are simply not defaulting to one. The only thing we will not accept is a *performed* accent that is not the actor's own.
 >
 > **Age range:** 40s-50s, male.
 >
-> **Reference (texture, not accent):** Mark Strong in Tinker Tailor Soldier Spy; Idris Elba's calmer Wire moments; Riz Ahmed reading aloud; Adewale Akinnuoye-Agbaje.
+> **Reference (texture, not accent):** Mark Strong in Tinker Tailor Soldier Spy; Idris Elba's calmer Wire moments; Riz Ahmed reading aloud; Adewale Akinnuoye-Agbaje; Wagner Moura quiet-mode.
 >
 > **Audition lines:** *"Saw the wipe pattern. Professional. Keep that habit. The hard part isn't getting in — it's leaving without writing your name on the wall."*
 >
@@ -228,15 +229,29 @@ Generic header for all four:
 
 > Former corporate intelligence analyst, now privately consulting from Reykjavík. The character refused, two years before the game opens, to write a profile on someone whose work they respected, and quit. They are principled, exhausted, formerly idealistic. The voice should carry the texture of someone who has been right and unrewarded for a long time.
 >
-> **Accent:** Open. Cast by tonal fit. The character is set in Reykjavík but was previously at Voidlink Dispatch, which could be from anywhere. Strong fits include Icelandic-English, mainland Scandinavian-English, American (Pacific Northwest neutral), British (mild Northern or middle-class non-RP), Black American. Authentic to the actor's background.
+> **Accent:** Open. Reykjavík-set but previously at Voidlink Dispatch which could be anywhere. Fits include British (any region — RP works, Northern works, Scottish works), Icelandic-English, mainland Scandinavian-English, American (any region), Black American, or any other accent authentic to the actor's background. The character has *travelled*.
 >
-> **Age range:** 40s. **Open to male OR female voices** — we are casting the role on tonal fit and may rename "Asher" to "Astrid" depending on whom we hire.
+> **Age range:** 40s. **Open to male OR female voices** — we are casting on tonal fit and may rename "Asher" to "Astrid" depending on whom we hire.
 >
-> **Reference (texture, not accent):** Mark Gatiss in quieter moments; Ólafur Darri Ólafsson; David Tennant tired-not-camp; Wagner Moura quiet-mode.
+> **Reference (texture, not accent):** Mark Gatiss in quieter moments; Ólafur Darri Ólafsson; David Tennant tired-not-camp; Wagner Moura quiet-mode; Sophie Okonedo audiobook reads.
 >
 > **Audition lines:** *"I worked for Voidlink Dispatch from 2191 to 2197. I helped build the system you read about. We called it the lighthouse — because it is a beam pointed at you, so that buyers can see you clearly."*
 >
 > **Estimated session:** 45-60 minutes covering ~2 minutes of audio.
+
+**Brief — DIRECTOR KOVAC** *(Tier 3 add)*
+
+> Director of the Joint Cybersecurity Bureau (the JCB) — the international law-enforcement authority operatives are afraid of. Appears in the player's life only at major endings (the ERASURE and CONTAINMENT families). When she does appear she is the *establishment voice*: senior, polite, professionally curious about what you have become. Not a villain. Not a friend. The institution speaking through one person.
+>
+> **Accent:** Open. RP British works particularly well for this kind of institutional authority — that register is the *point*. American educated East Coast also fits. Any equivalent authoritative-but-not-cold accent works. Authentic to the actor.
+>
+> **Age range:** 50s, female.
+>
+> **Reference (texture, not accent):** Olivia Williams; Sigourney Weaver in interviews; Cynthia Erivo serious-mode; Indira Varma.
+>
+> **Audition lines:** *"I have read your file. All of it. I would like, if I may, to ask you some questions that are not in it. You should know that the answers you give now go nowhere — not to a court, not to a record, not to your handler. They go only to me."*
+>
+> **Estimated session:** 45 minutes covering ~90 seconds of ending dialogue.
 
 ### B.5 Recording / direction logistics
 
@@ -248,12 +263,13 @@ Generic header for all four:
 
 ### B.6 Budget summary — voice
 
-| Tier | Cast | Total |
-|---|---|---|
-| **A — trailer only** | 1 voice | £200-500 |
-| **★ B — light** *(recommended)* | 4 voices, ~6 mins audio | £1,500-2,500 |
-| C — standard | 5-6 voices, ~15 mins audio | £2,500-4,500 |
-| D — full | every NPC letter voiced | £8,000-15,000+ |
+| Tier | Cast | Roles voiced | Total |
+|---|---|---|---|
+| **A — trailer only** | 1 voice | 1 trailer line | £200-500 |
+| **★ B — light** *(recommended)* | 4 voices, ~6 mins audio | CIPHER + NIGHTOWL + STERN + VANCE (MAGNUS done via processing one of the four) | £1,500-2,500 |
+| C — standard | 5 voices, ~8 mins audio | Tier B + DIRECTOR KOVAC | £1,800-3,000 |
+| D — extended | 5-6 voices, ~15 mins audio | Tier C + voiced versions of more NPC letters across the game | £3,000-5,500 |
+| E — full | every NPC letter voiced | every Cipher letter, every NightOwl letter, every Asher line | £8,000-15,000+ |
 
 ---
 
