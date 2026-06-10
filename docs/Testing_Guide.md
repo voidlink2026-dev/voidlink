@@ -2054,6 +2054,21 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 32 — P2 Operative Diary (2026-06)
+
+- [ ] Fresh character → taskbar shows new DIARY launcher button → click → window opens with empty-state text *"The diary is empty. Entries will be written as the world changes around you. Take a contract."*
+- [ ] Complete first procedural mission → disconnect → on next desktop tick, DIARY launcher gets a cyan pulsing badge with `2` (first_mission + first_log_wipe both fire on the same disconnect)
+- [ ] Open DIARY → both entries render newest-first with VST timestamp + body text; badge zeroes on open
+- [ ] Inline `*italic markers*` render as italic — visible in the cipher_first_letter entry once that fires
+- [ ] Set arc1_key_choice = 'upload' in devtools → next disconnect → arc1_upload entry appears in diary
+- [ ] Reach 10 missions → ten_missions entry fires
+- [ ] Reach 1M Cr cash → millionaire entry fires
+- [ ] Set choice_lighthouse_warn_cipher → arc8_warn_cipher entry fires
+- [ ] Choose Ghost specialisation → first_spec_ghost entry fires (each spec has its own variant — verify Architect, Brute, Social each work on a fresh character)
+- [ ] Save the game, reload → diary entries persist (stored on `player.diary[]`)
+- [ ] Re-fire a flag that already wrote its entry → the diary does NOT get a duplicate (one-shot via `diary_<id>` flag check)
+- [ ] Empty-state and populated views both pass with screen reader (DiaryWindow renders semantic markup, not flexbox-only layout)
+
 ## Phase 31 — P1 Operative Signature (2026-06)
 
 - [ ] Fresh character → Profile → identity row shows under the rank/spec lines: *"You are: an operative."*

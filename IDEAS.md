@@ -52,7 +52,7 @@ Ordered by impact-for-effort.
    - *"You are: the one who turned away."*
    ~3 hours to author. Lands hard because the player sees themselves *named*.
 
-2. **Operative Diary** *(★ high-value)*. Automatic Codex-style notes accumulating as the world simulation rolls forward. Written in second-person, terse, in the established voice. A new entry every season transition or major choice. Player can open Diary window from taskbar and re-read their own story. ~6 hours.
+2. **Operative Diary** ✅ **SHIPPED 2026-06-10 (P2).** Was: Automatic Codex-style notes accumulating as the world simulation rolls forward. Written in second-person, terse, in the established voice. A new entry every season transition or major choice. Player can open Diary window from taskbar and re-read their own story. ~6 hours.
 
 3. **End-of-arc Desktop Wallpaper Shift**. After each arc resolution, the desktop background subtly changes — a different city skyline, a different glyph in the corner, a different ambient tint. Players will notice on the second arc. Tiny technical cost, big "the world is responding to me" feel. ~1 hour.
 

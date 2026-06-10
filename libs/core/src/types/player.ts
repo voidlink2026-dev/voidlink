@@ -1,3 +1,5 @@
+import type { DiaryEntry } from '../data/diaryEntries.ts'
+
 export type PlayerId = string
 
 export type Specialization = 'ghost' | 'brute' | 'social' | 'architect'
@@ -66,6 +68,7 @@ export interface PlayerProfile {
   software: PlayerSoftware
   completedMissions: string[]
   activeFlags: Record<string, boolean | string | number> // narrative state flags
+  diary?: DiaryEntry[]                                   // P2 — operative diary entries, oldest-first
   stats: PlayerStats
   bounceLibrary: BounceNode[]
   faction: FactionData | null

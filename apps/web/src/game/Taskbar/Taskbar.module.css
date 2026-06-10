@@ -103,6 +103,31 @@
   box-shadow: 0 0 5px #39ff14;
 }
 
+/* P2 — diary unread badge */
+.unreadBadge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: #00cfff;
+  color: #050505;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(0, 207, 255, 0.5);
+  animation: badgePulse 2.4s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(0, 207, 255, 0.5); }
+  50% { box-shadow: 0 0 10px rgba(0, 207, 255, 0.9); }
+}
+
 /* ── Open window strip ─────────────────────────── */
 .centre {
   flex: 1;

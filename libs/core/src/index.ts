@@ -22,6 +22,7 @@ export * from './data/endings.ts'
 export * from './data/codex.ts'
 export * from './data/achievements.ts'
 export * from './data/operativeSignature.ts'
+export * from './data/diaryEntries.ts'
 export * from './data/splashCards.ts'
 
 // Network

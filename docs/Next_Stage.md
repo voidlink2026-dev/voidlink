@@ -244,21 +244,8 @@ For voice cast briefs, music tooling, and trailer workflow, see [`PRODUCTION.md`
 
 ---
 
-### P2 — Operative Diary 💭
-**Effort:** ~6 hours. **Window:** post-EA-safe but lands harder before.
-
-A new Codex-style window that the game automatically writes to in second-person, terse, in-voice. A new entry per season transition or major choice. Lets the player re-read their own story as a personal artefact of the run.
-
-**Sample entries:**
-- *"You took the Δ5 contract. You knew the data was already a lie. You corrupted it anyway. The payment cleared in ninety seconds."*
-- *"Cipher stopped writing to you for nine days. He started again with three lines. You read them twice."*
-
-**Tech.**
-- `libs/core/src/data/diaryEntries.ts` — template strings keyed on choice flag transitions.
-- `gameStore` writes to `s.player.diary[]` when a flagged event fires.
-- New `DiaryWindow` opens from taskbar.
-
-**Acceptance.** ~40 template entries. Player can scroll back through their full run. Last entry per session is highlighted.
+### P2 — Operative Diary ✅ SHIPPED 2026-06
+44-entry catalogue in [`diaryEntries.ts`](../libs/core/src/data/diaryEntries.ts). One-shot triggers via `diary_<id>` flag. New `DiaryWindow` opens from taskbar; cyan pulsing unread badge on the launcher when new entries land. Renders newest-first with VST timestamps. 12 tests.
 
 ---
 

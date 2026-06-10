@@ -19,6 +19,7 @@ import { BounceChainWindow } from '../../game/BounceChain/BounceChainWindow.tsx'
 import { EmailInbox } from '../../game/EmailInbox/EmailInbox.tsx'
 import { ResearchBench } from '../../game/Research/ResearchBench.tsx'
 import { CodexWindow } from '../../game/Codex/CodexWindow.tsx'
+import { DiaryWindow } from '../../game/Diary/DiaryWindow.tsx'
 import { CodexUnlockToast } from '../../game/Codex/CodexUnlockToast.tsx'
 import { AchievementUnlockToast } from '../../game/Achievements/AchievementUnlockToast.tsx'
 import { SplashOverlay } from '../../game/Splash/SplashOverlay.tsx'
@@ -57,6 +58,7 @@ const WINDOW_COMPONENTS: Record<string, React.ComponentType> = {
   EmailInbox,
   ResearchBench,
   CodexWindow,
+  DiaryWindow,
 }
 
 export function DesktopScreen() {

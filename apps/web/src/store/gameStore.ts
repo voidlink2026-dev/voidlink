@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, evaluateAchievements, getAchievement, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, evaluateAchievements, getAchievement, evaluateDiaryEntries, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -208,6 +208,7 @@ interface GameState {
   codexFocusId: string | null       // deep-link target for the Codex window
   achievementUnlockQueue: string[]  // L5 — queued in-game achievement toasts
   steamUnlockQueue: string[]        // L5.1 — gated queue for Steamworks SDK (drains on L4)
+  diaryUnreadCount: number          // P2 — unread diary entries since last open
   pendingSplash: string | null      // M14q Sub-sprint E — splash card ID
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
@@ -330,6 +331,7 @@ interface GameActions {
   evaluateCodexUnlockNotifications: () => void
   dismissCodexUnlock: (id: string) => void
   dismissAchievementUnlock: (id: string) => void
+  markDiaryRead: () => void
   setCodexFocusId: (id: string | null) => void
   markCodexRead: (id: string) => void
 
@@ -363,6 +365,7 @@ export const useGameStore = create<GameState & GameActions>()(
     codexFocusId: null,
     achievementUnlockQueue: [],
     steamUnlockQueue: [],
+    diaryUnreadCount: 0,
     pendingSplash: null,
     activeWorldEvents: [],
     nextWorldEventAt: null,
@@ -1269,6 +1272,22 @@ export const useGameStore = create<GameState & GameActions>()(
                   if (!s.steamUnlockQueue.includes(id)) s.steamUnlockQueue.push(id)
                 }
               }
+            }
+          }
+
+          // P2 — Operative Diary. Each entry is one-shot: presence of
+          // `diary_<id>` flag means it's been written. Newly-eligible
+          // entries get appended to `player.diary[]` (oldest-first) and a
+          // taskbar pulse signals the player there's something new.
+          if (s.player) {
+            const newDiary = evaluateDiaryEntries(s.player)
+            if (newDiary.length > 0) {
+              if (!s.player.diary) s.player.diary = []
+              for (const entry of newDiary) {
+                s.player.diary.push(entry)
+                s.player.activeFlags[`diary_${entry.id}`] = entry.writtenAt
+              }
+              s.diaryUnreadCount = (s.diaryUnreadCount ?? 0) + newDiary.length
             }
           }
 
@@ -2375,6 +2394,9 @@ export const useGameStore = create<GameState & GameActions>()(
 
     dismissAchievementUnlock: (id) =>
       set((s) => { s.achievementUnlockQueue = s.achievementUnlockQueue.filter((x) => x !== id) }),
+
+    markDiaryRead: () =>
+      set((s) => { s.diaryUnreadCount = 0 }),
 
     setCodexFocusId: (id) =>
       set((s) => { s.codexFocusId = id }),
