@@ -2054,6 +2054,26 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 33 — P4 CRT Mode + P8 Inbox PGP Footer (2026-06)
+
+**P4 CRT / Scanline Mode**
+- [ ] Settings → CRT / SCANLINE MODE toggle present alongside LOW QUALITY
+- [ ] Toggle ON → scanlines visible across entire screen, including all overlays
+- [ ] Toggle ON → slight vignette darkens corners; subtle "phosphor sweep" animates over ~8s loop
+- [ ] Toggle ON → text gets a faint red/blue chromatic-aberration ghost (most visible on bright cyan text)
+- [ ] Toggle OFF → overlay disappears completely (no residual filters)
+- [ ] Setting persists across reload (zustand persist middleware)
+- [ ] CRT overlay does NOT block clicks (pointer-events: none)
+- [ ] On low-end hardware (or with `data-quality=low`), CRT mode does not noticeably tank FPS — it's pure CSS, no WebGL
+
+**P8 Inbox PGP Footer**
+- [ ] Decrypt any encrypted message (e.g. a Cipher letter) → footer renders at end of message body
+- [ ] Footer reads: *"── PGP fingerprint confirmed — message integrity verified by Internic routing layer ──"*
+- [ ] Footer is dim cyan italic, smaller font, dashed border-top above it
+- [ ] Footer text is NOT selectable (user-select: none — it's UI chrome)
+- [ ] Footer only appears on *encrypted* messages; clear-text system messages (sys.ops) do not get it
+- [ ] Decrypted state persists — footer doesn't flicker on re-open
+
 ## Phase 32 — P2 Operative Diary (2026-06)
 
 - [ ] Fresh character → taskbar shows new DIARY launcher button → click → window opens with empty-state text *"The diary is empty. Entries will be written as the world changes around you. Take a contract."*

@@ -160,6 +160,18 @@
   letter-spacing: 0.06em;
 }
 
+/* P8 — diegetic PGP footer on decrypted messages */
+.pgpFooter {
+  margin-top: 24px;
+  padding-top: 10px;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: #5a8a9a;
+  border-top: 1px dashed rgba(90, 138, 154, 0.3);
+  font-style: italic;
+  user-select: none;
+}
+
 .readerBody {
   flex: 1;
   overflow-y: auto;

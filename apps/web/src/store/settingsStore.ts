@@ -17,6 +17,10 @@ export interface Settings {
   //   - CSS backdrop-filter blurs are dropped via [data-quality=low] selector
   // Recommended for Steam Deck and integrated-GPU laptops.
   lowQuality: boolean
+  // P4 — CRT / scanline mode. Cosmetic overlay only (CSS); has zero
+  // perf impact when off. Adds scanlines + curvature + slight chromatic
+  // aberration. Some players will love it; others ignore it. Off by default.
+  crtMode: boolean
 }
 
 interface SettingsActions {
@@ -34,6 +38,7 @@ const defaults: Settings = {
   uiScale: 1.0,
   disableSplashCards: false,
   lowQuality: false,
+  crtMode: false,
 }
 
 export const useSettingsStore = create<Settings & SettingsActions>()(

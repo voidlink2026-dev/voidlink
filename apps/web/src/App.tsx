@@ -17,6 +17,7 @@ export function App() {
   const theme      = useSettingsStore((s) => s.theme)
   const uiScale    = useSettingsStore((s) => s.uiScale)
   const lowQuality = useSettingsStore((s) => s.lowQuality)
+  const crtMode    = useSettingsStore((s) => s.crtMode)
 
   // Apply theme to document root
   useEffect(() => {
@@ -28,6 +29,11 @@ export function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-quality', lowQuality ? 'low' : 'high')
   }, [lowQuality])
+
+  // P4 — CRT / scanline mode. data-crt attribute on root drives the overlay.
+  useEffect(() => {
+    document.documentElement.setAttribute('data-crt', crtMode ? 'on' : 'off')
+  }, [crtMode])
 
   // Apply UI scale via zoom
   useEffect(() => {
@@ -76,6 +82,9 @@ export function App() {
       </AnimatePresence>
       <TraceAmbient />
       {screen === 'desktop' && <ConnectionEffect />}
+      {/* P4 — CRT / scanline overlay. Pointer-events:none; renders only when
+          data-crt=on on the root. Effect is pure CSS — zero perf when off. */}
+      {crtMode && <div className="crt-overlay" aria-hidden="true" />}
     </>
   )
 }

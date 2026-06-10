@@ -265,3 +265,48 @@ button, input, select, textarea {
 [data-quality="low"] {
   --bloom-disabled: 1;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   P4 — CRT / scanline mode. Pure CSS, no WebGL. Two layers:
+   (1) horizontal scanlines via repeating-linear-gradient
+   (2) faint vignette + subtle phosphor flicker
+   When data-crt=off the overlay element doesn't render at all (App.tsx).
+   When on, the overlay sits at z-index 99999 with pointer-events:none.
+   ───────────────────────────────────────────────────────────────────────── */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+  background:
+    /* horizontal scanlines */
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.18) 0px,
+      rgba(0, 0, 0, 0.18) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    /* subtle vignette */
+    radial-gradient(
+      ellipse at center,
+      transparent 50%,
+      rgba(0, 0, 0, 0.28) 100%
+    );
+  /* very faint horizontal "phosphor" sweep */
+  animation: crtPhosphor 8s linear infinite;
+  mix-blend-mode: multiply;
+}
+
+@keyframes crtPhosphor {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 0 -3px, 0 0; }
+}
+
+/* Slight chromatic-aberration ghost on body text when CRT is on.
+   Cheap: a 0.5px outline tinted in red+blue. */
+[data-crt="on"] body {
+  text-shadow:
+    0.5px 0 0 rgba(255, 80, 80, 0.18),
+    -0.5px 0 0 rgba(80, 200, 255, 0.18);
+}

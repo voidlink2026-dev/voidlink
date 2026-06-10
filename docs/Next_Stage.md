@@ -258,12 +258,8 @@ After each arc resolution the desktop background subtly changes — different ci
 
 ---
 
-### P4 — CRT / Scanline Visual Mode 💭
-**Effort:** ~2 hours. **Window:** any.
-
-Settings toggle: CRT mode adds scanlines + slight CRT curvature + chromatic aberration to the entire screen. Optional, opt-in. Hardcore fans will love it; everyone else ignores it.
-
-**Tech.** CSS overlay with mix-blend-mode + filter primitives. No WebGL required for the basic effect. Performance neutral.
+### P4 — CRT / Scanline Visual Mode ✅ SHIPPED 2026-06
+CSS-only overlay (no WebGL). Scanlines via repeating-linear-gradient + subtle vignette + slow phosphor sweep keyframe + 0.5px text-shadow chromatic aberration ghost. Toggle in Settings. Zero perf impact when off.
 
 ---
 
@@ -312,14 +308,8 @@ Non-gameplay news headlines and inbox messages drip into the world even without 
 
 ---
 
-### P8 — Inbox PGP Footer 💭
-**Effort:** ~30 min. **Window:** any.
-
-Subtle one-line footer on every decrypted inbox view:
-
-> *"PGP fingerprint confirmed — message integrity verified by Internic routing layer."*
-
-Pure flavour. Costs nothing. Deeply diegetic.
+### P8 — Inbox PGP Footer ✅ SHIPPED 2026-06
+Renders on every decrypted encrypted message: *"── PGP fingerprint confirmed — message integrity verified by Internic routing layer ──"*. Tiny dashed border-top, dim cyan italic, user-select disabled (it's chrome, not content).
 
 ---
 

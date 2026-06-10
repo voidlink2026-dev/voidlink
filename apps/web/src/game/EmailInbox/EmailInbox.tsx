@@ -136,7 +136,15 @@ export function EmailInbox() {
 
             <div className={styles.readerBody}>
               {showDecrypted ? (
-                selected.body
+                <>
+                  {selected.body}
+                  {/* P8 — diegetic PGP footer on decrypted messages */}
+                  {selected.encrypted && selected.fromFingerprint && (
+                    <div className={styles.pgpFooter} aria-hidden="true">
+                      ── PGP fingerprint confirmed — message integrity verified by Internic routing layer ──
+                    </div>
+                  )}
+                </>
               ) : (
                 <>
                   <div className={styles.cipherOverlay}>{cipherArt(selected.id)}</div>
