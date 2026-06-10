@@ -782,6 +782,9 @@ export const useGameStore = create<GameState & GameActions>()(
           c.toolId === 'cracker_v3' || c.toolId === 'cracker_v4' || c.toolId === 'cracker_v5')
         if (!hasTier3Cracker) { result = 'underqualified'; return }
         node.hasRoot = true
+        // L5 — stat tracking for `escalation_expert` achievement (50 escalations)
+        s.player.activeFlags.stat_escalations =
+          ((s.player.activeFlags.stat_escalations as number) ?? 0) + 1
         // Trace spike: + tier × 2.5%
         if (s.traceState) {
           s.traceState.level = Math.min(100, s.traceState.level + node.securityTier * 2.5)
@@ -805,6 +808,9 @@ export const useGameStore = create<GameState & GameActions>()(
         if (!node?.hasRoot) { result = 'no_root'; return }
         if (node.hasBackdoor) { result = 'already_planted'; return }
         node.hasBackdoor = true
+        // L5 — stat tracking for `backdoor_master` achievement (20 backdoors)
+        s.player.activeFlags.stat_backdoors_planted =
+          ((s.player.activeFlags.stat_backdoors_planted as number) ?? 0) + 1
         // Save persistent backdoor key on player.activeFlags so it survives across missions
         const mission = s.missions.find((m) => m.id === s.activeMissionId)
         if (mission) {
@@ -1120,6 +1126,26 @@ export const useGameStore = create<GameState & GameActions>()(
             s.player.stats.totalMissions++
             s.player.completedMissions.push(mission.id)
 
+            // L5 — stat tracking for client-based achievements
+            const ch = mission.briefing.clientHandle.toLowerCase()
+            if (ch === 'cipher') {
+              s.player.activeFlags.stat_cipher_contracts =
+                ((s.player.activeFlags.stat_cipher_contracts as number) ?? 0) + 1
+            }
+            if (ch === 'nightowl_22' || ch === 'night_owl_22' || ch === 'nightowl22') {
+              s.player.activeFlags.stat_nightowl_contracts =
+                ((s.player.activeFlags.stat_nightowl_contracts as number) ?? 0) + 1
+            }
+            // L5 — escape_artist stat: disconnect at >90% trace
+            if (s.traceState && s.traceState.level >= 90) {
+              s.player.activeFlags.stat_high_trace_escapes =
+                ((s.player.activeFlags.stat_high_trace_escapes as number) ?? 0) + 1
+            }
+            // L5 — bountied_survivor: hit full trace and lived through this mission
+            if (s.traceState && s.traceState.level >= 100 && s.traceState.status !== 'traced') {
+              s.player.activeFlags.stat_survived_full_trace = true
+            }
+
             // Award XP
             const isStory = !!(mission as StoryMission).isStory
             const xpGain = missionXpReward(mission.difficulty, isStory)
@@ -1225,6 +1251,11 @@ export const useGameStore = create<GameState & GameActions>()(
           // state doesn't justify it, the Steam unlock does not fire.
           if (s.player) {
             const tampered = !!s.player.activeFlags.save_tampered_at
+            // L5 — keep the inbox high-water-mark for the data_hoarder
+            // achievement. The catalogue check reads stat_inbox_total.
+            const inboxNow = s.inbox.length
+            const prevInboxMax = (s.player.activeFlags.stat_inbox_total as number) ?? 0
+            if (inboxNow > prevInboxMax) s.player.activeFlags.stat_inbox_total = inboxNow
             const dueAchievements = evaluateAchievements(s.player)
             for (const id of dueAchievements) {
               s.player.activeFlags[`achievement_${id}`] = Date.now()
