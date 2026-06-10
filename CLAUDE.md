@@ -44,6 +44,7 @@ These live at the **repo root**, not in `docs/`. They are creative/marketing, no
 - `EULA.md` — end-user licence agreement. Update when licence terms change.
 - `PRIVACY.md` — privacy notice (GDPR / UK GDPR). Update when data-processing practices change (notably: when cloud saves / multiplayer launch).
 - `IDEAS.md` — brainstorm doc. Not a planning commitment. Captures stand-out features, monetisation directions, and open questions for the developer to decide on. Items move out of `IDEAS.md` into `Next_Stage.md` once a decision is locked in. Append-only by default; entries can be marked decided or rejected.
+- `PRODUCTION.md` — handbook for production-side work that ships outside the binary: music self-production (FL Studio, instruments, mastering), voice acting (Voquent, casting briefs), trailer workflow (DaVinci Resolve, Derek Lieu formula, structure). UK-focused resource directory. Update when a supplier is contacted, hired, or rejected. Maps 1:1 against L1 (audio) and L7 (trailer + press kit) sprints in `Next_Stage.md`.
 
 Adding new creative docs at repo root is allowed if they serve a clearly different purpose. Adding more planning docs is **not** — extend one of the five instead.
 
