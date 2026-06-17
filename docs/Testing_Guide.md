@@ -2054,6 +2054,53 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 34 — V1+V2+V3 Visual polish (2026-06)
+
+**V3 Trace Bar redesign**
+- [ ] Trace bar in Hacking Interface now renders 24 discrete cells, not a smooth fill
+- [ ] Each cell flashes briefly when it activates (brightness 2.4× → 1× over 280ms)
+- [ ] The boundary cell at the current trace level shows a partial gradient (left filled, right empty)
+- [ ] Threshold markers visible at 30 / 60 / 75 / 90% with small "30" / "60" / "75" / "90" labels above the track
+- [ ] 75 and 90 markers + their labels are amber-tinted (vs grey for 30/60)
+- [ ] When trace crosses a threshold (30/60/75/90/100) the entire track gets a brief outline glow (~420ms)
+- [ ] Above 75% trace: track gets a slow amber alarm border pulse (1.6s loop)
+- [ ] Above 90% trace: track gets a fast red critical border pulse (0.7s loop) AND the % readout turns red with shadow glow
+- [ ] At 100% (TRACED): existing red blink-alert text continues to fire correctly
+- [ ] `prefers-reduced-motion` media query disables all the new animations
+
+**V1 Faction colour tinting**
+- [ ] Mission Board → each card has a 3px left border coloured by client faction
+- [ ] Cipher / NIGHTOWL / Null_Trader / Shadow_Broker / Zero_Cool / Ghost_Karachi / The_Broker → underground (green)
+- [ ] ARES_Recruitment / Nexus_Compliance / Internic_Ops / Arunmor_HR / ARC_Internal → corporate (amber)
+- [ ] JCB_Liaison / GOV_Procurement → government (red)
+- [ ] VoidlinkSupport / YOURSELF → neutral (cyan)
+- [ ] Hover any card → faction-coloured glow box-shadow appears
+- [ ] Each card has a small CORP / GOV / UND / IND / NET chip next to the LVL difficulty badge, coloured to match the border
+- [ ] Accept a mission → Hacking Interface trace bar track picks up the faction accent colour (visible as a tint underneath the status colour)
+- [ ] Disconnect → trace bar returns to default Voidlink cyan accent
+
+**V2 Network Map node iconography**
+- [ ] Connect to any procedural network → each node renders with:
+  - The existing icosahedron mesh + glow
+  - A new large glyph just below the type-name label
+  - The existing type-name text label at the top
+- [ ] Glyphs visible per type:
+  - entry_point: ⊕
+  - firewall: ◫
+  - router: ⇄
+  - file_server: ▤
+  - database: ▦
+  - mail_server: ✉
+  - intrusion_detector: ◉
+  - proxy: ⇌
+  - endpoint: ▣
+  - admin_console: ⌘
+  - ai_core: ◈
+- [ ] Glyph colour matches the node's breach state (turns green when breached)
+- [ ] Glyph stays legible against dark backgrounds (canvas drop-shadow renders correctly)
+- [ ] Glyph faces camera at all rotations (sprite, not mesh)
+- [ ] Network can be visually scanned at a glance without clicking each node
+
 ## Phase 33 — P4 CRT Mode + P8 Inbox PGP Footer (2026-06)
 
 **P4 CRT / Scanline Mode**

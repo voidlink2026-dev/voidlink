@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
 import type { Mission, MissionRequirements, PlayerProfile, StoryMission } from '@voidlink/core'
-import { getDecisionPattern } from '@voidlink/core'
+import { getDecisionPattern, getFactionAccent } from '@voidlink/core'
 import { LoadoutBar } from '../Loadouts/LoadoutBar.tsx'
 import styles from './MissionBoard.module.css'
 
@@ -141,14 +141,23 @@ function MissionCard({
   const activeRouteLen = useGameStore((s) => s.activeRoute.length)
   const reqs = meetsRequirements(mission.requirements, player, activeRouteLen)
 
+  const accent = getFactionAccent(mission.briefing.clientHandle)
+
   return (
-    <div className={`${styles.card} ${isActive ? styles.cardActive : ''} ${isStory ? styles.cardStory : ''} ${!reqs.all && !isActive ? styles.cardLocked : ''}`}>
+    <div
+      className={`${styles.card} ${isActive ? styles.cardActive : ''} ${isStory ? styles.cardStory : ''} ${!reqs.all && !isActive ? styles.cardLocked : ''}`}
+      style={{ '--faction-accent': accent.primary, '--faction-glow': accent.glow } as React.CSSProperties}
+      data-faction={accent.faction}
+    >
       <div className={styles.cardHeader}>
         <span className={isStory ? styles.missionTypeStory : styles.missionType}>
           {TYPE_DISPLAY[mission.type] ?? mission.type}
         </span>
         <div className={styles.cardHeaderRight}>
           {isStory && <span className={styles.storyBadge}>{t('missionBoard.storyBadge')}</span>}
+          <span className={styles.factionChip} title={`${accent.faction} client`}>
+            {accent.label}
+          </span>
           <span className={styles.difficulty}>
             LVL {DIFFICULTY_LABEL[mission.difficulty]}
           </span>

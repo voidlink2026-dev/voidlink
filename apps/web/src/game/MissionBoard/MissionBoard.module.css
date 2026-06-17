@@ -34,16 +34,33 @@
 .card {
   background: #0f0f0f;
   border: 1px solid #1e1e1e;
+  border-left: 3px solid var(--faction-accent, #2a2a2a);
   border-radius: 2px;
-  padding: 10px 12px;
+  padding: 10px 12px 10px 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
 }
 
 .card:hover {
   border-color: #505050;
+  border-left-color: var(--faction-accent, #505050);
+  box-shadow: -2px 0 12px var(--faction-glow, rgba(80, 80, 80, 0.2));
+}
+
+/* V1 — Faction chip */
+.factionChip {
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: var(--faction-accent, #888);
+  border: 1px solid var(--faction-accent, #2a2a2a);
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 4px var(--faction-glow, transparent);
 }
 
 .cardActive {

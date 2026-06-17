@@ -1,10 +1,11 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   padding: 8px;
+  --trace-accent: #00cfff;
 }
 
 .label {
@@ -25,80 +26,182 @@
 }
 
 .percent {
-  color: #888;
+  color: #c0c0c0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: right;
 }
 
 .rate {
   font-size: 9px;
-  color: #555;
+  color: #888;
   letter-spacing: 0.06em;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .rateHigh {
   color: #ff6600;
 }
 
+/* ── Track + segmented cells ────────────────────────────────────────────── */
+
 .track {
-  height: 8px;
-  background: #1a1a1a;
-  border-radius: 2px;
   position: relative;
-  overflow: visible;
+  height: 12px;
+  background: #0a0a0a;
   border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  margin-top: 8px;  /* room for the threshold labels above */
 }
 
-.fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: background-color 0.3s ease;
+.cells {
+  position: absolute;
+  inset: 1px;
+  display: flex;
+  gap: 1px;
+  border-radius: 1px;
+  overflow: hidden;
 }
+
+.cell {
+  flex: 1;
+  background: #141414;
+  border-right: 1px solid #1a1a1a;
+  position: relative;
+  transition: background 0.18s ease;
+}
+.cell:last-child { border-right: none; }
+
+/* Filled cell — coloured by status (see status-specific rules below) */
+.cellFilled {
+  background: currentColor;
+  box-shadow: 0 0 4px currentColor;
+  animation: cellFlash 280ms ease-out;
+}
+
+/* Partial cell — gradient fill from left up to {cell-fill}% */
+.cellPartial {
+  background: linear-gradient(
+    to right,
+    currentColor var(--cell-fill, 0%),
+    #141414 var(--cell-fill, 0%)
+  );
+  box-shadow: 0 0 3px currentColor;
+}
+
+@keyframes cellFlash {
+  0%   { filter: brightness(2.4); }
+  100% { filter: brightness(1); }
+}
+
+/* ── Threshold markers ──────────────────────────────────────────────────── */
 
 .marker {
   position: absolute;
-  top: -2px;
-  bottom: -2px;
+  top: -3px;
+  bottom: -3px;
   width: 1px;
-  background: #2a2a2a;
+  background: #3a3a3a;
+  pointer-events: none;
 }
 
-/* Status colours */
-.clean .statusText  { color: #39ff14; }
-.clean .fill        { background: #39ff14; box-shadow: 0 0 6px rgba(57,255,20,0.4); }
+.markerCritical {
+  background: rgba(255, 153, 0, 0.4);
+}
 
-.monitoring .statusText { color: #ff9900; }
-.monitoring .fill       { background: #ff9900; box-shadow: 0 0 6px rgba(255,153,0,0.4); }
-
-.tracing .statusText { color: #ff6600; }
-.tracing .fill       { background: #ff6600; box-shadow: 0 0 8px rgba(255,102,0,0.5); }
-
-.traced .statusText { color: #ff2d20; }
-.traced .fill       { background: #ff2d20; box-shadow: 0 0 12px rgba(255,45,32,0.7); }
-.traced .track      { animation: pulse-border 0.5s ease-in-out infinite; }
-
-.escaped .statusText { color: #888; }
-.escaped .fill       { background: #444; }
-
-.tracedAlert {
-  color: #ff2d20;
-  font-weight: 700;
+.markerLabel {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 7px;
+  color: #6a6a6a;
   letter-spacing: 0.08em;
-  animation: blink-alert 0.4s step-end infinite;
-  text-align: center;
-  margin-top: 4px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.markerCritical .markerLabel { color: #ff9900; }
+
+/* ── Status colours (set currentColor for the filled cells) ─────────────── */
+
+.clean              { color: #39ff14; }
+.clean .statusText  { color: #39ff14; }
+
+.monitoring             { color: #ff9900; }
+.monitoring .statusText { color: #ff9900; }
+
+.tracing             { color: #ff6600; }
+.tracing .statusText { color: #ff6600; }
+
+.traced              { color: #ff2d20; }
+.traced .statusText  { color: #ff2d20; }
+.traced .track       { animation: pulseBorder 0.45s ease-in-out infinite; }
+
+.escaped             { color: #555; }
+.escaped .statusText { color: #888; }
+
+/* ── Intensity overlays — drive a pulsing border above 75% ──────────────── */
+
+.intensity_alarm .track {
+  animation: alarmBorder 1.6s ease-in-out infinite;
+}
+.intensity_critical .track {
+  animation: criticalBorder 0.7s ease-in-out infinite;
+}
+.intensity_critical .percent {
+  color: #ff2d20;
+  text-shadow: 0 0 8px rgba(255, 45, 32, 0.6);
 }
 
-@keyframes blink-alert {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.2; }
+@keyframes alarmBorder {
+  0%, 100% { border-color: #ff9900; box-shadow: 0 0 0 rgba(255,153,0,0); }
+  50%       { border-color: #ffaa33; box-shadow: 0 0 12px rgba(255,153,0,0.5); }
 }
-
-@keyframes pulse-border {
+@keyframes criticalBorder {
+  0%, 100% { border-color: #ff2d20; box-shadow: 0 0 0 rgba(255,45,32,0); }
+  50%       { border-color: #ff5544; box-shadow: 0 0 16px rgba(255,45,32,0.7); }
+}
+@keyframes pulseBorder {
   0%, 100% { border-color: #ff2d20; }
   50%       { border-color: #440000; }
 }
 
-/* Bounce hop indicators */
+/* ── Threshold-crossing flash — fires briefly when the level crosses a
+       major threshold. Adds a quick outline glow at the appropriate colour. */
+
+.flash_30 .track,
+.flash_60 .track,
+.flash_75 .track,
+.flash_90 .track,
+.flash_100 .track {
+  animation: crossingFlash 420ms ease-out;
+}
+
+@keyframes crossingFlash {
+  0%   { box-shadow: 0 0 18px currentColor, inset 0 0 12px currentColor; }
+  100% { box-shadow: 0 0 0 transparent, inset 0 0 0 transparent; }
+}
+
+/* ── Traced alert text ──────────────────────────────────────────────────── */
+
+.tracedAlert {
+  color: #ff2d20;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  animation: blinkAlert 0.4s step-end infinite;
+  text-align: center;
+  margin-top: 4px;
+}
+
+@keyframes blinkAlert {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+/* ── Bounce hop indicators (unchanged from original) ───────────────────── */
+
 .hopsRow {
   display: flex;
   align-items: center;
@@ -119,12 +222,22 @@
 
 .hopLabel {
   font-size: 9px;
-  color: #555;
+  color: #888;
   letter-spacing: 0.08em;
   margin-left: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tracedAlert { animation: none; }
-  .traced .track { animation: none; }
+  .tracedAlert,
+  .cellFilled,
+  .traced .track,
+  .intensity_alarm .track,
+  .intensity_critical .track,
+  .flash_30 .track,
+  .flash_60 .track,
+  .flash_75 .track,
+  .flash_90 .track,
+  .flash_100 .track {
+    animation: none;
+  }
 }

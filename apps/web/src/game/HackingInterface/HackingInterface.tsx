@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameStore } from '../../store/gameStore.ts'
 import type { CredentialEntry } from '../../store/gameStore.ts'
 import { Button, TraceBar } from '@voidlink/ui'
+import { getFactionAccent } from '@voidlink/core'
 import { startCrackJob, tickCrackJob, ramBonus, wipeSpeedMultiplier, researchRamBonus, researchCrackSpeedMul, researchScanSpeedMul } from '@voidlink/core'
 import type { CrackJob } from '@voidlink/core'
 import { AudioEngine } from '../Audio/audioEngine.ts'
@@ -651,6 +652,7 @@ export function HackingInterface() {
           status={traceState.status}
           hopsRemaining={traceState.hopsRemaining}
           totalHops={traceState.totalHops}
+          accent={activeMission ? getFactionAccent(activeMission.briefing.clientHandle).primary : undefined}
         />
       </div>
 

@@ -71,6 +71,48 @@ function createNodeLabel(text: string, hexColor: number): THREE.Sprite {
   return sprite
 }
 
+// V2 — Per-node-type glyph map. Unicode characters that render cleanly in
+// canvas with monospace fallback chain. Each glyph is single-character.
+const NODE_GLYPHS: Record<string, string> = {
+  entry_point:        '⊕',
+  firewall:           '◫',
+  router:             '⇄',
+  file_server:        '▤',
+  database:           '▦',
+  mail_server:        '✉',
+  intrusion_detector: '◉',
+  proxy:              '⇌',
+  endpoint:           '▣',
+  admin_console:      '⌘',
+  ai_core:            '◈',
+}
+
+// V2 — Glyph sprite, drawn larger than the label text. Sits just above the
+// node icosahedron so the player can read network topology at a glance
+// without clicking through every node.
+function createNodeGlyph(nodeType: string, hexColor: number): THREE.Sprite {
+  const glyph = NODE_GLYPHS[nodeType] ?? '●'
+  const canvas = document.createElement('canvas')
+  canvas.width  = 64
+  canvas.height = 64
+  const ctx2d   = canvas.getContext('2d')!
+  ctx2d.clearRect(0, 0, 64, 64)
+  ctx2d.font         = '700 44px "JetBrains Mono", "DejaVu Sans Mono", monospace'
+  ctx2d.fillStyle    = '#' + hexColor.toString(16).padStart(6, '0')
+  ctx2d.globalAlpha  = 0.95
+  ctx2d.textAlign    = 'center'
+  ctx2d.textBaseline = 'middle'
+  // Subtle outer shadow for legibility against dark backgrounds
+  ctx2d.shadowColor   = '#000'
+  ctx2d.shadowBlur    = 6
+  ctx2d.fillText(glyph, 32, 36)
+  const texture  = new THREE.CanvasTexture(canvas)
+  const mat      = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false })
+  const sprite   = new THREE.Sprite(mat)
+  sprite.scale.set(0.95, 0.95, 1)
+  return sprite
+}
+
 // ─── Helpers ───────────────────────────────────────────────────────────
 function mapPos(x: number, y: number, tier: number): THREE.Vector3 {
   return new THREE.Vector3(
@@ -251,10 +293,17 @@ function NetworkCanvas({
         group.add(glow)
       }
 
-      // Label sprite — always visible, faces camera
+      // V2 — Type glyph sprite. Sits just above the node mesh so the
+      // player can read network topology at a glance without clicking
+      // through every node. Faces camera.
+      const glyph = createNodeGlyph(node.type, nodeHex(node))
+      glyph.position.set(0, 0.45, 0)
+      group.add(glyph)
+
+      // Label sprite — type name, sits above the glyph
       const labelText = node.type.replace(/_/g, ' ').toUpperCase()
       const label = createNodeLabel(labelText, nodeHex(node))
-      label.position.set(0, 0.9, 0)
+      label.position.set(0, 1.05, 0)
       group.add(label)
 
       // Selection ring (hidden by default)
