@@ -4,6 +4,7 @@ import { useGameStore } from '../../store/gameStore.ts'
 import { Button } from '@voidlink/ui'
 import type { StoryMission } from '@voidlink/core'
 import { AudioEngine } from '../Audio/audioEngine.ts'
+import { MissionPayoff } from './MissionPayoff.tsx'
 import styles from './MissionResult.module.css'
 
 const ARC1_CHOICES = [
@@ -119,6 +120,9 @@ export function MissionResult() {
         </div>
 
         <div className={styles.divider} />
+
+        {/* V7 — Per-mission-type payoff cinematic, shown above the rewards block */}
+        {isSuccess && lastMission && <MissionPayoff mission={lastMission} />}
 
         {isSuccess && lastMission && (
           <div className={styles.rewards}>

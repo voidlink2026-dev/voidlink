@@ -31,6 +31,7 @@ import { ReflectionOverlay } from '../../game/Reflection/ReflectionOverlay.tsx'
 import { EndingChoiceOverlay } from '../../game/Ending/EndingChoiceOverlay.tsx'
 import { generateContract, STORY_MISSIONS, MULTIPHASE_TEMPLATES, generateMultiPhaseMission } from '@voidlink/core'
 import { GlyphDrift } from '../../components/GlyphDrift/GlyphDriftLazy.tsx'
+import { DesktopWallpaper } from '../../components/DesktopWallpaper/DesktopWallpaper.tsx'
 import { TraceSweep } from '../../components/TraceSweep/TraceSweep.tsx'
 import styles from './DesktopScreen.module.css'
 
@@ -236,6 +237,8 @@ export function DesktopScreen() {
 
   return (
     <main className={styles.desktop} aria-label="Voidlink desktop environment">
+      {/* V8 — Wallpaper depth: grid + city silhouette behind everything */}
+      <DesktopWallpaper />
       {/* Idle ambient — fades when a trace is active (TraceSweep takes over) */}
       <GlyphDrift opacity={traceState ? 0.15 : 0.55} density={0.9} style={{ zIndex: 0 }} />
       <TraceSweep />

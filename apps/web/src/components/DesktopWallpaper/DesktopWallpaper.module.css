@@ -1,0 +1,39 @@
+/* V8 — Desktop wallpaper depth: grid + city silhouette behind everything */
+
+.root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(0, 80, 110, 0.06) 0%, transparent 60%),
+    #020608;
+}
+
+/* Subtle grid lines — gives the workspace depth + scale */
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 207, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 207, 255, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 100%);
+}
+
+/* City silhouette — anchored to the bottom of the screen */
+.skyline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  max-height: 38vh;
+  opacity: 0.55;
+}
+
+/* Low-quality mode (L6) — skip the skyline entirely to save paint */
+:global([data-quality="low"]) .skyline { display: none; }

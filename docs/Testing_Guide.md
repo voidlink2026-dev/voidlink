@@ -2054,6 +2054,55 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 36 — V6+V7+V8 Visual polish (2026-06)
+
+**V6 Boot screen polish**
+- [ ] Open a fresh browser session → boot screen renders
+- [ ] CRT power-on sweep visible on first paint (a vertical bar expanding from 2% to full height, ~600ms, then fades)
+- [ ] Two faint hex byte noise lines above the BIOS log
+- [ ] One faint hex byte noise line below the cursor
+- [ ] BIOS lines fade in one at a time with ~150ms stagger (faster than before — total log lands in ~2s)
+- [ ] Glitch character flickers periodically next to the cursor (red `▓` appearing for ~70ms every ~2.4s)
+- [ ] Glitch character has a subtle x-translate shimmy (`glitchShift` keyframe)
+- [ ] Boot → Prologue transition: bright green scanline sweeps from top to bottom of screen (500ms)
+
+**V7 Mission completion overlay (per-type cinematics)**
+- [ ] Complete a `file_theft` mission → success overlay shows:
+  - "FILE RECEIVED" header
+  - File icon + filename + size in KB + SHA-256 first 16 hex
+  - Animated ✓ check (spring-in at 300ms delay)
+- [ ] Complete an `account_deletion` mission → success overlay shows:
+  - "ACCOUNT REMOVED FROM RECORD" header
+  - Struck-through `user_<seed>` username (red line-through)
+  - Amber DELETED status badge
+  - Italic sub-line about backups and audit log
+- [ ] Complete a `database_corruption` mission → success overlay shows:
+  - "DATABASE CORRUPTED" header
+  - 4 rows of hex dump (12 bytes per row) with address column
+  - Rows stagger-in at 70ms intervals
+  - Italic sub-line about forensic review
+- [ ] Complete a `network_sabotage` mission → success overlay shows:
+  - "TARGET INFRASTRUCTURE — STATUS" header
+  - DOWN badge with red border and box-shadow glow (spring-in)
+  - Italic sub-line about MTTR
+- [ ] Complete a `bounty_hunt` mission → success overlay shows:
+  - "BOUNTY RESOLVED" header
+  - Struck-through target handle
+  - SETTLED status badge
+  - Italic sub-line about arbitration
+
+**V8 Desktop wallpaper depth**
+- [ ] Sign in → reach the desktop → visible behind everything:
+  - A faint cyan grid at 64×64px, fading out toward edges via radial mask
+  - A city skyline silhouette anchored to the bottom (~38vh max height, 55% opacity)
+  - ~40 buildings of varying widths/heights with procedural window patterns (~18% lit dim cyan)
+  - Subtle dark blue haze behind the skyline
+- [ ] Skyline remains static (no animation) — it's atmosphere, not motion
+- [ ] Skyline is identical across page reloads (seeded from constant)
+- [ ] GlyphDrift globe sits *over* the wallpaper (visible above the skyline)
+- [ ] Windows sit *over* both wallpaper and GlyphDrift
+- [ ] Settings → LOW QUALITY ON → skyline disappears; grid remains (pure CSS, no SVG cost)
+
 ## Phase 35 — V4+V5 Visual polish (2026-06)
 
 **V4 Inbox decrypt animation**
