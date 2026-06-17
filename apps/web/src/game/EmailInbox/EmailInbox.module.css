@@ -160,6 +160,20 @@
   letter-spacing: 0.06em;
 }
 
+/* V4 — decrypt scramble in progress */
+.decryptingBody {
+  color: #5fff5f;
+  text-shadow: 0 0 4px rgba(95, 255, 95, 0.4);
+  white-space: pre-wrap;
+  font-family: 'JetBrains Mono', monospace;
+  animation: decryptFlicker 60ms linear infinite;
+}
+
+@keyframes decryptFlicker {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.85; }
+}
+
 /* P8 — diegetic PGP footer on decrypted messages */
 .pgpFooter {
   margin-top: 24px;

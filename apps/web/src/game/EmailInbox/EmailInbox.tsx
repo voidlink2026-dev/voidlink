@@ -46,10 +46,18 @@ export function EmailInbox() {
     inbox.find((m) => !m.isRead)?.id ?? inbox[0]?.id ?? null,
   )
   const [decrypted, setDecrypted] = useState<Record<string, true>>({})
+  // V4 — decrypt animation. While `decryptingId` matches the selected message,
+  // we render a per-character scramble that resolves to the real body over
+  // ~600ms. The scramble passes 4 times per character before settling, so the
+  // effect reads as "the encryption is being peeled off character by character"
+  // rather than as a typewriter from nothing.
+  const [decryptingId, setDecryptingId] = useState<string | null>(null)
+  const [decryptProgress, setDecryptProgress] = useState(0)
 
   const selected = inbox.find((m) => m.id === selectedId) ?? null
   const unreadCount = inbox.filter((m) => !m.isRead).length
   const showDecrypted = selected && (!selected.encrypted || decrypted[selected.id])
+  const isAnimatingDecrypt = selected && decryptingId === selected.id
 
   function handleSelect(id: string) {
     setSelectedId(id)
@@ -59,8 +67,54 @@ export function EmailInbox() {
 
   function handleDecrypt() {
     if (!selected) return
-    setDecrypted((d) => ({ ...d, [selected.id]: true }))
+    setDecryptingId(selected.id)
+    setDecryptProgress(0)
     AudioEngine.playSfx('success')
+    // Mark the message decrypted up-front so the body text is available for
+    // the scramble effect; the showDecrypted flag flips immediately but the
+    // render below shows the animated scramble while decryptingId is set.
+    setDecrypted((d) => ({ ...d, [selected.id]: true }))
+
+    const TOTAL_MS = 620
+    const FRAME_MS = 28
+    const target = selected.body
+    const start = performance.now()
+
+    const tick = () => {
+      const elapsed = performance.now() - start
+      const p = Math.min(1, elapsed / TOTAL_MS)
+      setDecryptProgress(p)
+      if (p < 1) {
+        requestAnimationFrame(tick)
+      } else {
+        // Final settle — clear the animating state so the canonical body renders
+        setDecryptingId(null)
+      }
+      void target; void FRAME_MS
+    }
+    requestAnimationFrame(tick)
+  }
+
+  // Scramble: each character is "settled" once progress reaches the per-char
+  // threshold; before that, it's a random glyph from the scramble set.
+  function scrambleBody(body: string, progress: number): string {
+    const SCRAMBLE_CHARS = 'ABCDEF0123456789█▓▒░╳╱╲'
+    let out = ''
+    for (let i = 0; i < body.length; i++) {
+      const ch = body[i]
+      // Whitespace, newlines, punctuation settle instantly.
+      if (ch === ' ' || ch === '\n' || ch === '\t') { out += ch; continue }
+      const charThreshold = i / body.length
+      if (progress >= charThreshold) {
+        out += ch
+      } else {
+        // Use a quasi-random index that changes each frame for the flicker
+        // effect. progress * length seeds it so frames feel related.
+        const seed = (i * 31 + Math.floor(progress * 100 * body.length)) >>> 0
+        out += SCRAMBLE_CHARS[seed % SCRAMBLE_CHARS.length]
+      }
+    }
+    return out
   }
 
   return (
@@ -137,9 +191,15 @@ export function EmailInbox() {
             <div className={styles.readerBody}>
               {showDecrypted ? (
                 <>
-                  {selected.body}
+                  {isAnimatingDecrypt ? (
+                    <span className={styles.decryptingBody}>
+                      {scrambleBody(selected.body, decryptProgress)}
+                    </span>
+                  ) : (
+                    selected.body
+                  )}
                   {/* P8 — diegetic PGP footer on decrypted messages */}
-                  {selected.encrypted && selected.fromFingerprint && (
+                  {!isAnimatingDecrypt && selected.encrypted && selected.fromFingerprint && (
                     <div className={styles.pgpFooter} aria-hidden="true">
                       ── PGP fingerprint confirmed — message integrity verified by Internic routing layer ──
                     </div>

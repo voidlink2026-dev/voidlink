@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
-import { getMaxRelayHops, relayHopBonus, researchRelayHopBonus } from '@voidlink/core'
+import { getMaxRelayHops, relayHopBonus, researchRelayHopBonus, getFactionAccent } from '@voidlink/core'
 import { useGameStore } from '../../store/gameStore.ts'
 import { useSettingsStore } from '../../store/settingsStore.ts'
 import styles from './WorldMap.module.css'
@@ -232,6 +232,12 @@ export function WorldMap() {
   const player      = useGameStore((s) => s.player)
   const activeRoute = useGameStore((s) => s.activeRoute)
   const setBounceRoute = useGameStore((s) => s.setBounceRoute)
+  // V5 — connection trail pulses while a mission is connected. Pulses
+  // travel from the player gateway → relay 1 → relay 2 → ... along the
+  // visible arcs at ~1.6s per hop, repeating. Picks up faction tint
+  // (V1) when an active mission has a recognised client.
+  const activeMission = useGameStore((s) => s.missions.find((m) => m.status === 'active') ?? null)
+  const pulsesRef = useRef<{ mesh: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; t: number }[]>([])
   const setActiveBank        = useGameStore((s) => s.setActiveBank)
   const setActiveTargetInfo  = useGameStore((s) => s.setActiveTargetInfo)
   const openWindow     = useGameStore((s) => s.openWindow)
@@ -359,6 +365,7 @@ export function WorldMap() {
     function animate(ts: number) {
       rafRef.current = requestAnimationFrame(animate)
       if (ts - last < 33) return
+      const dt = (ts - last) / 1000
       last = ts
       // Scale rotate speed inversely with how close the camera is to the globe.
       // Closer in → smaller angular delta per pixel → easier to focus on one region.
@@ -367,6 +374,22 @@ export function WorldMap() {
       const t = (dist - 140) / (500 - 140)   // 0 close → 1 far
       controls.rotateSpeed = 0.25 + 0.75 * Math.max(0, Math.min(1, t))
       controls.update()
+
+      // V5 — advance traveling pulses along their arcs. Each pulse takes
+      // ~1.6s to traverse a single arc; on completion it wraps back to t=0
+      // so the chain feels like a continuous loop.
+      const PULSE_HZ = 0.6   // 0.6 hop/s → 1.67s per arc
+      for (const p of pulsesRef.current) {
+        p.t = (p.t + PULSE_HZ * dt) % 1
+        // Spherical-ish interpolation: lerp + normalise to globe surface offset
+        const pos = new THREE.Vector3().lerpVectors(p.from, p.to, p.t).normalize().multiplyScalar(G + 3)
+        p.mesh.position.copy(pos)
+        // Subtle opacity fade at the start/end of each arc so the pulse
+        // appears to "enter" and "exit" each segment.
+        const fade = Math.sin(p.t * Math.PI)  // 0 at edges, 1 at midpoint
+        ;(p.mesh.material as THREE.MeshBasicMaterial).opacity = 0.45 + 0.55 * fade
+      }
+
       if (composer) composer.render()
       else renderer.render(scene, camera)
     }
@@ -392,6 +415,7 @@ export function WorldMap() {
     const group = arcGroupRef.current
     if (!group) return
     group.clear()
+    pulsesRef.current = []
     if (activeRoute.length === 0) return
 
     // Player origin
@@ -404,19 +428,50 @@ export function WorldMap() {
       if (coords) hops.push(latLonToVec3(coords[0], coords[1]))
     }
 
+    // V5 — faction accent for the pulse colour. Default to underground green
+    // (matches the existing static arcs) when no active mission, otherwise
+    // pick up the active mission's faction accent.
+    const accentHex = (() => {
+      if (!activeMission) return 0x39ff14
+      const a = getFactionAccent(activeMission.briefing.clientHandle).primary
+      // Convert '#rrggbb' to 0xrrggbb
+      return parseInt(a.replace('#', ''), 16)
+    })()
+
     for (let i = 0; i < hops.length - 1; i++) {
-      group.add(makeArc(hops[i], hops[i + 1], 0x39ff14))
+      group.add(makeArc(hops[i], hops[i + 1], accentHex))
     }
     // Animate pulsing dot on each hop node
     for (const hopId of activeRoute) {
       const node   = bounceLib.find((n) => n.id === hopId)
       const coords = node ? REGION_COORDS[node.region] : null
       if (!coords) continue
-      const pulse = makeGlowDot(0x39ff14, 3.0)
+      const pulse = makeGlowDot(accentHex, 3.0)
       pulse.position.copy(latLonToVec3(coords[0], coords[1]))
       group.add(pulse)
     }
-  }, [activeRoute, bounceLib])
+
+    // V5 — Traveling pulse sphere per arc. Each pulse starts at a staggered
+    // phase so they appear to chase each other along the chain. Position is
+    // updated each frame in the render loop based on `t` ∈ [0, 1).
+    for (let i = 0; i < hops.length - 1; i++) {
+      const pulseMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1.4, 12, 12),
+        new THREE.MeshBasicMaterial({
+          color: accentHex,
+          transparent: true,
+          opacity: 0.95,
+        }),
+      )
+      group.add(pulseMesh)
+      pulsesRef.current.push({
+        mesh: pulseMesh,
+        from: hops[i].clone(),
+        to: hops[i + 1].clone(),
+        t: (i / Math.max(1, hops.length - 1)) * 0.6,  // stagger
+      })
+    }
+  }, [activeRoute, bounceLib, activeMission])
 
   // ── Raycasting for bounce node clicks ───────────────────────────────────────
   useEffect(() => {

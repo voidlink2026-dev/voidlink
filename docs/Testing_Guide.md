@@ -2054,6 +2054,35 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 35 — V4+V5 Visual polish (2026-06)
+
+**V4 Inbox decrypt animation**
+- [ ] Open any encrypted message (e.g. a Cipher letter) → cipher art block displays as before
+- [ ] Click DECRYPT WITH KEY → success SFX fires, scramble animation starts
+- [ ] During animation (~620ms): characters appear as random glyphs from a scramble set, flickering
+- [ ] Characters settle left-to-right as progress advances (first chars become real first)
+- [ ] Whitespace and newlines do not scramble — only printable characters
+- [ ] Scramble text is green (`#5fff5f`) with text-shadow glow
+- [ ] When animation completes: body text reads correctly; PGP footer appears below
+- [ ] Re-opening the same message later does NOT replay the animation (it's a one-shot per decrypt action)
+- [ ] Opening a different encrypted message and decrypting fires the animation fresh
+- [ ] Non-encrypted (system) messages skip the animation entirely
+
+**V5 World Map connection trail pulses**
+- [ ] Accept a procedural mission → World Map opens → arcs appear from player gateway to relay hops to target
+- [ ] Small pulse spheres travel ALONG each arc, from gateway → relay 1 → relay 2 → target
+- [ ] Pulses repeat (loop back to start of each arc when reaching the end)
+- [ ] Pulses fade in at start of each arc and fade out at end (sine-wave opacity)
+- [ ] Pulses pick up the active mission's faction colour:
+  - Cipher / NIGHTOWL / Null_Trader contract → underground green pulses
+  - ARES_Recruitment / Arunmor_HR / Internic_Ops contract → corporate amber pulses
+  - JCB_Liaison / GOV_Procurement → government red pulses
+  - VoidlinkSupport contract → neutral cyan pulses
+- [ ] Arc line colour also picks up the faction accent (not just pulses)
+- [ ] Disconnect from mission → pulses disappear (arcs persist as the bounce chain layout)
+- [ ] No active mission → arcs default to underground green
+- [ ] 30 fps render cap is preserved (no perf regression)
+
 ## Phase 34 — V1+V2+V3 Visual polish (2026-06)
 
 **V3 Trace Bar redesign**
