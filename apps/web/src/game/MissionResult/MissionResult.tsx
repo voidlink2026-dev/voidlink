@@ -5,6 +5,7 @@ import { Button } from '@voidlink/ui'
 import type { StoryMission } from '@voidlink/core'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import { MissionPayoff } from './MissionPayoff.tsx'
+import { DeathRecap } from './DeathRecap.tsx'
 import styles from './MissionResult.module.css'
 
 const ARC1_CHOICES = [
@@ -156,11 +157,15 @@ export function MissionResult() {
         )}
 
         {isTraced && (
-          <div className={styles.failText}>
-            <p>Trace complete. Your connection was identified.</p>
-            <p className={styles.failSub}>All evidence of the intrusion has been flagged.
-            Your reputation may be affected.</p>
-          </div>
+          <>
+            <div className={styles.failText}>
+              <p>Trace complete. Your connection was identified.</p>
+              <p className={styles.failSub}>All evidence of the intrusion has been flagged.
+              Your reputation may be affected.</p>
+            </div>
+            {/* P5 — Death Recap: forensic walk-back of the last 5 actions */}
+            <DeathRecap />
+          </>
         )}
 
         {/* Arc 1 key choice — shown after arc03 completes */}

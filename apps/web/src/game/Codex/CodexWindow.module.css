@@ -75,14 +75,20 @@
 }
 
 .readerCategory {
-  font-size: 9px;
-  letter-spacing: 0.24em;
+  /* V9 — Display font for codex category labels */
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  font-weight: 600;
   color: #00e5ff;
 }
 
 .readerTitle {
-  font-size: 18px;
-  font-weight: 700;
+  /* V9 — Display font for codex entry titles */
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   margin: 4px 0 4px;
   color: #d4d4d4;
 }

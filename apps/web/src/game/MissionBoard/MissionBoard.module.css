@@ -5,9 +5,11 @@
 }
 
 .sectionLabel {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
+  /* V9 — Display font for section headers */
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   color: #a8a8a8;
   text-transform: uppercase;
   border-bottom: 1px solid #1a1a1a;

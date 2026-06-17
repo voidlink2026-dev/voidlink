@@ -1,0 +1,118 @@
+/* P5 — Death Recap forensic walk-back */
+
+.root {
+  margin: 16px 0 6px;
+  padding: 12px 14px;
+  background: rgba(255, 45, 32, 0.04);
+  border-left: 2px solid rgba(255, 45, 32, 0.4);
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.headerLabel {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: #ff2d20;
+  text-shadow: 0 0 6px rgba(255, 45, 32, 0.35);
+}
+
+.headerSub {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: #888;
+  font-style: italic;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #1e1e1e;
+  border-radius: 2px;
+}
+
+.rowTerminal {
+  border-color: rgba(255, 45, 32, 0.5);
+  background: rgba(255, 45, 32, 0.08);
+  box-shadow: 0 0 10px rgba(255, 45, 32, 0.15);
+}
+
+.rowTime {
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowBody {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowAction {
+  font-size: 10px;
+  color: #d4d4d4;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.rowNode {
+  font-size: 10px;
+  color: #909090;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.rowTrace {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 10px;
+  color: #a8a8a8;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowTraceBefore { color: #707070; }
+.rowTraceArrow  { color: #555; padding: 0 2px; }
+.rowTraceAfter  { color: #c0c0c0; font-weight: 700; }
+.rowTraceAfterFatal {
+  color: #ff2d20;
+  text-shadow: 0 0 6px rgba(255, 45, 32, 0.5);
+}
+
+.rowDelta {
+  font-size: 9px;
+  color: #ff6600;
+  letter-spacing: 0.04em;
+  margin-left: 8px;
+  font-weight: 700;
+}
+
+.verdict {
+  margin-top: 10px;
+  font-size: 10px;
+  color: #a0a0a0;
+  font-style: italic;
+  line-height: 1.55;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 45, 32, 0.18);
+}

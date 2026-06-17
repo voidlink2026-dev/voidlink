@@ -75,11 +75,15 @@
 }
 
 .title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  /* V9 — Rajdhani display font for window titles. The narrower geometric
+     sans gives windows a chrome that visually separates from the body
+     monospace and lifts the whole desktop without losing the terminal vibe. */
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #555;
+  color: #6a6a6a;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;

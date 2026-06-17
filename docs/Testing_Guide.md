@@ -2054,6 +2054,37 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 37 — P5 Death Recap + V9 Typography (2026-06)
+
+**P5 Death Recap**
+- [ ] Accept a procedural mission → connect → trace action log clears (`s.traceActionLog === []`)
+- [ ] Perform actions that bump trace (BREACH a node, ESCALATE PRIVILEGES, DUMP CREDENTIALS, fail a crack to trigger LOCKOUT)
+- [ ] Each action records a `TraceActionEvent` with before/after trace percentages
+- [ ] Log is capped at 10 entries (oldest dropped if more occur)
+- [ ] Let trace reach 100% (TRACED) → MissionResult overlay shows fail content
+- [ ] Below the existing "Trace complete. Your connection was identified." block, new DeathRecap renders:
+  - "HOW DID IT COME TO THIS" header
+  - Last 5 actions, oldest at top
+  - Each row: T+<secs>s timestamp · action label · node label · before% → after% · +delta
+  - Rows stagger-in left-to-right at 120ms intervals
+  - The action that pushed trace ≥100% is highlighted with red border + red glow + red rowTraceAfter
+  - Closing italic verdict line reads:
+    - *"The last action put the trace over 100%. Whether the order was wrong or the order was inevitable is your call."* if the final action was fatal
+    - *"Background trace accumulation finished what the last action started."* if passive trace tipped it
+- [ ] Successful mission (no TRACED) → DeathRecap does NOT render
+- [ ] Abandoned mission (LEAVE NETWORK) → DeathRecap does NOT render
+- [ ] Start a new mission → previous DeathRecap data is gone (log cleared on acceptMission)
+
+**V9 Typography hierarchy**
+- [ ] Window title bars now render in Rajdhani (narrower geometric sans), not JetBrains Mono
+- [ ] HackingInterface section labels (TRACE STATUS, OBJECTIVES, etc.) render in Rajdhani
+- [ ] MissionBoard section labels render in Rajdhani
+- [ ] Email Inbox subject line renders in Rajdhani at 17px
+- [ ] Codex category label and entry title render in Rajdhani
+- [ ] Body text, terminal output, hex dumps, trace numerics still use JetBrains Mono
+- [ ] No font-loading flash on first paint (Rajdhani is already loaded via @fontsource/rajdhani)
+- [ ] Hierarchy is visually clear — Rajdhani-set headings clearly distinct from mono body
+
 ## Phase 36 — V6+V7+V8 Visual polish (2026-06)
 
 **V6 Boot screen polish**

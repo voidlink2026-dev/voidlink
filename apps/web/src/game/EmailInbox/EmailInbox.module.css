@@ -137,8 +137,11 @@
 }
 
 .readerSubject {
-  font-size: 14px;
-  font-weight: 700;
+  /* V9 — Display font for the message subject */
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--color-cyan, #00e5ff);
   text-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
 }

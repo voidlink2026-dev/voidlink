@@ -123,6 +123,39 @@ export type WorldEventEffect =
   | { type: 'rival_frequency'; mult: number }
   | { type: 'market_crash' }  // M14e — stock prices crash 25%, savings APR zeroed
 
+// P5 — Death Recap action event. Each player-action that bumps trace
+// records one of these into the ring buffer for the failure post-mortem.
+export interface TraceActionEvent {
+  id: string         // stable id for React key
+  ts: number         // unix ms
+  action: string     // human-readable action label
+  nodeLabel?: string // optional node target description
+  traceBefore: number
+  traceAfter: number
+}
+
+const TRACE_LOG_MAX = 10
+
+function pushTraceAction(
+  s: { traceActionLog: TraceActionEvent[] },
+  action: string,
+  traceBefore: number,
+  traceAfter: number,
+  nodeLabel?: string,
+): void {
+  s.traceActionLog.push({
+    id: `tla_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+    ts: Date.now(),
+    action,
+    nodeLabel,
+    traceBefore: Math.round(traceBefore * 10) / 10,
+    traceAfter: Math.round(traceAfter * 10) / 10,
+  })
+  if (s.traceActionLog.length > TRACE_LOG_MAX) {
+    s.traceActionLog.splice(0, s.traceActionLog.length - TRACE_LOG_MAX)
+  }
+}
+
 export interface WorldEvent {
   id: string
   name: string
@@ -209,6 +242,10 @@ interface GameState {
   achievementUnlockQueue: string[]  // L5 — queued in-game achievement toasts
   steamUnlockQueue: string[]        // L5.1 — gated queue for Steamworks SDK (drains on L4)
   diaryUnreadCount: number          // P2 — unread diary entries since last open
+  // P5 — Death Recap. Ring buffer (max 10) of the player's most recent
+  // trace-impacting actions during the current mission. Cleared on mission
+  // start. Surfaced in MissionResult when the mission ends in TRACED.
+  traceActionLog: TraceActionEvent[]
   pendingSplash: string | null      // M14q Sub-sprint E — splash card ID
   activeWorldEvents: WorldEvent[]
   nextWorldEventAt: number | null
@@ -366,6 +403,7 @@ export const useGameStore = create<GameState & GameActions>()(
     achievementUnlockQueue: [],
     steamUnlockQueue: [],
     diaryUnreadCount: 0,
+    traceActionLog: [],
     pendingSplash: null,
     activeWorldEvents: [],
     nextWorldEventAt: null,
@@ -624,6 +662,9 @@ export const useGameStore = create<GameState & GameActions>()(
         s.networks[network.id] = network
         s.activeNetworkId = network.id
         s.traceState = createTraceState(network.traceSpeed)
+        // P5 — Clear the trace-action log on every new mission so the
+        // Death Recap shows only this mission's actions.
+        s.traceActionLog = []
 
         // Wire active relay route into trace state. Each hop is a real
         // bounce node and applies the trace-rate reduction (Math.pow(0.65, n)).
@@ -790,7 +831,9 @@ export const useGameStore = create<GameState & GameActions>()(
           ((s.player.activeFlags.stat_escalations as number) ?? 0) + 1
         // Trace spike: + tier × 2.5%
         if (s.traceState) {
+          const before = s.traceState.level
           s.traceState.level = Math.min(100, s.traceState.level + node.securityTier * 2.5)
+          pushTraceAction(s, 'ESCALATED PRIVILEGES', before, s.traceState.level, node.label)
         }
         s.terminalLines.push({
           id: `log_root_${Date.now()}`, type: 'success',
@@ -883,11 +926,15 @@ export const useGameStore = create<GameState & GameActions>()(
             // Brute spec halves the immediate trace spike
             const bruteMod = s.player?.specialization === 'brute' ? 0.5 : 1
             const now2 = Date.now()
+            const before = s.traceState.level
             s.traceState.level = Math.min(100, s.traceState.level + node.securityTier * 5 * bruteMod)
             s.traceState.alarmRate = (3.0 + node.securityTier * 1.0) * bruteMod
             s.traceState.alarmDecaysAt = now2 + 15_000
+            pushTraceAction(s, 'HARD-BREACHED FIREWALL', before, s.traceState.level, node.label)
           } else {
+            const before = s.traceState.level
             s.traceState = triggerBreachAlarm(s.traceState, node.securityTier, Date.now())
+            pushTraceAction(s, 'BREACHED', before, s.traceState.level, node.label)
           }
         }
         // bounty_hunt objective: breach the specific target endpoint
@@ -2672,7 +2719,9 @@ export const useGameStore = create<GameState & GameActions>()(
         node.lockoutUntil = Date.now() + 30_000
         node.failedCrackAttempts = (node.failedCrackAttempts ?? 0) + 1
         if (s.traceState) {
+          const before = s.traceState.level
           s.traceState.level = Math.min(s.traceState.level + 2, 100)
+          pushTraceAction(s, 'CRACK FAILED — LOCKOUT', before, s.traceState.level, node.label)
         }
         s.terminalLines.push({ id: `log_lockout_${Date.now()}`, type: 'error',
           text: `LOCKOUT TRIGGERED — ${node.label}: ${node.failedCrackAttempts} failed attempt${node.failedCrackAttempts !== 1 ? 's' : ''}. Node locked for 30 seconds. IDS alert raised.` })
@@ -2713,7 +2762,9 @@ export const useGameStore = create<GameState & GameActions>()(
         }
         s.credentialCache.push(entry)
         if (s.player?.specialization !== 'ghost' && s.traceState) {
+          const before = s.traceState.level
           s.traceState.level = Math.min(s.traceState.level + 1.5, 100)
+          pushTraceAction(s, 'DUMPED CREDENTIALS', before, s.traceState.level, node.label)
         }
         s.terminalLines.push({
           id: `log_dump_${Date.now()}`,
@@ -2774,7 +2825,9 @@ export const useGameStore = create<GameState & GameActions>()(
         result = 'ok'
         node.isBreached = true
         if (s.player?.specialization !== 'ghost' && s.traceState) {
+          const before = s.traceState.level
           s.traceState.level = Math.min(s.traceState.level + 3, 100)
+          pushTraceAction(s, 'BREACHED via CACHED CREDS', before, s.traceState.level, node.label)
         }
         s.terminalLines.push({
           id: `log_cred_use_${Date.now()}`,
