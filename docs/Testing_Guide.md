@@ -2054,6 +2054,44 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 38 — V13 + V10 + P9 + V14 Quick UX wins (2026-06)
+
+**V13 Button micro-interactions**
+- [ ] Hover any shared `Button` (e.g. ACCEPT on Mission Board) → button lifts by 1px
+- [ ] Click and hold → button scales down to 96% during press, snaps back on release
+- [ ] Taskbar launcher buttons (CODEX, DIARY, etc.) also scale down on press
+- [ ] Settings → REDUCE MOTION ON → all transform animations disabled
+
+**V10 Network Map hover preview**
+- [ ] Connect to any procedural network → hover over any node
+- [ ] Tooltip appears near cursor with: type (Rajdhani), TIER N badge, node label
+- [ ] If breached: green "● BREACHED" pill
+- [ ] If locked out: red "● LOCKED OUT" pill
+- [ ] If Zone B (and unbreached): amber "● ZONE B — pivot required" pill
+- [ ] If scanned: service list with PROTO:PORT format, VULN badge on vulnerable services
+- [ ] If unscanned: italic "Scan to reveal services."
+- [ ] Tooltip clamps to viewport (never clips off screen)
+- [ ] Move cursor off node → tooltip disappears
+- [ ] Move cursor outside canvas → tooltip disappears
+- [ ] Tooltip does NOT intercept clicks (clicks still register on canvas)
+
+**P9 Reflection Replay**
+- [ ] Settings → DISPLAY section → "REFLECTIONS" row
+- [ ] On a fresh character (no reflections unlocked): row shows "NO REFLECTIONS UNLOCKED YET"
+- [ ] After completing an arc that fires a reflection: row shows "REFLECTIONS — N UNLOCKED" with a list of ▶ entries
+- [ ] Click any ▶ entry → reflection overlay appears with the same content as the original
+- [ ] Replay does NOT consume the unlocked state (can replay any reflection unlimited times)
+- [ ] Each scene displays with its original tokens resolved against current player state
+
+**V14 World Map orbit polish**
+- [ ] Open World Map → don't touch it for 2 seconds → globe begins slow auto-rotation
+- [ ] Click and drag globe → auto-rotation stops immediately
+- [ ] Hover over globe → auto-rotation stops (`pointerenter` triggers idle reset)
+- [ ] Scroll wheel zoom → auto-rotation stops
+- [ ] After 2 seconds of no interaction → auto-rotation resumes
+- [ ] Wheel zoom feels smoother (0.5 zoomSpeed vs previous 0.6)
+- [ ] Damping feels slightly tighter (0.10 vs 0.08) — momentum still present but less long-tail
+
 ## Phase 37 — P5 Death Recap + V9 Typography (2026-06)
 
 **P5 Death Recap**

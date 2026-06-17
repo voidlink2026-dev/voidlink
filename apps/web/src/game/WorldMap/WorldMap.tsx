@@ -269,12 +269,24 @@ export function WorldMap() {
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
-    controls.dampingFactor = 0.08
+    controls.dampingFactor = 0.1
     controls.minDistance   = 140
     controls.maxDistance   = 500
-    controls.zoomSpeed     = 0.6   // smoother wheel zoom (default 1.0)
+    controls.zoomSpeed     = 0.5   // V14 — smoother wheel zoom
     controls.rotateSpeed   = 1.0   // baseline — adapted per-frame below to compensate for distance
+    // V14 — Slow auto-rotation when idle. Pauses on any user interaction
+    // and on hover; resumes after 2s of no activity.
+    controls.autoRotate      = true
+    controls.autoRotateSpeed = 0.18   // very slow, atmospheric (default 2.0 → much too fast)
     ctrlRef.current = controls
+
+    // V14 — Track user activity for auto-rotate pause/resume
+    let lastInteractAt = 0
+    const IDLE_BEFORE_RESUME_MS = 2000
+    const onUserInteract = () => { lastInteractAt = performance.now() }
+    renderer.domElement.addEventListener('pointerdown', onUserInteract)
+    renderer.domElement.addEventListener('wheel', onUserInteract, { passive: true })
+    renderer.domElement.addEventListener('pointerenter', onUserInteract)
 
     // Tone mapping for nicer bloom
     renderer.toneMapping = THREE.ACESFilmicToneMapping
@@ -373,6 +385,12 @@ export function WorldMap() {
       const dist = camera.position.length()
       const t = (dist - 140) / (500 - 140)   // 0 close → 1 far
       controls.rotateSpeed = 0.25 + 0.75 * Math.max(0, Math.min(1, t))
+
+      // V14 — Auto-rotate gates on idle. Resume only after user has been
+      // inactive for IDLE_BEFORE_RESUME_MS.
+      const idleFor = ts - lastInteractAt
+      controls.autoRotate = idleFor > IDLE_BEFORE_RESUME_MS
+
       controls.update()
 
       // V5 — advance traveling pulses along their arcs. Each pulse takes
@@ -398,6 +416,9 @@ export function WorldMap() {
     return () => {
       cancelAnimationFrame(rafRef.current)
       ro.disconnect()
+      renderer.domElement.removeEventListener('pointerdown', onUserInteract)
+      renderer.domElement.removeEventListener('wheel', onUserInteract)
+      renderer.domElement.removeEventListener('pointerenter', onUserInteract)
       controls.dispose()
       renderer.dispose()
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)

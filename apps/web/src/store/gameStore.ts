@@ -357,6 +357,7 @@ interface GameActions {
 
   // M14p Pass 2c — reflection scenes
   triggerReflection: (id: string) => void
+  replayReflection: (id: string) => void   // P9 — bypass once-only gate to revisit
   dismissReflection: () => void
 
   // M14p Pass 2d — Arc 5 ending choice
@@ -2396,6 +2397,14 @@ export const useGameStore = create<GameState & GameActions>()(
         // marks it as seen.
         if (s.player.activeFlags[`reflection_${id}`]) return
         s.player.activeFlags[`reflection_${id}`] = Date.now()
+        s.pendingReflection = id
+      }),
+
+    // P9 — Replay a previously-seen reflection. Bypasses the once-only gate
+    // on triggerReflection so the player can revisit any unlocked scene
+    // from Settings without losing the original timestamp.
+    replayReflection: (id) =>
+      set((s) => {
         s.pendingReflection = id
       }),
 

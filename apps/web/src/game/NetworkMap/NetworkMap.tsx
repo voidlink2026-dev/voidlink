@@ -153,6 +153,7 @@ function NetworkCanvas({
   targetNodeTypes,
   onNodeClick,
   onBgClick,
+  onHoverNode,
 }: {
   nodes: NetworkNode[]
   selectedNodeId: string | null
@@ -160,6 +161,7 @@ function NetworkCanvas({
   targetNodeTypes: string[]
   onNodeClick: (n: NetworkNode) => void
   onBgClick: () => void
+  onHoverNode: (n: NetworkNode | null, x: number, y: number) => void
 }) {
   const mountRef   = useRef<HTMLDivElement>(null)
   // Keep latest callbacks/state in refs so the animation loop doesn't go stale
@@ -354,7 +356,26 @@ function NetworkCanvas({
     let pointerMoved = false
 
     function onPointerDown() { pointerMoved = false }
-    function onPointerMove() { pointerMoved = true }
+    function onPointerMove(e: PointerEvent) {
+      pointerMoved = true
+      // V10 — hover raycast. Set hovered node so the parent can render a tooltip.
+      const rect2 = renderer.domElement.getBoundingClientRect()
+      pointer.x =  ((e.clientX - rect2.left) / rect2.width)  * 2 - 1
+      pointer.y = -((e.clientY - rect2.top)  / rect2.height) * 2 + 1
+      raycaster.setFromCamera(pointer, camera)
+      const hoverHits = raycaster.intersectObjects([...meshByNode.values()])
+      if (hoverHits.length > 0) {
+        const hitMesh = hoverHits[0].object
+        for (const [nid, m] of meshByNode) {
+          if (m === hitMesh) {
+            const node = nodesRef.current.find((n) => n.id === nid)
+            if (node) { onHoverNode(node, e.clientX, e.clientY); return }
+          }
+        }
+      }
+      onHoverNode(null, e.clientX, e.clientY)
+    }
+    function onPointerLeave() { onHoverNode(null, 0, 0) }
     function onPointerUp(e: MouseEvent) {
       if (pointerMoved) return
       const rect = renderer.domElement.getBoundingClientRect()
@@ -378,6 +399,7 @@ function NetworkCanvas({
     renderer.domElement.addEventListener('pointerdown', onPointerDown)
     renderer.domElement.addEventListener('pointermove', onPointerMove)
     renderer.domElement.addEventListener('pointerup',   onPointerUp)
+    renderer.domElement.addEventListener('pointerleave', onPointerLeave)
 
     // ── Resize ─────────────────────────────────────────────
     const ro = new ResizeObserver(() => {
@@ -458,6 +480,7 @@ function NetworkCanvas({
       renderer.domElement.removeEventListener('pointerdown', onPointerDown)
       renderer.domElement.removeEventListener('pointermove', onPointerMove)
       renderer.domElement.removeEventListener('pointerup',   onPointerUp)
+      renderer.domElement.removeEventListener('pointerleave', onPointerLeave)
       controls.dispose()
       renderer.dispose()
       icoGeo.dispose()
@@ -490,6 +513,9 @@ export function NetworkMap() {
 
   const [transferringFileId, setTransferringFileId] = useState<string | null>(null)
   const [transferProgress, setTransferProgress]     = useState(0)
+  // V10 — node hover preview
+  const [hoveredNode, setHoveredNode] = useState<NetworkNode | null>(null)
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
   // M14j — exfilChannel hoisted to gameStore so loadouts can drive it.
   const exfilChannel    = useGameStore((s) => s.exfilChannel)
   const setExfilChannel = useGameStore((s) => s.setExfilChannel)
@@ -649,7 +675,55 @@ export function NetworkMap() {
           targetNodeTypes={targetNodeTypes}
           onNodeClick={handleNodeClick}
           onBgClick={() => selectNode(null)}
+          onHoverNode={(n, x, y) => {
+            setHoveredNode(n)
+            setHoverPos({ x, y })
+          }}
         />
+
+        {/* V10 — Hover preview tooltip — positioned near the cursor, fixed
+            so it survives canvas resize / scroll without re-projection. */}
+        {hoveredNode && (
+          <div
+            className={styles.hoverTooltip}
+            role="tooltip"
+            style={{
+              left: Math.min(hoverPos.x + 14, window.innerWidth - 240),
+              top:  Math.min(hoverPos.y + 14, window.innerHeight - 160),
+            }}
+          >
+            <div className={styles.hoverHead}>
+              <span className={styles.hoverType}>
+                {hoveredNode.type.replace(/_/g, ' ').toUpperCase()}
+              </span>
+              <span className={styles.hoverTier}>TIER {hoveredNode.securityTier}</span>
+            </div>
+            <div className={styles.hoverLabel}>{hoveredNode.label}</div>
+            {hoveredNode.isBreached && (
+              <div className={styles.hoverStateBreached}>● BREACHED</div>
+            )}
+            {hoveredNode.isLockedOut && (
+              <div className={styles.hoverStateLocked}>● LOCKED OUT</div>
+            )}
+            {hoveredNode.zone === 'B' && !hoveredNode.isBreached && (
+              <div className={styles.hoverStateZoneB}>● ZONE B — pivot required</div>
+            )}
+            {hoveredNode.isScanned && hoveredNode.services.length > 0 && (
+              <div className={styles.hoverServices}>
+                <div className={styles.hoverServicesLabel}>SERVICES</div>
+                {hoveredNode.services.map((s, i) => (
+                  <div key={i} className={styles.hoverService}>
+                    <span>{s.protocol}:{s.port}</span>
+                    {s.hasKnownVulnerability && <span className={styles.hoverVuln}>VULN</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {!hoveredNode.isScanned && (
+              <div className={styles.hoverSub}>Scan to reveal services.</div>
+            )}
+          </div>
+        )}
 
         {selectedNode && (
           <NodePanel

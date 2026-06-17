@@ -46,13 +46,30 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   cursor: pointer;
-  transition: color 0.12s, background 0.12s;
+  /* V13 — micro-interactions */
+  transition:
+    color 0.12s,
+    background 0.12s,
+    transform 0.1s cubic-bezier(0.22, 1.36, 0.4, 1);
   white-space: nowrap;
+  transform: scale(1);
 }
 
 .launchBtn:hover:not(:disabled) {
   color: var(--color-text, #d4d4d4);
   background: rgba(127, 127, 127, 0.08);
+}
+
+.launchBtn:active:not(:disabled) {
+  transform: scale(0.95);
+  transition-duration: 0.05s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launchBtn,
+  .launchBtn:active:not(:disabled) {
+    transform: none !important;
+  }
 }
 
 .launchBtn:focus-visible {

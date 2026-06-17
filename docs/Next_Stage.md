@@ -313,12 +313,8 @@ Renders on every decrypted encrypted message: *"── PGP fingerprint confirmed
 
 ---
 
-### P9 — Reflection Replay 💭
-**Effort:** ~30 min. **Window:** any.
-
-Settings → "Replay Reflections" submenu lists every reflection scene the player has unlocked (`end_of_arc_1`, `who_you_work_for`, `post_arc_6`, etc.) and replays them on demand. Currently each fires once and is gone.
-
-**Tech.** Settings panel reads `activeFlags.reflection_*` and offers replay buttons. Each button sets `pendingReflection` to the trigger ID.
+### P9 — Reflection Replay ✅ SHIPPED 2026-06
+New `replayReflection(id)` store action bypasses the once-only `triggerReflection` gate. Settings panel renders a "REFLECTIONS — N UNLOCKED" list of every scene the player has unlocked (filtered by `activeFlags.reflection_<id>`). Empty-state reads "NO REFLECTIONS UNLOCKED YET".
 
 ---
 

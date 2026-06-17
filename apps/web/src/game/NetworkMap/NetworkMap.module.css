@@ -427,3 +427,87 @@
   color: var(--color-amber, #ffaa00);
   text-align: center;
 }
+
+/* V10 — Hover preview tooltip */
+.hoverTooltip {
+  position: fixed;
+  z-index: 9000;
+  pointer-events: none;
+  min-width: 200px;
+  max-width: 240px;
+  background: rgba(5, 7, 10, 0.92);
+  border: 1px solid rgba(0, 207, 255, 0.45);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 18px rgba(0, 207, 255, 0.18), 0 6px 24px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hoverHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 207, 255, 0.18);
+  padding-bottom: 4px;
+}
+.hoverType {
+  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: #00cfff;
+  font-weight: 600;
+  text-shadow: 0 0 6px rgba(0, 207, 255, 0.3);
+}
+.hoverTier {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: #909090;
+  font-weight: 700;
+}
+.hoverLabel {
+  font-size: 10px;
+  color: #d4d4d4;
+  font-style: italic;
+}
+.hoverSub {
+  font-size: 9px;
+  color: #888;
+  font-style: italic;
+  margin-top: 2px;
+}
+.hoverStateBreached { font-size: 9px; color: #39ff14; letter-spacing: 0.1em; font-weight: 700; }
+.hoverStateLocked   { font-size: 9px; color: #ff2d20; letter-spacing: 0.1em; font-weight: 700; }
+.hoverStateZoneB    { font-size: 9px; color: #ff9900; letter-spacing: 0.1em; font-weight: 700; }
+.hoverServices {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(0, 207, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hoverServicesLabel {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: #707070;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.hoverService {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #c0c0c0;
+}
+.hoverVuln {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: #ff6600;
+  border: 1px solid #ff6600;
+  padding: 1px 4px;
+  border-radius: 1px;
+  font-weight: 700;
+}

@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { useSettingsStore } from '../../store/settingsStore.ts'
+import { useGameStore } from '../../store/gameStore.ts'
+import { REFLECTION_SCENES } from '@voidlink/core'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './SettingsWindow.module.css'
 
@@ -128,6 +130,10 @@ export function SettingsWindow() {
             }}
           >REPLAY ON NEXT LOGIN</button>
         </div>
+
+        {/* P9 — Replay Reflections — lists every reflection scene this
+            character has unlocked, lets the player revisit any of them. */}
+        <ReflectionReplayList />
       </section>
 
       {/* ── Shortcuts ─────────────────────────────────────────────────────── */}
@@ -142,6 +148,47 @@ export function SettingsWindow() {
       </section>
 
       <div className={styles.version}>VOIDLINK OS v4.7.1 — PRE-ALPHA · © 2199 Voidlink International</div>
+    </div>
+  )
+}
+
+// P9 — Replay Reflections list. Renders every reflection scene the player
+// has unlocked (i.e. activeFlags.reflection_<id> is set) as a clickable row
+// that calls replayReflection(id) to surface it again.
+function ReflectionReplayList() {
+  const player = useGameStore((s) => s.player)
+  const replayReflection = useGameStore((s) => s.replayReflection)
+
+  const unlocked = Object.entries(REFLECTION_SCENES)
+    .filter(([id]) => !!player?.activeFlags[`reflection_${id}`])
+    .map(([id, scene]) => ({ id, title: scene.title }))
+
+  if (unlocked.length === 0) {
+    return (
+      <div className={styles.scaleRow}>
+        <span className={styles.sliderLabel}>REFLECTIONS</span>
+        <span style={{ fontSize: 9, color: '#707070', letterSpacing: '0.08em', fontStyle: 'italic' }}>
+          NO REFLECTIONS UNLOCKED YET
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div className={styles.sliderLabel} style={{ marginBottom: 2 }}>
+        REFLECTIONS — {unlocked.length} UNLOCKED
+      </div>
+      {unlocked.map((r) => (
+        <button
+          key={r.id}
+          className={styles.testBtn}
+          style={{ textAlign: 'left', padding: '5px 10px' }}
+          onClick={() => replayReflection(r.id)}
+        >
+          ▶ {r.title}
+        </button>
+      ))}
     </div>
   )
 }
