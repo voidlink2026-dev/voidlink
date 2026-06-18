@@ -4,7 +4,7 @@ import { useGameStore } from '../../store/gameStore.ts'
 import { getAchievement } from '@voidlink/core'
 import styles from './AchievementUnlockToast.module.css'
 
-const AUTO_DISMISS_MS = 7000
+const AUTO_DISMISS_MS = 3500   // Playtester feedback: previous 7s was too long
 
 export function AchievementUnlockToast() {
   const queue   = useGameStore((s) => s.achievementUnlockQueue)
@@ -43,7 +43,7 @@ export function AchievementUnlockToast() {
               </div>
               <div className={styles.title}>{entry.title}</div>
               <div className={styles.description}>{entry.description}</div>
-              <div className={styles.hint}>Click to dismiss · auto-dismiss in 7s</div>
+              <div className={styles.hint}>Click to dismiss · auto-dismiss in 3.5s · review in PROFILE</div>
             </motion.div>
           )
         })}

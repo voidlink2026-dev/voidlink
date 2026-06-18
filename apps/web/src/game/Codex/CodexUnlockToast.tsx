@@ -4,7 +4,7 @@ import { useGameStore } from '../../store/gameStore.ts'
 import { getCodexEntry } from '@voidlink/core'
 import styles from './CodexUnlockToast.module.css'
 
-const AUTO_DISMISS_MS = 8000
+const AUTO_DISMISS_MS = 4000   // Playtester feedback: previous 8s was too long
 
 export function CodexUnlockToast() {
   const queue           = useGameStore((s) => s.codexUnlockQueue)
@@ -58,7 +58,7 @@ export function CodexUnlockToast() {
               <div className={styles.label}>NEW CODEX ENTRY</div>
               <div className={styles.title}>{entry.title}</div>
               <div className={styles.tagline}>{entry.tagline}</div>
-              <div className={styles.hint}>Click to read · auto-dismiss in 8s</div>
+              <div className={styles.hint}>Click to read · auto-dismiss in 4s · CODEX has the rest</div>
             </motion.div>
           )
         })}

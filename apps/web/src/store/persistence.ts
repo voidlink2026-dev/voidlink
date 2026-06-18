@@ -256,3 +256,145 @@ export function startAutoSave(): () => void {
   }, 60_000)
   return () => clearInterval(id)
 }
+
+// ─── P10 — Branch saves ───────────────────────────────────────────────────────
+// Players can bookmark the current state as a branch save before any major
+// story choice, then restore later to explore the other path. Branch saves
+// share the same SaveData shape and integrity signing as the main save.
+
+const BRANCH_PREFIX = 'voidlink_branch_'
+
+export interface BranchSaveMeta {
+  id: string          // bookmark id (timestamp-based)
+  handle: string
+  label: string
+  savedAt: number
+  rank: number
+  credits: number
+  arcProgress?: string // e.g. "Arc 4 in progress" — derived from flags at write time
+}
+
+function branchKey(handle: string, id: string) {
+  return `${BRANCH_PREFIX}${handle.toLowerCase()}_${id}`
+}
+
+function deriveArcProgress(s: ReturnType<typeof useGameStore.getState>): string {
+  const flags = s.player?.activeFlags ?? {}
+  if (flags.arc8_buyer_list_acquired) return 'Arc 8 LIGHTHOUSE — resolution pending'
+  if (flags.arc8_started)             return 'Arc 8 LIGHTHOUSE in progress'
+  if (flags.arc7_window_confirmed)    return 'Arc 7 QUIET WAR — resolution pending'
+  if (flags.arc7_started)             return 'Arc 7 QUIET WAR in progress'
+  if (flags.arc6_magnus_identified)   return 'Arc 6 DEAD DROP — resolution pending'
+  if (flags.arc6_started)             return 'Arc 6 DEAD DROP in progress'
+  if (typeof flags.arc1_key_choice === 'string') return `Arc 1 resolved (${flags.arc1_key_choice})`
+  const mn = s.player?.completedMissions.length ?? 0
+  return `${mn} missions completed`
+}
+
+export function createBranchSave(label: string): BranchSaveMeta | null {
+  try {
+    const s = useGameStore.getState()
+    if (!s.player) return null
+    const id = `bm_${Date.now()}`
+    const data: SaveData = {
+      version: SAVE_VERSION,
+      savedAt: Date.now(),
+      player: s.player,
+      missions: s.missions.filter((m) => m.status !== 'active'),
+      newsFeed: s.newsFeed,
+      inbox: s.inbox,
+      exfilChannel: s.exfilChannel,
+      activeWorldEvents: s.activeWorldEvents,
+      nextWorldEventAt: s.nextWorldEventAt,
+      activeWindows: s.activeWindows,
+      windowLastPositions: s.windowLastPositions,
+      windowZCounter: s.windowZCounter,
+    }
+    const signed = { ...data, [SAVE_INTEGRITY_FIELD]: signSave(data) }
+    localStorage.setItem(branchKey(s.player.handle, id), JSON.stringify(signed))
+    return {
+      id, handle: s.player.handle, label,
+      savedAt: Date.now(), rank: s.player.rank, credits: s.player.credits,
+      arcProgress: deriveArcProgress(s),
+    }
+  } catch {
+    return null
+  }
+}
+
+export function listBranchSaves(handle: string): BranchSaveMeta[] {
+  const out: BranchSaveMeta[] = []
+  const prefix = `${BRANCH_PREFIX}${handle.toLowerCase()}_`
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key || !key.startsWith(prefix)) continue
+    try {
+      const raw = localStorage.getItem(key)
+      if (!raw) continue
+      const data = JSON.parse(raw) as SaveData & Record<string, unknown>
+      const labelKey = `${BRANCH_PREFIX}label_${key.slice(BRANCH_PREFIX.length)}`
+      const label = localStorage.getItem(labelKey) ?? 'Bookmark'
+      out.push({
+        id: key.slice(prefix.length),
+        handle,
+        label,
+        savedAt: data.savedAt ?? 0,
+        rank: data.player?.rank ?? 1,
+        credits: data.player?.credits ?? 0,
+      })
+    } catch { /* ignore corrupt */ }
+  }
+  return out.sort((a, b) => b.savedAt - a.savedAt)
+}
+
+export function setBranchLabel(handle: string, id: string, label: string) {
+  localStorage.setItem(`${BRANCH_PREFIX}label_${handle.toLowerCase()}_${id}`, label)
+}
+
+export function restoreBranchSave(handle: string, id: string): boolean {
+  try {
+    const raw = localStorage.getItem(branchKey(handle, id))
+    if (!raw) return false
+    const parsed = JSON.parse(raw) as SaveData & Record<string, unknown>
+    if (!parsed.player) return false
+    const integrityOk = !!parsed[SAVE_INTEGRITY_FIELD] && verifySave(parsed)
+    const { [SAVE_INTEGRITY_FIELD]: _sig, ...rest } = parsed
+    void _sig
+    const data: SaveData = rest as SaveData
+    if (!integrityOk && data.player) {
+      data.player.activeFlags = { ...data.player.activeFlags, save_tampered_at: Date.now() }
+    }
+    const now = Date.now()
+    const restoredWindows = (data.activeWindows ?? []).filter(
+      (w) => !MISSION_ONLY_WINDOWS.has(w.id),
+    )
+    useGameStore.setState((s) => ({
+      ...s,
+      player: data.player,
+      missions: data.missions ?? [],
+      newsFeed: data.newsFeed ?? [],
+      inbox: data.inbox ?? [],
+      exfilChannel: data.exfilChannel ?? 'direct',
+      activeWorldEvents: (data.activeWorldEvents ?? []).filter((e) => e.endsAt > now),
+      nextWorldEventAt: data.nextWorldEventAt ?? null,
+      activeWindows: restoredWindows,
+      windowLastPositions: data.windowLastPositions ?? {},
+      windowZCounter: data.windowZCounter ?? 100,
+      focusedWindowId: restoredWindows.length > 0
+        ? restoredWindows.reduce((top, w) => (top.zOrder > w.zOrder ? top : w)).id
+        : null,
+      screen: 'desktop',
+    }))
+    // Persist the restored state to the main save key so subsequent autosaves
+    // continue from the bookmark.
+    saveGame()
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function deleteBranchSave(handle: string, id: string): void {
+  localStorage.removeItem(branchKey(handle, id))
+  localStorage.removeItem(`${BRANCH_PREFIX}label_${handle.toLowerCase()}_${id}`)
+}

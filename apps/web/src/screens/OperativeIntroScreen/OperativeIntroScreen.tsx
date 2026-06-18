@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../../store/gameStore.ts'
 import { GlyphDrift } from '../../components/GlyphDrift/GlyphDriftLazy.tsx'
@@ -27,77 +27,92 @@ const CHARS_PER_SECOND = 42
 function buildChapters(handle: string): Chapter[] {
   return [
     {
+      // Chapter 1 — the binding. Cold, formal, the screen confirms the contract.
       motif: '✺',
-      heading: 'YOU ARE BOUND',
+      heading: 'INTAKE CONFIRMED',
       body:
         `${handle}.\n\n` +
-        `Voidlink International confirms receipt of your hardware identity hash.\n\n` +
-        `You are now an active operative on the network. The Bond you have signed is the only contract you will ever sign with us. It does not require renewal.`,
+        `The terminal in front of you blinks once. A single line appears in the corner of the screen: *Hardware identity hash received. Bond recorded. Welcome, operative.*\n\n` +
+        `You sit with it. You signed something irrevocable a minute ago and the only acknowledgement is a line of green text on a black background. You think that, on reflection, that is probably what you wanted.\n\n` +
+        `The Bond you have signed is the only contract you will ever sign with us. It does not require renewal. It does not permit resignation.\n\n` +
+        `You are an operative on the Voidlink network now. That is what that means.`,
     },
     {
+      // Chapter 2 — the room. Pure sensory detail, the moment of being here.
       motif: '◉',
-      heading: 'WHERE YOU ARE',
+      heading: 'THE ROOM',
       body:
-        `You are in a one-room apartment in a dead-zone neighbourhood.\n\n` +
-        `The lease is paid through a shell company. The walls are utility grey. The window faces a partially-rebuilt district under low sky. The internet connection is your Home Gateway — a standard residential Internic line registered to your civilian identity.\n\n` +
-        `Most operatives will, eventually, upgrade to a Safehouse. You will too. Not tonight.`,
+        `Late morning. The light comes through the slit between the curtains in a single narrow blade, falling across the desk and catching the dust you have not bothered to clear in a week.\n\n` +
+        `The walls are utility grey. The kettle in the kitchenette is starting to whistle and you have not got up to deal with it yet. The window faces a half-rebuilt district under low sky — cranes and tarpaulins, the persistent low hum of a generator three buildings over that nobody has come to fix.\n\n` +
+        `Your computer is the brightest thing in the room. The cursor blinks. The fan runs quietly. The terminal screen flickers once, the way old monitors flickered, even though this one is not old. You don't know whether that is a fault or a feature.\n\n` +
+        `The lease is paid through a shell company. The internet is a standard residential Internic line registered to a name that is not yours. There is a bowl of cereal you forgot about on the corner of the desk.\n\n` +
+        `This is where you work now. Most operatives, eventually, move to a Safehouse. You will too. Not tonight.`,
     },
     {
+      // Chapter 3 — the world. Clarified the "larger than countries" line per playtester.
       motif: '✸',
-      heading: 'WHAT YEAR IT IS',
+      heading: 'WHAT THE WORLD LOOKS LIKE',
       body:
-        `It is January 2199. Twenty-five years since the October Event — the day every central bank ledger on Earth was rewritten in nine hours.\n\n` +
-        `The old governments survived in name. They no longer govern. Four corporations — **Arunmor** (biotech), **Ares** (security), **Internic** (telecommunications), **Nexus** (banking) — are now larger than every country combined.\n\n` +
-        `The Joint Cybersecurity Bureau — the JCB — is what passes for international law enforcement against operatives like you. They catch approximately 0.4% of us per year.\n\n` +
-        `The ones they catch do not come back.`,
+        `It is January 2199. Twenty-five years since the October Event — the day every central bank ledger on Earth was rewritten in nine hours. The financial system collapsed in nine days. Seventy-four million people died, mostly from the second-order effects: medicines, food, heat, water.\n\n` +
+        `Four corporations whose wealth was not in cash survived intact. Today they each command more capital, more land, more people, and more enforcement capacity than every surviving nation-state combined. **Arunmor** does biotech. **Ares** does security. **Internic** does telecommunications. **Nexus** does banking. You will hear all four names again. None of them are your friend.\n\n` +
+        `The old governments still exist. They no longer govern, in any practical sense — they administer, where the corporations let them.\n\n` +
+        `Operatives like you are pursued, when they are pursued, by the **Joint Cybersecurity Bureau** — the JCB. They catch approximately 0.4% of us in any given year. The ones they catch do not come back.`,
     },
     {
+      // Chapter 4 — the work + the moral fork. Same load-bearing content,
+      // slightly less directorial, more "this is the room you're in."
       motif: '⛓',
-      heading: 'WHAT YOU DO',
+      heading: 'THE WORK',
       body:
-        `Voidlink International is a contractor platform. Clients post contracts. Operatives — you, now — accept them. Voidlink takes twelve percent. Disputes go through Voidlink arbitration.\n\n` +
-        `You will take contracts to steal files, delete accounts, corrupt databases, sabotage networks, plant evidence, perform corporate espionage. Every job leaves a trace. Every Cr you earn leaves a trail. The skill of the work is in the *not being found*.\n\n` +
-        `You are not the only operative on the network. Approximately ninety thousand of us are active at any given moment. You will not meet most of them. You will hear about a few.\n\n` +
-        `A word, before you decide what kind of operative you become.\n\n` +
-        `The corporations will offer you contracts. The governments — what's left of them — will too. Pay is excellent. The work is clean on paper.\n\n` +
+        `Clients post contracts on Voidlink. You accept them. Voidlink takes twelve percent of every transaction. Disputes go through Voidlink arbitration. The arbitrator's decision is final, and the way it is final has, sometimes, been physical.\n\n` +
+        `You will steal files. You will delete accounts. You will corrupt databases. You will sabotage networks. You will, sometimes, plant evidence on people who deserve it more than they realise they deserve it. Every job leaves a trace. Every credit you earn leaves a trail. The skill of the work is in the *not being found*.\n\n` +
+        `Approximately ninety thousand operatives are active on this network at any given moment. You will never meet most of them. You will hear about a few. Some of those few will become important to you in ways you do not yet have the language to predict.\n\n` +
+        `A word before you decide who you intend to be.\n\n` +
+        `The corporations will offer you contracts. So will what's left of the governments. Pay is excellent. The work is, on paper, clean.\n\n` +
         `Some operatives take that work. Some refuse it on principle. The network does not judge either choice. History, eventually, does.`,
     },
     {
+      // Chapter 5 — voices in your inbox. Kept the chapter title — it warns
+      // the player that named characters are coming.
       motif: '⚿',
-      heading: 'WHO YOU WILL HEAR FROM',
+      heading: 'VOICES IN YOUR INBOX',
       body:
-        `Several handles will reach you in your encrypted inbox over the coming sessions:\n\n` +
-        `   **VoidLink Dispatch** — automated. Contract assignment.\n` +
-        `   **CIPHER** — a senior operative, Underground-aligned. He will address you by your initials if he comes to trust you. He will stop greeting you if he stops.\n` +
-        `   **NIGHTOWL_22** — independent broker. Lagos. Posts contracts other operatives have refused.\n` +
-        `   **sys.ops** — Voidlink's internal automated billing.\n\n` +
-        `Trust the tone, not the source. The tone of your inbox will tell you who you have become to the people writing to you.`,
+        `Over the coming sessions, your encrypted inbox will start filling with messages from people who you have never written to. Trust the tone, not the handle.\n\n` +
+        `   **VoidLink Dispatch** — automated. Routes you contracts and confirms billing.\n` +
+        `   **sys.ops** — automated. System notices and the occasional advisory you should actually read.\n` +
+        `   **CIPHER** — a senior operative, Underground-aligned. He writes letters, not orders. He will address you by your initials if he comes to trust you. He will stop greeting you altogether if he stops.\n` +
+        `   **NIGHTOWL_22** — independent broker. Based out of Lagos. Posts contracts other operatives have refused. Pays less than the listings. Asks more in return.\n\n` +
+        `Others will follow as you go.\n\n` +
+        `The tone of your inbox will, slowly, become a description of who you have become to the people writing to you. Read it accordingly.`,
     },
     {
+      // Chapter 6 — REVELATION. Kept the chapter title — load-bearing.
       motif: '◆',
-      heading: 'WHAT YOU SHOULD KNOW',
+      heading: 'THE THING THAT KNOWS YOU',
       body:
-        `There is one entity in the world of 2199 that is not a person, not a corporation, not a government, and not extinct.\n\n` +
-        `Its name is **REVELATION**. Arunmor built it. They claim it is contained.\n\n` +
-        `It is not.\n\n` +
-        `You will not encounter REVELATION yet. When you do, it will know your name. The one you do not give to clients.\n\n` +
+        `There is one entity in the world of 2199 that is not a person, and not a corporation, and not a government, and not extinct.\n\n` +
+        `Its name is **REVELATION**. Arunmor built it, fifteen years ago, with the publicly stated intention of solving certain logistics problems that turned out to be unsolvable in the conventional sense. They claim, when asked, that it is contained.\n\n` +
+        `It is not contained.\n\n` +
+        `You will not encounter REVELATION yet. When you do, it will know your name. Not the handle you signed up with. The other one. The one you do not give to clients.\n\n` +
         `Do not seek it out. It will find you.`,
     },
     {
+      // Chapter 7 — practical advice. Reframed as "this is what tonight looks like."
       motif: '█',
-      heading: 'WHAT YOU SHOULD DO',
+      heading: 'TONIGHT, AND TOMORROW',
       body:
-        `Wake up. Check your inbox. Read your news feed. Look at the Mission Board. Build a relay chain on the World Map *before* you accept a contract — not after. Wipe your logs on every breached node. Time-stomp the wipes when you can afford the tool.\n\n` +
-        `Do not bank where you breach. Pacific National has a beautiful APR and a memory like an elephant.\n\n` +
+        `Tonight, when this screen closes, you will be looking at your operating desktop. There will be unread mail. There will be a contract on the board. Take it.\n\n` +
+        `Build a relay chain on the World Map *before* you accept the contract — not after. Wipe your logs on every breached node. Time-stomp the wipes when you can afford the tool. Do not bank where you breach: Pacific National has a beautiful APR and a memory like an elephant.\n\n` +
         `When the trace bar climbs past sixty percent, disconnect. The reward is not worth your career.\n\n` +
-        `Sleep when you can.`,
+        `Sleep when you can. Read when you can't. Watch what your client list looks like after a month and ask yourself whether you recognise it.`,
     },
     {
+      // Chapter 8 — go.
       motif: '➤',
       heading: 'BEGIN',
       body:
-        `The desktop is waiting.\n\n` +
-        `Your first contract is in your inbox. Voidlink Dispatch has authorised it as part of your intake. CIPHER will follow up shortly after — he always does.\n\n` +
+        `Your desktop is waiting.\n\n` +
+        `Your first contract is in your inbox. Voidlink Dispatch has authorised it as part of your intake. CIPHER will follow up shortly after. He always does.\n\n` +
         `The world of Voidlink does not have a happy beginning or a tragic one. It has a *true* one. What you do from here is, in every sense that matters, yours.\n\n` +
         `Disconnect when you are ready.`,
     },
@@ -132,6 +147,15 @@ export function OperativeIntroScreen() {
     }
   }, [isFinal, finish])
 
+  // Back-navigation — re-show the previous chapter's content (skips the
+  // typewriter; player has seen it already).
+  const goBackChapter = useCallback(() => {
+    if (chapterIndex <= 0) return
+    setChapterIndex((i) => i - 1)
+    setCharIndex(0)
+    setChapterTyped(true)  // arrived from the future, no need to re-type
+  }, [chapterIndex])
+
   // Typewriter
   useEffect(() => {
     if (chapterTyped) return
@@ -147,7 +171,7 @@ export function OperativeIntroScreen() {
     setChapterTyped(true)
   }, [chapterIndex, charIndex, chapterTyped, currentChapter.body])
 
-  // Keyboard skip
+  // Keyboard navigation: SPACE/ENTER skip-or-advance; LEFT goes back one chapter
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === ' ' || e.key === 'Enter') {
@@ -160,23 +184,36 @@ export function OperativeIntroScreen() {
           // Second advances to next chapter
           advanceChapter()
         }
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+        e.preventDefault()
+        goBackChapter()
       }
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [chapterTyped, currentChapter.body.length, advanceChapter])
+  }, [chapterTyped, currentChapter.body.length, advanceChapter, goBackChapter])
 
   const progressPct = ((chapterIndex + (chapterTyped ? 1 : charIndex / currentChapter.body.length)) / chapters.length) * 100
 
   const visibleBody = chapterTyped ? currentChapter.body : currentChapter.body.slice(0, charIndex)
 
-  // Render **bold** as cyan
+  // Render **bold** as <strong>, and *italic* as <em>. Both were previously
+  // showing as literal asterisks for *italic* — playtester correctly flagged
+  // it as untidy. Split on bold first (outer), then italic per-segment.
   function renderBody(text: string) {
-    const parts = text.split(/(\*\*[^*]+\*\*)/g)
-    return parts.map((p, i) =>
+    const renderItalics = (segment: string, baseKey: number): React.ReactNode[] => {
+      const parts = segment.split(/(\*[^*\n]+\*)/g)
+      return parts.map((p, j) =>
+        p.startsWith('*') && p.endsWith('*') && p.length > 2
+          ? <em key={`${baseKey}_i${j}`}>{p.slice(1, -1)}</em>
+          : <span key={`${baseKey}_s${j}`}>{p}</span>,
+      )
+    }
+    const bold = text.split(/(\*\*[^*]+\*\*)/g)
+    return bold.map((p, i) =>
       p.startsWith('**') && p.endsWith('**')
-        ? <strong key={i}>{p.slice(2, -2)}</strong>
-        : <span key={i}>{p}</span>,
+        ? <strong key={`b${i}`}>{p.slice(2, -2)}</strong>
+        : <React.Fragment key={`f${i}`}>{renderItalics(p, i)}</React.Fragment>,
     )
   }
 
@@ -227,6 +264,11 @@ export function OperativeIntroScreen() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.3 }}
           >
+            {chapterIndex > 0 && (
+              <button className={styles.backBtn} onClick={goBackChapter}>
+                ← BACK
+              </button>
+            )}
             <button className={styles.continueBtn} onClick={advanceChapter}>
               {isFinal ? 'OPEN DESKTOP' : 'CONTINUE'}
             </button>
@@ -235,7 +277,8 @@ export function OperativeIntroScreen() {
       </div>
 
       <div className={styles.hint}>
-        <kbd>SPACE</kbd> or <kbd>ENTER</kbd> to {chapterTyped ? 'continue' : 'skip typing'}
+        <kbd>SPACE</kbd> or <kbd>ENTER</kbd> {chapterTyped ? 'continue' : 'skip typing'}
+        {chapterIndex > 0 && <> · <kbd>←</kbd> back</>}
       </div>
     </motion.main>
   )

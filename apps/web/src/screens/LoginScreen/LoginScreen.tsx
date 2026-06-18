@@ -359,6 +359,16 @@ export function LoginScreen() {
             >
               NEW OPERATIVE
             </button>
+            {/* Playtester feedback: password reset wasn't discoverable.
+                Now a top-level mode you can reach without first selecting
+                an existing operative and entering a wrong password. */}
+            <button
+              className={`${styles.tab} ${mode === 'reset' ? styles.tabActive : ''}`}
+              onClick={() => { startResetFlow() }}
+              title="Reset your password via email code"
+            >
+              RECOVER ACCESS
+            </button>
           </div>
         )}
 

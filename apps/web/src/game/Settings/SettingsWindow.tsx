@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSettingsStore } from '../../store/settingsStore.ts'
 import { useGameStore } from '../../store/gameStore.ts'
 import { REFLECTION_SCENES } from '@voidlink/core'
+import { createBranchSave, listBranchSaves, restoreBranchSave, deleteBranchSave, setBranchLabel, type BranchSaveMeta } from '../../store/persistence.ts'
 import { AudioEngine } from '../Audio/audioEngine.ts'
 import styles from './SettingsWindow.module.css'
 
@@ -136,6 +137,12 @@ export function SettingsWindow() {
         <ReflectionReplayList />
       </section>
 
+      {/* P10 — Branch saves */}
+      <section className={styles.section}>
+        <div className={styles.sectionTitle}>BRANCH SAVES</div>
+        <BranchSavesPanel />
+      </section>
+
       {/* ── Shortcuts ─────────────────────────────────────────────────────── */}
       <section className={styles.section}>
         <div className={styles.sectionTitle}>SHORTCUTS</div>
@@ -189,6 +196,75 @@ function ReflectionReplayList() {
           ▶ {r.title}
         </button>
       ))}
+    </div>
+  )
+}
+
+// P10 — Branch saves panel. Lets the player bookmark the current state
+// before a major choice and restore it later. Useful for completionist runs
+// that want to explore alternate Arc 1 / Arc 5 / Arc 6/7/8 resolutions.
+function BranchSavesPanel() {
+  const player = useGameStore((s) => s.player)
+  const [bookmarks, setBookmarks] = useState<BranchSaveMeta[]>([])
+
+  useEffect(() => {
+    if (player) setBookmarks(listBranchSaves(player.handle))
+  }, [player])
+
+  if (!player) return null
+
+  const handleCreate = () => {
+    const label = window.prompt('Bookmark label (optional):', 'Before next choice') ?? 'Bookmark'
+    const meta = createBranchSave(label)
+    if (meta) {
+      setBranchLabel(meta.handle, meta.id, meta.label)
+      setBookmarks(listBranchSaves(player.handle))
+    }
+  }
+
+  const handleRestore = (id: string) => {
+    if (!window.confirm('Restore this bookmark? Your current progress will be overwritten.')) return
+    if (restoreBranchSave(player.handle, id)) {
+      window.location.reload()
+    }
+  }
+
+  const handleDelete = (id: string) => {
+    if (!window.confirm('Delete this bookmark?')) return
+    deleteBranchSave(player.handle, id)
+    setBookmarks(listBranchSaves(player.handle))
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <span style={{ fontSize: 9, letterSpacing: '0.16em', color: '#a8a8a8' }}>
+          {bookmarks.length} BOOKMARK{bookmarks.length === 1 ? '' : 'S'}
+        </span>
+        <button className={styles.testBtn} onClick={handleCreate}>+ CREATE BOOKMARK</button>
+      </div>
+      {bookmarks.length === 0 ? (
+        <span style={{ fontSize: 9, color: '#707070', fontStyle: 'italic', letterSpacing: '0.06em' }}>
+          NO BOOKMARKS YET. CREATE ONE BEFORE A MAJOR CHOICE TO SAVE A BRANCH POINT.
+        </span>
+      ) : (
+        bookmarks.map((b) => (
+          <div key={b.id} style={{
+            display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 8,
+            alignItems: 'center', padding: '6px 8px',
+            border: '1px solid #1e1e1e', borderRadius: 2,
+          }}>
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <div style={{ fontSize: 10, color: '#d4d4d4', fontWeight: 700 }}>{b.label}</div>
+              <div style={{ fontSize: 8, color: '#888', letterSpacing: '0.06em' }}>
+                Rank {b.rank} · {b.credits.toLocaleString()} Cr · {new Date(b.savedAt).toLocaleString()}
+              </div>
+            </div>
+            <button className={styles.testBtn} onClick={() => handleRestore(b.id)}>RESTORE</button>
+            <button className={styles.testBtn} onClick={() => handleDelete(b.id)} style={{ color: '#ff6666' }}>DELETE</button>
+          </div>
+        ))
+      )}
     </div>
   )
 }

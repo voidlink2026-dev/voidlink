@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { PlayerProfile, BounceNode, FactionData, Mission, MissionObjective, Network, NetworkNode, SecurityTier, TraceState, NetworkArchetype, HardwareDefinition, ToolDefinition, StoryMission, Specialization, EmailMessage, ExfilChannelId } from '@voidlink/core'
-import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, evaluateAchievements, getAchievement, evaluateDiaryEntries, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
+import { createTraceState, tickTrace, triggerBreachAlarm, generateNetwork, escapeTrace, RANK_THRESHOLDS, levelFromXp, missionXpReward, getBank, getStock, STOCKS, getConsumable, BANKS, getImplant, traceBaseRateDelta, getGateway, gatewayBaseRateMul, gatewayNotorietyMul, getResearchNode, researchBaseRateDelta, researchPointsForMission, getDecisionPattern, flagForCompletedContract, evaluateAchievements, getAchievement, evaluateDiaryEntries, pickAmbientDrip, frameNewsArticle, evaluateDialogueTriggers, pickDialogueVariant, evaluateCodexUnlocks } from '@voidlink/core'
 import { saveGame, clearActiveSession } from './persistence.ts'
 
 // ── M14m helper ──────────────────────────────────────────────────────────────
@@ -324,6 +324,7 @@ interface GameActions {
   buyStock: (stockId: string, shares: number) => 'ok' | 'insufficient_funds' | 'invalid_amount'
   sellStock: (stockId: string, shares: number) => 'ok' | 'insufficient_shares' | 'invalid_amount'
   tickMarket: () => void
+  tickAmbientWorld: () => void   // P7 — ambient news + system inbox drip
   tickGameLoop: (deltaMs: number) => void
   logTerminal: (text: string, type?: string) => void
   logout: () => void
@@ -3299,6 +3300,45 @@ export const useGameStore = create<GameState & GameActions>()(
     },
 
     // ── Market simulation tick ───────────────────────────────────────────────
+    // P7 — Ambient world drip. Fires a non-gameplay headline or sys.ops
+    // inbox message at most once per 5 minutes of real-time desktop play.
+    // Items are picked from data/ambientDrip.ts with bucket-aware weighting.
+    tickAmbientWorld: () =>
+      set((s) => {
+        if (!s.player) return
+        const now = Date.now()
+        const last = (s.player.activeFlags.last_ambient_drip_at as number) ?? 0
+        const DRIP_INTERVAL_MS = 5 * 60 * 1000
+        if (now - last < DRIP_INTERVAL_MS) return
+        const pick = pickAmbientDrip(s.player)
+        if (!pick) return
+        s.player.activeFlags[`ambient_${pick.id}`] = now
+        s.player.activeFlags.last_ambient_drip_at = now
+        if (pick.kind === 'news' && pick.headline && pick.category) {
+          s.newsFeed.unshift({
+            id: `news_ambient_${pick.id}_${now}`,
+            timestamp: now,
+            headline: pick.headline,
+            body: pick.body,
+            category: pick.category,
+            isPlayerAction: false,
+          })
+          if (s.newsFeed.length > 100) s.newsFeed.splice(100)
+        } else if (pick.kind === 'inbox_system' && pick.subject) {
+          s.inbox.unshift({
+            id: `mail_ambient_${pick.id}_${now}`,
+            receivedAt: now,
+            isRead: false,
+            encrypted: false,
+            category: 'system',
+            from: 'sys.ops',
+            subject: pick.subject,
+            body: pick.body,
+          })
+          if (s.inbox.length > 100) s.inbox.length = 100
+        }
+      }),
+
     tickMarket: () =>
       set((s) => {
         const now = Date.now()

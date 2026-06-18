@@ -23,6 +23,7 @@ const APPS: AppDef[] = [
   { id: 'inbox',       label: 'INBOX',      title: 'ENCRYPTED INBOX',     component: 'EmailInbox',       width: 720, height: 480 },
   { id: 'codex',       label: 'CODEX',      title: 'CODEX',               component: 'CodexWindow',      width: 880, height: 580 },
   { id: 'diary',       label: 'DIARY',      title: 'OPERATIVE DIARY',     component: 'DiaryWindow',      width: 620, height: 520 },
+  { id: 'help',        label: 'HELP',       title: 'OPERATIVE HANDBOOK',  component: 'HelpWindow',       width: 880, height: 580 },
   { id: 'research',    label: 'RESEARCH',   title: 'RESEARCH BENCH',      component: 'ResearchBench',    width: 1100, height: 580 },
   { id: 'shop',        label: 'SHOP',       title: 'UPGRADE SHOP',        component: 'UpgradeShop',      width: 1280, height: 620 },
   { id: 'profile',     label: 'PROFILE',    title: 'OPERATIVE PROFILE',   component: 'ProfileWindow',    width: 480, height: 560 },

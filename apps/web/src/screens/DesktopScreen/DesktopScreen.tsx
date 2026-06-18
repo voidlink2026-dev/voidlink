@@ -20,6 +20,7 @@ import { EmailInbox } from '../../game/EmailInbox/EmailInbox.tsx'
 import { ResearchBench } from '../../game/Research/ResearchBench.tsx'
 import { CodexWindow } from '../../game/Codex/CodexWindow.tsx'
 import { DiaryWindow } from '../../game/Diary/DiaryWindow.tsx'
+import { HelpWindow } from '../../game/Help/HelpWindow.tsx'
 import { CodexUnlockToast } from '../../game/Codex/CodexUnlockToast.tsx'
 import { AchievementUnlockToast } from '../../game/Achievements/AchievementUnlockToast.tsx'
 import { SplashOverlay } from '../../game/Splash/SplashOverlay.tsx'
@@ -60,6 +61,7 @@ const WINDOW_COMPONENTS: Record<string, React.ComponentType> = {
   ResearchBench,
   CodexWindow,
   DiaryWindow,
+  HelpWindow,
 }
 
 export function DesktopScreen() {
@@ -137,6 +139,7 @@ export function DesktopScreen() {
   // Also ticks bank interest accrual every loop iteration.
   const tickBankInterest = useGameStore((s) => s.tickBankInterest)
   const tickMarket       = useGameStore((s) => s.tickMarket)
+  const tickAmbientWorld = useGameStore((s) => s.tickAmbientWorld)
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null
     function tick() {
@@ -145,6 +148,7 @@ export function DesktopScreen() {
       lastTickRef.current = now
       tickBankInterest()
       tickMarket()
+      tickAmbientWorld()
     }
     function start() {
       if (intervalId) return
@@ -156,7 +160,7 @@ export function DesktopScreen() {
     start()
     document.addEventListener('visibilitychange', onVis)
     return () => { stop(); document.removeEventListener('visibilitychange', onVis) }
-  }, [tickGameLoop, tickBankInterest, tickMarket])
+  }, [tickGameLoop, tickBankInterest, tickMarket, tickAmbientWorld])
 
   // Ctrl+scroll zooms the entire window layer (railway.com-style)
   useEffect(() => {
