@@ -2054,6 +2054,62 @@ If you find something broken, note its Phase + step number — it makes the fix-
 - [ ] [TRY TO CONTINUE] dismisses the panel and re-renders the app
 - [ ] [RELOAD CLIENT] does a full page reload — save still loads cleanly afterwards
 
+## Phase 39 — Playtester feedback fix-pass (2026-06)
+
+**Intro chapter prose + rendering**
+- [ ] Sign up as a new operative → 8-chapter intro plays
+- [ ] Chapter 2 reads as a sensory paragraph (curtain blade of light, dust on the desk, kitchenette kettle, half-rebuilt district through the window) NOT "You are in a one-room apartment"
+- [ ] Chapter 3 names the four corporations with their domain in parentheses and explicitly clarifies the size comparison ("more capital, more land, more people, and more enforcement capacity")
+- [ ] No literal `*` characters appear in the rendered text — single-asterisk `*text*` markers render as italic, double-asterisk `**text**` markers render as cyan bold
+- [ ] ← BACK button appears in actions row from chapter 2 onward
+- [ ] ArrowLeft / Backspace keyboard shortcut goes back one chapter
+- [ ] Returning to a previous chapter skips the typewriter (already-seen content)
+- [ ] Hint line at bottom shows "← back" shortcut when applicable
+
+**Achievement + Codex toasts**
+- [ ] Achievement unlock toast now auto-dismisses in ~3.5s (was 7s)
+- [ ] Codex unlock toast now auto-dismisses in ~4s (was 8s)
+- [ ] Toast hint text reads "review in PROFILE" (achievement) or "CODEX has the rest" (codex) so player knows the data isn't lost
+
+**HELP / OPERATIVE HANDBOOK window**
+- [ ] HELP launcher visible in taskbar between DIARY and RESEARCH
+- [ ] Window opens with 7 left-sidebar tabs: GETTING STARTED / HACKING BASICS / TRACE & RELAY / MONEY & FACTIONS / CHARACTERS & STORY / MULTIPLAYER / CONTROLS & KEYS
+- [ ] Multiplayer tab opens to a clear "Voidlink is a single-player game" statement
+- [ ] All seven tabs render with body content + bullet rows + occasional callout boxes
+- [ ] Sidebar active tab is highlighted in cyan with left border
+
+**Password reset discoverability**
+- [ ] Login screen tab row shows 3 tabs: EXISTING OPERATIVE / NEW OPERATIVE / RECOVER ACCESS
+- [ ] Clicking RECOVER ACCESS opens the email-based password reset flow without first selecting an operative
+- [ ] Reset flow → enter email → receive 6-digit code → set new password works end-to-end
+
+**Tutorial — click-blocking outside spotlight**
+- [ ] Start tutorial → on a step with no spotlight (orientation), entire screen has `cursor: not-allowed` and clicks are eaten
+- [ ] On a step with a spotlight (e.g. "Open the Mission Board"), only clicks inside the highlighted area register
+- [ ] Player cannot accidentally accept a mission / open shop / etc. during the tutorial outside the current step's target
+
+**Tutorial — back navigation + replay**
+- [ ] BACK button appears in panel actions from step 2 onward
+- [ ] ArrowLeft / Backspace go back a step
+- [ ] ArrowRight / Enter advance when no condition is gating progress
+- [ ] kbdHint footer shows "← back · → next · visited N/total"
+- [ ] Cannot skip forward into unseen steps via the forward shortcut
+- [ ] Settings → DISPLAY → TUTORIAL → REPLAY NOW asks for confirmation, then clears `tutorial_done` flag and the tutorial re-renders immediately
+
+**Tutorial — live spotlight tracking + finish layout**
+- [ ] During a step with a spotlight on a window: drag the window → spotlight follows in real-time
+- [ ] Resize the window → spotlight follows in real-time
+- [ ] Complete the tutorial → desktop is no longer blank:
+  - INBOX opens at (80, 80) 720x480
+  - MISSION BOARD opens at (820, 80) 540x480
+  - HELP opens at (200, 380) 880x380
+- [ ] Skip-button completion (for returning operatives with the localStorage flag set) also opens the default layout
+
+**Network Map / Hacking Interface default sizes**
+- [ ] Accept any mission from the Mission Board → Network Map opens at 860x600 at (60, 80) — visibly larger than before, not cramped
+- [ ] Hacking Interface opens at 480x520 at (940, 80)
+- [ ] Both windows visible side-by-side on a 1366-wide screen without overlap
+
 ## Phase 38 — V13 + V10 + P9 + V14 Quick UX wins (2026-06)
 
 **V13 Button micro-interactions**
