@@ -132,6 +132,22 @@ export function SettingsWindow() {
           >REPLAY ON NEXT LOGIN</button>
         </div>
 
+        {/* Playtester feedback: 'have an option to re-run the tutorial even
+            after i have finished it'. Clears the tutorial_done flag on the
+            active player so the tutorial overlay re-renders immediately. */}
+        <div className={styles.scaleRow}>
+          <span className={styles.sliderLabel}>TUTORIAL</span>
+          <button
+            className={styles.testBtn}
+            onClick={() => {
+              const player = useGameStore.getState().player
+              if (!player) return
+              if (!window.confirm('Replay the operative tutorial from the start? Your save is not affected.')) return
+              useGameStore.getState().setPlayerFlag('tutorial_done', false)
+            }}
+          >REPLAY NOW</button>
+        </div>
+
         {/* P9 — Replay Reflections — lists every reflection scene this
             character has unlocked, lets the player revisit any of them. */}
         <ReflectionReplayList />

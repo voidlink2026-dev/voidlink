@@ -263,10 +263,12 @@ export function TutorialOverlay() {
   const setPlayerFlag = useGameStore((s) => s.setPlayerFlag)
   const minimizeWindow = useGameStore((s) => s.minimizeWindow)
   const focusWindow = useGameStore((s) => s.focusWindow)
+  const openWindow = useGameStore((s) => s.openWindow)
+  const activeWindows = useGameStore((s) => s.activeWindows)
   const [step, setStep] = useState(0)
   const [spotlight, setSpotlight] = useState<SpotlightRect | null>(null)
   const conditionMet = useRef(false)
-  const measureRaf = useRef<number>(0)
+  const [furthestReached, setFurthestReached] = useState(0)   // gates BACK button to visited steps only
 
   const current = STEPS[step]
   const isLast = step === STEPS.length - 1
@@ -315,12 +317,21 @@ export function TutorialOverlay() {
     })
   }, [current.spotlightSelector])
 
-  // Re-measure on step change and on window resize
+  // Re-measure on step change and on window resize.
+  // Playtester feedback: spotlight stayed in place when windows were dragged
+  // or resized. Now we re-measure on every animation frame whenever a
+  // spotlight target is set — cheap (one querySelector + rect read per
+  // frame) and always tracks live position changes.
   useEffect(() => {
-    measureRaf.current = requestAnimationFrame(measureSpotlight)
+    let raf = 0
+    function loop() {
+      measureSpotlight()
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
     window.addEventListener('resize', measureSpotlight)
     return () => {
-      cancelAnimationFrame(measureRaf.current)
+      cancelAnimationFrame(raf)
       window.removeEventListener('resize', measureSpotlight)
     }
   }, [measureSpotlight])
@@ -337,10 +348,12 @@ export function TutorialOverlay() {
         conditionMet.current = true
         clearInterval(interval)
         setTimeout(() => {
-          if (step < STEPS.length - 1) setStep((s) => s + 1)
-          else {
-            setPlayerFlag('tutorial_done', true)
-            try { localStorage.setItem('voidlink_tutorial_completed_once', String(Date.now())) } catch { /**/ }
+          if (step < STEPS.length - 1) {
+            const next = step + 1
+            setStep(next)
+            setFurthestReached((f) => Math.max(f, next))
+          } else {
+            finishTutorial()
           }
         }, 600)
       }
@@ -349,18 +362,60 @@ export function TutorialOverlay() {
     return () => clearInterval(interval)
   }, [step, current.condition]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Keyboard navigation: arrow keys to step back/forward (within visited
+  // range only); ESC does nothing (skip is via the SKIP button).
+  useEffect(() => {
+    if (!player || player.activeFlags.tutorial_done) return
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+        e.preventDefault()
+        goBack()
+      } else if ((e.key === 'ArrowRight' || e.key === 'Enter') && !current.condition) {
+        e.preventDefault()
+        advance()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [player, step, current.condition]) // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!player || player.activeFlags.tutorial_done) return null
 
   function advance() {
-    if (step < STEPS.length - 1) setStep((s) => s + 1)
-    else dismiss()
+    if (step < STEPS.length - 1) {
+      const next = step + 1
+      setStep(next)
+      setFurthestReached((f) => Math.max(f, next))
+    } else {
+      finishTutorial()
+    }
+  }
+
+  function goBack() {
+    if (step <= 0) return
+    setStep((s) => s - 1)
+  }
+
+  function finishTutorial() {
+    setPlayerFlag('tutorial_done', true)
+    try { localStorage.setItem('voidlink_tutorial_completed_once', String(Date.now())) } catch { /**/ }
+    // Playtester feedback: ending on a blank desktop after the tutorial was
+    // clunky. Open a useful default layout (inbox + mission board + welcome
+    // terminal) so the player has something to immediately engage with.
+    const openIds = new Set(activeWindows.map((w) => w.id))
+    if (!openIds.has('inbox')) {
+      openWindow({ id: 'inbox', title: 'ENCRYPTED INBOX', component: 'EmailInbox', x: 80, y: 80, width: 720, height: 480, isMinimized: false })
+    }
+    if (!openIds.has('missions')) {
+      openWindow({ id: 'missions', title: 'MISSION BOARD', component: 'MissionBoard', x: 820, y: 80, width: 540, height: 480, isMinimized: false })
+    }
+    if (!openIds.has('help')) {
+      openWindow({ id: 'help', title: 'OPERATIVE HANDBOOK', component: 'HelpWindow', x: 200, y: 380, width: 880, height: 380, isMinimized: false })
+    }
   }
 
   function dismiss() {
-    setPlayerFlag('tutorial_done', true)
-    // M14r — mark that this machine has completed the tutorial at least once,
-    // which unlocks the SKIP TUTORIAL button for future operatives.
-    try { localStorage.setItem('voidlink_tutorial_completed_once', String(Date.now())) } catch { /**/ }
+    finishTutorial()
   }
 
   const showNextBtn = !current.condition
@@ -378,8 +433,29 @@ export function TutorialOverlay() {
   return (
     <AnimatePresence>
       <div key="tutorial-root" className={styles.root}>
-        {/* Soft ambient dim — does NOT block clicks */}
+        {/* Soft ambient dim — pointer-events: none, just visual */}
         <div className={styles.softDim} aria-hidden="true" />
+
+        {/* Playtester feedback: 'I can just click ANYTHING I like without
+            it forcing me to learn.' Now we block clicks outside the
+            spotlight area. When there's no spotlight target, the whole
+            screen blocks (the player must use the tutorial panel buttons).
+            When there's a spotlight, we render four blocker rectangles
+            around it so clicks only register inside the highlighted area. */}
+        {!spotlight ? (
+          <div className={styles.clickBlocker} aria-hidden="true" />
+        ) : (
+          <>
+            {/* Top blocker */}
+            <div className={styles.clickBlocker} style={{ top: 0, left: 0, right: 0, height: Math.max(0, spotlight.y) }} aria-hidden="true" />
+            {/* Bottom blocker */}
+            <div className={styles.clickBlocker} style={{ top: spotlight.y + spotlight.height, left: 0, right: 0, bottom: 0 }} aria-hidden="true" />
+            {/* Left blocker */}
+            <div className={styles.clickBlocker} style={{ top: spotlight.y, left: 0, width: Math.max(0, spotlight.x), height: spotlight.height }} aria-hidden="true" />
+            {/* Right blocker */}
+            <div className={styles.clickBlocker} style={{ top: spotlight.y, left: spotlight.x + spotlight.width, right: 0, height: spotlight.height }} aria-hidden="true" />
+          </>
+        )}
 
         {/* Spotlight ring — pointer-events:none, just a glow outline */}
         {spotlight && (
@@ -446,6 +522,13 @@ export function TutorialOverlay() {
           )}
 
           <div className={styles.actions}>
+            {/* BACK button — playtester feedback. Always visible from step 2
+                onward; lets the player re-read earlier instructions. */}
+            {step > 0 && (
+              <button className={styles.backBtn} onClick={goBack}>
+                ‹ BACK
+              </button>
+            )}
             {/* M14r — tutorial is MANDATORY on first signup. SKIP only appears
                 for returning operatives who have completed a tutorial before
                 on this machine (localStorage flag set when tutorial finishes). */}
@@ -463,6 +546,11 @@ export function TutorialOverlay() {
                 {isLast ? 'BEGIN' : 'NEXT ›'}
               </Button>
             )}
+          </div>
+
+          {/* Keyboard hint */}
+          <div className={styles.kbdHint} aria-hidden="true">
+            <kbd>←</kbd> back · {!current.condition && <><kbd>→</kbd> next · </>}<span style={{ opacity: 0.6 }}>visited {furthestReached + 1}/{STEPS.length}</span>
           </div>
 
           {/* Step pip track */}

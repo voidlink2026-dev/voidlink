@@ -67,24 +67,28 @@ export function MissionBoard() {
     acceptMission(mission.id)
     logTerminal(`Mission accepted: ${mission.briefing.subject}`, 'success')
     logTerminal(`Target network located. Establishing route...`, 'system')
+    // Playtester feedback: network map was opening 'really small' at the
+    // start of the first mission. Bumped defaults from 640x440 → 860x600
+    // for the network map and 380x340 → 480x520 for the hacking interface,
+    // and rearranged them so they don't overlap on a 1366-wide screen.
     openWindow({
       id: 'network-map',
       title: 'NETWORK MAP',
       component: 'NetworkMap',
-      x: 120,
-      y: 120,
-      width: 640,
-      height: 440,
+      x: 60,
+      y: 80,
+      width: 860,
+      height: 600,
       isMinimized: false,
     })
     openWindow({
       id: 'hacking',
       title: 'HACKING INTERFACE',
       component: 'HackingInterface',
-      x: 800,
-      y: 200,
-      width: 380,
-      height: 340,
+      x: 940,
+      y: 80,
+      width: 480,
+      height: 520,
       isMinimized: false,
     })
   }
